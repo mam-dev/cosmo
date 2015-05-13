@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cosmo-multimodule</artifactId>
+        <groupId>org.unitedinternet.cosmo</groupId>
+        <version>3.41-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>cosmo-webapp</artifactId>
+    <packaging>war</packaging>
+    <name>cosmo-webapp</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.unitedinternet.cosmo</groupId>
+            <artifactId>cosmo-core</artifactId>
+        </dependency>
+        <dependency>
+		    <groupId>commons-dbcp</groupId>
+		    <artifactId>commons-dbcp</artifactId>
+		    <version>1.4</version>
+		</dependency>
+	     <dependency>
+	           <groupId>javax.servlet</groupId>
+	           <artifactId>javax.servlet-api</artifactId>
+	           <version>3.1.0</version>
+	           <scope>provided</scope>
+	       </dependency>
+	   </dependencies>
+
+    <build>
+    	<finalName>cosmo</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                        </archive>
+                        <webResources>
+                            <resource>
+                                <directory>${basedir}/src/main/resources</directory>
+                                <filtering>true</filtering>
+                                <includes>
+                                    <include>cosmo.version.txt</include>
+                                </includes>
+                            </resource>
+                            <resource>
+                                <directory>${basedir}/src/docs</directory>
+                                <filtering>false</filtering>
+                                <includes>
+                                    <include>NOTICE.txt</include>
+                                </includes>
+                            </resource>
+                        </webResources>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+     <scm>
+        <connection>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-core</connection>
+        <developerConnection>scm:git:ssh://git@github.com/aaaa</developerConnection>
+        <url>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-core</url>
+    </scm>
+</project>

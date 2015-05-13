@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    For more configuration information and examples see 
+    http://logback.qos.ch/manual/configuration.html
+-->
+<configuration 
+        debug="false"
+        scan="false"
+        scanPeriod="30 seconds">
+    <jmxConfigurator/>
+
+    <logger name="ch.qos.logback.classic" level="info" />
+
+    <!-- Propagate level changes back to JUL -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <!-- Console appender (goes to wrapper.log) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{ISO8601} %9relative [%thread] %-5level %logger [%file:%line] %mdc{GURID} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+   <!-- RULES for logging OFF < TRACE < DEBUG < INFO < WARN < ERROR < ALL [INHERITED|NULL] -->
+
+    <!-- SERVICE logger setup -->
+    <logger name="com.unitedinternet" level="INFO" />
+    <logger name="net.gmx" level="INFO" />
+    <logger name="de.web" level="INFO" />
+    <logger name="net.sf" level="WARN" />
+    <logger name="jdbc.*" level="WARN" /><!--
+
+
+    <logger name="org.hibernate" level="TRACE" />
+    <logger name="org.hibernate.type" level="TRACE" />
+
+
+    --><!-- ROOT logger setup -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
+

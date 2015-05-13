@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        Copyright 2005-2006 Open Source Applications Foundation Licensed under
+        the Apache License, Version 2.0 (the "License"); you may not use this
+        file except in compliance with the License. You may obtain a copy of
+        the License at http://www.apache.org/licenses/LICENSE-2.0 Unless
+        required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+        implied. See the License for the specific language governing
+        permissions and limitations under the License.
+    -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+   <bean id="jdbcDataSource" class="org.unitedinternet.cosmo.datasource.DataSourceFactoryBean">
+        <constructor-arg ref="externalComponentInstanceProvider"/>
+    </bean>
+    <!-- Sesssion factory -->
+    <bean id="sessionFactory"
+        class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
+        <!-- <constructor-arg ref="externalComponentInstanceProvider"/> -->
+        <property name="packagesToScan" ref="hibernatePackagesToScan"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.cache.use_query_cache">false</prop>
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>
+          <!--       <prop key="hibernate.cache.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop> -->
+                <prop key="current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+                <prop key="hibernate.jdbc.batch_size">25</prop>
+                <!--<prop key="hibernate.tenant_identifier_resolver">org.unitedinternet.cosmo.hibernate.MultiTenantIdentifierResolver</prop>
+                <prop key="hibernate.multi_tenant_connection_provider">org.hibernate.service.jdbc.connections.spi.DataSourceBasedMultiTenantConnectionProviderImpl</prop> -->
+
+                <!-- configure in cosmo.propeties -->
+                <prop key="hibernate.connection.release_mode">after_transaction</prop>
+                <!--  hibernate debugging config switches -->
+                <prop key="hibernate.show_sql">${cosmo.debug.showSql}</prop>
+                <prop key="hibernate.format_sql">${cosmo.debug.showSql}</prop>
+                <prop key="hibernate.use_sql_comments">${cosmo.debug.showSql}</prop>
+                <prop key="hibernate.generate_statistics">true</prop>
+            </props>
+        </property>
+        <property name="entityInterceptor" ref="cosmoHibernateInterceptor" />
+        <property name="dataSource" ref="jdbcDataSource" />
+    </bean>
+
+    <alias alias="hibernatePackagesToScan" name="${cosmo.hibernate.hibernatePackagesToScan}"/>
+    
+    <util:list id="hibernatePackagesToScanDefault">
+        <value>org.unitedinternet.cosmo.model.hibernate</value>
+    </util:list>
+
+    <bean id="auditableObjectInterceptor"
+        class="org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor" />
+
+    <bean id="eventStampInterceptor" class="org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor" />
+    <bean id="cosmoHibernateInterceptor" class="org.unitedinternet.cosmo.hibernate.CompoundInterceptor">
+        <property name="interceptors">
+            <list>
+                <ref bean="auditableObjectInterceptor" />
+                <ref bean="eventStampInterceptor" />
+            </list>
+        </property>
+    </bean>
+
+    <!--  Transaction Definitions -->
+
+    <!--
+        Transaction manager for a single Hibernate SessionFactory (alternative
+        to JTA)
+    -->
+    
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="dataSource" ref="jdbcDataSource" />
+    </bean>
+
+    <!--  AOP Configuration -->
+
+    <!-- transactional advice -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!-- the transactional semantics... -->
+        <tx:attributes>
+            <!-- getPasswordRecovery is only 'get' thats not read-only -->
+            <tx:method name="getPasswordRecovery" />
+            <tx:method name="remove*" rollback-for="Throwable"/>
+            <!--
+                all methods starting with 'get', 'load', and 'find' are read-only
+            -->
+            <tx:method name="get*" read-only="true" rollback-for="Throwable"/>
+            <tx:method name="load*" read-only="true" rollback-for="Throwable"/>
+            <tx:method name="find*" read-only="true" rollback-for="Throwable"/>
+            <!-- other methods use the default transaction settings -->
+            <tx:method name="*" rollback-for="Throwable"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--  define advice for all service methods -->
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* org.unitedinternet.cosmo.service.*Service.*(..))" />
+        <aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvice" />
+    </aop:config>
+
+    <!--
+        a helper for setting up the database schema and loading seed data
+    -->
+     <bean id = "cosmoStartupDataInitializer" class="org.unitedinternet.cosmo.service.impl.CosmoStartupDataInitializer">
+        <property name="rootLoginUrl" value="/account/view" />
+        <property name="entityFactory" ref="cosmoEntityFactory" />
+        <property name="userService" ref="userService" />
+        <property name="serverPropertyService" ref="serverPropertyService" />
+    </bean>
+
+    
+	<bean id="dbInitializer" init-method="initialize"
+		class="org.unitedinternet.cosmo.db.DbInitializer">
+		<property name="localSessionFactory" ref="&amp;sessionFactory" />
+		<property name="dataSource" ref="jdbcDataSource" />
+		<property name="validateSchema" value="true" />
+        <property name="startupDataInitializers" ref="startupDataInitializers"/>
+		<property name="serverPropertyService" ref="serverPropertyService" />
+	</bean>
+
+	<alias alias="startupDataInitializers" name="${cosmo.startupDataInitializers}"/>
+	
+  	<bean id="cosmoStartupDataInitializers" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="cosmoStartupDataInitializer" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+</beans>

@@ -1,0 +1,182 @@
+Bootstrapping a Maven 2 repository
+
+Create an entry in your Maven 2 settings.xml file for the repository
+
+    ~/.m2/settings.xml
+
+    <?xml version="1.0" encoding="ISO-8859-1"?>
+    <settings>
+      <servers>
+        <server>
+          <id>osaf-m2</id>
+          <username>userid</username>
+          <password>password</password>
+        </server>
+      </servers>
+    </settings>
+
+Plugins:
+
+    Checkout the maven-jsar-plugin from OSAF's svn:
+
+        svn co http://svn.osafoundation.org/server/maven-jsar-plugin
+
+    Install the plugin locally:
+
+        mvn install
+
+    Deploy the plugin to the Maven 2 repository:
+
+        cd target
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -Dfile=maven-jsar-plugin-1.0-SNAPSHOT.jar \
+                               -DpomFile=maven-jsar-plugin-1.0-SNAPSHOT.pom
+
+Apache Tomcat distribution
+
+    In the Maven 1 world we just downloaded from one of the servers the apache-tomcat-###.zip
+    file and then used some jelly scripting to unpack it into the proper spot.
+    
+    In the Maven 2 world I haven't quite figured out a way to do it with assemblies or any other
+    normal Maven 2 plugin so what I've done is deployed it to the Maven 2 repository:
+    
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=org.osaf \
+                               -DartifactId=apache-tomcat \
+                               -Dversion=5.5.17 \
+                               -Dpackaging=zip \
+                               -Dfile=apache-tomcat-5.5.17.zip
+                               
+    After unpacking the stock apache-tomcat zip file, I did the following "cleanup" work:
+        removed conf/Catalina/localhost/*.xml
+        removed conf/server.xml
+        removed common/classes/logging.properties
+        removed webapps/*
+
+    Repacked it so that it doesn't have a base-directory of apache-tomcat (to fit how dependencies
+    are built in Maven.)
+
+Jsar file list:
+
+    dojo-event_and_io-0.4.0
+        http://download.dojotoolkit.org/release-0.4.0/dojo-0.4.0-event_and_io.tar.gz
+
+        tar xzf dojo-0.4.0-event_and_io.tar.gz
+        cd dojo-0.4.0-event_and_io
+        jar cvf ../dojo-event_and_io-0.4.0.jsar *
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=dojo \
+                               -DartifactId=dojo-event_and_io \
+                               -Dversion=0.4.0 \
+                               -Dpackaging=jsar \
+                               -Dfile=dojo-event_and_io-0.4.0.jsar
+
+    jsonrpc-java-1.0
+        http://oss.metaparadigm.com/jsonrpc-dist/json-rpc-java-1.0.tar.gz
+
+        Note - yes, the filenames are different but it's inside of cosmo now :(
+
+        tar xzf json-rpc-java-1.0.tar.gz
+        cd json-rpc-java-1.0/webapp/jsonrpc
+        jar cvf ../../jsonrpc-java-1.0.jsar *.js *.jsp
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=jsonrpc-java \
+                               -DartifactId=jsonrpc-java-js \
+                               -Dversion=1.0 \
+                               -Dpackaging=jsar \
+                               -Dfile=jsonrpc-java-js-1.0.jsar
+
+    olson-tzdata-2006n
+        ftp://elsie.nci.nih.gov/pub/tzdata2006o.tar.gz
+        
+        mkdir olson-tzdata
+        cd olson-tzdata
+        tar xzf ../tzdata2006o.tar.gz
+        cd $COSMO_HOME/tools
+        # for now the following command needs to be run from 
+        # within the tools directory
+        ./strip_all_comments /path/to/olson-tzdata
+        cd /path/to/olson-tzdata
+        jar cvf ../olson-tzdata-2006o-1.jsar *
+        
+        
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=olson \
+                               -DartifactId=olson-tzdata \
+                               -Dversion=2006o-1 \
+                               -Dpackaging=jsar \
+                               -Dfile=olson-tzdata-2006o-1.jsar
+
+
+Jar file list:
+
+    urlrewrite-2.6.0.jar
+    smtp-1.3.2.jar
+    jta-1.0.1B.jar
+    activation-1.0.2.jar
+    mail-1.3.2.jar
+    mailapi-1.3.2.jar
+    connect-1.0.jar
+    jsonrpc-java-1.0.jar
+    commons-id-0.1-dev.jar
+    serializer-2.7.0.jar
+
+    Note: the following are located in our Maven 1 repository
+
+    unstandard-20050518.jar
+
+    Since the above jars all come with POM files, use the following to deploy:
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                                                      -DrepositoryId=osaf-m2 \
+                                                      -DpomFile=<filename>.pom \
+                                                      -Dfile=<filename>.jar
+
+    The following do not come with POM files normally, we have to create one:
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=org.apache.jackrabbit \
+                               -DartifactId=jackrabbit-jcr-commons \
+                               -Dversion=1.0-osaf-20060508 \
+                               -Dpackaging=jar \
+                               -Dfile=jackrabbit-jcr-commons-1.0-osaf-20060508.jar
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=org.apache.jackrabbit \
+                               -DartifactId=jackrabbit-jcr-server \
+                               -Dversion=1.0-osaf-20061023 \
+                               -Dpackaging=jar \
+                               -Dfile=jackrabbit-jcr-server-1.0-osaf-20061023.jar
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=org.apache.jackrabbit \
+                               -DartifactId=jackrabbit-jcr-client \
+                               -Dversion=1.0-osaf-20061023 \
+                               -Dpackaging=jar \
+                               -Dfile=jackrabbit-jcr-client-1.0-osaf-20061023.jar
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=org.apache.jackrabbit \
+                               -DartifactId=jackrabbit-jcr-webdav \
+                               -Dversion=1.0-osaf-20061023 \
+                               -Dpackaging=jar \
+                               -Dfile=jackrabbit-jcr-webdav-1.0-osaf-20061023.jar
+
+        mvn deploy:deploy-file -Durl=scpexe://paniolo.osafoundation.org/www/maven2 \
+                               -DrepositoryId=osaf-m2 \
+                               -DgroupId=org.apache.jackrabbit \
+                               -DartifactId=jackrabbit-server \
+                               -Dversion=1.0-osaf-20061023 \
+                               -Dpackaging=jar \
+                               -Dfile=jackrabbit-server-1.0-osaf-20061023.jar

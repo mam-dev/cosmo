@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2005-2006 Open Source Applications Foundation Licensed under 
+	the Apache License, Version 2.0 (the "License"); you may not use this file 
+	except in compliance with the License. You may obtain a copy of the License 
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
+	law or agreed to in writing, software distributed under the License is distributed 
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+	express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	
+	<!-- ICalendar Client Filter Manager The ICalendar Client Filter Manager 
+		provides a way for cosmo to tailor the icalendar data depending on the client 
+		requesting the data. -->
+
+	<!-- filter for iCal clients -->
+	<bean id="ical3ClientFilter" class="org.unitedinternet.cosmo.icalendar.ICal3ClientFilter" />
+
+	<bean id="iCalendarClientFilterManager"
+		class="org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager">
+		<property name="clientFilters">
+			<map>
+				<entry key="ical2" value-ref="ical3ClientFilter" />
+				<entry key="ical3" value-ref="ical3ClientFilter" />
+			</map>
+		</property>
+	</bean>
+
+
+
+	<!-- extension advice used by external advice providers -->
+
+	<bean id="contextServiceExtensionsAdvice"
+		class="org.unitedinternet.cosmo.event.aop.ContextServiceExtensionsAdvice">
+	</bean>
+
+	<bean id="contextServiceExtensionsAdviceDecorator"
+		class="org.unitedinternet.cosmo.event.aop.ContextServiceExtensionAdviceDecorator">
+		<constructor-arg ref="externalComponentInstanceProvider" />
+		<constructor-arg ref="contextServiceExtensionsAdvice" />
+	</bean>
+	
+
+	<!-- Intercepts service calls and logs events -->
+	<bean id="eventLogAspect" init-method="init"
+		class="org.unitedinternet.cosmo.event.aop.EventLogAdvice">
+		<property name="securityManager">
+			<ref bean="securityManager" />
+		</property>
+		<property name="eventLogDao">
+			<ref bean="eventLogDao" />
+		</property>
+		<property name="order" value="6" />
+		<property name="enabled" value="false" />
+	</bean>
+
+	<bean id="ootbHelper"
+		class="org.unitedinternet.cosmo.service.account.OutOfTheBoxHelper">
+		<property name="contentDao">
+			<ref bean="contentDao" />
+		</property>
+		<property name="entityFactory">
+			<ref bean="cosmoEntityFactory" />
+		</property>
+	</bean>
+
+	<bean id="triageStatusQueryProcessor"
+		class="org.unitedinternet.cosmo.service.impl.StandardTriageStatusQueryProcessor">
+		<property name="contentDao">
+			<ref bean="contentDao" />
+		</property>
+	</bean>
+
+
+	<bean id="userService"
+		class="org.unitedinternet.cosmo.service.impl.StandardUserService"
+		init-method="init" destroy-method="destroy">
+		<property name="contentDao" ref="contentDao" />
+		<property name="userDao" ref="userDao" />
+		<property name="passwordGenerator" ref="tokenGenerator" />
+	</bean>
+
+	<bean id="contentLockManager"
+		class="org.unitedinternet.cosmo.service.lock.SingleVMLockManager" />
+
+	<bean id="contentService"
+		class="org.unitedinternet.cosmo.service.impl.StandardContentService"
+		init-method="init" destroy-method="destroy">
+		<property name="contentDao" ref="contentDao" />
+		<property name="lockManager" ref="contentLockManager" />
+		<property name="triageStatusQueryProcessor" ref="triageStatusQueryProcessor" />
+	</bean>
+
+	<bean id="calendarService"
+		class="org.unitedinternet.cosmo.service.impl.StandardCalendarService"
+		init-method="init" destroy-method="destroy">
+		<property name="calendarDao" ref="calendarDao" />
+	</bean>
+
+	<bean id="serverPropertyService"
+		class="org.unitedinternet.cosmo.service.impl.StandardServerPropertyService"
+		init-method="init" destroy-method="destroy">
+		<property name="serverPropertyDao" ref="serverPropertyDao" />
+	</bean>
+
+	<bean id="calendarQueryProcessor"
+		class="org.unitedinternet.cosmo.calendar.query.impl.StandardCalendarQueryProcessor">
+		<property name="calendarDao" ref="calendarDao" />
+		<property name="contentDao" ref="contentDao" />
+	</bean>
+
+	<!-- general protocol/interface resources -->
+
+	<bean id="serviceLocatorFactory" class="org.unitedinternet.cosmo.server.ServiceLocatorFactory">
+		<property name="cmpPrefix" value="/cmp" />
+		<property name="davPrefix" value="/dav" />
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+
+	<!-- dav protocol resources -->
+
+	<bean id="davResourceFactory" class="org.unitedinternet.cosmo.dav.StandardResourceFactory">
+		<constructor-arg>
+			<ref bean="contentService" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="userService" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="securityManager" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="cosmoEntityFactory" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="calendarQueryProcessor" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="iCalendarClientFilterManager" />
+		</constructor-arg>
+
+		<property name="schedulingEnabled" value="${cosmo.caldav.schedulingEnabled}" />
+	</bean>
+
+	<bean id="davResourceLocatorFactory"
+		class="org.unitedinternet.cosmo.dav.StandardResourceLocatorFactory" />
+
+	<bean id="dav"
+		class="org.unitedinternet.cosmo.dav.servlet.StandardRequestHandler">
+		<property name="resourceLocatorFactory" ref="davResourceLocatorFactory" />
+		<property name="resourceFactory" ref="davResourceFactory" />
+		<property name="entityFactory" ref="cosmoEntityFactory" />
+	</bean>
+
+
+	<!-- the servlet context configurer, which is used instead of spring's servlet 
+		context export mechanism because config information needs to be loaded from 
+		the database -->
+	<bean id="servletContextConfigurer"
+		class="org.unitedinternet.cosmo.servletcontext.ServletContextConfigurer">
+		<property name="userService" ref="userService" />
+	</bean>
+
+	<!-- authentication resources -->
+
+	<bean id="userDetailsService"
+		class="org.unitedinternet.cosmo.acegisecurity.userdetails.CosmoUserDetailsService">
+		<property name="userDao" ref="userDao" />
+	</bean>
+
+
+	<!-- Logging resources -->
+	<bean id="httpLoggingFormat" class="java.lang.String">
+		<constructor-arg type="java.lang.String"
+			value="${cosmo.log.HttpLoggingFilter.format}" />
+	</bean>
+
+	<!-- Retry Filter -->
+	<bean id="retryFilter" class="org.unitedinternet.cosmo.filters.RetryFilter">
+		<property name="maxRetries" value="10" />
+		<property name="methods">
+			<list>
+				<value>POST</value>
+				<value>PUT</value>
+				<value>DELETE</value>
+				<value>MKCALENDAR</value>
+			</list>
+		</property>
+		<property name="exceptions">
+			<list>
+				<value>org.springframework.dao.ConcurrencyFailureException</value>
+				<value>org.springframework.dao.DataIntegrityViolationException
+				</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Extension for request filters -->
+	<!-- alias defined in web.xml for filter dav-extension -->
+	<alias name="${cosmo.externalFilterChainBean}" alias="externalFilterChainBean" />
+	<bean id="requestExternalFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+		<security:filter-chain-map>
+			<security:filter-chain pattern="/**" filters="emptyFilter" />
+		</security:filter-chain-map>
+	</bean>
+
+	<bean id="emptyFilter" class="org.unitedinternet.cosmo.filters.EmptyFilter" />
+	<!-- API implementation -->
+	
+	
+	 <bean id="typesFinder" class="org.unitedinternet.cosmo.api.TypesFinder"/>
+    
+    <bean id="externalComponentsManager" class="org.unitedinternet.cosmo.api.ExternalComponentsManager" />
+    
+    <bean id="springExternalComponentFactory" class="org.unitedinternet.cosmo.api.SpringExternalComponentFactory"/>
+    
+    <bean id="externalComponentFactoryChain" class="org.unitedinternet.cosmo.api.ExternalComponentFactoryChain">
+       <constructor-arg ref="externalComponentsManager"/>
+       <constructor-arg>
+          <array>
+              <ref bean="springExternalComponentFactory"/>  
+              <bean class="org.unitedinternet.cosmo.api.DefaultExternalComponentFactory"/>
+          </array>
+       </constructor-arg>
+    </bean>
+                            
+    <bean id="externalComponentInstanceProvider" class="org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider">
+       <constructor-arg ref="typesFinder"/>
+       <constructor-arg ref="externalComponentFactoryChain"/>
+    </bean>
+    
+    <bean id="externalComponentDecorator" class="org.unitedinternet.cosmo.api.ExternalComponentDecorator">
+       <constructor-arg ref="externalComponentsManager"/>
+       <constructor-arg ref="typesFinder"/>
+    </bean>
+</beans>

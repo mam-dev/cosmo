@@ -1,0 +1,1236 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:Simdesk
+BEGIN:VEVENT
+UID:1B42B2A3-1B0D-497C-B8A8-F90F87FD3718
+SUMMARY:this is a summary
+DESCRIPTION:Welcome to the Chandler 0.6 Release!\n\nFor a wealth of informa
+ tion for end-users and developers\, point your browser to:\n    http://cha
+ ndler.osafoundation.org\n\nThere you can see presentations on the Vision o
+ f Chandler\, details about this release\, screenshots and screencast demos
+ \, documentation and tutorials for developers\, and how to participate in 
+ testing and giving us feedback about your experience in experimenting with
+  Chandler.\n\nThis release is focused on "experimentally usable" calendar 
+ functionality. It meets the following four goals:\n\n1. Usable Calendar\nW
+ e intend to use the 0.6 calendar internally at OSAF on a day-to-day basis 
+ in order to experience first hand the features\, functionality\, limitatio
+ ns\, and any bugs in the product. We believe using the product ourselves e
+ arly on is the best way to ensure superlative design and implementation. T
+ he calendar now includes timezones\, repeating events\, all-day events\, m
+ ultiple overlaying calendars\, and shared collaborative (multi-author) gro
+ up calendars using our new CalDAV-based calendar server.\n\n2. Polished Us
+ er Interface\nAdding polish to the UI helps calendar usability. To a lesse
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ r extent we have also polished other areas of the application UI.\n\n3. In
+ frastructure Investment\n* Although the focus for this release is usable c
+ alendar functionality\, we have invested in some projects for both develop
+ er and Quality Assurance productivity. For example\, we have begun optimiz
+ ing for performance\, and have developed automated QA code tests. We want 
+ Chandler to be testable\, high quality source code.\n* In addition\, this 
+ release also includes continuing infrastructure work on email and internat
+ ionalization.\n\n4. Developer Platform\n* If you are an experienced Python
+  programmer\, you should be able to create simple forms-based parcels like
+  the Flickr\, Feeds\, and Amazon parcels that are included in the 0.6 rele
+ ase.\n* Developer documentation\, tutorials\, and sample add-in parcels ar
+ e part of this release.\n\nPlease note\, this release is still intended to
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+  be experimental\; do not trust your real data with this version. An exper
+ imental file import/export feature is available to back up your calendar d
+ ata.\n\nThank you for trying Chandler. Your feedback is welcome on our mai
+ l lists:\n    http://wiki.osafoundation.org/bin/view/Chandler/OsafMailingL
+ ists\n\nThe Chandler Team AAAA Should be truncated AAAAA
+CLASS:PRIVATE
+X-MOZILLA-ALARM-DEFAULT-LENGTH:0
+X-SIMDESK-ORIGINAL-TIMEZONE:-1
+X-MOZILLA-RECUR-DEFAULT-INTERVAL:0
+DTSTART:20050811T164500
+DTEND:20050811T174500
+DTSTAMP:20060605T212724Z
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+        >
+
+    <!--
+        Copyright 2006 Open Source Applications Foundation
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    -->
+
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.unitedinternet.cosmo.servletcontext.CosmoPropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath:/etc/cosmo.properties"/>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+    </bean>
+
+
+    <bean id="auditableObjectInterceptor" class="org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor"/>
+
+    <bean id="eventStampInterceptor" class="org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor"/>
+
+    <bean id="cosmoHibernateInterceptor" class="org.unitedinternet.cosmo.hibernate.CompoundInterceptor">
+        <property name="interceptors">
+            <list>
+                <ref bean="auditableObjectInterceptor"/>
+                <ref bean="eventStampInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="beanValidationEventListener" class="org.hibernate.cfg.beanvalidation.BeanValidationEventListener"/>
+
+
+    <bean id="sessionFactory" class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
+        <property name="packagesToScan" ref="hibernatePackagesToScan"/>
+        <property name="entityInterceptor">
+            <ref bean="cosmoHibernateInterceptor"/>
+        </property>
+
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.cache.use_query_cache">false</prop>
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <!--  hibernate debugging config switches -->
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.use_sql_comments">false</prop>
+                <prop key="hibernate.generate_statistics">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+            </props>
+        </property>
+        <property name="dataSource">
+            <ref bean="jdbcDataSource"/>
+        </property>
+    </bean>
+
+    <bean id="jdbcDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>org.hsqldb.jdbc.JDBCDriver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:hsqldb:file:target/testdb</value>
+        </property>
+        <property name="username">
+            <value>sa</value>
+        </property>
+        <property name="password">
+            <value></value>
+        </property>
+    </bean>
+
+    <alias alias="hibernatePackagesToScan" name="${cosmo.hibernate.hibernatePackagesToScan}"/>
+
+    <util:list id="hibernatePackagesToScanDefault">
+        <value>org.unitedinternet.cosmo.model.hibernate</value>
+    </util:list>
+
+    <!--
+    Transaction manager for a single Hibernate SessionFactory (alternative
+    to JTA)
+-->
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="dataSource" ref="jdbcDataSource"/>
+    </bean>
+
+    <!-- transactional advice -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!-- the transactional semantics... -->
+        <tx:attributes>
+            <!-- getPasswordRecovery is only 'get' thats not read-only -->
+            <tx:method name="getPasswordRecovery"/>
+            <tx:method name="remove*" rollback-for="Throwable"/>
+            <!--
+                all methods starting with 'get', 'load', and 'find' are read-only
+            -->
+            <tx:method name="get*" read-only="true" rollback-for="Throwable"/>
+            <tx:method name="load*" read-only="true" rollback-for="Throwable"/>
+            <tx:method name="find*" read-only="true" rollback-for="Throwable"/>
+            <!-- other methods use the default transaction settings -->
+            <tx:method name="*" rollback-for="Throwable"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--  define advice for all service methods -->
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* org.unitedinternet.cosmo.service.*Service.*(..))"/>
+        <aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvice"/>
+    </aop:config>
+
+    <bean id="securityAdvice" class="org.unitedinternet.cosmo.security.aop.SecurityAdvice"/>
+
+</beans>

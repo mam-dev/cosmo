@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<C:filter xmlns:C="urn:ietf:params:xml:ns:caldav">
+    <nothing/>
+</C:filter>

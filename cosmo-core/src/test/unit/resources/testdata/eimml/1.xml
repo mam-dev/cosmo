@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<core:records
+    xmlns:core="http://osafoundation.org/eimml/core"
+    xmlns:collection="http://osafoundation.org/eimml/collection"
+    xmlns:item="http://osafoundation.org/eimml/item"
+    xmlns:event="http://osafoundation.org/eimml/event"
+    xmlns:task="http://osafoundation.org/eimml/task"
+    xmlns:message="http://osafoundation.org/eimml/message"
+    xmlns:note="http://osafoundation.org/eimml/note">
+  <collection:record>
+    <core:uuid>8501de14-1dc9-40d4-a7d4-f289feff8214</core:uuid>
+  </collection:record>
+  <item:record>
+    <core:uuid>011dfa04-cc6c-4fa1-b66e-dca8e7c19526</core:uuid>
+    <item:title>Welcome to Cosmo!</item:title>
+    <item:createdOn>2006-11-29T12:25:31-0800</item:createdOn>
+  </item:record>
+  <event:record>
+    <core:uuid>011dfa04-cc6c-4fa1-b66e-dca8e7c19526</core:uuid>
+    <event:dtstart>20061129T090000</event:dtstart>
+    <event:dtend>20061129T100000</event:dtend>
+  </event:record>
+  <note:record>
+    <core:uuid>011dfa04-cc6c-4fa1-b66e-dca8e7c19526</core:uuid>
+    <note:body>Welcome to Cosmo!</note:body>
+    <note:icalUid>0e7ab3fc-e12e-415e-8672-e29b1951f10f</note:icalUid>
+  </note:record>
+  <item:record>
+    <core:uuid>d1dd801c-f682-4bcb-b187-46b8c427e77f</core:uuid>
+    <item:title>Cosmo: Status</item:title>
+    <item:createdOn>2006-11-29T12:30:09-0800</item:createdOn>
+  </item:record>
+  <note:record>
+    <core:uuid>d1dd801c-f682-4bcb-b187-46b8c427e77f</core:uuid>
+    <note:body>Cosmo status meeting</note:body>
+    <note:icalUid>1e2d48c0-d66b-494c-bb33-c3d75a1ba66b</note:icalUid>
+  </note:record>
+  <event:record>
+    <core:uuid>d1dd801c-f682-4bcb-b187-46b8c427e77f</core:uuid>
+    <event:dtstart>20061130T140000</event:dtstart>
+    <event:dtend>20061130T150000</event:dtend>
+    <event:rrule>FREQ=WEEKLY</event:rrule>
+    <event:status>CONFIRMED</event:status>
+  </event:record>
+</core:records>

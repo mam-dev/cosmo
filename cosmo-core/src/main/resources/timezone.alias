@@ -1,0 +1,570 @@
+# known aliases
+PST=America/Los_Angeles
+
+# aliases from ical4j
+Pacific/Samoa=Pacific/Pago_Pago
+US/Samoa=Pacific/Pago_Pago
+
+America/Atka=America/Adak
+US/Aleutian=America/Adak
+
+US/Hawaii=Pacific/Honolulu
+
+US/Alaska=America/Anchorage
+
+US/Pacific=America/Los_Angeles
+US/Pacific-New=America/Los_Angeles
+
+America/Ensenada=America/Tijuana
+Mexico/BajaNorte=America/Tijuana
+
+Canada/Pacific=America/Vancouver
+
+Canada/Yukon=America/Whitehorse
+
+America/Shiprock=America/Denver
+Navajo=America/Denver
+US/Mountain=America/Denver
+
+Canada/Mountain=America/Edmonton
+
+Mexico/BajaSur=America/Mazatlan
+
+US/Arizona=America/Phoenix
+
+US/Central=America/Chicago
+
+America/Knox_IN=America/Indiana/Knox
+US/Indiana-Starke=America/Indiana/Knox
+
+Mexico/General=America/Mexico_City
+
+Canada/East-Saskatchewan=America/Regina
+Canada/Saskatchewan=America/Regina
+
+Canada/Central=America/Winnipeg
+
+Chile/EasterIsland=Pacific/Easter
+
+America/Coral_Harbour=America/Atikokan
+
+US/Michigan=America/Detroit
+
+Cuba=America/Havana
+
+America/Fort_Wayne=America/Indiana/Indianapolis
+America/Indianapolis=America/Indiana/Indianapolis
+US/East-Indiana=America/Indiana/Indianapolis
+
+Jamaica=America/Jamaica
+
+America/Louisville=America/Kentucky/Louisville
+
+US/Eastern=America/New_York
+
+America/Porto_Acre=America/Rio_Branco
+Brazil/Acre=America/Rio_Branco
+
+Canada/Eastern=America/Toronto
+
+Canada/Atlantic=America/Halifax
+
+Brazil/West=America/Manaus
+
+Chile/Continental=America/Santiago
+
+America/Virgin=America/St_Thomas
+
+Canada/Newfoundland=America/St_Johns
+
+America/Buenos_Aires=America/Argentina/Buenos_Aires
+
+America/Argentina/ComodRivadavia=America/Argentina/Catamarca
+America/Catamarca=America/Argentina/Catamarca
+
+America/Cordoba=America/Argentina/Cordoba
+America/Rosario=America/Argentina/Cordoba
+
+America/Jujuy=America/Argentina/Jujuy
+
+America/Mendoza=America/Argentina/Mendoza
+
+Brazil/East=America/Sao_Paulo
+
+Brazil/DeNoronha=America/Noronha
+
+Africa/Timbuktu=Africa/Bamako
+
+Iceland=Atlantic/Reykjavik
+
+## Unsupported timezone identifiers..
+Etc/GMT+0=Etc/GMT
+Etc/GMT-0=Etc/GMT
+Etc/GMT0=Etc/GMT
+Etc/Greenwich=Etc/GMT
+GMT=Etc/GMT
+GMT+0=Etc/GMT
+GMT-0=Etc/GMT
+GMT0=Etc/GMT
+Greenwich=Etc/GMT
+
+UCT=Etc/UCT
+
+Etc/Universal=Etc/UTC
+Etc/Zulu=Etc/UTC
+Universal=Etc/UTC
+Zulu=Etc/UTC
+##
+
+Eire=Europe/Dublin
+
+Portugal=Europe/Lisbon
+
+Europe/Belfast=Europe/London
+Europe/Guernsey=Europe/London
+Europe/Isle_of_Man=Europe/London
+Europe/Jersey=Europe/London
+GB=Europe/London
+GB-Eire=Europe/London
+
+Europe/Ljubljana=Europe/Belgrade
+Europe/Podgorica=Europe/Belgrade
+Europe/Sarajevo=Europe/Belgrade
+Europe/Skopje=Europe/Belgrade
+Europe/Zagreb=Europe/Belgrade
+
+Arctic/Longyearbyen=Europe/Oslo
+Atlantic/Jan_Mayen=Europe/Oslo
+
+Europe/Bratislava=Europe/Prague
+
+Europe/San_Marino=Europe/Rome
+Europe/Vatican=Europe/Rome
+
+Poland=Europe/Warsaw
+
+Egypt=Africa/Cairo
+
+Libya=Africa/Tripoli
+
+Asia/Tel_Aviv=Asia/Jerusalem
+Israel=Asia/Jerusalem
+
+Europe/Nicosia=Asia/Nicosia
+
+Europe/Tiraspol=Europe/Chisinau
+
+Europe/Mariehamn=Europe/Helsinki
+
+Asia/Istanbul=Europe/Istanbul
+Turkey=Europe/Istanbul
+
+W-SU=Europe/Moscow
+
+Iran=Asia/Tehran
+
+Asia/Ashkhabad=Asia/Ashgabat
+
+Asia/Dacca=Asia/Dhaka
+
+Asia/Thimbu=Asia/Thimphu
+
+Asia/Chungking=Asia/Chongqing
+
+Hongkong=Asia/Hong_Kong
+
+Asia/Macao=Asia/Macau
+
+Asia/Ujung_Pandang=Asia/Makassar
+
+PRC=Asia/Shanghai
+
+Singapore=Asia/Singapore
+
+ROC=Asia/Taipei
+
+Asia/Ulan_Bator=Asia/Ulaanbaatar
+
+Australia/West=Australia/Perth
+
+ROK=Asia/Seoul
+
+Japan=Asia/Tokyo
+
+Australia/South=Australia/Adelaide
+
+Australia/Yancowinna=Australia/Broken_Hill
+
+Australia/North=Australia/Darwin
+
+Australia/Queensland=Australia/Brisbane
+
+Australia/Tasmania=Australia/Hobart
+
+Australia/Victoria=Australia/Melbourne
+
+Australia/ACT=Australia/Sydney
+Australia/Canberra=Australia/Sydney
+Australia/NSW=Australia/Sydney
+
+Pacific/Yap=Pacific/Truk
+
+Australia/LHI=Australia/Lord_Howe
+
+Antarctica/South_Pole=Antarctica/McMurdo
+
+NZ=Pacific/Auckland
+
+Kwajalein=Pacific/Kwajalein
+
+NZ-CHAT=Pacific/Chatham
+
+# Windows timezones
+Afghanistan=Asia/Kabul
+Afghanistan\ Standard\ Time=Asia/Kabul
+Alaskan=America/Anchorage
+Alaskan\ Standard\\ Time=America/Anchorage
+Arab=Asia/Riyadh
+Arab\ Standard\ Time=Asia/Riyadh
+Arabian=Asia/Muscat
+Arabian\ Standard\ Time=Asia/Muscat
+Arabic\ Standard\ Time=Asia/Baghdad
+Atlantic=America/Halifax
+Atlantic\ Standard\ Time=America/Halifax
+AUS\ Central=Australia/Darwin
+AUS\ Central\ Standard\ Time=Australia/Darwin
+AUS\ Eastern=Australia/Sydney
+AUS\ Eastern\ Standard\ Time=Australia/Sydney
+Azerbaijan\ Standard\ Time=Asia/Baku
+Azores=Atlantic/Azores
+Azores\ Standard\ Time=Atlantic/Azores
+Bangkok=Asia/Bangkok
+Bangkok\ Standard\ Time=Asia/Bangkok
+Beijing=Asia/Shanghai
+Canada\ Central=America/Regina
+Canada\ Central\ Standard\ Time=America/Regina
+Cape\ Verde\ Standard\ Time=Atlantic/Cape_Verde
+Caucasus=Asia/Yerevan
+Caucasus\ Standard\ Time=Asia/Yerevan
+Cen.\ Australia=Australia/Adelaide
+Cen.\ Australia\ Standard\ Time=Australia/Adelaide
+Central=America/Chicago
+Central\ America\ Standard\ Time=America/Regina
+Central\ Asia=Asia/Dhaka
+Central\ Asia\ Standard\ Time=Asia/Dhaka
+Central\ Brazilian\ Standard\ Time=America/Manaus
+Central\ Europe=Europe/Prague
+Central\ Europe\ Standard\ Time=Europe/Prague
+Central\ European=Europe/Belgrade
+Central\ European\ Standard\ Time=Europe/Belgrade
+Central\ Pacific=Pacific/Guadalcanal
+Central\ Pacific\ Standard\ Time=Pacific/Guadalcanal
+Central\ Standard\ Time=America/Chicago
+Central\ Standard\ Time\ (Mexico)=America/Mexico_City
+China=Asia/Shanghai
+China\ Standard\ Time=Asia/Shanghai
+Dateline=GMT-1200
+Dateline\ Standard\ Time=GMT-1200
+E.\ Africa=Africa/Nairobi
+E.\ Africa\ Standard\ Time=Africa/Nairobi
+E.\ Australia=Australia/Brisbane
+E.\ Australia\ Standard\ Time=Australia/Brisbane
+E.\ Europe=Europe/Minsk
+E.\ Europe\ Standard\ Time=Europe/Minsk
+E.\ South\ America=America/Sao_Paulo
+E.\ South\ America\ Standard\ Time=America/Sao_Paulo
+Eastern=America/New_York
+Eastern\ Standard\ Time=America/New_York
+Egypt=Africa/Cairo
+Egypt\ Standard\ Time=Africa/Cairo
+Ekaterinburg=Asia/Yekaterinburg
+Ekaterinburg\ Standard\ Time=Asia/Yekaterinburg
+Fiji=Pacific/Fiji
+Fiji\ Standard\ Time=Pacific/Fiji
+FLE=Europe/Helsinki
+FLE\ Standard\ Time=Europe/Helsinki
+Georgian\ Standard\ Time=Asia/Tbilisi
+GFT=Europe/Athens
+GFT\ Standard\ Time=Europe/Athens
+GMT=Europe/London
+GMT\ Standard\ Time=Europe/London
+GMT\ Standard\ Time=GMT
+Greenland\ Standard\ Time=America/Godthab
+Greenwich=GMT
+Greenwich\ Standard\ Time=GMT
+GTB=Europe/Athens
+GTB\ Standard\ Time=Europe/Athens
+Hawaiian=Pacific/Honolulu
+Hawaiian\ Standard\ Time=Pacific/Honolulu
+India=Asia/Calcutta
+India\ Standard\ Time=Asia/Calcutta
+Iran=Asia/Tehran
+Iran\ Standard\ Time=Asia/Tehran
+Israel=Asia/Jerusalem
+Israel\ Standard\ Time=Asia/Jerusalem
+Jordan\ Standard\ Time=Asia/Amman
+Korea=Asia/Seoul
+Korea\ Standard\ Time=Asia/Seoul
+Mexico=America/Mexico_City
+Mexico\ Standard\ Time=America/Mexico_City
+Mexico\ Standard\ Time\ 2=America/Chihuahua
+Mid-Atlantic=Atlantic/South_Georgia
+Mid-Atlantic\ Standard\ Time=Atlantic/South_Georgia
+Middle\ East\ Standard\ Time=Asia/Beirut
+Mountain=America/Denver
+Mountain\ Standard\ Time=America/Denver
+Mountain\ Standard\ Time\ (Mexico)=America/Chihuahua
+Myanmar\ Standard\ Time=Asia/Rangoon
+N.\ Central\ Asia\ Standard\ Time=Asia/Novosibirsk
+Namibia\ Standard\ Time=Africa/Windhoek
+Nepal\ Standard\ Time=Asia/Katmandu
+New\ Zealand=Pacific/Auckland
+New\ Zealand\ Standard\ Time=Pacific/Auckland
+Newfoundland=America/St_Johns
+Newfoundland\ Standard\ Time=America/St_Johns
+North\ Asia\ East\ Standard\ Time=Asia/Ulaanbaatar
+North\ Asia\ Standard\ Time=Asia/Krasnoyarsk
+Pacific=America/Los_Angeles
+Pacific\ SA=America/Santiago
+Pacific\ SA\ Standard\ Time=America/Santiago
+Pacific\ Standard\ Time=America/Los_Angeles
+Pacific\ Standard\ Time\ (Mexico)=America/Tijuana
+Prague\ Bratislava=Europe/Prague
+Romance=Europe/Paris
+Romance\ Standard\ Time=Europe/Paris
+Russian=Europe/Moscow
+Russian\ Standard\ Time=Europe/Moscow
+SA\ Eastern=America/Buenos_Aires
+SA\ Eastern\ Standard\ Time=America/Buenos_Aires
+SA\ Pacific=America/Bogota
+SA\ Pacific\ Standard\ Time=America/Bogota
+SA\ Western=America/Caracas
+SA\ Western\ Standard\ Time=America/Caracas
+Samoa=Pacific/Apia
+Samoa\ Standard\ Time=Pacific/Apia
+Saudi\ Arabia=Asia/Riyadh
+Saudi\ Arabia\ Standard\ Time=Asia/Riyadh
+SE\ Asia=Asia/Bangkok
+SE\ Asia\ Standard\ Time=Asia/Bangkok
+Singapore=Asia/Singapore
+Singapore\ Standard\ Time=Asia/Singapore
+South\ Africa=Africa/Harare
+South\ Africa\ Standard\ Time=Africa/Harare
+Sri\ Lanka=Asia/Colombo
+Sri\ Lanka\ Standard\ Time=Asia/Colombo
+Sydney\ Standard\ Time=Australia/Sydney
+Taipei=Asia/Taipei
+Taipei\ Standard\ Time=Asia/Taipei
+Tasmania=Australia/Hobart
+Tasmania\ Standard\ Time=Australia/Hobart
+Tasmania\ Standard\ Time=Australia/Hobart
+Tokyo=Asia/Tokyo
+Tokyo\ Standard\ Time=Asia/Tokyo
+Tonga\ Standard\ Time=Pacific/Tongatapu
+US\ Eastern=America/Indiana/Indianapolis
+US\ Eastern\ Standard\ Time=America/Indiana/Indianapolis
+US\ Mountain=America/Phoenix
+US\ Mountain\ Standard\ Time=America/Phoenix
+Vladivostok=Asia/Vladivostok
+Vladivostok\ Standard\ Time=Asia/Vladivostok
+W.\ Australia=Australia/Perth
+W.\ Australia\ Standard\ Time=Australia/Perth
+W.\ Central\ Africa\ Standard\ Time=Africa/Luanda
+W.\ Europe=Europe/Berlin
+W.\ Europe\ Standard\ Time=Europe/Berlin
+Warsaw=Europe/Warsaw
+West\ Asia=Asia/Karachi
+West\ Asia\ Standard\ Time=Asia/Karachi
+West\ Pacific=Pacific/Guam
+West\ Pacific\ Standard\ Time=Pacific/Guam
+Western\ Brazilian\ Standard\ Time=America/Rio_Branco
+Yakutsk=Asia/Yakutsk
+Yakutsk\ Standard\ Time=Asia/Yakutsk
+
+# Windows aliases as found in the registry
+(GMT+04:30)\ Kabul=Asia/Kabul	
+(GMT-09:00)\ Alaska=America/Anchorage
+(GMT+03:00)\ Kuwait,\ Riyadh=Asia/Riyadh
+(GMT+04:00)\ Abu\ Dhabi,\ Muscat=Asia/Muscat
+(GMT+03:00)\ Baghdad=Asia/Baghdad
+(GMT-04:00)\ Atlantic\ Time\ (Canada)=America/Halifax
+(GMT+09:30)\ Darwin=Australia/Darwin
+(GMT+10:00)\ Canberra,\ Melbourne,\ Sydney=Australia/Sydney
+(GMT-01:00)\ Azores=Atlantic/Azores
+(GMT-06:00)\ Saskatchewan=America/Regina
+(GMT-01:00)\ Cape\ Verde\ Islands=Atlantic/Cape_Verde
+(GMT-01:00)\ Cape\ Verde\ Is.=Atlantic/Cape_Verde
+(GMT+04:00)\ Baku=Asia/Baku
+(GMT+04:00)\ Yerevan=Asia/Yerevan
+(GMT-04:00)\ Manaus=America/Manaus
+(GMT+04:00)\ Baku,\ Tbilisi,\ Yerevan=Asia/Yerevan
+(GMT+09:30)\ Adelaide=Australia/Adelaide
+(GMT-06:00)\ Central\ America=America/Regina
+(GMT+06:00)\ Astana,\ Dhaka=Asia/Dhaka
+(GMT+01:00)\ Belgrade,\ Bratislava,\ Budapest,\ Ljubljana,\ Prague=Europe/Prague
+(GMT+01:00)\ Sarajevo,\ Skopje,\ Warsaw,\ Zagreb=Europe/Belgrade
+(GMT+11:00)\ Magadan,\ Solomon\ Is.,\ New\ Caledonia=Pacific/Guadalcanal
+(GMT+11:00)\ Magadan,\ Solomon\ Islands,\ New\ Caledonia=Pacific/Guadalcanal
+(GMT-06:00)\ Central\ Time\ (US\ and\ Canada)=America/Chicago
+(GMT-07:00)\ Chihuahua,\ La\ Paz,\ Mazatlan\ -\ Old=America/Chihuahua
+(GMT-06:00)\ Guadalajara,\ Mexico\ City,\ Monterrey\ -\ New=America/Chihuahua
+(GMT-06:00)\ Guadalajara,\ Mexico\ City,\ Monterrey\ -\ Old=America/Mexico_City
+(GMT+08:00)\ Beijing,\ Chongqing,\ Hong\ Kong\ SAR,\ Urumqi=Asia/Shanghai
+(GMT+08:00)\ Beijing,\ Chongqing,\ Hong\ Kong,\ Urumqi=Asia/Shanghai
+(GMT-12:00)\ International\ Date\ Line\ West=GMT-1200
+(GMT+03:00)\ Nairobi=Africa/Nairobi
+(GMT+10:00)\ Brisbane=Australia/Brisbane
+(GMT+02:00)\ Bucharest=Europe/Minsk
+(GMT+02:00)\ Minsk=Europe/Minsk
+(GMT-03:00)\ Brasilia=America/Sao_Paulo
+(GMT-05:00)\ Eastern\ Time\ (US\ and\ Canada)=America/New_York
+(GMT+02:00)\ Cairo=Africa/Cairo
+(GMT+05:00)\ Ekaterinburg=Asia/Yekaterinburg
+(GMT+12:00)\ Fiji\ Islands,\ Kamchatka,\ Marshall\ Islands=Pacific/Fiji
+(GMT+12:00)\ Fiji,\ Kamchatka,\ Marshall\ Is.=Pacific/Fiji
+(GMT+02:00)\ Helsinki,\ Kiev,\ Riga,\ Sofia,\ Tallinn,\ Vilnius=Europe/Helsinki
+(GMT+02:00)\ Helsinki,\ Kyiv,\ Riga,\ Sofia,\ Tallinn,\ Vilnius=Europe/Helsinki
+(GMT)\ Greenwich\ Mean\ Time\ :\ Dublin,\ Edinburgh,\ Lisbon,\ London=Europe/London
+(GMT-03:00)\ Greenland=America/Godthab
+(GMT)\ Casablanca,\ Monrovia=GMT
+(GMT)\ Greenwich\ Mean\ Time\ :\ Dublin,\ Edinburgh,\ Lisbon,\ London=GMT
+(GMT+03:00)\ Tbilisi=Asia/Tbilisi
+(GMT+02:00)\ Athens,\ Istanbul,\ Minsk=Europe/Athens
+(GMT-10:00)\ Hawaii=Pacific/Honolulu
+(GMT+05:30)\ Chennai,\ Kolkata,\ Mumbai,\ New\ Delhi=Asia/Calcutta
+(GMT+03:30)\ Tehran=Asia/Tehran
+(GMT+02:00)\ Jerusalem=Asia/Jerusalem
+(GMT+09:00)\ Seoul=Asia/Seoul
+(GMT-06:00)\ Guadalajara,\ Mexico\ City,\ Monterrey=America/Mexico_City
+(GMT-07:00)\ Chihuahua,\ La\ Paz,\ Mazatlan=America/Chihuahua
+(GMT-02:00)\ Mid-Atlantic=Atlantic/South_Georgia
+(GMT-07:00)\ Mountain\ Time\ (US\ and\ Canada)=America/Denver
+(GMT+06:30)\ Yangon\ (Rangoon)=Asia/Rangoon
+(GMT+06:00)\ Almaty,\ Novosibirsk=Asia/Novosibirsk
+(GMT+05:45)\ Kathmandu=Asia/Katmandu
+(GMT+12:00)\ Auckland,\ Wellington=Pacific/Auckland
+(GMT-03:30)\ Newfoundland\ and\ Labrador=America/St_Johns
+(GMT-03:00)\ Greenland=America/Godthab
+(GMT+08:00)\ Irkutsk,\ Ulaanbaatar=Asia/Ulaanbaatar
+(GMT+07:00)\ Krasnoyarsk=Asia/Krasnoyarsk
+(GMT-04:00)\ Santiago=America/Santiago
+(GMT-08:00)\ Pacific\ Time\ (US\ and\ Canada);\ Tijuana=America/Los_Angeles
+(GMT-08.00)\ Pacific\ Time\ (US\ &\ Canada)/Tijuana=America/Los_Angeles
+(GMT-08:00)\ Tijuana,\ Baja\ California=America/Tijuana
+(GMT+01:00)\ Brussels,\ Copenhagen,\ Madrid,\ Paris=Europe/Paris
+(GMT+03:00)\ Moscow,\ St.\ Petersburg,\ Volgograd=Europe/Moscow
+(GMT-03:00)\ Buenos\ Aires,\ Georgetown=America/Buenos_Aires
+(GMT-05:00)\ Bogota,\ Lima,\ Quito=America/Bogota
+(GMT-04:00)\ Caracas,\ La\ Paz=America/Caracas
+(GMT-11:00)\ Midway\ Island,\ Samoa=Pacific/Apia
+(GMT+07:00)\ Bangkok,\ Hanoi,\ Jakarta=Asia/Bangkok
+(GMT+08:00)\ Kuala\ Lumpur,\ Singapore=Asia/Singapore
+(GMT+02:00)\ Harare,\ Pretoria=Africa/Harare
+(GMT+06:00)\ Sri\ Jayawardenepura=Asia/Colombo
+(GMT+08:00)\ Taipei=Asia/Taipei
+(GMT+10:00)\ Hobart=Australia/Hobart
+(GMT+09:00)\ Osaka,\ Sapporo,\ Tokyo=Asia/Tokyo
+(GMT+13:00)\ Nuku'alofa=Pacific/Tongatapu
+(GMT-05:00)\ Indiana\ (East)=America/Indiana/Indianapolis
+(GMT-07:00)\ Arizona=America/Phoenix
+(GMT+10:00)\ Vladivostok=Asia/Vladivostok
+(GMT+08:00)\ Perth=Australia/Perth
+(GMT+01:00)\ West\ Central\ Africa=Africa/Luanda
+(GMT+01:00)\ Amsterdam,\ Berlin,\ Bern,\ Rome,\ Stockholm,\ Vienna=Europe/Berlin
+(GMT+05:00)\ Islamabad,\ Karachi,\ Tashkent=Asia/Karachi
+(GMT+10:00)\ Guam,\ Port\ Moresby=Pacific/Guam
+(GMT+09:00)\ Yakutsk=Asia/Yakutsk
+
+# Windows aliases as found in the registry with a "." instead of ":"
+(GMT+04.30)\ Kabul=Asia/Kabul	
+(GMT-09.00)\ Alaska=America/Anchorage
+(GMT+03.00)\ Kuwait,\ Riyadh=Asia/Riyadh
+(GMT+04.00)\ Abu\ Dhabi,\ Muscat=Asia/Muscat
+(GMT+03.00)\ Baghdad=Asia/Baghdad
+(GMT-04.00)\ Atlantic\ Time\ (Canada)=America/Halifax
+(GMT+09.30)\ Darwin=Australia/Darwin
+(GMT+10.00)\ Canberra,\ Melbourne,\ Sydney=Australia/Sydney
+(GMT-01.00)\ Azores=Atlantic/Azores
+(GMT-06.00)\ Saskatchewan=America/Regina
+(GMT-01.00)\ Cape\ Verde\ Islands=Atlantic/Cape_Verde
+(GMT-01.00)\ Cape\ Verde\ Is.=Atlantic/Cape_Verde
+(GMT+04.00)\ Baku=Asia/Baku
+(GMT+04.00)\ Yerevan=Asia/Yerevan
+(GMT-04.00)\ Manaus=America/Manaus
+(GMT+04.00)\ Baku,\ Tbilisi,\ Yerevan=Asia/Yerevan
+(GMT+09.30)\ Adelaide=Australia/Adelaide
+(GMT-06.00)\ Central\ America=America/Regina
+(GMT+06.00)\ Astana,\ Dhaka=Asia/Dhaka
+(GMT+01.00)\ Belgrade,\ Bratislava,\ Budapest,\ Ljubljana,\ Prague=Europe/Prague
+(GMT+01.00)\ Sarajevo,\ Skopje,\ Warsaw,\ Zagreb=Europe/Belgrade
+(GMT+11.00)\ Magadan,\ Solomon\ Is.,\ New\ Caledonia=Pacific/Guadalcanal
+(GMT+11.00)\ Magadan,\ Solomon\ Islands,\ New\ Caledonia=Pacific/Guadalcanal
+(GMT-06.00)\ Central\ Time\ (US\ and\ Canada)=America/Chicago
+(GMT-07.00)\ Chihuahua,\ La\ Paz,\ Mazatlan\ -\ Old=America/Chihuahua
+(GMT-06.00)\ Guadalajara,\ Mexico\ City,\ Monterrey\ -\ New=America/Chihuahua
+(GMT-06.00)\ Guadalajara,\ Mexico\ City,\ Monterrey\ -\ Old=America/Mexico_City
+(GMT+08.00)\ Beijing,\ Chongqing,\ Hong\ Kong\ SAR,\ Urumqi=Asia/Shanghai
+(GMT+08.00)\ Beijing,\ Chongqing,\ Hong\ Kong,\ Urumqi=Asia/Shanghai
+(GMT-12.00)\ International\ Date\ Line\ West=GMT-1200
+(GMT+03.00)\ Nairobi=Africa/Nairobi
+(GMT+10.00)\ Brisbane=Australia/Brisbane
+(GMT+02:00)\ Bucharest=Europe/Minsk
+(GMT+02.00)\ Minsk=Europe/Minsk
+(GMT-03.00)\ Brasilia=America/Sao_Paulo
+(GMT-05.00)\ Eastern\ Time\ (US\ and\ Canada)=America/New_York
+(GMT+02.00)\ Cairo=Africa/Cairo
+(GMT+05.00)\ Ekaterinburg=Asia/Yekaterinburg
+(GMT+12.00)\ Fiji\ Islands,\ Kamchatka,\ Marshall\ Islands=Pacific/Fiji
+(GMT+12.00)\ Fiji,\ Kamchatka,\ Marshall\ Is.=Pacific/Fiji
+(GMT+02.00)\ Helsinki,\ Kiev,\ Riga,\ Sofia,\ Tallinn,\ Vilnius=Europe/Helsinki
+(GMT+02.00)\ Helsinki,\ Kyiv,\ Riga,\ Sofia,\ Tallinn,\ Vilnius=Europe/Helsinki
+(GMT)\ Greenwich\ Mean\ Time\ :\ Dublin,\ Edinburgh,\ Lisbon,\ London=Europe/London
+(GMT-03.00)\ Greenland=America/Godthab
+(GMT)\ Casablanca,\ Monrovia=GMT
+(GMT)\ Greenwich\ Mean\ Time\ :\ Dublin,\ Edinburgh,\ Lisbon,\ London=GMT
+(GMT+03.00)\ Tbilisi=Asia/Tbilisi
+(GMT+02.00)\ Athens,\ Istanbul,\ Minsk=Europe/Athens
+(GMT-10.00)\ Hawaii=Pacific/Honolulu
+(GMT+05.30)\ Chennai,\ Kolkata,\ Mumbai,\ New\ Delhi=Asia/Calcutta
+(GMT+03.30)\ Tehran=Asia/Tehran
+(GMT+02.00)\ Jerusalem=Asia/Jerusalem
+(GMT+09.00)\ Seoul=Asia/Seoul
+(GMT-06.00)\ Guadalajara,\ Mexico\ City,\ Monterrey=America/Mexico_City
+(GMT-07.00)\ Chihuahua,\ La\ Paz,\ Mazatlan=America/Chihuahua
+(GMT-02.00)\ Mid-Atlantic=Atlantic/South_Georgia
+(GMT-07.00)\ Mountain\ Time\ (US\ and\ Canada)=America/Denver
+(GMT+06.30)\ Yangon\ (Rangoon)=Asia/Rangoon
+(GMT+06.00)\ Almaty,\ Novosibirsk=Asia/Novosibirsk
+(GMT+05.45)\ Kathmandu=Asia/Katmandu
+(GMT+12.00)\ Auckland,\ Wellington=Pacific/Auckland
+(GMT-03.30)\ Newfoundland\ and\ Labrador=America/St_Johns
+(GMT-03.00)\ Greenland=America/Godthab
+(GMT+08.00)\ Irkutsk,\ Ulaanbaatar=Asia/Ulaanbaatar
+(GMT+07.00)\ Krasnoyarsk=Asia/Krasnoyarsk
+(GMT-04.00)\ Santiago=America/Santiago
+(GMT-08.00)\ Pacific\ Time\ (US\ and\ Canada);\ Tijuana=America/Los_Angeles
+(GMT-08.00)\ Pacific\ Time\ (US\ &\ Canada)/Tijuana=America/Los_Angeles
+(GMT-08.00)\ Tijuana,\ Baja\ California=America/Tijuana
+(GMT+01.00)\ Brussels,\ Copenhagen,\ Madrid,\ Paris=Europe/Paris
+(GMT+03.00)\ Moscow,\ St.\ Petersburg,\ Volgograd=Europe/Moscow
+(GMT-03.00)\ Buenos\ Aires,\ Georgetown=America/Buenos_Aires
+(GMT-05.00)\ Bogota,\ Lima,\ Quito=America/Bogota
+(GMT-04.00)\ Caracas,\ La\ Paz=America/Caracas
+(GMT-11.00)\ Midway\ Island,\ Samoa=Pacific/Apia
+(GMT+07.00)\ Bangkok,\ Hanoi,\ Jakarta=Asia/Bangkok
+(GMT+08.00)\ Kuala\ Lumpur,\ Singapore=Asia/Singapore
+(GMT+02.00)\ Harare,\ Pretoria=Africa/Harare
+(GMT+06.00)\ Sri\ Jayawardenepura=Asia/Colombo
+(GMT+08.00)\ Taipei=Asia/Taipei
+(GMT+10.00)\ Hobart=Australia/Hobart
+(GMT+09.00)\ Osaka,\ Sapporo,\ Tokyo=Asia/Tokyo
+(GMT+13.00)\ Nuku'alofa=Pacific/Tongatapu
+(GMT-05.00)\ Indiana\ (East)=America/Indiana/Indianapolis
+(GMT-07.00)\ Arizona=America/Phoenix
+(GMT+10.00)\ Vladivostok=Asia/Vladivostok
+(GMT+08.00)\ Perth=Australia/Perth
+(GMT+01.00)\ West\ Central\ Africa=Africa/Luanda
+(GMT+01.00)\ Amsterdam,\ Berlin,\ Bern,\ Rome,\ Stockholm,\ Vienna=Europe/Berlin
+(GMT+05.00)\ Islamabad,\ Karachi,\ Tashkent=Asia/Karachi
+(GMT+10.00)\ Guam,\ Port\ Moresby=Pacific/Guam
+(GMT+09.00)\ Yakutsk=Asia/Yakutsk

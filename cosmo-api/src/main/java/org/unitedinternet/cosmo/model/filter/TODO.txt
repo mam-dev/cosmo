@@ -1,0 +1,3 @@
+Scheduling Package should be deleted (and a new version added)
+
+The entire model.filter package is used because a reference to getContentService().findItems(noteFilter) from scheduler. 

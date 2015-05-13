@@ -1,0 +1,20 @@
+<p>This product includes software developed by the following:</p>
+<ul>
+    <li><a href="http://www.osafoundation.org/">Open Source Applications Foundation</li>
+    <li><a href="http://www.apache.org/">Apache Software Foundation</a></li>
+    <li><a href="http://www.hibernate.org/">Hibernate</a></li>
+    <li><a href="http://dojotoolkit.org/">Dojo Toolkit</a></li>
+    <li><a href="http://www.acegisecurity.org/">Acegi Security</a></li>
+    <li><a href="http://www.json.org/java/index.html">JSON</a></li>
+    <li><a href="http://jsontools.berlios.de/">JSONTOOLS</a></li>
+    <li><a href="http://modularity.net.au">iCal4j</a></li>
+    <li><a href="http://springframework.org">Spring Framework</a></li>
+    <li><a href="http://www.antlr.org">ANTLR Parser Generator</a></li>
+    <li><a href="http://asm.objectweb.org">ASM Toolkit</a></li>
+    <li><a href="http://cglib.sourceforge.net/">Code Generation Library</a></li>
+    <li><a href="http://www.dom4j.org">dom4j</a></li>
+    <li><a href="https://stax-utils.dev.java.net/">StAX Utilities</a></li>
+    <li><a href="http://woodstox.codehaus.org">Woodstox</a></li>
+    <li><a href="http://ehcache.sourceforge.net/">ehcache</a></li>
+</ul>
+

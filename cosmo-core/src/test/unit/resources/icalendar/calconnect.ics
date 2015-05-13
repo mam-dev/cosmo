@@ -1,0 +1,374 @@
+BEGIN:VCALENDAR
+CALSCALE:GREGORIAN
+PRODID:-//Cyrusoft International\, Inc.//Mulberry v4.0//EN
+VERSION:2.0
+BEGIN:VTIMEZONE
+LAST-MODIFIED:20040110T032845Z
+TZID:US/Pacific
+BEGIN:DAYLIGHT
+DTSTART:20000404T020000
+RRULE:FREQ=YEARLY;BYDAY=1SU;BYMONTH=4
+TZNAME:PDT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+END:DAYLIGHT
+BEGIN:STANDARD
+DTSTART:20001026T020000
+RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
+TZNAME:PST
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n- Background on TC EVENTPUB\n- Presentation on resul
+ ts of event pub survey (no current document)\n- Discuss next steps\n- Revi
+ ew charter/dates/milestones.\n- Determine future meeting date/times. 
+DTSTAMP:20050908T170324Z
+DTSTART;TZID=US/Pacific:20050913T103000
+DURATION:PT2H
+LAST-MODIFIED:20050908T192923Z
+SEQUENCE:2
+SUMMARY:TC-EVENTPUB
+UID:1F0BB70FEB24C92FAA0A2554@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1.  What was done since the last Interop.\n\n2.  Que
+ stionnaire report http://ietf.cse.ucsc.edu/calconnect/TC-TIMEZONE/Timezone
+ QuestionnaireResults-V1.pdf\n\n3.  Problems and recommendations document d
+ raft http://ietf.cse.ucsc.edu/calconnect/TC-TIMEZONE/ ICalendar%20Timezone
+ %20Problems%20and%20Recommendations%20Draft.doc\n\n4.  What's next\, Regis
+ try recommendation document.\n\n5.  Review charter/dates/milestones\n\n6. 
+  Schedule next conference call(s).
+DTSTAMP:20050908T171221Z
+DTSTART;TZID=US/Pacific:20050914T160000
+DURATION:PT2H
+LAST-MODIFIED:20050908T193020Z
+SEQUENCE:1
+SUMMARY:TC-TIMEZONE
+UID:1F1CE618640226082BF2774C@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1.  Results of onsite testing\n\n2.  Ongoing Interop
+  testing during Round tables - before\, during or after - suggestions\, et
+ c.\n\n3.  Schedule next confcall(s) \n\n4.  Review charter/dates/milestone
+ s 
+DTSTAMP:20050908T171408Z
+DTSTART;TZID=US/Pacific:20050915T083000
+DURATION:PT1H
+LAST-MODIFIED:20050908T192937Z
+SEQUENCE:3
+SUMMARY:TC-IOPTEST
+UID:292F41F7EA7A10730046F61D@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T171512Z
+DTSTART;TZID=US/Pacific:20050915T103000
+DURATION:PT1H30M
+SUMMARY:TC reports (1)
+UID:2AB372FE3391873FA073A5F4@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:The dinner is at the:\n\nCanton Seafood and Dim Sum Restaurant
+ \,\n655 Folsom Street\,\nSan Francisco 94107\n\nhttp://www.cantonsf.com.\n
+ \nWe will meet at the restaurant which is a few blocks from OSAF at 1900. 
+  They will have a room reserved for us\; the reservation will be in the na
+ me of Calconnect.
+DTSTAMP:20050908T171317Z
+DTSTART;TZID=US/Pacific:20050914T190000
+DURATION:PT2H30M
+LAST-MODIFIED:20050908T171330Z
+SEQUENCE:1
+SUMMARY:Social Event
+UID:3ABD7F2EB2571C50D1E540C4@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTEND;TZID=US/Pacific:20050913T160000
+DTSTAMP:20050908T170534Z
+DTSTART;TZID=US/Pacific:20050913T153000
+SUMMARY:Break
+UID:3B86DC18B1F0FBF911AACA82@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T165933Z
+DTSTART;TZID=US/Pacific:20050913T100000
+DURATION:PT30M
+LAST-MODIFIED:20050908T170723Z
+SEQUENCE:2
+SUMMARY:Break
+UID:3DDC0C586B735B19A88646EE@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\nHere are the current agenda items for discussion dur
+ ing the General (Plenary) Session(s) (in addition to status updates\, TC r
+ eports\, etc.)  These are not in any particular order and will not be deal
+ t with in the order shown below.\n\n1. Daylight Savings Time Ad Hoc report
+  and next steps\n2. Future of TC CALSIFY\n3. New areas to pursue: proposed
+  Discovery TC\n4. New areas to pursue: proposed Authentication TC\n5. Issu
+ es with Blackberry and mobile devices (from OSAF)\n6. Availability and use
+  of Calconnect Wiki\n7. Recruiting - contacts at Expedia/Orbitz/Travelocit
+ y/Airlines\n8. Recruiting - other suggestions and opportunities\n9. Last C
+ all for Glossary\n10. Last Call for Timezone Questionnaire Report\n11. Las
+ t Call for Timezone Problems and Recommendations Paper\n12. Establishment 
+ of publicity ad hoc committee\n13. Establishment of Roadmap ad hoc committ
+ ee\n
+DTSTAMP:20050908T171735Z
+DTSTART;TZID=US/Pacific:20050915T133000
+DURATION:PT2H
+SUMMARY:General Plenary
+UID:45704858EF302CA5314CB079@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T171458Z
+DTSTART;TZID=US/Pacific:20050915T093000
+DURATION:PT30M
+SUMMARY:TC reports (1)
+UID:4D75E01EA75613D5FCEE11B2@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n08:30 - Level set - discuss previous day - any issue
+ s\n\n09:00 - Resume testing\n\n12:30 - Break for lunch\n\n13:30 - Resume t
+ esting\n\n16:00 - Reconvene all hands for level set and validation that al
+ l is going well\n\n16:15 - Resume testing\n\n17:45 - Reconvene all hands t
+ o discuss issues/results for the day     - gather notes from participants 
+ \n
+DTEND;TZID=US/Pacific:20050914T180000
+DTSTAMP:20050908T171823Z
+DTSTART;TZID=US/Pacific:20050914T083000
+LAST-MODIFIED:20050908T172106Z
+SEQUENCE:2
+SUMMARY:Interop
+UID:4F09AA69A270BA0DC4076B3C@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:General session\;  status updates\; TC-CALSIFY Inter-TC checkp
+ oint
+DTSTAMP:20050908T165921Z
+DTSTART;TZID=US/Pacific:20050913T083000
+DURATION:PT1H
+LAST-MODIFIED:20050908T172733Z
+SEQUENCE:3
+SUMMARY:General Session
+UID:5E06B181A9C6E96C4AC1F9F8@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T171123Z
+DTSTART;TZID=US/Pacific:20050914T153000
+DURATION:PT30M
+LAST-MODIFIED:20050908T171134Z
+SEQUENCE:1
+SUMMARY:Break
+UID:656EDEA80FF8CCC6AFC5A136@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T171556Z
+DTSTART;TZID=US/Pacific:20050915T123000
+DURATION:PT1H
+SUMMARY:Lunch
+UID:6E7F0D7961AD5862C160EFEF@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T170822Z
+DTSTART;TZID=US/Pacific:20050914T100000
+DURATION:PT30M
+LAST-MODIFIED:20050908T170723Z
+SUMMARY:Break
+UID:6FD5287F38964048401245ED@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T170700Z
+DTSTART;TZID=US/Pacific:20050914T080000
+DURATION:PT30M
+LAST-MODIFIED:20050908T170708Z
+SEQUENCE:1
+SUMMARY:Breakfast
+UID:7CEB72DFFC5FA477FF4DBE3E@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T170419Z
+DTSTART;TZID=US/Pacific:20050913T123000
+DURATION:PT1H
+SUMMARY:SC Meeting (SC Members Only)
+UID:7EF8D6ECB3570D47D3F99A11@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T171423Z
+DTSTART;TZID=US/Pacific:20050915T100000
+DURATION:PT30M
+LAST-MODIFIED:20050908T170723Z
+SUMMARY:Break
+UID:8569E9E8B6A1A10C4B53B841@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T165836Z
+DTSTART;TZID=US/Pacific:20050913T080000
+DURATION:PT30M
+LAST-MODIFIED:20050908T170716Z
+SEQUENCE:1
+SUMMARY:Breakfast
+UID:8C42404D3FFC99582D90A56E@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1. Determine what outputs from other TC's can be use
+ d for documents/reports to IETF CALSIFY.\n2. Determine schedule/milestones
+  for TC output. 
+DTSTAMP:20050908T171538Z
+DTSTART;TZID=US/Pacific:20050915T120000
+DURATION:PT30M
+LAST-MODIFIED:20050908T192806Z
+SEQUENCE:4
+SUMMARY:TC-CALSIFY (2)/Inter-TC
+UID:98B47619D459F67D0CFEB57E@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1. TC status update.\n2. Discussion of IETF Calsify 
+ effort. 
+DTEND;TZID=US/Pacific:20050913T100000
+DTSTAMP:20050908T172728Z
+DTSTART;TZID=US/Pacific:20050913T093000
+LAST-MODIFIED:20050908T192750Z
+SEQUENCE:1
+SUMMARY:TC-CALSIFY (1)
+UID:A4CFB32B52D3139DDBB79E36@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Open Source Applications Foundation (OSAF)\n543 Howard Street\
+ ,\nFifth Floor San Francisco\,\nCalifornia 94105 
+DTSTAMP:20050908T165808Z
+DTSTART;VALUE=DATE:20050913
+DURATION:P3D
+SUMMARY:Calconnect IV
+UID:A71A8E9080A57BD989854661@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T170950Z
+DTSTART;TZID=US/Pacific:20050914T123000
+DURATION:PT1H
+LAST-MODIFIED:20050908T192605Z
+SEQUENCE:1
+SUMMARY:Ad Hoc Discussions
+UID:B4CA76D36F3B1822F001E68B@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1.  Review new charter/schedule http://www.calconnec
+ t.org/tc-recurr.html\n\n2.  What we've done since last roundtable\n\n3.  W
+ hat we want to do between now and next roundtable \n\n4.  What we'd like t
+ o work on today\n -  iTIP Cases in Use Case Document\n -  Best Practices d
+ ocument? Interest?\n\n5.  Schedule next conference call(s) 
+DTSTAMP:20050908T170920Z
+DTSTART;TZID=US/Pacific:20050914T103000
+DURATION:PT2H
+LAST-MODIFIED:20050908T170342Z
+SUMMARY:TC-RECURR
+UID:B91D12E8D4F7A4FAF45254BE@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1. Progress and Status Update\n 1.1 CalDAV out there
+ \n 1.2 CalDAV calendar-access draft -07 and -08\n 1.3 CalDAV calendar-sche
+ dule draft -01\n 1.4 Overview of use cases\n\nDocument for review:   http:
+ //ietf.cse.ucsc.edu/calconnect/TC-CALDAV/CalDAV-UseCases-V1.pdf\n\n2. Prel
+ iminary Results of 3rd IOP\n 2.1 CalDAV clients and servers tested\n 2.2 O
+ verview of test scenarios\n 2.3 Overview of test results\n\n3. Moving Forw
+ ard\n 3.1 Plan of action\n 3.2 Work products\n\n4. Administrative\n 4.1 Re
+ view charter/dates/milestones.\n 4.2 Schedule TC conference call for follo
+ w on work. 
+DTSTAMP:20050908T171116Z
+DTSTART;TZID=US/Pacific:20050914T133000
+DURATION:PT2H
+LAST-MODIFIED:20050908T192854Z
+SEQUENCE:1
+SUMMARY:TC-CALDAV
+UID:BEED09ABF529A286339BE161@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1. Discuss Min-IOP use cases to determine that every
+ one is agreement with the functionality exposed in the use cases:\n\n - Re
+ currence\n - Time zone\n - Scheduling Document:  http://ietf.cse.ucsc.edu/
+ calconnect/TC-USECASE/UseCase_Min_IOP_v7.doc (Warning: this document may b
+ e updated)\n\n2. Determine if this will be a last call for min-iop use cas
+ es\, as we want to send them to the IETF CALSIFY list soon in preparation 
+ for the next IETF.\n
+DTSTAMP:20050908T170522Z
+DTSTART;TZID=US/Pacific:20050913T133000
+DURATION:PT2H
+SUMMARY:TC-USECASE (1)
+UID:CDFC9459CCFF632E9937C20A@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:For first-time attendees\, we will offer a quick overview of t
+ he Consortium for anyone who is interested.
+DTEND;TZID=US/Pacific:20050913T103000
+DTSTAMP:20050908T170211Z
+DTSTART;TZID=US/Pacific:20050913T100000
+LAST-MODIFIED:20050908T171912Z
+SEQUENCE:1
+SUMMARY:Consortium Overview (optional)
+UID:CE32E5AE17D830E0EC718BC5@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T170350Z
+DTSTART;TZID=US/Pacific:20050913T123000
+DURATION:PT1H
+SUMMARY:Lunch
+UID:D92DBE03EBC58802AE232360@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n10:30 - All participants meet in Interop area to dis
+ cuss logistics\, timing\, test connections\, assign test pairs\, scribes e
+ tc.\n\n11:00 - Participants divide up into respective "sections" to start 
+ testing\n\n11:30 - Start Pair testing as assigned on Testing Sheet\n\n12:3
+ 0 - Break for Lunch\n\n13:30 - Resume testing\n\n16:00 - Reconvene all han
+ ds for level set and validation that all is going well\n\n16:15 - Resume t
+ esting\n\n17:45 - Reconvene all hands to discuss issues/results for the da
+ y\n\n18:00 - Close for dinner 
+DTEND;TZID=US/Pacific:20050913T180000
+DTSTAMP:20050908T171809Z
+DTSTART;TZID=US/Pacific:20050913T103000
+LAST-MODIFIED:20050908T172036Z
+SEQUENCE:2
+SUMMARY:Interop
+UID:DFFEF1410813E754EFD9A144@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T171338Z
+DTSTART;TZID=US/Pacific:20050915T080000
+DURATION:PT30M
+LAST-MODIFIED:20050908T170708Z
+SUMMARY:Breakfast
+UID:E1B2FE2C7FCD53D4BD832BC5@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1  Introduction\n 1.1 What is TC Realtime?\n 1.2 Pre
+ sent updated charter.        (http://www.calconnect.org/tc-realtime.html)\
+ n 1.3 Relationship with other standards: iCalendar\, iTIP\, CalDAV.\n\n2  
+ Status update\n 2.1 Present current direction.\n 2.2 Overview of Use Cases
+ .\n 2.3 Interesting issues to be addressed.\n\n3  Plan\n 3.1 Milestones an
+ d Work Products.\n\n4 Schedule TC conference call for follow on work \n
+DTSTAMP:20050908T170642Z
+DTSTART;TZID=US/Pacific:20050913T160000
+DURATION:PT2H
+SUMMARY:TC-REALTIME
+UID:E3297567B53D471AEAF09EB8@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20050908T170926Z
+DTSTART;TZID=US/Pacific:20050914T123000
+DURATION:PT1H
+SUMMARY:Lunch
+UID:F24964BD7C58E8182B24CD66@ninevah.local
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:AGENDA\n\n1. Discuss domain model document.\n - determine if w
+ e have the complete model\n - flesh out text with examples or scenarios Do
+ cument:  http://ietf.cse.ucsc.edu/calconnect/TC-USECASE/Use_Case_Domain_Mo
+ del.doc\n\n2. Review charter/dates/milesones\n\n3. Determine schedule for 
+ next conference call(s) 
+DTSTAMP:20050908T170758Z
+DTSTART;TZID=US/Pacific:20050914T083000
+DURATION:PT1H30M
+LAST-MODIFIED:20050908T193059Z
+SEQUENCE:3
+SUMMARY:TC-USECASE (2)
+UID:FC70E72BC597940F00C2EE0D@ninevah.local
+END:VEVENT
+END:VCALENDAR

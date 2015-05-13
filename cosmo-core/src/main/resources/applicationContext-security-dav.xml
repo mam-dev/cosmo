@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright 2005-2007 Open Source Applications Foundation Licensed under 
+	the Apache License, Version 2.0 (the "License"); you may not use this file 
+	except in compliance with the License. You may obtain a copy of the License 
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
+	law or agreed to in writing, software distributed under the License is distributed 
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+	express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
+
+<!-- Security configuration for WebDAV -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="protocolAuthenticationEntryPoint"
+		class="org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint" />
+
+	<bean id="protocolBasicProcessingFilter"
+		class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+		<constructor-arg ref="authenticationManager" />
+		<constructor-arg ref="protocolAuthenticationEntryPoint" />
+	</bean>
+
+	<bean id="protocolTicketProcessingFilter"
+		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter" />
+
+	<bean id="protocolExtraTicketProcessingFilter"
+		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.ExtraTicketProcessingFilter">
+		<property name="securityManager">
+			<ref bean="securityManager" />
+		</property>
+		<property name="contentDao">
+			<ref bean="contentDao" />
+		</property>
+	</bean>
+
+
+	<bean id="clientICalendarFilterManagerFilter" class="org.unitedinternet.cosmo.filters.ClientICalendarFilter">
+		<property name="filterManager" ref="iCalendarClientFilterManager" />
+		<property name="clientKeyMap">
+			<map>
+				<entry key=".*iCal 2.*" value="ical2" />
+				<entry key=".*iCal 3.*" value="ical3" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- morse code AccessDecisionManager that verifies user paths -->
+	<bean id="davAccessDecisionManager"
+		class="org.unitedinternet.cosmo.dav.acegisecurity.DavAccessDecisionManager">
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+	</bean>
+
+	<bean id="davExceptionTranslationFilter"
+		class="org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter">
+		<constructor-arg ref="protocolAuthenticationEntryPoint" />
+		<property name="accessDeniedHandler">
+			<bean
+				class="org.unitedinternet.cosmo.dav.acegisecurity.DavAccessDeniedHandler" />
+		</property>
+	</bean>
+
+	<!-- interceptor which performs authorization for DAV requests -->
+
+	<bean id="davFilterInvocationInterceptor"
+		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="accessDecisionManager">
+			<ref bean="davAccessDecisionManager" />
+		</property>
+		<property name="securityMetadataSource">
+			<security:filter-security-metadata-source>
+				<security:intercept-url pattern="/**"
+					access="ROLE_WE_DONT_HAVE" />
+			</security:filter-security-metadata-source>
+		</property>
+	</bean>
+
+
+	<!-- filter chain that kicks off request-time processing -->
+
+	<bean id="davFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+		<security:filter-chain-map path-type="ant">
+			<security:filter-chain pattern="/**"
+				filters="protocolBasicProcessingFilter,
+         				protocolTicketProcessingFilter,
+         				clientICalendarFilterManagerFilter,
+         				davExceptionTranslationFilter,
+         				davFilterInvocationInterceptor" />
+		</security:filter-chain-map>
+	</bean>
+
+
+
+	<!-- Intercepts service calls and verifies current principal has sufficient 
+		privileges to execute api. Aspect bean is annotated with aspecj annotations. -->
+	<bean id="securityAspect" init-method="init"
+		class="org.unitedinternet.cosmo.security.aop.SecurityAdvice">
+		<property name="securityManager">
+			<ref bean="securityManager" />
+		</property>
+		<property name="contentDao">
+			<ref bean="contentDao" />
+		</property>
+		<property name="userDao">
+			<ref bean="userDao" />
+		</property>
+		<property name="order" value="5" />
+		<property name="enabled" value="true" />
+	</bean>
+
+
+	<!-- authentication manager definition and dependencies -->
+
+	<bean id="daoAuthenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService">
+			<ref bean="userDetailsService" />
+		</property>
+		<property name="passwordEncoder">
+			<ref bean="passwordEncoder" />
+		</property>
+	</bean>
+	<bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+
+	<bean id="anonymousAuthenticationProvider"
+		class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
+		<constructor-arg value="badgerbadgerbadger" />
+	</bean>
+
+	<bean id="ticketAuthenticationProvider"
+		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticationProvider">
+		<property name="contentDao" ref="contentDao" />
+	</bean>
+
+    <bean id="authenticationProviderProxyFactory" class="org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderProxyFactory">
+        <constructor-arg index="0" name="userService" ref="userService"/>
+        <constructor-arg index="1" name="contentDao" ref="contentDao"/>    
+    </bean>
+	<bean id="authenticationProviderDelegator" class="org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderDelegatorFactoryBean">
+	   <constructor-arg index="0" name="authenticationProviderProxyFactory" ref="authenticationProviderProxyFactory"/>
+	   <constructor-arg index="1" name="externalComponentInstanceProvider" ref="externalComponentInstanceProvider"/>
+	</bean>
+	
+	<bean id="authenticationManager"
+		class="org.springframework.security.authentication.ProviderManager">
+		<property name="providers" ref="authenticationProviders"/>
+	</bean>
+	
+	<util:list id="authenticationProviders">
+		<ref bean="daoAuthenticationProvider" />
+		<ref bean="anonymousAuthenticationProvider" />
+		<ref bean="ticketAuthenticationProvider" />
+		<ref bean="authenticationProviderDelegator" />
+	</util:list>
+	<!-- security facade resources -->
+
+	<bean id="securityManager"
+		class="org.unitedinternet.cosmo.security.impl.CosmoSecurityManagerImpl">
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+	</bean>
+</beans>

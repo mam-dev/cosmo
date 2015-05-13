@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns0:collection uuid="6b97edbe-bb44-4a72-860c-d4905732e060"
+                hue="1"
+                xmlns:ns0="http://osafoundation.org/eim/0">
+  <ns0:recordset uuid="11803e22-e7e4-43da-ae47-851259d8c87b">
+    <ns1:record xmlns:ns1="http://osafoundation.org/eim/event/0">
+      <ns1:uuid ns0:key="true" ns0:type="text">11803e22-e7e4-43da-ae47-851259d8c87b</ns1:uuid>
+      <ns1:dtstart ns0:type="text">;VALUE=DATE-TIME:20070201T110000</ns1:dtstart>
+      <ns1:dtend ns0:type="text">;VALUE=DATE-TIME:20070201T120000</ns1:dtend>
+    </ns1:record>
+    <ns1:record xmlns:ns1="http://osafoundation.org/eim/note/0">
+      <ns1:uuid ns0:key="true" ns0:type="text">11803e22-e7e4-43da-ae47-851259d8c87b</ns1:uuid>
+      <ns1:body ns0:type="clob">Changed by Chandler again
+
+</ns1:body>
+    </ns1:record>
+  </ns0:recordset>
+</ns0:collection>
