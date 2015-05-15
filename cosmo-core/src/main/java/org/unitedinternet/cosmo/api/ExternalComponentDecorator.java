@@ -14,6 +14,8 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,7 +57,8 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
             
             try {
                 field.setAccessible(true);
-                field.set(managedComponent, applicationContext.getBean(field.getType()));
+                Object toBeInjected = applicationContext.getBean(field.getType());
+                field.set(managedComponent, unwrapIfNecessary(toBeInjected, field.getAnnotation(Provided.class)));
                 LOGGER.info("Set field [{}] of [{}].", field.getName(), field.getDeclaringClass().getName());
             } catch (BeansException | IllegalArgumentException | IllegalAccessException e) {
                 throw new RuntimeException(e);
@@ -74,7 +77,8 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
             
             try {
                 setter.setAccessible(true);
-                setter.invoke(managedComponent, applicationContext.getBean(setter.getParameterTypes()[0]));
+                Object toBeSet = applicationContext.getBean(setter.getParameterTypes()[0]);
+                setter.invoke(managedComponent, unwrapIfNecessary(toBeSet, setter.getAnnotation(Provided.class)));
                 LOGGER.info("Invoked setter [{}] of [{}].", setter.getName(), setter.getDeclaringClass().getName());
             } catch (BeansException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new RuntimeException();
@@ -82,6 +86,21 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
         }
     }
     
+    private static Object unwrapIfNecessary(Object obj, Provided annotation){
+    	if(!annotation.unwrapIfProxied()){
+    		return obj;
+    	}
+    	
+    	if(AopUtils.isAopProxy(obj) && obj instanceof Advised) {
+			try {
+				return ((Advised)obj).getTargetSource().getTarget();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+    	}
+    	
+    	return obj;
+    }
     private Object getManagedInstanceFor(Class<?> clazz){
         Object locallyManaged = manager.forClass(clazz);
         

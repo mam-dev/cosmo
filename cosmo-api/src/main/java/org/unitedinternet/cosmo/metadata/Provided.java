@@ -20,5 +20,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Provided {
-
+	boolean unwrapIfProxied() default false;
 }

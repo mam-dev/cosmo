@@ -72,7 +72,7 @@ public class UserCreationAuthenticationListener implements SuccessfulAuthenticat
     public void setEntityFactory(EntityFactory entityFactory) {
         this.entityFactory = entityFactory;
     }
-	@Provided
+	@Provided(unwrapIfProxied=true)
     public void setContentService(ContentService contentService) {
         this.contentService = contentService;
     }
