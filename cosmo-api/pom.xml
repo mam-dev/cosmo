@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.unitedinternet.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>3.41-SNAPSHOT</version>
+		<version>0.9-SNAPSHOT</version>
 	</parent>
 	<artifactId>cosmo-api</artifactId>
 
@@ -86,8 +86,6 @@
 	</build>
 
   <scm>
-    <connection>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-api</connection>
-    <developerConnection>scm:git:ssh://git@github.com/aaaa</developerConnection>
-    <url>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-api</url>
+    <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
   </scm>
 </project>

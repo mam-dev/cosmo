@@ -8,6 +8,7 @@
 package org.unitedinternet.cosmo.datasource;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -25,15 +26,18 @@ import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
+import org.unitedinternet.cosmo.db.DataSourceProvider;
 import org.unitedinternet.cosmo.db.DataSourceType;
+import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
 @SuppressWarnings("deprecation")
 public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionFactory>, InitializingBean{
     private ExternalComponentInstanceProvider instanceProvider;
     private LocalSessionFactoryBean delegate;
+    private static final String COSMO_MYSQL_DIALECT = "org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect";
     
-    public HibernateSessionFactoryBeanDelegate(/*ExternalComponentInstanceProvider instanceProvider*/){
-        //this.instanceProvider = instanceProvider;
+    public HibernateSessionFactoryBeanDelegate(ExternalComponentInstanceProvider instanceProvider){
+        this.instanceProvider = instanceProvider;
         delegate = new LocalSessionFactoryBean();
     }
 
@@ -138,27 +142,31 @@ public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionF
     }
 
     public void afterPropertiesSet() throws IOException {
-        delegate.afterPropertiesSet();
-        //delegate.getConfiguration().setProperty( "hibernate.dialect", "org.hibernate.dialect." + DataSourceType.MySQL5InnoDB.name() + "Dialect");
-        if(delegate.getConfiguration().getProperty("hibernate.dialect") == null){
-            delegate.getConfiguration().setProperty( "hibernate.dialect", "org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect");
+        if(instanceProvider != null){
+    		Collection<? extends DataSourceProvider> dsps = instanceProvider.getImplInstancesAnnotatedWith(CalendarRepository.class, DataSourceProvider.class);
+    		if(dsps != null && !dsps.isEmpty()){
+    			DataSourceProvider dsp = dsps.iterator().next();
+    			if(dsp.getDataSourceType() != null){
+    				delegate.getHibernateProperties().put("hibernate.dialect", getDialectForDataSourceType(dsp.getDataSourceType()));
+    			}
+    		}
         }
-        //
+        
+        delegate.afterPropertiesSet();
     }
-
+    
+    private static String getDialectForDataSourceType(DataSourceType dataSourceType){
+    	if(dataSourceType == DataSourceType.MySQL5InnoDB){
+    		return COSMO_MYSQL_DIALECT;
+    	}
+    	
+    	return "org.hibernate.dialect." + dataSourceType.name() + "Dialect";
+    }
     public final Configuration getConfiguration() {
         return delegate.getConfiguration();
     }
 
     public SessionFactory getObject() {
-       /* Collection<? extends DataSourceProvider> dsps = instanceProvider.getImplInstancesAnnotatedWith(CalendarRepository.class, DataSourceProvider.class);
-        if(dsps.size() != 1){
-            throw new IllegalStateException("One DataSourceProvider implementation must exist");
-        }
-        DataSourceProvider dsp = dsps.iterator().next(); */
-       // delegate.setDataSource(dsp.getDataSource());
-        delegate.getHibernateProperties().put("hibernate.dialect", "org.hibernate.dialect." + DataSourceType.MySQL5InnoDB.name() + "Dialect");
-        
         return delegate.getObject();
     }
 
@@ -173,6 +181,4 @@ public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionF
     public void destroy() {
         delegate.destroy();
     }
-
-
 }

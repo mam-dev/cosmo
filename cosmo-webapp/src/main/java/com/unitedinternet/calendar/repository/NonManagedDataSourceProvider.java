@@ -21,10 +21,10 @@ public class NonManagedDataSourceProvider implements DataSourceProvider{
     public NonManagedDataSourceProvider() {
         BasicDataSource dataSource = new BasicDataSource();
         
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost/begenda_os?autoReconnect=true");
-        dataSource.setUsername("begenda");
-        dataSource.setPassword("*");
+        dataSource.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
+        dataSource.setUrl("jdbc:hsqldb:file:target/testdb");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("");
         dataSource.setMaxActive(100);
         dataSource.setMaxIdle(20);
         dataSource.setMaxWait(10000);
@@ -41,6 +41,6 @@ public class NonManagedDataSourceProvider implements DataSourceProvider{
 
     @Override
     public DataSourceType getDataSourceType() {
-        return null;
+        return DataSourceType.HSQL;
     }
 }

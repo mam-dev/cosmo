@@ -51,6 +51,7 @@
 
 
     <bean id="sessionFactory" class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
+    	<constructor-arg ref="externalComponentInstanceProvider"/>
         <property name="packagesToScan" ref="hibernatePackagesToScan"/>
         <property name="entityInterceptor">
             <ref bean="cosmoHibernateInterceptor"/>

@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.unitedinternet.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>3.41-SNAPSHOT</version>
+		<version>0.9-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>
@@ -60,9 +60,9 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.10</version>
 		</dependency>
+		
 
 		<!-- Logging -->
-		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -71,13 +71,17 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 		</dependency>
-		<!-- XML processing -->
-		<!-- <dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
-		</dependency> -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging-api</artifactId>
+			<version>1.1</version>
+		</dependency>
 		
+		<!-- XML processing -->
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
@@ -501,8 +505,6 @@
 	</reporting>
 
 	<scm>
-		<connection>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-core</connection>
-		<developerConnection>scm:git:ssh://git@github.com/aaaa</developerConnection>
-		<url>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-core</url>
+		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
 	</scm>
 </project>

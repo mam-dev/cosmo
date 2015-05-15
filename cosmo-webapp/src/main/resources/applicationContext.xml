@@ -19,9 +19,9 @@
     <bean id="authenticationProvider" class="com.unitedinternet.calendar.security.DummyAuthenticationProvider"/>
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" lazy-init="true" destroy-method="close">
-         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-         <property name="url" value="jdbc:mysql://localhost/begenda_os?autoReconnect=true"/>
-         <property name="username" value="begenda"/> 
+         <property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver"/>
+         <property name="url" value="jdbc:hsqldb:file:target/testdb"/>
+         <property name="username" value="sa"/> 
          <property name="password" value="*" />
          <property name="maxActive" value="100"/> 
          <property name="maxIdle" value="20" />
@@ -32,7 +32,7 @@
        
     <bean id="dataSourceProviderImpl" class="com.unitedinternet.calendar.repository.DataSourceProviderImpl">
         <constructor-arg ref="dataSource"/>
-        <constructor-arg value="MySQL5InnoDB"/>
+        <constructor-arg value="HSQL"/>
     </bean>
     
     <bean class="org.unitedinternet.cosmo.service.interceptors.LoggingEventAddHandler"/>
