@@ -3,7 +3,7 @@
     <parent>
         <artifactId>cosmo-multimodule</artifactId>
         <groupId>org.unitedinternet.cosmo</groupId>
-        <version>3.41-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,6 +27,11 @@
 	           <version>3.1.0</version>
 	           <scope>provided</scope>
 	       </dependency>
+	       <dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>compile</scope>
+		</dependency>
 	   </dependencies>
 
     <build>
@@ -49,13 +54,6 @@
                                     <include>cosmo.version.txt</include>
                                 </includes>
                             </resource>
-                            <resource>
-                                <directory>${basedir}/src/docs</directory>
-                                <filtering>false</filtering>
-                                <includes>
-                                    <include>NOTICE.txt</include>
-                                </includes>
-                            </resource>
                         </webResources>
                     </configuration>
                 </plugin>
@@ -64,8 +62,6 @@
     </build>
 
      <scm>
-        <connection>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-core</connection>
-        <developerConnection>scm:git:ssh://git@github.com/aaaa</developerConnection>
-        <url>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32/cosmo-core</url>
+        <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
     </scm>
 </project>
