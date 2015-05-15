@@ -102,7 +102,7 @@ is the class com.unitedinternet.calendar.security.DummyAuthenticationProvider:
 	 
 		...
 
-If a user component is not found in the Spring application context, it will be intantiated. The same happens
+If a user component is not found in the Spring application context, it will be instantiated. The same happens
 to the successful authentification listener that creates a calendar user if he doesn't already exist with the given credentials after a successful authentication. (Please keep in mind that in this example each authentication is valid):
 
 		...
