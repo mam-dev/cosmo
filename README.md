@@ -4,7 +4,7 @@
 
 Cosmo Calendar Server is part of an open source project called Chandler which provides calendaring features,
 task and note management. Cosmo implements CalDAV protocol. 
-It is being used as Calendar Server solution for web.de, gmx.net, gmx.com and mail.com brands. 
+It is being used as Calendar Server solution for WEB.DE, GMX.net, GMX.com and mail.com brands. 
 
 This project contains only CalDAV core part from Chandler with its dependencies up to date 
 (initial project being closed in 2008).
