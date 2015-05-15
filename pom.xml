@@ -64,7 +64,7 @@
 		<hsqldb.version>2.3.2</hsqldb.version>
 
 		<xerces.version>2.11.0</xerces.version>
-		<dom4j.version>20040902.021138</dom4j.version>
+		<dom4j.version>1.6.1</dom4j.version>
 		<stax.version>1.0.1</stax.version>
 		<woodstox.version>4.0.6</woodstox.version>
 
