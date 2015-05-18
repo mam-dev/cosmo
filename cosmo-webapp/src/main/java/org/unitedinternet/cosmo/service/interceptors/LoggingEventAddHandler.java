@@ -28,13 +28,12 @@ public class LoggingEventAddHandler implements EventAddHandler {
 
     @Override
     public void beforeAdd(CollectionItem parent, Set<ContentItem> contentItems) {
-        LOG.info("ABOUT to add " + contentItems.size() + " items to parent " + parent.getDisplayName());
+        LOG.info("=========ABOUT to add items [{}] to parent [{}]==========", contentItems.size(), parent.getDisplayName());
 
     }
 
     @Override
     public void afterAdd(CollectionItem parent, Set<ContentItem> contentItems) {
-        LOG.info("ADDED " + contentItems.size() + " items to parent " + parent.getDisplayName());
+        LOG.info("======ADDED [{}] items to parent [{}]===========", contentItems.size(), parent.getDisplayName());
     }
-
 }

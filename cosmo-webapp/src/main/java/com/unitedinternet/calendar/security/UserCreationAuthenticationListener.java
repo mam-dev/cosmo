@@ -1,5 +1,7 @@
 package com.unitedinternet.calendar.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.unitedinternet.cosmo.metadata.CalendarSecurity;
 import org.unitedinternet.cosmo.metadata.Provided;
@@ -13,18 +15,18 @@ import org.unitedinternet.cosmo.service.UserService;
 
 @CalendarSecurity
 public class UserCreationAuthenticationListener implements SuccessfulAuthenticationListener{
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserCreationAuthenticationListener.class);
     
     @Provided
 	private UserService userService;
 	private EntityFactory entityFactory;
 	private ContentService contentService;
 	
-	public UserCreationAuthenticationListener(){
-	    System.out.println("===========================================");
-	    System.out.println("Inside UserCreationAuthenticationListener constructor");
-	}
+	
 	@Override
 	public void onSuccessfulAuthentication(Authentication authentication) {
+		LOGGER.info("===================== Succesful authentication occured========================");
 		createUserIfNotPresent(authentication);
 	}
 
@@ -34,9 +36,11 @@ public class UserCreationAuthenticationListener implements SuccessfulAuthenticat
 		User user = userService.getUser(userName);
 		
 		if(user != null){
+			LOGGER.info("===== Found user with email [{}] =====", user.getEmail());
 			return user;
 		}
 		
+		LOGGER.info("=== No user found for principal [{}]. Creating one with an empty calendar.===", userName);
 		user = entityFactory.createUser();
         user.setUsername(userName);
         user.setEmail(userName);
