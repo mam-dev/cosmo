@@ -12,7 +12,6 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.unitedinternet.cosmo.db.DataSourceProvider;
 import org.unitedinternet.cosmo.db.DataSourceType;
-import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
 //@CalendarRepository
 public class NonManagedDataSourceProvider implements DataSourceProvider{

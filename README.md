@@ -16,15 +16,16 @@ to developers and a plugin mechanism that allows developers to write custom logi
 
 ## Main parts
 
-There are two main logical components, each of them residing in its own artefact: cosmo-api and cosmo-core.
+There are two main logical components, each of them residing in its own artifact: cosmo-api and cosmo-core.
 
-In ``cosmo-api`` are defined interfaces which are contracts between the CalDAV runtime environment and an implementation 
-of such an interface,
-externalizable services definitions (interfaces) whose actual implementations are placed in cosmo-core
-and can be injected (externalized) into client components,
-POJOs and interfaces that are abstractions of CalDAV components,
-annotations that are used to specify that an implementation of some contract must be plugged into the CalDAV runtime environment,
-annotations that tells the runtime environment container that it should inject some (public) service implementation.
+ ``cosmo-api`` contains:
+
+ - interfaces which are contracts between the CalDAV runtime environment
+   and an implementation of such an interface
+ - externalizable services definitions (interfaces) whose actual implementations are placed in cosmo-core and can be injected (externalized) into client components
+ - POJOs and interfaces that are abstractions of CalDAV components
+ - annotations that are used to specify that an implementation of some contract must be plugged into the CalDAV runtime environment
+ - annotations that tells the runtime environment container that it should inject some (public) service implementation.
 
 
 ``cosmo-core`` is the actual CalDAV server and runtime environment for developer custom components. It looks up for such components at 
@@ -39,15 +40,15 @@ Servlet 3.0 container).
 
 Setting up a CalDAV server with cosmo-api and cosmo-core
 
-At least one (concrete) implementation of org.springframework.security.core.Authentication annotated with @CalendarSecurity 
-must be provided. Exactly one (concrete) implementation of org.unitedinternet.cosmo.db.DataSourceProvider annotated
-with @CalendarRepository must be provided.
+At least one (concrete) implementation of ``org.springframework.security.core.AuthenticationProvider`` annotated with ``@CalendarSecurity`` 
+must be provided. Exactly one (concrete) implementation of ``org.unitedinternet.cosmo.db.DataSourceProvider`` annotated
+with ``@CalendarRepository`` must be provided.
 
 Other components can exist without a restriction. All of these are looked up in a Spring context (if exists), 
 otherwise are instantiated directly.
 
 
-Example of Spring Application that creates a user if he doesn't exist:
+###Example of Spring Application that creates a user if he doesn't exist:
 
 web.xml:
 
@@ -103,7 +104,7 @@ is the class com.unitedinternet.calendar.security.DummyAuthenticationProvider:
 		...
 
 If a user component is not found in the Spring application context, it will be instantiated. The same happens
-to the successful authentification listener that creates a calendar user if he doesn't already exist with the given credentials after a successful authentication. (Please keep in mind that in this example each authentication is valid):
+to the successful authentication listener that creates a calendar user if he doesn't already exist with the given credentials after a successful authentication. (Please keep in mind that in this example each authentication is valid):
 
 		...
 	@CalendarSecurity
@@ -136,12 +137,13 @@ instance of this class must be invoked after a successful authentication.
 @Provided annotation associated with an externalizable service tells the container that it must inject the implementation
 into that instance variable. The injection is available via setter and via field. 
 
-Building and running the existing project
-This is possible by creating the cosmo.war artefact with maven, running the command mvn clean package in the directory 
+###Building and running the existing project
+This is possible by creating the cosmo.war artifact with maven, running the command mvn clean package in the directory 
 cosmo-multimodule. The war will be available in directory cosmo-webapp/target and it should be deployed into any 
 Servlet 3.0 (+) compliant container. The application simply creates a user with an empty calendar called 'calendar' if 
-the user doesn't exist and then you can perform CalDAV requests to URI /cosmo/dav/<username>/calendar where <username>
+the user doesn't exist and then you can perform CalDAV requests to URI /cosmo/dav/&lt;username>/calendar/ where  &lt;username>
 is the username you provided for login.
+
 
 
 

@@ -13,7 +13,7 @@ public class DummyAuthenticationProvider implements AuthenticationProvider{
     private static final Logger LOGGER = LoggerFactory.getLogger(DummyAuthenticationProvider.class);
 	
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public UsernamePasswordAuthenticationToken authenticate(Authentication authentication) throws AuthenticationException {
 	    String userName = authentication.getName();
 	    LOGGER.info("===Authenticating user [{}]===", userName);
 	    

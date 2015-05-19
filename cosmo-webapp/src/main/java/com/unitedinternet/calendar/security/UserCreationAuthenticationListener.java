@@ -26,7 +26,7 @@ public class UserCreationAuthenticationListener implements SuccessfulAuthenticat
 	
 	@Override
 	public void onSuccessfulAuthentication(Authentication authentication) {
-		LOGGER.info("===================== Succesful authentication occured========================");
+		LOGGER.info("=== Succesful authentication occured ===");
 		createUserIfNotPresent(authentication);
 	}
 
@@ -36,7 +36,7 @@ public class UserCreationAuthenticationListener implements SuccessfulAuthenticat
 		User user = userService.getUser(userName);
 		
 		if(user != null){
-			LOGGER.info("===== Found user with email [{}] =====", user.getEmail());
+			LOGGER.info("=== Found user with email [{}] ===", user.getEmail());
 			return user;
 		}
 		
