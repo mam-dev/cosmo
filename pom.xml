@@ -110,16 +110,8 @@
 			<organization>1 and 1</organization>
 		</developer>
 	</developers>
-
-	<mailingLists>
-		<mailingList>
-			<name>Calendar Solutions Development Romania mailing list - csdr@1and1.ro </name>
-		</mailingList>
-	</mailingLists>
 	<scm>
-		<connection>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32</connection>
 		<developerConnection>scm:git:ssh://git@github.com/aaaa</developerConnection>
-		<url>scm:svn:https://svn.1and1.org/svn/Calendar3/chandlerserver/branches/3.32</url>
 	</scm>
 	<modules>
 		<module>cosmo-api</module>
@@ -544,6 +536,14 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<configuration>
 					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<warDirectory>${basedir}/target/cosmo</warDirectory>
+					<path>/cosmo</path>
 				</configuration>
 			</plugin>
 		</plugins>
