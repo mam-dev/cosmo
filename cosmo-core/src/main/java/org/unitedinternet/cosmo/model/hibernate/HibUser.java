@@ -23,6 +23,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -44,7 +44,7 @@ import org.unitedinternet.cosmo.model.User;
  * Hibernate persistent User.
  */
 @Entity
-@Table(name="users")
+@Table(name="users",indexes={@Index(name = "idx_activationid",columnList = "activationId" )})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibUser extends HibAuditableObject implements User {
 
@@ -81,11 +81,10 @@ public class HibUser extends HibAuditableObject implements User {
     @Column(name = "uid", nullable=false, unique=true, length=255)
     @NotNull
     @Length(min=1, max=255)
-    @Index(name="idx_useruid")
     private String uid;
     
     @Column(name = "username", nullable=false)
-    @Index(name="idx_username")
+//    @Index(name="idx_username")
     @NotNull
     @NaturalId
     @Length(min=USERNAME_LEN_MIN, max=USERNAME_LEN_MAX)
@@ -113,8 +112,6 @@ public class HibUser extends HibAuditableObject implements User {
     private String lastName;
     
     @Column(name = "email", nullable=true, unique=true)
-    @Index(name="idx_useremail")
-//    @NotNull
     @Length(min=EMAIL_LEN_MIN, max=EMAIL_LEN_MAX)
     @Email
     private String email;
@@ -123,7 +120,6 @@ public class HibUser extends HibAuditableObject implements User {
     
     @Column(name = "activationid", nullable=true, length=255)
     @Length(min=1, max=255)
-    @Index(name="idx_activationid")
     private String activationId;
     
     @Column(name = "admin")

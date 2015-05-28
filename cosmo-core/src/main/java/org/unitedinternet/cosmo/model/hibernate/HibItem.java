@@ -39,13 +39,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyClass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Index;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
@@ -67,10 +67,14 @@ import org.unitedinternet.cosmo.model.User;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@Table(name="item")
-@org.hibernate.annotations.Table(
-        appliesTo="item", 
-        indexes={@Index(name="idx_itemtype", columnNames={"itemtype"})})
+
+
+@Table(name = "item",
+        indexes={@Index(name = "idx_itemtype",columnList = "itemtype" ),
+                 @Index(name = "idx_itemuid",columnList = "uid" ),
+                 @Index(name = "idx_itemname",columnList = "itemname" ),
+        }
+)
 @DiscriminatorColumn(
         name="itemtype",
         discriminatorType=DiscriminatorType.STRING,
@@ -78,18 +82,15 @@ import org.unitedinternet.cosmo.model.User;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class HibItem extends HibAuditableObject implements Item {
 
-
     @Column(name = "uid", nullable = false, length=255)
     @NotNull
     @Length(min=1, max=255)
-    @Index(name="idx_itemuid")
     @NaturalId
     private String uid;
 
     @Column(name = "itemname", nullable = false, length=255)
     @NotNull
     @Length(min=1, max=255)
-    @Index(name="idx_itemname")
     private String name;
 
     @Column(name = "displayname", length=1024)
@@ -474,7 +475,6 @@ public abstract class HibItem extends HibAuditableObject implements Item {
 
     /**
      * @param parent collection to add item to
-     * @param readOnly true if item is read-only in collection
      */
     public void addParent(CollectionItem parent) {
         parentDetails.add(new HibCollectionItemDetails(parent,this));

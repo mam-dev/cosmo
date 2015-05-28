@@ -46,7 +46,6 @@ public class HibPasswordRecovery extends BaseModelObject implements PasswordReco
     
     @Column(name = "pwrecoverykey", unique = true, nullable = false, length = 255)
     @NotNull
-    @Index(name = "idx_pwrecoverykey")
     private String key;
     
     @Column(name = "creationdate")

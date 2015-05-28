@@ -53,7 +53,6 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
 
     @Column(name = "ticketkey", unique = true, nullable = false, length = 255)
     @NotNull
-    @Index(name = "idx_ticketkey")
     private String key;
     
     @Column(name = "tickettimeout", nullable = false, length=255)

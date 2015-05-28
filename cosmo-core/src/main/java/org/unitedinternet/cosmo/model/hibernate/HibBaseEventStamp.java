@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import javax.validation.constraints.NotNull;
@@ -73,7 +74,13 @@ import org.unitedinternet.cosmo.model.NoteItem;
  */
 @Entity
 @SecondaryTable(name="event_stamp", pkJoinColumns={
-        @PrimaryKeyJoinColumn(name="stampid", referencedColumnName="id")})
+        @PrimaryKeyJoinColumn(name="stampid", referencedColumnName="id")},
+        indexes = {
+                @Index(name = "idx_startdt",columnList = "startDate"),
+                @Index(name = "idx_enddt",columnList = "endDate"),
+                @Index(name = "idx_floating",columnList = "isFloating"),
+                @Index(name = "idx_recurring",columnList = "isrecurring")}
+)
 @DiscriminatorValue("baseevent")
 public abstract class HibBaseEventStamp extends HibStamp implements ICalendarConstants, BaseEventStamp {
 
@@ -88,7 +95,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     @Type(type="calendar_clob")
     @NotNull
     private Calendar eventCalendar = null;
-    
+
     @Embedded
     private HibEventTimeRangeIndex timeRangeIndex = null;
     

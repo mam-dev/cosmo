@@ -33,7 +33,6 @@ public class HibServerProperty extends BaseModelObject implements ServerProperty
     private static final long serialVersionUID = -4099057363051156531L;
     
     @Column(name = "propertyname", unique=true, length=255)
-    @Index(name="idx_svrpropname")
     @NotNull
     private String name;
     

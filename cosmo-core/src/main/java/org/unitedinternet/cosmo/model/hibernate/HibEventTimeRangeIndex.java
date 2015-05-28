@@ -3,8 +3,6 @@ package org.unitedinternet.cosmo.model.hibernate;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.hibernate.annotations.Index;
-
 /**
  * Contains time-range data for an event that can be
  * used for determining if an event falls into a
@@ -14,19 +12,15 @@ import org.hibernate.annotations.Index;
 public class HibEventTimeRangeIndex {
     
     @Column(table="event_stamp", name = "startdate", length=16)
-    @Index(name="idx_startdt")
     private String startDate = null;
     
     @Column(table="event_stamp", name = "enddate", length=16)
-    @Index(name="idx_enddt")
     private String endDate = null;
     
     @Column(table="event_stamp", name = "isfloating")
-    @Index(name="idx_floating")
     private Boolean isFloating = null;
     
     @Column(table="event_stamp", name = "isrecurring")
-    @Index(name="idx_recurring")
     private Boolean isRecurring = null;
     
     /**

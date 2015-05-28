@@ -32,7 +32,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Index;
+import javax.persistence.Index;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
@@ -47,11 +47,10 @@ import org.unitedinternet.cosmo.model.Stamp;
                      discriminatorType = DiscriminatorType.STRING, length = 16)
 // Unique constraint for stamptype and itemid to prevent items
 // having more than one of the same stamp
-@Table(name = "stamp", uniqueConstraints = { 
-        @UniqueConstraint(columnNames = { "itemid", "stamptype" }) })
-// Define index on discriminator
-@org.hibernate.annotations.Table(appliesTo = "stamp", 
-        indexes = { @Index(name = "idx_stamptype", columnNames = { "stamptype" }) })
+@Table(name = "stamp",
+        uniqueConstraints = {@UniqueConstraint(columnNames = { "itemid", "stamptype" })} ,
+        indexes={@Index(name = "idx_stamptype",columnList = "stamptype" )}
+)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class HibStamp extends HibAuditableObject implements Stamp {
 

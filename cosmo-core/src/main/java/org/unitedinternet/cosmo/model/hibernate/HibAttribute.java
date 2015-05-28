@@ -23,16 +23,15 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Target;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
@@ -43,15 +42,14 @@ import org.unitedinternet.cosmo.model.QName;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-// Define a unique constraint on item, namespace, and localname
-@Table(name="attribute", uniqueConstraints = {
-        @UniqueConstraint(columnNames={"itemid", "namespace", "localname"})})
 // Define indexes on discriminator and key fields
-@org.hibernate.annotations.Table(
-        appliesTo="attribute", 
-        indexes={@Index(name="idx_attrtype", columnNames={"attributetype"}),
-                 @Index(name="idx_attrname", columnNames={"localname"}),
-                 @Index(name="idx_attrns", columnNames={"namespace"})})
+@Table(
+        name="attribute",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames={"itemid", "namespace", "localname"})},
+        indexes={@Index(name="idx_attrtype", columnList="attributetype"),
+                 @Index(name="idx_attrname", columnList="localname"),
+                 @Index(name="idx_attrns", columnList="namespace")})
 @DiscriminatorColumn(
         name="attributetype",
         discriminatorType=DiscriminatorType.STRING,
