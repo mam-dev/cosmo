@@ -48,6 +48,14 @@ Other components can exist without a restriction. All of these are looked up in 
 otherwise are instantiated directly.
 
 
+###Building and running the existing project
+In the project's root directory just run ``mvn tomcat7:run-war``.
+The calendar server will be packaged, tested and run. It will be available for CalDAV requests at
+http://localhost:8080/cosmo/dav/.
+The application simply creates a user with an empty calendar called 'calendar' if 
+the user doesn't exist and then you can perform CalDAV requests to URI /cosmo/dav/&lt;username>/calendar/ where  &lt;username>
+is the username you provided for login.
+
 ###Example of Spring Application that creates a user if he doesn't exist:
 
 web.xml:
@@ -137,12 +145,7 @@ instance of this class must be invoked after a successful authentication.
 @Provided annotation associated with an externalizable service tells the container that it must inject the implementation
 into that instance variable. The injection is available via setter and via field. 
 
-###Building and running the existing project
-This is possible by creating the cosmo.war artifact with maven, running the command mvn clean package in the directory 
-cosmo-multimodule. The war will be available in directory cosmo-webapp/target and it should be deployed into any 
-Servlet 3.0 (+) compliant container. The application simply creates a user with an empty calendar called 'calendar' if 
-the user doesn't exist and then you can perform CalDAV requests to URI /cosmo/dav/&lt;username>/calendar/ where  &lt;username>
-is the username you provided for login.
+
 
 
 
