@@ -9,7 +9,6 @@ package org.unitedinternet.cosmo.service.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.spi.search.StartupDataInitializer;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.ServerProperty;
@@ -18,13 +17,13 @@ import org.unitedinternet.cosmo.service.ServerPropertyService;
 import org.unitedinternet.cosmo.service.UserService;
 
 /**
- * Cosmo specific database initializeation which adds default server properties(schema version) 
+ * Cosmo specific database initialization which adds default server properties(schema version) 
  * and cosmo root
  * 
  * @author ccoman
  *
  */
-public class CosmoStartupDataInitializer implements StartupDataInitializer {
+public class CosmoStartupDataInitializer {
 
  private static final Log LOG = LogFactory.getLog(CosmoStartupDataInitializer.class);
     
@@ -67,7 +66,6 @@ public class CosmoStartupDataInitializer implements StartupDataInitializer {
     /* (non-Javadoc)
 	 * @see org.unitedinternet.cosmo.service.StartupDataInitializer#initializeStartupData()
 	 */
-    @Override
     public void initializeStartupData() {
         addServerProperties();
         addOverlord();

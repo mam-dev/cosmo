@@ -32,12 +32,14 @@ public class DataSourceFactoryBean implements FactoryBean<DataSource>{
         }
         DataSourceProvider dsp = dsps.iterator().next(); 
 
-        return dsp.getDataSource();
+        DataSource ds = dsp.getDataSource();
+        
+        return ds;
     }
 
     @Override
     public Class<DataSource> getObjectType() {
-        return null;
+        return DataSource.class;
     }
 
     @Override

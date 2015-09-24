@@ -13,5 +13,5 @@ package org.unitedinternet.cosmo.api;
  *
  */
 public interface ExternalComponentFactory {
-    <T, R extends T> R instanceForDescritor(ExternalComponentDescriptor<R> desc);
+    <T, R extends T> R instanceForDescriptor(ExternalComponentDescriptor<R> desc);
 }

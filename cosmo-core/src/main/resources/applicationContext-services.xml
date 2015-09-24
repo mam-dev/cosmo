@@ -212,25 +212,22 @@
 
 	<!-- Extension for request filters -->
 	<!-- alias defined in web.xml for filter dav-extension -->
-	<alias name="${cosmo.externalFilterChainBean}" alias="externalFilterChainBean" />
+	<!-- <alias name="${cosmo.externalFilterChainBean}" alias="externalFilterChainBean" />
 	<bean id="requestExternalFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
 		<security:filter-chain-map>
 			<security:filter-chain pattern="/**" filters="emptyFilter" />
 		</security:filter-chain-map>
 	</bean>
 
-	<bean id="emptyFilter" class="org.unitedinternet.cosmo.filters.EmptyFilter" />
+	<bean id="emptyFilter" class="org.unitedinternet.cosmo.filters.EmptyFilter" /> -->
 	<!-- API implementation -->
 	
 	
 	 <bean id="typesFinder" class="org.unitedinternet.cosmo.api.TypesFinder"/>
     
-    <bean id="externalComponentsManager" class="org.unitedinternet.cosmo.api.ExternalComponentsManager" />
-    
     <bean id="springExternalComponentFactory" class="org.unitedinternet.cosmo.api.SpringExternalComponentFactory"/>
     
     <bean id="externalComponentFactoryChain" class="org.unitedinternet.cosmo.api.ExternalComponentFactoryChain">
-       <constructor-arg ref="externalComponentsManager"/>
        <constructor-arg>
           <array>
               <ref bean="springExternalComponentFactory"/>  
@@ -245,7 +242,11 @@
     </bean>
     
     <bean id="externalComponentDecorator" class="org.unitedinternet.cosmo.api.ExternalComponentDecorator">
-       <constructor-arg ref="externalComponentsManager"/>
+       <constructor-arg ref="externalComponentInstanceProvider"/>
        <constructor-arg ref="typesFinder"/>
+    </bean>
+    
+    <bean id="servletContextListenersDelegate" class="org.unitedinternet.cosmo.servletcontext.ServletContextListenerDelegatesFactoryBean">
+		<constructor-arg ref="externalComponentInstanceProvider"/>
     </bean>
 </beans>

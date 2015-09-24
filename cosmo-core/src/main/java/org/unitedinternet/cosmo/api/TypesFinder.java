@@ -60,20 +60,42 @@ public class TypesFinder {
         return new ExternalComponentDescriptor<T>(clazz);
     }
     
-    public Set<Method> getSettersAnnotatedWith(Class<? extends Annotation> annotation){
+    public Set<SetterBasedServiceOwnerDescriptor> getSettersAnnotatedWith(Class<? extends Annotation> annotation){
         Set<Method> allMethods = reflections.getMethodsAnnotatedWith(annotation);
-        Set<Method> result = new HashSet<>();
-        for(Method m : allMethods){
-            if(m.getParameterTypes().length == 1 && m.getName().startsWith("set")){
-                result.add(m);
+        Set<SetterBasedServiceOwnerDescriptor> result = new HashSet<>();
+        for(Method method : allMethods){
+            if(method.getParameterTypes().length == 1 && method.getName().startsWith("set")){
+            	Class<?> setterDeclaringClass = method.getDeclaringClass();
+            	Set<Class<?>> setterDeclaringClasses = new HashSet<>(1);
+            	collectConcreteTypesFor(setterDeclaringClass, setterDeclaringClasses);
+            	for(Class<?> c : setterDeclaringClasses){
+            		result.add(new SetterBasedServiceOwnerDescriptor(c, method.getParameterTypes()[0], method));
+            	}
             }
         }
         
         return result;
     }
     
-    public Set<Field> getFieldsAnnotatedWith(Class<? extends Annotation> annotation){
+    public Set<FieldBasedServiceOwnerDescriptor> getFieldsAnnotatedWith(Class<? extends Annotation> annotation){
+        Set<Field> fields = reflections.getFieldsAnnotatedWith(annotation);
+        Set<FieldBasedServiceOwnerDescriptor> result = new HashSet<>();
         
-        return reflections.getFieldsAnnotatedWith(annotation);
+        for(Field field : fields){
+        	result.add(new FieldBasedServiceOwnerDescriptor(field.getDeclaringClass(), field.getType(), field));
+        }
+        return result;
+    }
+    
+    private <T> void  collectConcreteTypesFor(Class<T> clazz, Set<Class<?>> set){
+    	if(!Modifier.isAbstract(clazz.getModifiers())){
+    		set.add(clazz);
+    		return;
+    	}
+    	
+    	Set<Class<? extends T >> subTypes = reflections.getSubTypesOf(clazz);
+    	for(Class<? extends T> c : subTypes){
+    		collectConcreteTypesFor(c, set);
+    	}
     }
 }

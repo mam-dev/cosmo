@@ -10,6 +10,7 @@ package org.unitedinternet.cosmo.api;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -31,12 +32,12 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalComponentDecorator.class);
     
     private ApplicationContext applicationContext;
-    private ExternalComponentsManager manager;
-
+    private ExternalComponentInstanceProvider externalComponentInstanceProvider;
+    
     private TypesFinder typesFinder;
 
-    public ExternalComponentDecorator(ExternalComponentsManager manager, TypesFinder typesFinder) {
-        this.manager = manager;
+    public ExternalComponentDecorator(ExternalComponentInstanceProvider externalComponentInstanceProvider, TypesFinder typesFinder) {
+        this.externalComponentInstanceProvider = externalComponentInstanceProvider;
         this.typesFinder = typesFinder;
     }
 
@@ -47,30 +48,38 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
     }
 
     private void decorateByFields() {
-        Set<Field> annotatedFields = typesFinder.getFieldsAnnotatedWith(Provided.class);
+        Set<FieldBasedServiceOwnerDescriptor> descriptors = typesFinder.getFieldsAnnotatedWith(Provided.class);
         
-        for(Field field : annotatedFields){
-            Object managedComponent = getManagedInstanceFor(field.getDeclaringClass());
-            if(managedComponent == null || !isPublicApiInterface(field.getType())){
+        for(FieldBasedServiceOwnerDescriptor desc : descriptors){
+        	Class<?> fieldDeclaringClass = desc.getOwnerType();
+        
+            Object managedComponent = getManagedComponentFor(fieldDeclaringClass);
+            
+            if(managedComponent == null || 
+            		!isPublicApiInterface(desc.getServiceType())){
                 continue;
             }
-            
+            Field field = desc.getField();
             try {
                 field.setAccessible(true);
                 Object toBeInjected = applicationContext.getBean(field.getType());
                 field.set(managedComponent, unwrapIfNecessary(toBeInjected, field.getAnnotation(Provided.class)));
                 LOGGER.info("Set field [{}] of [{}].", field.getName(), field.getDeclaringClass().getName());
             } catch (BeansException | IllegalArgumentException | IllegalAccessException e) {
+            	LOGGER.error("Exception occured", e);
                 throw new RuntimeException(e);
             }
         }
     }
 
     private void decorateBySetters() {
-        Set<Method> setters = typesFinder.getSettersAnnotatedWith(Provided.class);
+        Set<SetterBasedServiceOwnerDescriptor> setterDescriptors = typesFinder.getSettersAnnotatedWith(Provided.class);
         
-        for(Method setter : setters){
-            Object managedComponent = getManagedInstanceFor(setter.getDeclaringClass());
+        for(SetterBasedServiceOwnerDescriptor desc : setterDescriptors){
+        	Class<?> setterDeclaringClass = desc.getOwnerType();
+        	Method setter = desc.getSetter();
+            Object managedComponent = getManagedComponentFor(setterDeclaringClass);
+            
             if(managedComponent == null || !isPublicApiInterface(setter.getParameterTypes()[0])){
                 continue;
             }
@@ -81,7 +90,8 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
                 setter.invoke(managedComponent, unwrapIfNecessary(toBeSet, setter.getAnnotation(Provided.class)));
                 LOGGER.info("Invoked setter [{}] of [{}].", setter.getName(), setter.getDeclaringClass().getName());
             } catch (BeansException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                throw new RuntimeException();
+            	LOGGER.error("Exception occured", e);
+                throw new RuntimeException(e);
             }
         }
     }
@@ -95,19 +105,15 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
 			try {
 				return ((Advised)obj).getTargetSource().getTarget();
 			} catch (Exception e) {
+				LOGGER.error("Exception occured", e);
 				throw new RuntimeException(e);
 			}
     	}
     	
     	return obj;
     }
-    private Object getManagedInstanceFor(Class<?> clazz){
-        Object locallyManaged = manager.forClass(clazz);
-        
-        if(locallyManaged == null){
-            locallyManaged = applicationContext.getBean(clazz);
-        }
-        return locallyManaged;
+    private Object getManagedComponentFor(Class<?> clazz){
+    	return externalComponentInstanceProvider.instanceForClass(clazz);
     }
 
 
@@ -119,5 +125,9 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+    
+	private static boolean isConcreteClass(Class<?> clazz){
+    	return  !Modifier.isAbstract(clazz.getModifiers());
     }
 }

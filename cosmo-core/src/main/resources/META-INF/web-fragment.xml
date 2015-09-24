@@ -46,14 +46,13 @@
         <listener-class>org.unitedinternet.cosmo.api.SpringContextInitializerListener</listener-class>
     </listener> 
      
- <!--    <listener>
+	<listener>
         <listener-class>org.unitedinternet.cosmo.db.DbListener</listener-class>
     </listener>
      
     <listener>
         <listener-class>org.unitedinternet.cosmo.servletcontext.ConfigurationListener</listener-class>
     </listener>
-     -->
     <listener>
 	  <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
@@ -68,15 +67,6 @@
             <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
     </filter>
 
-    <!-- Extension point for filters, should execute before dav-security -->
-    <filter>
-        <filter-name>dav-extension</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <param-name>targetBeanName</param-name>
-            <param-value>externalFilterChainBean</param-value>
-        </init-param>
-    </filter>
     <!-- Default DAV auth entry point for filters -->
     
     <filter>
@@ -130,10 +120,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <!-- extension filter should run before dav-security -->
-    <filter-mapping>
-        <filter-name>dav-extension</filter-name>
-        <url-pattern>/dav/*</url-pattern>
-    </filter-mapping>
     <filter-mapping>
         <filter-name>dav-security</filter-name>
         <url-pattern>/dav/*</url-pattern>

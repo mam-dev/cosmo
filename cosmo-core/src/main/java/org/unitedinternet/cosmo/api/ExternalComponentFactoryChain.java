@@ -18,26 +18,23 @@ import java.util.Set;
 public class ExternalComponentFactoryChain implements ExternalComponentFactory{
     
     private Set<ExternalComponentFactory> factories = new LinkedHashSet<>();
-    private ExternalComponentsManager manager;
     
     @Override
-    public <T, R extends T> R instanceForDescritor(ExternalComponentDescriptor<R> desc) {
+    public <T, R extends T> R instanceForDescriptor(ExternalComponentDescriptor<R> desc) {
         
         for(ExternalComponentFactory factory : factories){
-            R result = factory.instanceForDescritor(desc);
+            R result = factory.instanceForDescriptor(desc);
             if(result != null){
-                manager.add(desc, result);
                 return result;
             }
         }
         return null;
     }
     
-    public ExternalComponentFactoryChain(ExternalComponentsManager manager, ExternalComponentFactory...factories){
+    public ExternalComponentFactoryChain(ExternalComponentFactory...factories){
         if(factories == null){
             return;
         }
-        this.manager = manager;
         for(ExternalComponentFactory factory :factories){
             this.factories.add(factory);
         }

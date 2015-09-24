@@ -28,7 +28,7 @@
     <bean id="sessionFactory"
         class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
         <constructor-arg ref="externalComponentInstanceProvider"/>
-        <property name="packagesToScan" ref="hibernatePackagesToScan"/>
+       <property name="packagesToScan" ref="hibernatePackagesToScan"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
@@ -43,9 +43,6 @@
                 <!-- configure in cosmo.propeties -->
                 <prop key="hibernate.connection.release_mode">after_transaction</prop>
                 <!--  hibernate debugging config switches -->
-                <prop key="hibernate.show_sql">${cosmo.debug.showSql}</prop>
-                <prop key="hibernate.format_sql">${cosmo.debug.showSql}</prop>
-                <prop key="hibernate.use_sql_comments">${cosmo.debug.showSql}</prop>
                 <prop key="hibernate.generate_statistics">true</prop>
             </props>
         </property>
@@ -122,23 +119,11 @@
     </bean>
 
     
-	<bean id="dbInitializer" init-method="initialize"
-		class="org.unitedinternet.cosmo.db.DbInitializer">
+	<bean id="dbInitializer" class="org.unitedinternet.cosmo.db.DbInitializer">
 		<property name="localSessionFactory" ref="&amp;sessionFactory" />
 		<property name="dataSource" ref="jdbcDataSource" />
 		<property name="validateSchema" value="true" />
-        <property name="startupDataInitializers" ref="startupDataInitializers"/>
 		<property name="serverPropertyService" ref="serverPropertyService" />
+		<property name="cosmoStartupDataInitializer" ref="cosmoStartupDataInitializer"/>
 	</bean>
-
-	<alias alias="startupDataInitializers" name="${cosmo.startupDataInitializers}"/>
-	
-  	<bean id="cosmoStartupDataInitializers" class="java.util.ArrayList">
-		<constructor-arg>
-			<list>
-				<ref bean="cosmoStartupDataInitializer" />
-			</list>
-		</constructor-arg>
-	</bean>
-
 </beans>

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultExternalComponentFactory implements ExternalComponentFactory{
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExternalComponentFactory.class);
     
-    public <T, R extends T> R instanceForDescritor(ExternalComponentDescriptor<R> desc){
+    public <T, R extends T> R instanceForDescriptor(ExternalComponentDescriptor<R> desc){
         try {
             R result = (R)desc.getImplementationClass().newInstance();
             LOGGER.info("Created instance of type [{}]", desc.getImplementationClass().getName());

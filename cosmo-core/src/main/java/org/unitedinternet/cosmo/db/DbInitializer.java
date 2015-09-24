@@ -20,7 +20,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
@@ -29,14 +28,13 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.spi.search.StartupDataInitializer;
 import org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate;
 import org.unitedinternet.cosmo.model.ServerProperty;
 import org.unitedinternet.cosmo.service.ServerPropertyService;
-import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.unitedinternet.cosmo.service.impl.CosmoStartupDataInitializer;
 
 /**
  * A helper class that initializes the Cosmo database schema and populates the
@@ -53,8 +51,9 @@ public class DbInitializer {
     private DataSource datasource;
     
     private boolean validateSchema = true;
+    
+    private CosmoStartupDataInitializer cosmoStartupDataInitializer;
         
-    private ArrayList<StartupDataInitializer> startupDataInitializers;
     /**
      * Performs initialization tasks if required.
      * 
@@ -68,10 +67,7 @@ public class DbInitializer {
             LOG.info("Creating database");                
             new SchemaExport(localSessionFactory.getConfiguration()).create(true, true);
             LOG.info("Initializing database");
-            //add initialization data
-            for(StartupDataInitializer startupDataInitializer: startupDataInitializers){
-                startupDataInitializer.initializeStartupData();
-            }
+            cosmoStartupDataInitializer.initializeStartupData();
             return true;
         } else {
             // Verify that db schema is supported by server
@@ -245,9 +241,8 @@ public class DbInitializer {
         }
     }
 
-    public void setStartupDataInitializers(
-            ArrayList<StartupDataInitializer> startupDataInitializers) {
-        this.startupDataInitializers = startupDataInitializers;
-    }
-
+	public void setCosmoStartupDataInitializer(
+			CosmoStartupDataInitializer cosmoStartupDataInitializer) {
+		this.cosmoStartupDataInitializer = cosmoStartupDataInitializer;
+	}
 }
