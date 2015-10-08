@@ -30,12 +30,13 @@
         <property name="userService" ref="userService" />
         <property name="serverPropertyService" ref="serverPropertyService" />
     </bean>
-    <bean id="dbInitializer" init-method="initialize"
-        class="org.unitedinternet.cosmo.db.DbInitializer">
-        <property name="localSessionFactory" ref="&amp;sessionFactory" />
-        <property name="dataSource" ref="jdbcDataSource" />
-        <property name="validateSchema" value="true" />
-        <property name="startupDataInitializers" ref="startupDataInitializers"/>
-        <property name="serverPropertyService" ref="serverPropertyService" />
-    </bean>
+    
+    <bean id="dbInitializer" class="org.unitedinternet.cosmo.db.DbInitializerFactoryBean">
+		<constructor-arg ref="serverPropertyService" />
+		<constructor-arg ref="&amp;sessionFactory"/>
+		<constructor-arg ref="jdbcDataSource" />
+		<constructor-arg value="true" />
+		<constructor-arg ref="cosmoStartupDataInitializer"/>
+		<constructor-arg ref="externalComponentInstanceProvider"/>
+	</bean>
 </beans>
