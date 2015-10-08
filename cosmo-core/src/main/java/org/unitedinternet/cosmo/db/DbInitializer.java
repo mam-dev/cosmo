@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 
 import javax.sql.DataSource;
 
@@ -53,8 +54,11 @@ public class DbInitializer {
     private boolean validateSchema = true;
     
     private CosmoStartupDataInitializer cosmoStartupDataInitializer;
+    
+    private Collection<DatabaseInitializationCallback> callbacks;
         
-    /**
+
+	/**
      * Performs initialization tasks if required.
      * 
      * @return <code>true</code> if initialization was required, *
@@ -68,6 +72,9 @@ public class DbInitializer {
             new SchemaExport(localSessionFactory.getConfiguration()).create(true, true);
             LOG.info("Initializing database");
             cosmoStartupDataInitializer.initializeStartupData();
+            for(DatabaseInitializationCallback callback : callbacks){
+            	callback.execute();
+            }
             return true;
         } else {
             // Verify that db schema is supported by server
@@ -102,6 +109,10 @@ public class DbInitializer {
             ServerPropertyService serverPropertyService) {
         this.serverPropertyService = serverPropertyService;
     }
+    
+    public void setCallbacks(Collection<DatabaseInitializationCallback> callbacks) {
+		this.callbacks = callbacks;
+	}
 
     //default to allow usage in tests
     /**
