@@ -19,7 +19,7 @@
 
 	<groupId>org.unitedinternet.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>0.9-SNAPSHOT</version>
+	<version>0.9-RC</version>
 
 	<packaging>pom</packaging>
 
