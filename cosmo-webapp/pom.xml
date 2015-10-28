@@ -3,7 +3,7 @@
     <parent>
         <artifactId>cosmo-multimodule</artifactId>
         <groupId>org.unitedinternet.cosmo</groupId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.9-RC</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
