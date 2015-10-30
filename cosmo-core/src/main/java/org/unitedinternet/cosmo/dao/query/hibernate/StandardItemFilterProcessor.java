@@ -324,6 +324,10 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
                 appendWhere(whereBuf, "size(i.modifications) = 0");
             }
         }
+        
+        if(filter.getModifiedSince() != null){
+            formatExpression(whereBuf, params, "i.modifiedDate", filter.getModifiedSince());
+        }
     }
 
     private void handleContentItemFilter(StringBuffer selectBuf,

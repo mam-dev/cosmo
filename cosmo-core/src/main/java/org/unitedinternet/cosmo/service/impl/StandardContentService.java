@@ -598,7 +598,6 @@ public class StandardContentService implements ContentService {
         if(collection instanceof HomeCollectionItem) {
             throw new IllegalArgumentException("cannot remove home collection");
         }
-        
         contentDao.removeCollection(collection);
     }
 

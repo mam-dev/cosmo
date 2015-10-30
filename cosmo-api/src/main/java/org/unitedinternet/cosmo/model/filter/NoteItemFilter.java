@@ -25,6 +25,7 @@ public class NoteItemFilter extends ContentItemFilter {
     private FilterCriteria icalUid = null;
     private FilterCriteria body = null;
     private FilterCriteria reminderTime = null;
+    private FilterCriteria modifiedSince = null;
     
     private Boolean hasModifications = null;
     private Boolean isModification = null;
@@ -105,5 +106,13 @@ public class NoteItemFilter extends ContentItemFilter {
      */
     public void setReminderTime(FilterCriteria reminderTime) {
         this.reminderTime = reminderTime;
+    }
+
+    public FilterCriteria getModifiedSince() {
+        return modifiedSince;
+    }
+
+    public void setModifiedSince(FilterCriteria modifiedSince) {
+        this.modifiedSince = modifiedSince;
     }
 }

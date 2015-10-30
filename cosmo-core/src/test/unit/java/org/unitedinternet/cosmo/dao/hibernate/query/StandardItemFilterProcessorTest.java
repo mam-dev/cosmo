@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate.query;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import net.fortuna.ical4j.model.DateTime;
@@ -31,6 +32,7 @@ import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.TriageStatus;
 import org.unitedinternet.cosmo.model.filter.AttributeFilter;
+import org.unitedinternet.cosmo.model.filter.BetweenExpression;
 import org.unitedinternet.cosmo.model.filter.ContentItemFilter;
 import org.unitedinternet.cosmo.model.filter.EventStampFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -67,6 +69,17 @@ public class StandardItemFilterProcessorTest extends AbstractHibernateDaoTestCas
         filter.setUid(Restrictions.eq("abc"));
         Query query =  queryBuilder.buildQuery(session, filter);
         Assert.assertEquals("select i from HibItem i where i.uid=:param0", query.getQueryString());
+    }
+    
+    @Test
+    public void testModifiedSinceQuery(){
+        NoteItemFilter filter = new NoteItemFilter();
+        Calendar c = Calendar.getInstance();
+        Date end = c.getTime();
+        c.add(Calendar.YEAR, -1);
+        filter.setModifiedSince(Restrictions.between(c.getTime(), end));
+        Query query = queryBuilder.buildQuery(session, filter);
+        Assert.assertEquals("select i from HibNoteItem i where i.modifiedDate between :param0 and :param1", query.getQueryString());
     }
     
     /**
