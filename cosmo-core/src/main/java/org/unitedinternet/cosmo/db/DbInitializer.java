@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.sql.DataSource;
 
@@ -55,7 +56,7 @@ public class DbInitializer {
     
     private CosmoStartupDataInitializer cosmoStartupDataInitializer;
     
-    private Collection<DatabaseInitializationCallback> callbacks;
+    private Collection<? extends DatabaseInitializationCallback> callbacks = Collections.emptyList();
         
 
 	/**
@@ -110,7 +111,7 @@ public class DbInitializer {
         this.serverPropertyService = serverPropertyService;
     }
     
-    public void setCallbacks(Collection<DatabaseInitializationCallback> callbacks) {
+    public void setCallbacks(Collection<? extends DatabaseInitializationCallback> callbacks) {
 		this.callbacks = callbacks;
 	}
 
