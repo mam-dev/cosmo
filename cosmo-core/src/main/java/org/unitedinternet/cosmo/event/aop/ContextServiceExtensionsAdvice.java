@@ -14,8 +14,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.unitedinternet.cosmo.service.interceptors.CalendarGetHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionCreateHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionDeleteHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionUpdateHandler;
@@ -49,6 +51,7 @@ public class ContextServiceExtensionsAdvice {
 
     private List<CollectionUpdateHandler> updateCollectionHandlers;
     
+    private List<CalendarGetHandler> calendarGetHandlers;;
     
     /**
      * Default constructor
@@ -332,6 +335,13 @@ public class ContextServiceExtensionsAdvice {
         returnVal = pjp.proceed();
         return (CollectionItem) returnVal;
     }
+    
+    @AfterReturning(pointcut = "execution(org.unitedinternet.cosmo.model.Item org.unitedinternet.cosmo.service.ContentService.findItemBy*(..))", returning = "item")
+    public void afterFindItemBy(Item item) throws Throwable {
+        for (CalendarGetHandler handler : this.calendarGetHandlers) {
+            handler.afterGet(item);
+        }
+    }
 
     public void setAddHandlers(List<EventAddHandler> addHandlers) {
         this.addHandlers = addHandlers;
@@ -355,6 +365,10 @@ public class ContextServiceExtensionsAdvice {
 
     public void setUpdateCollectionHandlers(List<CollectionUpdateHandler> updateCollectionHandlers) {
         this.updateCollectionHandlers = updateCollectionHandlers;
+    }
+    
+    public void setCalendarGetHandlers(List<CalendarGetHandler> calendarGetHandlers) {
+        this.calendarGetHandlers = calendarGetHandlers;
     }
     
 }

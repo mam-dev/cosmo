@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.metadata.Interceptor;
+import org.unitedinternet.cosmo.service.interceptors.CalendarGetHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionCreateHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionDeleteHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionUpdateHandler;
@@ -63,6 +64,6 @@ public class ContextServiceExtensionAdviceDecorator {
         this.advice.setCreateHandlers(this.getInterceptorsList(CollectionCreateHandler.class));
         this.advice.setUpdateCollectionHandlers(this.getInterceptorsList(CollectionUpdateHandler.class));
         this.advice.setDeleteHandlers(this.getInterceptorsList(CollectionDeleteHandler.class));
-
+        this.advice.setCalendarGetHandlers(this.getInterceptorsList(CalendarGetHandler.class));
     }
 }
