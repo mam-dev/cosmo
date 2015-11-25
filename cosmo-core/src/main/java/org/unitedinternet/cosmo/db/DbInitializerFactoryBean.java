@@ -58,7 +58,7 @@ public class DbInitializerFactoryBean implements FactoryBean<DbInitializer>{
 		result.setLocalSessionFactory(localSessionFactory);
 		result.setServerPropertyService(serverPropertyService);
 		result.setValidateSchema(validateSchema);
-		
+		result.setCallbacks(callbacksList);
 		
 		return result;
 	}
