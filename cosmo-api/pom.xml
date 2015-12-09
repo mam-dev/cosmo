@@ -4,11 +4,12 @@
 	<parent>
 		<groupId>org.unitedinternet.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>0.9-RC</version>
+		<version>0.9-SNAPSHOT</version>
 	</parent>
 	<artifactId>cosmo-api</artifactId>
 
 	<name>cosmo-api</name>
+	<description>Cosmo API</description>
 
 	<properties>
 		<findbugs.suppressions.config.file>findbugs-suppressions.xml</findbugs.suppressions.config.file>
@@ -90,6 +91,10 @@
 	</build>
 
   <scm>
-    <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
+	<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
+	<url>https://github.com/1and1/</url>
+	<tag>HEAD</tag>
   </scm>
+
 </project>
