@@ -35,7 +35,7 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-    <bean id="contentDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl"
+    <bean id="dBcontentDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl"
         init-method="init" destroy-method="destroy">
         <property name="itemPathTranslator" ref="itemPathTranslator" />
         <property name="idGenerator">
@@ -47,6 +47,14 @@
         <property name="itemFilterProcessor">
             <ref bean="itemFilterProcessor" />
         </property>
+    </bean>
+    
+    <bean id="contentDao" class="org.unitedinternet.cosmo.dao.external.ContentDaoProxyFactory">
+    	<constructor-arg>
+    		<bean class="org.unitedinternet.cosmo.dao.external.ContentDaoInvocationHandler">
+    			<constructor-arg ref="dBcontentDao"/>
+    		</bean>	
+    	</constructor-arg>
     </bean>
 
     <bean id="itemFilterProcessor" parent="abstractDao" class="org.unitedinternet.cosmo.dao.query.hibernate.StandardItemFilterProcessor" />
