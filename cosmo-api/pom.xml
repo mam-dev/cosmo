@@ -7,6 +7,7 @@
 		<version>0.9</version>
 	</parent>
 	<artifactId>cosmo-api</artifactId>
+  <version>0.10-SNAPSHOT</version>
 
 	<name>cosmo-api</name>
 	<description>Cosmo API</description>
@@ -94,7 +95,7 @@
     <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 	<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 	<url>https://github.com/1and1/</url>
-	<tag>cosmo-api-0.9</tag>
+	<tag>HEAD</tag>
   </scm>
 
 </project>
