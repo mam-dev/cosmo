@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.unitedinternet.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>0.9-SNAPSHOT</version>
+		<version>0.9</version>
 	</parent>
 	<artifactId>cosmo-api</artifactId>
 
@@ -94,7 +94,7 @@
     <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 	<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 	<url>https://github.com/1and1/</url>
-	<tag>HEAD</tag>
+	<tag>cosmo-api-0.9</tag>
   </scm>
 
 </project>
