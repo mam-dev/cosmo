@@ -92,7 +92,6 @@
 					<groupId>com.mycila.maven-license-plugin</groupId>
 					<executions>
 						<execution>
-							<id>default-check</id>
 							<phase>none</phase>
 						</execution>
 					</executions>
@@ -100,6 +99,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
 
   <scm>
     <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
