@@ -17,7 +17,7 @@ package org.unitedinternet.cosmo.dao;
 
 import java.util.Set;
 
-import org.unitedinternet.cosmo.dao.external.Externalizable;
+import org.unitedinternet.cosmo.dao.external.ExternalizableContent;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
@@ -61,7 +61,7 @@ public interface ItemDao extends Dao {
      *            path of item to find
      * @return item represented by path
      */
-    @Externalizable
+    @ExternalizableContent
     public Item findItemByPath(String path);
     
     /**
@@ -75,7 +75,7 @@ public interface ItemDao extends Dao {
      *            uid of parent that path is relative to
      * @return item represented by path
      */
-    @Externalizable
+    @ExternalizableContent
     public Item findItemByPath(String path, String parentUid);
     
     /**
@@ -244,7 +244,7 @@ public interface ItemDao extends Dao {
      * @param filter criteria to filter items by
      * @return set of items matching ItemFilter
      */
-    @Externalizable
+    @ExternalizableContent
     public Set<Item> findItems(ItemFilter filter);
 
     /**
