@@ -10,6 +10,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.filter.ItemFilter;
+import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 
 /**
  * 
@@ -31,6 +35,13 @@ public class ContentDaoInvocationHandlerTest {
         this.contentDaoProxy = new ContentDaoProxyFactory(
                 new ContentDaoInvocationHandler(contentDaoInternal, contentDaoExternal)).getObject();
     }
+       
+    @Test
+    public void shouldSuccessfullyDelegateCallToInternalDaoForNonExternalizableMethod() {
+        String uuid = CalendarUuidGenerator.genererate();
+        this.contentDaoProxy.findItemParentByPath(uuid);
+        verify(contentDaoInternal, times(1)).findItemParentByPath(uuid);
+    }
 
     @Test
     public void shouldSuccessfullyDelegateMethodCallToInternalDao()
@@ -51,9 +62,19 @@ public class ContentDaoInvocationHandlerTest {
     }
 
     @Test
-    public void shouldSuccessfullyDelegateCallToInternalDaoForNonExternalizableMethod() {
-        String uuid = CalendarUuidGenerator.genererate();
-        this.contentDaoProxy.findItemParentByPath(uuid);
-        verify(contentDaoInternal, times(1)).findItemParentByPath(uuid);
+    public void shouldSuccessfullyDelegateToInternalDaoWhenCallingFindItems() {
+        ItemFilter filter = new ItemFilter();
+        this.contentDaoProxy.findItems(filter);
+        verify(contentDaoInternal, times(1)).findItems(filter);
+    }
+
+    @Test
+    public void shouldSuccessfullyDelegateToExternalDaoWhenCallingFindItems() {
+        NoteItemFilter filter = new NoteItemFilter();
+        CollectionItem parent = new HibCollectionItem();
+        parent.setUid(CalendarUuidGenerator.genererate());
+        filter.setParent(parent);
+        this.contentDaoProxy.findItems(filter);
+        verify(contentDaoExternal, times(1)).findItems(filter);
     }
 }
