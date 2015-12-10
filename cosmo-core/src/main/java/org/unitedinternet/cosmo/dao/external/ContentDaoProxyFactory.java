@@ -4,10 +4,11 @@ import java.lang.reflect.Proxy;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.dao.ItemDao;
 
 /**
- * {@link FactoryBean} for creating a <code>ContentDao</code> implementation that delegates all the method invocations
- * to <code>ContentDaoInvocationHandler</code> instance.
+ * {@link FactoryBean} for creating a <code>ItemDao</code> implementation that delegates all the method invocations to
+ * <code>ContentDaoInvocationHandler</code> instance.
  * 
  * @author daniel grigore
  * @see ContentDao
@@ -30,7 +31,7 @@ public class ContentDaoProxyFactory implements FactoryBean<ContentDao> {
 
     @Override
     public Class<?> getObjectType() {
-        return ContentDao.class;
+        return ItemDao.class;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.unitedinternet.cosmo.dao.external;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,17 +18,37 @@ import org.unitedinternet.cosmo.dao.ContentDao;
 public class ContentDaoInvocationHandler implements InvocationHandler {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoInvocationHandler.class);
+    
+    /**
+     * Database DAO.
+     */
+    private final ContentDao contentDaoInternal;
 
-    private final ContentDao dbContentDao;
+    private final ContentDao contentDaoExternal;
 
-    public ContentDaoInvocationHandler(ContentDao dbContentDao) {
+    public ContentDaoInvocationHandler(ContentDao contentDaoInternal, ContentDao contentDaoExternal) {
         super();
-        this.dbContentDao = dbContentDao;
+        this.contentDaoInternal = contentDaoInternal;
+        this.contentDaoExternal = contentDaoExternal;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        LOG.info("DAO Proxy method: " + method.getName() + " with " + args.length + " parameters.");
-        return method.invoke(this.dbContentDao, args);
+        if (method.isAnnotationPresent(Externalizable.class) && isExternalUid(args)) {
+            LOG.info("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args));
+            return method.invoke(this.contentDaoExternal, args);
+        }
+        return method.invoke(this.contentDaoInternal, args);
+    }
+
+    private static boolean isExternalUid(Object[] args) {
+        if (args != null) {
+            for (Object arg : args) {
+                if (arg instanceof String && CalendarUuidGenerator.containsExternalUid((String) arg)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
