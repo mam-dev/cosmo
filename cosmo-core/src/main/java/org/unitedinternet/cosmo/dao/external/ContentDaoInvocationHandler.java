@@ -36,15 +36,19 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.isAnnotationPresent(ExternalizableContent.class)) {
-            String uuid = getExternalUuid(args);
-            if (uuid != null) {
-                LOG.info("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args)
-                        + " for external uuid: " + uuid);
-                return method.invoke(this.contentDaoExternal, args);
+        try{
+            if (method.isAnnotationPresent(ExternalizableContent.class)) {
+                String uuid = getExternalUuid(args);
+                if (uuid != null) {
+                    LOG.info("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args)
+                            + " for external uuid: " + uuid);
+                    return method.invoke(this.contentDaoExternal, args);
+                }
             }
+            return method.invoke(this.contentDaoInternal, args);
+        }catch(Throwable t){
+            throw unwrap(t);
         }
-        return method.invoke(this.contentDaoInternal, args);
     }
 
     private static String getExternalUuid(Object[] args) {
@@ -68,5 +72,15 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
             }
         }
         return null;
+    }
+    
+    private static Throwable unwrap(Throwable t){
+        Throwable unwrapped = t;
+        
+        while(unwrapped.getCause() != null){
+            unwrapped = t.getCause();
+        }
+        
+        return unwrapped;
     }
 }
