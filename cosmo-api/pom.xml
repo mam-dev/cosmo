@@ -4,10 +4,10 @@
 	<parent>
 		<groupId>org.unitedinternet.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>0.9</version>
+		<version>0.9-SNAPSHOT</version>
 	</parent>
 	<artifactId>cosmo-api</artifactId>
-  <version>0.10-SNAPSHOT</version>
+  <version>0.9-SNAPSHOT</version>
 
 	<name>cosmo-api</name>
 	<description>Cosmo API</description>
@@ -87,6 +87,16 @@
                         <effort>Max</effort>
                     </configuration>
                 </plugin>
+				<plugin>
+					<artifactId>maven-license-plugin</artifactId>
+					<groupId>com.mycila.maven-license-plugin</groupId>
+					<executions>
+						<execution>
+							<id>default-check</id>
+							<phase>none</phase>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
