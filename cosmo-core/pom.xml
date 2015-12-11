@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
 			<artifactId>cosmo-api</artifactId>
-			<version>0.92-SNAPSHOT</version>
+			<version>0.93-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Apache commons -->

@@ -19,7 +19,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>0.9</version>
+	<version>0.9-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -545,6 +545,15 @@
 					<warDirectory>${basedir}/target/cosmo</warDirectory>
 					<path>/cosmo</path>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-license-plugin</artifactId>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<executions>
+					<execution>
+						<phase>none</phase>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
