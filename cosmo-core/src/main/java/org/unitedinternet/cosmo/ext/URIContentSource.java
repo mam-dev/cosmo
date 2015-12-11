@@ -1,6 +1,7 @@
 package org.unitedinternet.cosmo.ext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
@@ -63,17 +64,27 @@ public class URIContentSource implements ContentSource {
     }
 
     private Calendar readFrom(String uri) {
+        InputStream input = null;
         try {
             URL url = new URL(uri);
             URLConnection connection = url.openConnection();
             connection.setReadTimeout(TIMEOUT);
             connection.setConnectTimeout(TIMEOUT);
             connection.connect();
-            Calendar calendar = new CalendarBuilder().build(connection.getInputStream());
+            input = connection.getInputStream();
+            Calendar calendar = new CalendarBuilder().build(input);
             calendar.validate();
             return calendar;
         } catch (IOException | ParserException | ValidationException e) {
             LOG.error("Exception occured when reading content from " + uri);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                LOG.error("Exception occured when closing stream for " + uri);
+            }
         }
         return null;
     }
