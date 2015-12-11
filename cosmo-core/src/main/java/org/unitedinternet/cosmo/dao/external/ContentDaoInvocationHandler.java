@@ -39,12 +39,22 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
         if (method.isAnnotationPresent(ExternalizableContent.class)) {
             String uuid = getExternalUuid(args);
             if (uuid != null) {
-                LOG.info("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args)
-                        + " for external uuid: " + uuid);
-                return method.invoke(this.contentDaoExternal, args);
+                return this.invokeExternalDao(uuid, method, args);
             }
         }
         return method.invoke(this.contentDaoInternal, args);
+    }
+
+    private Object invokeExternalDao(String uuid, Method method, Object[] args) throws Throwable {
+        try {
+            LOG.info("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args)
+                    + " for external uuid: " + uuid);
+            return method.invoke(this.contentDaoExternal, args);
+        } catch (Exception e) {
+            LOG.error("EXTERNAL Exception caught when calling method " + method.getName() + " with args: "
+                    + Arrays.toString(args) + " for external uuid: " + uuid, e.getCause());
+            throw e;
+        }
     }
 
     private static String getExternalUuid(Object[] args) {

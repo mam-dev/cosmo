@@ -1,17 +1,23 @@
 package org.unitedinternet.cosmo.dao.external;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.ext.ContentSource;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
+import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
+import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
 /**
  * <code>ContentDao</code> that fetches calendar content from external providers.
@@ -21,8 +27,10 @@ import org.unitedinternet.cosmo.model.filter.ItemFilter;
  */
 public class ContentDaoExternal implements ContentDao {
 
-    public ContentDaoExternal() {
-        super();
+    private final ContentSource contentSource;
+
+    public ContentDaoExternal(ContentSource contentSource) {
+        this.contentSource = contentSource;
     }
 
     @Override
@@ -37,7 +45,37 @@ public class ContentDaoExternal implements ContentDao {
 
     @Override
     public Set<Item> findItems(ItemFilter filter) {
-        throw new UnsupportedOperationException();
+        Set<Item> items = new HashSet<>();
+        if (filter != null && filter.getParent() != null) {
+            CollectionItem calendarItem = filter.getParent();
+            CalendarCollectionStamp stamp = (CalendarCollectionStamp) calendarItem
+                    .getStamp(CalendarCollectionStamp.class);
+            if (stamp != null) {
+                String targetUri = stamp.getTargetUri();
+                if (this.contentSource.isContentFrom(targetUri)) {
+                    Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
+                    this.postProcess(noteItems);
+                    items.addAll(noteItems);
+                }
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Post process external <code>NoteItem</code>-s to make them ready to be displayed.
+     * 
+     * @param noteItems
+     *            note items to be processed.
+     */
+    private void postProcess(Set<NoteItem> noteItems) {
+        for (NoteItem item : noteItems) {
+            HibNoteItem hibItem = (HibNoteItem) item;
+            String eTag = hibItem.getEntityTag();
+            if (eTag == null || eTag.trim().isEmpty()) {
+                hibItem.setEntityTag(UUID.randomUUID().toString());
+            }
+        }
     }
 
     /* All below methods should not be called for external providers */

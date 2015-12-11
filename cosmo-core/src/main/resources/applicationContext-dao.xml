@@ -49,7 +49,17 @@
         </property>
     </bean>
     
-    <bean id="contentDaoExternal" class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal"></bean>
+    <bean id="entityConverter" class="org.unitedinternet.cosmo.model.hibernate.EntityConverter">
+    	<constructor-arg ref="cosmoEntityFactory"/>
+    </bean>
+    
+    <bean id="contentDaoExternal" class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">
+    	<constructor-arg>
+    		<bean class="org.unitedinternet.cosmo.ext.URIContentSource">
+    			<constructor-arg ref="entityConverter"/>
+    		</bean>
+    	</constructor-arg>
+    </bean>
     
     <bean id="contentDao" class="org.unitedinternet.cosmo.dao.external.ContentDaoProxyFactory">
     	<constructor-arg>

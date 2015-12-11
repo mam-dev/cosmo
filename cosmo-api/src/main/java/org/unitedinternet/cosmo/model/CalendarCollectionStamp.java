@@ -81,4 +81,8 @@ public interface CalendarCollectionStamp extends Stamp{
     public String getDisplayName();
 
     public void setDisplayName(String displayName) ;
+    
+    public String getTargetUri();
+    
+    public void setTargetUri(String targetUri);
 }

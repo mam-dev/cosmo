@@ -11,9 +11,12 @@ import java.util.Set;
 
 import org.unitedinternet.cosmo.model.NoteItem;
 
+/**
+ * @author corneliu dobrota
+ */
 public interface ContentSource {
 
     boolean isContentFrom(String uri);
     
-    Set<NoteItem> getContent();
+    Set<NoteItem> getContent(String uri);
 }

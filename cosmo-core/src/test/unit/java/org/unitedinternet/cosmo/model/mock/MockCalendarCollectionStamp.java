@@ -19,12 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.component.VTimeZone;
-
 import org.unitedinternet.cosmo.hibernate.validator.Timezone;
 import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
@@ -33,52 +27,58 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.hibernate.HibQName;
 
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.component.VTimeZone;
 
 /**
  * Represents a Calendar Collection.
  */
-public class MockCalendarCollectionStamp extends MockStamp implements
-        java.io.Serializable, ICalendarConstants, CalendarCollectionStamp {
-    
+@SuppressWarnings("serial")
+public class MockCalendarCollectionStamp extends MockStamp
+        implements java.io.Serializable, ICalendarConstants, CalendarCollectionStamp {
+
     // CalendarCollection specific attributes
-    public static final QName ATTR_CALENDAR_TIMEZONE = new MockQName(
-            CalendarCollectionStamp.class, "timezone");
-    
-    public static final QName ATTR_CALENDAR_DESCRIPTION = new MockQName(
-            CalendarCollectionStamp.class, "description");
-    
-    public static final QName ATTR_CALENDAR_LANGUAGE = new MockQName(
-            CalendarCollectionStamp.class, "language");
-    
-    public static final QName ATTR_CALENDAR_COLOR = new MockQName(
-            CalendarCollectionStamp.class, "color");
-    
-    public static final QName ATTR_CALENDAR_VISIBILITY = new MockQName(
-            CalendarCollectionStamp.class, "visibility");
-    
-    public static final QName ATTR_CALENDAR_DISPLAY_NAME = new HibQName(
-            CalendarCollectionStamp.class, "displayName");
-    
+    public static final QName ATTR_CALENDAR_TIMEZONE = new MockQName(CalendarCollectionStamp.class, "timezone");
+
+    public static final QName ATTR_CALENDAR_DESCRIPTION = new MockQName(CalendarCollectionStamp.class, "description");
+
+    public static final QName ATTR_CALENDAR_LANGUAGE = new MockQName(CalendarCollectionStamp.class, "language");
+
+    public static final QName ATTR_CALENDAR_COLOR = new MockQName(CalendarCollectionStamp.class, "color");
+
+    public static final QName ATTR_CALENDAR_VISIBILITY = new MockQName(CalendarCollectionStamp.class, "visibility");
+
+    public static final QName ATTR_CALENDAR_DISPLAY_NAME = new MockQName(CalendarCollectionStamp.class, "displayName");
+
+    public static final QName ATTR_CALENDAR_TARGET_URI = new MockQName(CalendarCollectionStamp.class, "targetUri");
+
     /** default constructor */
     public MockCalendarCollectionStamp() {
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#getType()
      */
     /**
      * Gets type.
+     * 
      * @return The type.
      */
     public String getType() {
         return "calendar";
     }
-    
+
     /**
      * Constructor.
-     * @param collection The collection item.
+     * 
+     * @param collection
+     *            The collection item.
      */
     public MockCalendarCollectionStamp(CollectionItem collection) {
         this();
@@ -86,20 +86,23 @@ public class MockCalendarCollectionStamp extends MockStamp implements
     }
 
     /**
-     * Copy.
-     * {@inheritDoc}
+     * Copy. {@inheritDoc}
+     * 
      * @return stamp
      */
     public Stamp copy() {
         CalendarCollectionStamp stamp = new MockCalendarCollectionStamp();
         return stamp;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#getDescription()
      */
     /**
      * Gets description.
+     * 
      * @return The description.
      */
     public String getDescription() {
@@ -107,12 +110,16 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         return MockStringAttribute.getValue(getItem(), ATTR_CALENDAR_DESCRIPTION);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#setDescription(java.lang.String)
      */
     /**
      * Sets description.
-     * @param description - The description.
+     * 
+     * @param description
+     *            - The description.
      * 
      */
     public void setDescription(String description) {
@@ -120,11 +127,14 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         MockStringAttribute.setValue(getItem(), ATTR_CALENDAR_DESCRIPTION, description);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#getLanguage()
      */
     /**
      * Gets language.
+     * 
      * @return The language.
      */
     public String getLanguage() {
@@ -132,23 +142,30 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         return MockStringAttribute.getValue(getItem(), ATTR_CALENDAR_LANGUAGE);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#setLanguage(java.lang.String)
      */
     /**
      * Sets language.
-     * @param language The language
+     * 
+     * @param language
+     *            The language
      */
     public void setLanguage(String language) {
         // language stored as StringAttribute on Item
         MockStringAttribute.setValue(getItem(), ATTR_CALENDAR_LANGUAGE, language);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#getTimezoneCalendar()
      */
     /**
      * Gets timezone.
+     * 
      * @return calendar.
      */
     @Timezone
@@ -157,11 +174,14 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         return MockICalendarAttribute.getValue(getItem(), ATTR_CALENDAR_TIMEZONE);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#getTimezone()
      */
     /**
      * Gets timezone.
+     * 
      * @return timezone.
      */
     public TimeZone getTimezone() {
@@ -172,12 +192,15 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         VTimeZone vtz = (VTimeZone) timezone.getComponents().getComponent(Component.VTIMEZONE);
         return new TimeZone(vtz);
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#getTimezoneName()
      */
     /**
      * Gets timezone name.
+     * 
      * @return The timezone.
      */
     public String getTimezoneName() {
@@ -185,32 +208,41 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         if (timezone == null) {
             return null;
         }
-        return timezone.getComponents().getComponent(Component.VTIMEZONE).
-            getProperties().getProperty(Property.TZID).getValue();
+        return timezone.getComponents().getComponent(Component.VTIMEZONE).getProperties().getProperty(Property.TZID)
+                .getValue();
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#setTimezoneCalendar(net.fortuna.ical4j.model.Calendar)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.unitedinternet.cosmo.model.copy.InterfaceCalendarCollectionStamp#setTimezoneCalendar(net.fortuna.ical4j.model
+     * .Calendar)
      */
     /**
      * Sets timezone calendar.
-     * @param timezone The timezone.
+     * 
+     * @param timezone
+     *            The timezone.
      */
     public void setTimezoneCalendar(Calendar timezone) {
         // timezone stored as ICalendarAttribute on Item
         MockICalendarAttribute.setValue(getItem(), ATTR_CALENDAR_TIMEZONE, timezone);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.CalendarCollectionStamp#getEventStamps()
      */
     /**
      * Gets event stamps.
+     * 
      * @return The events.
      */
     public Set<EventStamp> getEventStamps() {
         Set<EventStamp> events = new HashSet<EventStamp>();
-        for (Iterator<Item> i= ((CollectionItem) getItem()).getChildren().iterator(); i.hasNext();) {
+        for (Iterator<Item> i = ((CollectionItem) getItem()).getChildren().iterator(); i.hasNext();) {
             Item child = i.next();
             Stamp stamp = child.getStamp(EventStamp.class);
             if (stamp != null) {
@@ -219,10 +251,12 @@ public class MockCalendarCollectionStamp extends MockStamp implements
         }
         return events;
     }
-    
+
     /**
      * Return CalendarCollectionStamp from Item
-     * @param item The item
+     * 
+     * @param item
+     *            The item
      * @return CalendarCollectionStamp from Item
      */
     public static CalendarCollectionStamp getStamp(Item item) {
@@ -244,7 +278,7 @@ public class MockCalendarCollectionStamp extends MockStamp implements
     public void setColor(String color) {
         // color stored as StringAttribute on Item
         MockStringAttribute.setValue(getItem(), ATTR_CALENDAR_COLOR, color);
-        
+
     }
 
     @Override
@@ -257,9 +291,9 @@ public class MockCalendarCollectionStamp extends MockStamp implements
     public void setVisibility(Boolean visibility) {
         // color stored as BooleanAttribute on Item
         MockBooleanAttribute.setValue(getItem(), ATTR_CALENDAR_VISIBILITY, visibility);
-        
+
     }
-    
+
     @Override
     public String getDisplayName() {
         return MockStringAttribute.getValue(getItem(), ATTR_CALENDAR_DISPLAY_NAME);
@@ -268,6 +302,16 @@ public class MockCalendarCollectionStamp extends MockStamp implements
     @Override
     public void setDisplayName(String displayName) {
         MockStringAttribute.setValue(getItem(), ATTR_CALENDAR_DISPLAY_NAME, displayName);
-        
+
+    }
+
+    @Override
+    public String getTargetUri() {
+        return MockStringAttribute.getValue(getItem(), ATTR_CALENDAR_TARGET_URI);
+    }
+
+    @Override
+    public void setTargetUri(String targetUri) {
+        MockStringAttribute.setValue(getItem(), ATTR_CALENDAR_TARGET_URI, targetUri);
     }
 }
