@@ -598,4 +598,12 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<scm>
+		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
+		<url>https://github.com/1and1/</url>
+		<tag>cosmo-multimodule-0.9</tag>
+	</scm>
+
 </project>
