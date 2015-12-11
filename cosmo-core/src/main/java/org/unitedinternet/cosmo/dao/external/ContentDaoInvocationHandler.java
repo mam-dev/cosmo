@@ -42,7 +42,8 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
                 return this.invokeExternalDao(uuid, method, args);
             }
         }
-        return method.invoke(this.contentDaoInternal, args);
+        return this.invokeInternalDao(method, args);
+
     }
 
     private Object invokeExternalDao(String uuid, Method method, Object[] args) throws Throwable {
@@ -51,9 +52,18 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
                     + " for external uuid: " + uuid);
             return method.invoke(this.contentDaoExternal, args);
         } catch (Exception e) {
+            Throwable unwrapped = unwrap(e);
             LOG.error("EXTERNAL Exception caught when calling method " + method.getName() + " with args: "
-                    + Arrays.toString(args) + " for external uuid: " + uuid, e.getCause());
-            throw e;
+                    + Arrays.toString(args) + " for external uuid: " + uuid, unwrapped);
+            throw unwrapped;
+        }
+    }
+
+    private Object invokeInternalDao(Method method, Object[] args) throws Throwable {
+        try {
+            return method.invoke(this.contentDaoInternal, args);
+        } catch (Exception e) {
+            throw unwrap(e);
         }
     }
 
@@ -78,5 +88,13 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
             }
         }
         return null;
+    }
+
+    private static Throwable unwrap(Throwable t) {
+        Throwable unwrapped = t;
+        while (unwrapped.getCause() != null) {
+            unwrapped = t.getCause();
+        }
+        return unwrapped;
     }
 }
