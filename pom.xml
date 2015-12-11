@@ -18,7 +18,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>0.9</version>
+	<version>0.93-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
