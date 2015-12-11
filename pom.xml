@@ -109,10 +109,7 @@
 			<organization>1 and 1</organization>
 		</developer>
 	</developers>
-	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/aaaa</developerConnection>
-	  <tag>cosmo-multimodule-0.9</tag>
-  </scm>
+
 	<modules>
 		<module>cosmo-api</module>
 		<module>cosmo-core</module>
