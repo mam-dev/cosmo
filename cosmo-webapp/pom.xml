@@ -64,5 +64,6 @@
 
      <scm>
         <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
-    </scm>
+      <tag>cosmo-multimodule-0.9</tag>
+  </scm>
 </project>
