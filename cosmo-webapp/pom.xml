@@ -3,7 +3,7 @@
     <parent>
         <artifactId>cosmo-multimodule</artifactId>
         <groupId>net.oneandone.cosmo</groupId>
-        <version>0.9</version>
+        <version>0.93</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>net.oneandone.cosmo</groupId>
             <artifactId>cosmo-core</artifactId>
-            <version>0.93-SNAPSHOT</version>
+            <version>0.93</version>
         </dependency>
         <dependency>
 		    <groupId>commons-dbcp</groupId>
@@ -64,6 +64,6 @@
 
      <scm>
         <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
-      <tag>cosmo-multimodule-0.9</tag>
+      <tag>cosmo-multimodule-0.93</tag>
   </scm>
 </project>
