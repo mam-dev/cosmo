@@ -2,6 +2,7 @@ package org.unitedinternet.cosmo.ext;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
@@ -34,9 +35,12 @@ public class URIContentSource implements ContentSource {
 
     private final EntityConverter entityConverter;
 
-    public URIContentSource(EntityConverter entityConverter) {
+    private final Proxy proxy;
+
+    public URIContentSource(EntityConverter entityConverter, Proxy proxy) {
         super();
         this.entityConverter = entityConverter;
+        this.proxy = proxy;
     }
 
     @Override
@@ -67,7 +71,7 @@ public class URIContentSource implements ContentSource {
         InputStream input = null;
         try {
             URL url = new URL(uri);
-            URLConnection connection = url.openConnection();
+            URLConnection connection = url.openConnection(this.proxy);
             connection.setReadTimeout(TIMEOUT);
             connection.setConnectTimeout(TIMEOUT);
             connection.connect();

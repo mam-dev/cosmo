@@ -57,8 +57,12 @@
     	<constructor-arg>
     		<bean class="org.unitedinternet.cosmo.ext.URIContentSource">
     			<constructor-arg ref="entityConverter"/>
+    			<constructor-arg>
+    				<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
+    			</constructor-arg>
     		</bean>
     	</constructor-arg>
+    	<constructor-arg ref="contentDaoInternal"/>
     </bean>
     
     <bean id="contentDao" class="org.unitedinternet.cosmo.dao.external.ContentDaoProxyFactory">

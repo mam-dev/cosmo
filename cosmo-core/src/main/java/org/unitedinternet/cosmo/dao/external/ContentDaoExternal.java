@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.ext.ContentSource;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
@@ -27,20 +29,58 @@ import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
  */
 public class ContentDaoExternal implements ContentDao {
 
+    private static final Log LOG = LogFactory.getLog(ContentDaoExternal.class);
+
     private final ContentSource contentSource;
 
-    public ContentDaoExternal(ContentSource contentSource) {
+    private final ContentDao contentDaoInternal;
+
+    public ContentDaoExternal(ContentSource contentSource, ContentDao contentDaoInternal) {
         this.contentSource = contentSource;
+        this.contentDaoInternal = contentDaoInternal;
     }
 
     @Override
     public Item findItemByPath(String path) {
-        throw new UnsupportedOperationException();
+        PathSegments extPath = new PathSegments(path);
+        String homeUid = extPath.getHomeUid();
+        if (homeUid == null || homeUid.trim().isEmpty()) {
+            throw new IllegalArgumentException("Home path path cannot be null or empty.");
+        }
+        String collectionUid = extPath.getCollectionUid();
+        if (collectionUid == null || collectionUid.trim().isEmpty()) {
+            throw new IllegalArgumentException("Collection path cannot be null or empty.");
+        }
+        Item collectionItem = this.contentDaoInternal.findItemByPath(collectionUid, homeUid);
+        if (collectionItem == null) {
+            throw new IllegalArgumentException("Could not find collection for path: " + homeUid + "/" + collectionUid);
+        }
+        String eventUid = extPath.getEventUid();
+        if (eventUid == null || eventUid.trim().isEmpty()) {
+            // It means the query only looks for the CollectionItem
+            // TODO it might be necessary to fill the children as well
+            LOG.info("EXTERNAL Returning collection item from DB with uid:" + collectionUid);
+            return collectionItem;
+        } else {
+            // Return the NoteItem
+            ItemFilter filter = new ItemFilter();
+            filter.setParent((CollectionItem) collectionItem);
+            Set<Item> items = this.findItems(filter);
+            for (Item item : items) {
+                if (item.getUid() != null && item.getUid().equals(eventUid)) {
+                    LOG.info("EXTERNAL Returning item from memory with uid:" + collectionUid);
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public Item findItemByPath(String path, String parentUid) {
-        throw new UnsupportedOperationException();
+        // TODO Also it might be necessary to fill in the children
+        LOG.info("EXTERNAL Delegating call to internal for parentUid: " + parentUid + " and path: " + path);
+        return this.contentDaoInternal.findItemByPath(path, parentUid);
     }
 
     @Override
