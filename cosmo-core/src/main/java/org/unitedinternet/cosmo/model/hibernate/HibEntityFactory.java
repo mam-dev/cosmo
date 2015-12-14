@@ -19,8 +19,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.UUID;
 
-
+import org.unitedinternet.cosmo.dao.external.CalendarUuidGenerator;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BinaryAttribute;
 import org.unitedinternet.cosmo.model.CalendarAttribute;
@@ -62,6 +63,25 @@ public class HibEntityFactory implements EntityFactory {
         return new HibCollectionItem();
     }
 
+    public CollectionItem createCollection(String targetUri) {
+        CollectionItem createdCollection = new HibCollectionItem();
+        CalendarCollectionStamp colorStamp = createCalendarCollectionStamp(createdCollection);
+        createdCollection.setUid(getCalendarUuid(targetUri != null));
+        createdCollection.setName(UUID.randomUUID().toString());        
+        if (targetUri != null) {
+            colorStamp.setTargetUri(targetUri);
+        }
+        createdCollection.addStamp(colorStamp);
+        return createdCollection;
+    }
+
+    private String getCalendarUuid(boolean isExternalCalendar) {
+        if (!isExternalCalendar) {
+            return UUID.randomUUID().toString();
+        }
+        return CalendarUuidGenerator.genererate();
+    }
+    
     public NoteItem createNote() {
         return new HibNoteItem();
     }

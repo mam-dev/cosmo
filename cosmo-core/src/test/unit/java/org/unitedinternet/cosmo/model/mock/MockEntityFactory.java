@@ -65,6 +65,10 @@ public class MockEntityFactory implements EntityFactory {
         return new MockCollectionItem();
     }
     
+    public CollectionItem createCollection(String targetUri) {
+        return new MockCollectionItem();
+    }
+    
     /**
      * Creates note.
      * {@inheritDoc}
