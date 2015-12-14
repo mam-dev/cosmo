@@ -76,14 +76,14 @@ public class URIContentSource implements ContentSource {
             calendar.validate();
             return calendar;
         } catch (IOException | ParserException | ValidationException e) {
-            LOG.error("Exception occured when reading content from " + uri);
+            LOG.error("Exception occured when reading content from " + uri, e);
         } finally {
             try {
                 if (input != null) {
                     input.close();
                 }
             } catch (IOException e) {
-                LOG.error("Exception occured when closing stream for " + uri);
+                LOG.error("Exception occured when closing stream for " + uri, e);
             }
         }
         return null;
