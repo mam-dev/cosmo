@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
@@ -46,9 +47,7 @@ public class SpringContextInitializerListener implements ServletContextListener{
 	        }
         }catch(Throwable t){
         	LOGGER.error("Exception occured", t);
-        }
-        
-        System.out.println();
+        }        
     }
 
     private ApplicationContext createSpringApplicationContext(ServletContext servletContext){
@@ -74,7 +73,7 @@ public class SpringContextInitializerListener implements ServletContextListener{
         
         @SuppressWarnings("resource")
         GenericXmlApplicationContext cosmoAppCtxt = new GenericXmlApplicationContext();
-        
+        cosmoAppCtxt.setEnvironment((ConfigurableEnvironment) wac.getEnvironment());
         cosmoAppCtxt.load(cosmoContextLocation);
         cosmoAppCtxt.refresh();
         cosmoAppCtxt.start();
