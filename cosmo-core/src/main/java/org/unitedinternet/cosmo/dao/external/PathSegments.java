@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Represents the path segments as they might appear in the CALDAV requests. e.g. /homeUid/collectionUid/eventUid.
  * 
  * @author daniel grigore
  * @author corneliu dobrota

@@ -34,7 +34,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.dao.external.CalendarUuidGenerator;
+import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
@@ -452,7 +452,7 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
         Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
         Item item = this.getItem();
         if (item instanceof CollectionItem) {
-            if (CalendarUuidGenerator.containsExternalUid(item.getUid())) {
+            if (UuidExternalGenerator.containsExternalUid(item.getUid())) {
                 // External collection are read-only.
                 privileges.remove(DavPrivilege.WRITE);
             }

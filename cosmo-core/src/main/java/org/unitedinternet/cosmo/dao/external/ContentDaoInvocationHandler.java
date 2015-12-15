@@ -82,8 +82,8 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
                         path = parent.getUid();
                     }
                 }
-                if (path != null && CalendarUuidGenerator.containsExternalUid(path)) {
-                    return CalendarUuidGenerator.extractUuid(path);
+                if (path != null && UuidExternalGenerator.containsExternalUid(path)) {
+                    return UuidExternalGenerator.extractUuid(path);
                 }
             }
         }

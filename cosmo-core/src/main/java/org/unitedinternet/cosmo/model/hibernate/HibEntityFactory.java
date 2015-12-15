@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.UUID;
 
-import org.unitedinternet.cosmo.dao.external.CalendarUuidGenerator;
+import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BinaryAttribute;
 import org.unitedinternet.cosmo.model.CalendarAttribute;
@@ -52,36 +52,35 @@ import org.unitedinternet.cosmo.util.VersionFourGenerator;
 import org.w3c.dom.Element;
 
 /**
- * EntityFactory implementation that uses Hibernate 
- * persistent objects.
+ * EntityFactory implementation that uses Hibernate persistent objects.
  */
 public class HibEntityFactory implements EntityFactory {
 
     private VersionFourGenerator idGenerator = new VersionFourGenerator();
-    
+
     public CollectionItem createCollection() {
         return new HibCollectionItem();
     }
 
     public CollectionItem createCollection(String targetUri) {
-        CollectionItem createdCollection = new HibCollectionItem();
-        CalendarCollectionStamp colorStamp = createCalendarCollectionStamp(createdCollection);
-        createdCollection.setUid(getCalendarUuid(targetUri != null));
-        createdCollection.setName(UUID.randomUUID().toString());        
+        CollectionItem collection = new HibCollectionItem();
+        CalendarCollectionStamp colorStamp = createCalendarCollectionStamp(collection);
+        collection.setUid(getNextCalendarUuid(targetUri != null));
+        collection.setName(UUID.randomUUID().toString());
         if (targetUri != null) {
             colorStamp.setTargetUri(targetUri);
         }
-        createdCollection.addStamp(colorStamp);
-        return createdCollection;
+        collection.addStamp(colorStamp);
+        return collection;
     }
 
-    private String getCalendarUuid(boolean isExternalCalendar) {
+    private String getNextCalendarUuid(boolean isExternalCalendar) {
         if (!isExternalCalendar) {
-            return UUID.randomUUID().toString();
+            return this.generateUid();
         }
-        return CalendarUuidGenerator.genererate();
+        return UuidExternalGenerator.getNext();
     }
-    
+
     public NoteItem createNote() {
         return new HibNoteItem();
     }
