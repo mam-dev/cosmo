@@ -10,7 +10,6 @@ package org.unitedinternet.cosmo.api;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -125,9 +124,5 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-    }
-    
-	private static boolean isConcreteClass(Class<?> clazz){
-    	return  !Modifier.isAbstract(clazz.getModifiers());
     }
 }

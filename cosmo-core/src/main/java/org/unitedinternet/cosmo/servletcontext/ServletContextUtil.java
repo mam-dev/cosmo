@@ -8,29 +8,39 @@
 package org.unitedinternet.cosmo.servletcontext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.unitedinternet.cosmo.CosmoIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServletContextUtil {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServletContextUtil.class);
+	
     public static final String PROPERTIES_LOCATION = "propertiesLocation";
     
     public static Properties extractApplicationProperties(ServletContext servletContext) {
-        String propertiesLocation = servletContext
-                .getInitParameter(PROPERTIES_LOCATION);
-
-        if (propertiesLocation == null) {
-            return null;
-        }
+        String propertiesLocation = servletContext.getInitParameter(PROPERTIES_LOCATION);
 
         Properties props = new Properties();
+        InputStream is = ServletContextUtil.class.getResourceAsStream(propertiesLocation); 
+        
+        if (propertiesLocation == null || is == null) {
+            return props;
+        }
 
         try {
-            props.load(ServletContextUtil.class.getResourceAsStream(propertiesLocation));
+            props.load(is);
         } catch (IOException e) {
-            throw new CosmoIOException("Could not load " + propertiesLocation, e);
+            LOGGER.warn("Unable to load properties from location [{}]", propertiesLocation);
+        }finally{
+        	try {
+				is.close();
+			} catch (IOException e) {
+				LOGGER.error("Colud not close input stream");
+			}
         }
         return props;
     }

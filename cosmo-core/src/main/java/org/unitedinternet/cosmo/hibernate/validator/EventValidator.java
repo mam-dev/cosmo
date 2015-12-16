@@ -131,7 +131,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
         
         private static final String ATTENDEES_MAX_LENGTH_KEY = "cosmo.event.validation.attendees.max.length";
         
-        private static final String PROPERTIES_FILE = "/etc/cosmo.properties";
+        private static final String PROPERTIES_FILE = "/etc/application.properties";
         
         private Set<String> allowedRecurrenceFrequencies = new HashSet<>(5);
         

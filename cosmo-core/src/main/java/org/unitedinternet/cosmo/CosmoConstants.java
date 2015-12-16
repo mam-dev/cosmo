@@ -24,7 +24,6 @@ import java.util.Properties;
  * Defines server-wide constant attributes.
  */
 public final class CosmoConstants {
-
     // cannot be instantiated
     private CosmoConstants() {
     }
@@ -79,7 +78,7 @@ public final class CosmoConstants {
     
     private static final String LOCALE_KEY = "application.locale";
     
-    private static final String PROPERTIES_FILE = "/etc/cosmo.properties"; 
+    private static final String PROPERTIES_FILE = "/etc/application.properties"; 
     
     private static final Locale FALLBACK_LOCALE = Locale.GERMAN;
     
@@ -91,8 +90,8 @@ public final class CosmoConstants {
 
         // form the product Id using current build version
         PRODUCT_ID = new StringBuilder(PRODUCT_NAME)
-                .append(" ").append(PRODUCT_VERSION).append(PRODUCT_SUFFIX)
-                .toString();
+						                .append(" ").append(PRODUCT_VERSION).append(PRODUCT_SUFFIX)
+						                .toString();
 
         String localeKey = props.getProperty(LOCALE_KEY);
         LANGUAGE_LOCALE = getLocaleFor(localeKey);
@@ -102,22 +101,14 @@ public final class CosmoConstants {
      * @return Properties
      */
     private static Properties loadCosmoProperties() {
-        InputStream is = CosmoConstants.class.getResourceAsStream(PROPERTIES_FILE);
+        
         Properties props = new Properties();
         
-        try {
+        try(InputStream is = CosmoConstants.class.getResourceAsStream(PROPERTIES_FILE)) {
             props.load(is);
         } catch (IOException e) {
-            throw new CosmoIOException(e); 
-        }finally{
-            if(is!= null){
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    throw new CosmoIOException(e);
-                }
-            }
-        }
+			
+		} 
         return props;
     }
     

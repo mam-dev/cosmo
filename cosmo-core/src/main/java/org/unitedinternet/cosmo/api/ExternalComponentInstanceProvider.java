@@ -39,8 +39,7 @@ public class ExternalComponentInstanceProvider {
         
         Set<T> result = new HashSet<>(1);
         
-        LOGGER.info("Found [{}] type(s) [{}] annotated with [{}]",  
-                new String[]{String.valueOf(descriptions.size()), superType.getName(), metadata.getName()});
+        LOGGER.info("Found [{}] type(s) [{}] annotated with [{}]",  descriptions.size(), superType.getName(), metadata.getName());
         
         for(ExternalComponentDescriptor<? extends T> description : descriptions){
             

@@ -38,7 +38,7 @@
 	
     <context-param>
         <param-name>propertiesLocation</param-name>
-        <param-value>/etc/cosmo.properties</param-value>
+        <param-value>/etc/application.properties</param-value>
     </context-param>
     
     <listener>

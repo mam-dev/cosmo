@@ -7,6 +7,9 @@
  */
 package org.unitedinternet.cosmo.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
@@ -17,9 +20,20 @@ import org.slf4j.LoggerFactory;
 public class DefaultExternalComponentFactory implements ExternalComponentFactory{
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExternalComponentFactory.class);
     
-    public <T, R extends T> R instanceForDescriptor(ExternalComponentDescriptor<R> desc){
+    private ThreadLocal<Map<Class<?>, Object>> cacheHolder = new ThreadLocal<Map<Class<?>, Object>>(){
+    	protected Map<Class<?>, Object> initialValue(){
+			return new HashMap<>();
+    	}
+    };
+    
+	public <T, R extends T> R instanceForDescriptor(ExternalComponentDescriptor<R> desc){
         try {
-            R result = (R)desc.getImplementationClass().newInstance();
+        	@SuppressWarnings("unchecked")
+        	R result = (R)cacheHolder.get().get(desc.getImplementationClass());
+        	if(result == null){
+        		result = (R)desc.getImplementationClass().newInstance();
+        		cacheHolder.get().put(desc.getImplementationClass(), result);
+        	}
             LOGGER.info("Created instance of type [{}]", desc.getImplementationClass().getName());
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
