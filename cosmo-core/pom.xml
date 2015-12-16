@@ -12,11 +12,11 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>0.95-SNAPSHOT</version>
+		<version>0.95</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>
-	<version>0.95-SNAPSHOT</version>
+	<version>0.95</version>
 
 	<properties>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
 			<artifactId>cosmo-api</artifactId>
-			<version>0.95-SNAPSHOT</version>
+			<version>0.95</version>
 		</dependency>
 
 		<!-- Apache commons -->
@@ -507,6 +507,6 @@
 
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
-	  <tag>cosmo-multimodule-0.9</tag>
+	  <tag>cosmo-multimodule-0.95</tag>
   </scm>
 </project>
