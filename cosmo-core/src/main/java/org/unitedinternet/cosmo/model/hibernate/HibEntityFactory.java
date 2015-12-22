@@ -19,9 +19,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.UUID;
 
-import org.unitedinternet.cosmo.dao.external.CalendarUuidGenerator;
+import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BinaryAttribute;
 import org.unitedinternet.cosmo.model.CalendarAttribute;
@@ -52,13 +51,12 @@ import org.unitedinternet.cosmo.util.VersionFourGenerator;
 import org.w3c.dom.Element;
 
 /**
- * EntityFactory implementation that uses Hibernate 
- * persistent objects.
+ * EntityFactory implementation that uses Hibernate persistent objects.
  */
 public class HibEntityFactory implements EntityFactory {
 
     private VersionFourGenerator idGenerator = new VersionFourGenerator();
-    
+
     public CollectionItem createCollection() {
         return new HibCollectionItem();
     }
@@ -66,9 +64,12 @@ public class HibEntityFactory implements EntityFactory {
     public CollectionItem createCollection(String targetUri) {
         CollectionItem createdCollection = new HibCollectionItem();
         CalendarCollectionStamp colorStamp = createCalendarCollectionStamp(createdCollection);
+        
         boolean isExternalUrl = targetUri != null;
+        
         createdCollection.setUid(getCalendarUuid(isExternalUrl));
         createdCollection.setName(getCalendarUuid(isExternalUrl));        
+
         if (targetUri != null) {
             colorStamp.setTargetUri(targetUri);
         }
@@ -78,11 +79,11 @@ public class HibEntityFactory implements EntityFactory {
 
     private String getCalendarUuid(boolean isExternalCalendar) {
         if (!isExternalCalendar) {
-            return UUID.randomUUID().toString();
+            return this.generateUid();
         }
-        return CalendarUuidGenerator.genererate();
+        return UuidExternalGenerator.getNext();
     }
-    
+
     public NoteItem createNote() {
         return new HibNoteItem();
     }

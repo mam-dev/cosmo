@@ -38,7 +38,7 @@ public class ContentDaoInvocationHandlerTest {
        
     @Test
     public void shouldSuccessfullyDelegateCallToInternalDaoForNonExternalizableMethod() {
-        String uuid = CalendarUuidGenerator.genererate();
+        String uuid = UuidExternalGenerator.getNext();
         this.contentDaoProxy.findItemParentByPath(uuid);
         verify(contentDaoInternal, times(1)).findItemParentByPath(uuid);
     }
@@ -55,7 +55,7 @@ public class ContentDaoInvocationHandlerTest {
     @Test
     public void shouldSuccessfullyDelegateMethodToExternalDao()
             throws NoSuchMethodException, SecurityException, Throwable {
-        String uuid = CalendarUuidGenerator.genererate();
+        String uuid = UuidExternalGenerator.getNext();
         this.contentDaoProxy.findItemByPath(uuid);
         verify(contentDaoInternal, times(0)).findItemByPath(uuid);
         verify(contentDaoExternal, times(1)).findItemByPath(uuid);
@@ -72,7 +72,7 @@ public class ContentDaoInvocationHandlerTest {
     public void shouldSuccessfullyDelegateToExternalDaoWhenCallingFindItems() {
         NoteItemFilter filter = new NoteItemFilter();
         CollectionItem parent = new HibCollectionItem();
-        parent.setUid(CalendarUuidGenerator.genererate());
+        parent.setUid(UuidExternalGenerator.getNext());
         filter.setParent(parent);
         this.contentDaoProxy.findItems(filter);
         verify(contentDaoExternal, times(1)).findItems(filter);

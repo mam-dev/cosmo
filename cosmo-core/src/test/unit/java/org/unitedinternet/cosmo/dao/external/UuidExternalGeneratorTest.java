@@ -15,66 +15,66 @@ import org.junit.Test;
  * @author daniel grigore
  *
  */
-public class CalendarUuidGeneratorTest {
+public class UuidExternalGeneratorTest {
 
     @Test
     public void shouldSuccessfullyGenerateUUID() {
-        String uuid = CalendarUuidGenerator.genererate();
+        String uuid = UuidExternalGenerator.getNext();
         assertNotNull(uuid);
-        assertTrue(uuid.startsWith(CalendarUuidGenerator.EXPRESSION_PREFIX));
-        assertTrue(uuid.endsWith(CalendarUuidGenerator.EXPRESSION_SUFFIX));
+        assertTrue(uuid.startsWith(UuidExternalGenerator.EXPRESSION_PREFIX));
+        assertTrue(uuid.endsWith(UuidExternalGenerator.EXPRESSION_SUFFIX));
     }
 
     @Test
     public void shouldFindNullAsNoExternalUUid() {
-        assertFalse(CalendarUuidGenerator.containsExternalUid(null));
+        assertFalse(UuidExternalGenerator.containsExternalUid(null));
     }
 
     @Test
     public void shouldFindRandomStringAsNotExternalUUid() {
-        assertFalse(CalendarUuidGenerator.containsExternalUid(UUID.randomUUID().toString()));
+        assertFalse(UuidExternalGenerator.containsExternalUid(UUID.randomUUID().toString()));
     }
 
     @Test
     public void shouldSuccessfullyFindUuidAsExternal() {
-        String uuid = CalendarUuidGenerator.genererate();
-        assertTrue(CalendarUuidGenerator.containsExternalUid(uuid));
+        String uuid = UuidExternalGenerator.getNext();
+        assertTrue(UuidExternalGenerator.containsExternalUid(uuid));
     }
 
     @Test
     public void shouldSuccessfullyFindPathWithUuidAsExternal() {
-        String uuid = CalendarUuidGenerator.genererate();
+        String uuid = UuidExternalGenerator.getNext();
         StringBuilder sb = new StringBuilder();
         sb.append(UUID.randomUUID().toString()).append("/").append(uuid).append("/")
                 .append(UUID.randomUUID().toString());
         String path = sb.toString();
-        assertTrue(CalendarUuidGenerator.containsExternalUid(path));
+        assertTrue(UuidExternalGenerator.containsExternalUid(path));
     }
 
     @Test
     public void shouldReturnNullWhenExtractingUuuidFromNull() {
-        String uuid = CalendarUuidGenerator.extractUuid(null);
+        String uuid = UuidExternalGenerator.extractUuid(null);
         assertNull(uuid);
     }
 
     @Test
     public void shouldReturnNullWhenExtractingUuuidFromRandomString() {
-        String uuid = CalendarUuidGenerator.extractUuid(UUID.randomUUID().toString());
+        String uuid = UuidExternalGenerator.extractUuid(UUID.randomUUID().toString());
         assertNull(uuid);
     }
 
     @Test
     public void shouldSuccessfullyExtractUuidFromSelf() {
-        String uuid = CalendarUuidGenerator.genererate();
-        String extractedUuid = CalendarUuidGenerator.extractUuid(uuid);
+        String uuid = UuidExternalGenerator.getNext();
+        String extractedUuid = UuidExternalGenerator.extractUuid(uuid);
         assertEquals(uuid, extractedUuid);
     }
 
     @Test
     public void shouldSuccessfullyExtractUuidFromPath() {
-        String uuid = CalendarUuidGenerator.genererate();
+        String uuid = UuidExternalGenerator.getNext();
         String path = UUID.randomUUID().toString() + "/" + uuid + "/" + UUID.randomUUID().toString();
-        String extractedUuid = CalendarUuidGenerator.extractUuid(path);
+        String extractedUuid = UuidExternalGenerator.extractUuid(path);
         assertEquals(uuid, extractedUuid);
     }
 }

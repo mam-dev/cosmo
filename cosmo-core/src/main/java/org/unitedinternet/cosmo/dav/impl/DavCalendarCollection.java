@@ -34,7 +34,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.dao.external.CalendarUuidGenerator;
+import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
@@ -474,6 +474,6 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
     }
     
     private static boolean hasExternalContent(Item item){
-        return item instanceof CollectionItem && CalendarUuidGenerator.containsExternalUid(item.getUid());  
+        return item instanceof CollectionItem && UuidExternalGenerator.containsExternalUid(item.getUid());  
     }
 }

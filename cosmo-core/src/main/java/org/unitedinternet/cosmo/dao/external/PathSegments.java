@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import com.mysql.jdbc.StringUtils;
 
 /**
+ * Represents the path segments as they might appear in the CALDAV requests. e.g. /homeUid/collectionUid/eventUid.
  * 
  * @author daniel grigore
  * @author corneliu dobrota
