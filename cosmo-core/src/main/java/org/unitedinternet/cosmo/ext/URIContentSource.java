@@ -54,12 +54,14 @@ public class URIContentSource implements ContentSource {
         Calendar calendar = this.readFrom(uri);
         if (calendar != null) {
             Set<ICalendarItem> calendarItems = this.entityConverter.convertCalendar(calendar);
+            
             for (ICalendarItem item : calendarItems) {
                 /**
                  * Only VEVENT are supported currently. VTODO or VJOURNAL are not yet supported.
                  */
                 if (item instanceof NoteItem) {
                     items.add((NoteItem) item);
+                    item.setName(item.getIcalUid() + ".ics");
                 }
             }
 

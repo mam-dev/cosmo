@@ -492,7 +492,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         acl.getAces().add(unauthenticated);
 
         DavAce owner = new DavAce.PropertyAce(OWNER);
-        owner.getPrivileges().add(DavPrivilege.ALL);
+        owner.getPrivileges().add(DavPrivilege.READ);
         owner.setProtected(true);
         acl.getAces().add(owner);
 

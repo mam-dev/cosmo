@@ -24,7 +24,7 @@ public class PathSegmentsTest {
     public void shouldGetEmptyStringsForEmptyPath() {
         PathSegments path = new PathSegments("");
         assertNotNull(path);
-        assertTrue(path.getHomeUid().isEmpty());
+        assertTrue(path.getHomeCollectionUid().isEmpty());
         assertTrue(path.getCollectionUid().isEmpty());
         assertTrue(path.getEventUid().isEmpty());
     }
@@ -33,7 +33,7 @@ public class PathSegmentsTest {
     public void shouldSuccessfullyCreatePathWithOnlyHome() {
         String home = UUID.randomUUID().toString();
         PathSegments path = new PathSegments("/" + home);
-        assertEquals(home, path.getHomeUid());
+        assertEquals(home, path.getHomeCollectionUid());
         assertTrue(path.getCollectionUid().isEmpty());
         assertTrue(path.getEventUid().isEmpty());
     }
@@ -43,7 +43,7 @@ public class PathSegmentsTest {
         String home = UUID.randomUUID().toString();
         String collection = UUID.randomUUID().toString();
         PathSegments path = new PathSegments("/" + home + "/" + collection);
-        assertEquals(home, path.getHomeUid());
+        assertEquals(home, path.getHomeCollectionUid());
         assertEquals(collection, path.getCollectionUid());
         assertTrue(path.getEventUid().isEmpty());
     }
@@ -54,7 +54,7 @@ public class PathSegmentsTest {
         String collection = UUID.randomUUID().toString();
         String event = UUID.randomUUID().toString();
         PathSegments path = new PathSegments("/" + home + "/" + collection + "/" + event);
-        assertEquals(home, path.getHomeUid());
+        assertEquals(home, path.getHomeCollectionUid());
         assertEquals(collection, path.getCollectionUid());
         assertEquals(event, path.getEventUid());
     }

@@ -1,7 +1,11 @@
 package org.unitedinternet.cosmo.dao.external;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.mysql.jdbc.StringUtils;
 
 /**
  * 
@@ -9,17 +13,15 @@ import java.util.regex.Pattern;
  * @author corneliu dobrota
  *
  */
-public class PathSegments {
+class PathSegments {
 
-    private static final String QUERY_REGEX = "[\\-a-zA-Z0-9@:%\\._\\+~#=]*";
+    private static final String PATH_SEGMENT_REGEX = "[\\-a-zA-Z0-9@:%\\._\\+~#=]*";
+    private static final String URI_REGEX = "/?(?<homeCollectionUid>%s)?/?(?<collectionUid>%s)?/?(?<eventUid>%s)?";
+    private static final String ALL_REGEX = String.format(URI_REGEX, PATH_SEGMENT_REGEX, PATH_SEGMENT_REGEX, PATH_SEGMENT_REGEX);
 
-    private static final String ALL_REGEX = String.format(
-            "/?(?<homeCollectionUid>%s)?/?(?<collectionUid>%s)?/?(?<eventUid>%s)?", QUERY_REGEX, QUERY_REGEX,
-            QUERY_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(ALL_REGEX);
 
-    private final Pattern PATTERN = Pattern.compile(ALL_REGEX);
-
-    private final String homeUid;
+    private final String homeCollectionUid;
     private final String collectionUid;
     private final String eventUid;
 
@@ -33,21 +35,32 @@ public class PathSegments {
         }
         Matcher matcher = PATTERN.matcher(path);
         matcher.find();
-        this.homeUid = matcher.group("homeCollectionUid");
+        
+        this.homeCollectionUid = matcher.group("homeCollectionUid");
         this.collectionUid = matcher.group("collectionUid");
         this.eventUid = matcher.group("eventUid");
     }
 
-    public String getHomeUid() {
-        return homeUid;
+    public String getHomeCollectionUid() {
+        return decode(homeCollectionUid);
     }
 
     public String getCollectionUid() {
-        return collectionUid;
+        return decode(collectionUid);
     }
 
     public String getEventUid() {
-        return eventUid;
+        return decode(eventUid);
     }
-
+    
+    private static String decode(String path){
+        if(StringUtils.isNullOrEmpty(path)){
+            return path;
+        }
+        try {
+            return URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

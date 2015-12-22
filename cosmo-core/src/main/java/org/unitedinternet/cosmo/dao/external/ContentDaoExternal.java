@@ -1,5 +1,6 @@
 package org.unitedinternet.cosmo.dao.external;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,8 @@ import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
+import com.google.common.base.Strings;
+
 /**
  * <code>ContentDao</code> that fetches calendar content from external providers.
  * 
@@ -35,50 +38,100 @@ public class ContentDaoExternal implements ContentDao {
 
     private final ContentDao contentDaoInternal;
 
-    public ContentDaoExternal(ContentSource contentSource, ContentDao contentDaoInternal) {
-        this.contentSource = contentSource;
+    public ContentDaoExternal(final ContentSource defaultContentSource, final ContentDao contentDaoInternal) {
+        final Set<ContentSource> registeredContentSources = Collections.emptySet();
+        
+        this.contentSource = new ContentSource(){
+            @Override
+            public boolean isContentFrom(String uri) {
+                for(ContentSource registeredContentSource : registeredContentSources){
+                    if(registeredContentSource.isContentFrom(uri)){
+                        return true;
+                    }
+                }
+                
+                return defaultContentSource.isContentFrom(uri);
+            }
+
+            @Override
+            public Set<NoteItem> getContent(String uri) {
+                for(ContentSource registeredContentSource : registeredContentSources){
+                    if(registeredContentSource.isContentFrom(uri)){
+                        return registeredContentSource.getContent(uri);
+                    }
+                }
+                
+                if(defaultContentSource.isContentFrom(uri)){
+                    return defaultContentSource.getContent(uri);
+                }
+                
+                throw new IllegalStateException("Unable to get content from URI [" + uri + "]");
+            }};
+            
         this.contentDaoInternal = contentDaoInternal;
     }
 
     @Override
     public Item findItemByPath(String path) {
         PathSegments extPath = new PathSegments(path);
-        String homeUid = extPath.getHomeUid();
-        if (homeUid == null || homeUid.trim().isEmpty()) {
-            throw new IllegalArgumentException("Home path path cannot be null or empty.");
-        }
-        String collectionUid = extPath.getCollectionUid();
-        if (collectionUid == null || collectionUid.trim().isEmpty()) {
-            throw new IllegalArgumentException("Collection path cannot be null or empty.");
-        }
-        Item collectionItem = this.contentDaoInternal.findItemByPath(collectionUid, homeUid);
+        
+        String homeCollectionUid = validHomeCollectionUidFrom(extPath);
+        
+        String collectionUid = validCollectionUidFrom(extPath);
+        
+        Item collectionItem = this.contentDaoInternal.findItemByPath(homeCollectionUid + "/" + collectionUid);
+        
         if (collectionItem == null) {
-            throw new IllegalArgumentException("Could not find collection for path: " + homeUid + "/" + collectionUid);
+            throw new IllegalArgumentException("Could not find collection for path: " + homeCollectionUid + "/" + collectionUid);
         }
+        
+        CalendarCollectionStamp stamp = (CalendarCollectionStamp) collectionItem.getStamp(CalendarCollectionStamp.class);
+        
+        if(stamp == null){
+            throw new IllegalStateException("Found calendar without stamp for path [" + path + "]");
+        }
+        
+        String targetUri = stamp.getTargetUri();
+        
+        Set<NoteItem> itemsFromUri = this.contentSource.getContent(targetUri);
+        
+        for(NoteItem item : itemsFromUri){
+            item.setOwner(collectionItem.getOwner());
+        }
+        
         String eventUid = extPath.getEventUid();
-        if (eventUid == null || eventUid.trim().isEmpty()) {
-            // It means the query only looks for the CollectionItem
-            // TODO it might be necessary to fill the children as well
-            LOG.info("EXTERNAL Returning collection item from DB with uid:" + collectionUid);
-            return collectionItem;
-        } else {
-            // Return the NoteItem
-            ItemFilter filter = new ItemFilter();
-            filter.setParent((CollectionItem) collectionItem);
-            Set<Item> items = this.findItems(filter);
-            for (Item item : items) {
-                if (item.getUid() != null && item.getUid().equals(eventUid)) {
-                    LOG.info("EXTERNAL Returning item from memory with uid:" + collectionUid);
-                    return item;
-                }
+        
+        if(Strings.isNullOrEmpty(eventUid)){
+            return new ExternalCollectionItem((CollectionItem)collectionItem, itemsFromUri);
+        }
+        for(NoteItem noteItem : itemsFromUri){
+            if(eventUid.equals(noteItem.getName())){
+                return noteItem;
             }
         }
         return null;
     }
 
+    private static String validCollectionUidFrom(PathSegments extPath) {
+        String collectionUid = extPath.getCollectionUid();
+        
+        if (collectionUid == null || collectionUid.trim().isEmpty()) {
+            throw new IllegalArgumentException("Collection path cannot be null or empty.");
+        }
+        return collectionUid;
+    }
+
+    private static String validHomeCollectionUidFrom(PathSegments extPath) {
+        String homeCollectionUid = extPath.getHomeCollectionUid();
+        
+        if (homeCollectionUid == null || homeCollectionUid.trim().isEmpty()) {
+            throw new IllegalArgumentException("Home path path cannot be null or empty.");
+        }
+        return homeCollectionUid;
+    }
+
     @Override
     public Item findItemByPath(String path, String parentUid) {
-        // TODO Also it might be necessary to fill in the children
         LOG.info("EXTERNAL Delegating call to internal for parentUid: " + parentUid + " and path: " + path);
         return this.contentDaoInternal.findItemByPath(path, parentUid);
     }
@@ -88,15 +141,12 @@ public class ContentDaoExternal implements ContentDao {
         Set<Item> items = new HashSet<>();
         if (filter != null && filter.getParent() != null) {
             CollectionItem calendarItem = filter.getParent();
-            CalendarCollectionStamp stamp = (CalendarCollectionStamp) calendarItem
-                    .getStamp(CalendarCollectionStamp.class);
+            CalendarCollectionStamp stamp = (CalendarCollectionStamp) calendarItem.getStamp(CalendarCollectionStamp.class);
             if (stamp != null) {
                 String targetUri = stamp.getTargetUri();
-                if (this.contentSource.isContentFrom(targetUri)) {
-                    Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
-                    this.postProcess(noteItems);
-                    items.addAll(noteItems);
-                }
+                Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
+                this.postProcess(noteItems);
+                items.addAll(noteItems);
             }
         }
         return items;

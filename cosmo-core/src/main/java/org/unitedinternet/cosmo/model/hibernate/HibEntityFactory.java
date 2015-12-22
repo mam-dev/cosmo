@@ -66,8 +66,9 @@ public class HibEntityFactory implements EntityFactory {
     public CollectionItem createCollection(String targetUri) {
         CollectionItem createdCollection = new HibCollectionItem();
         CalendarCollectionStamp colorStamp = createCalendarCollectionStamp(createdCollection);
-        createdCollection.setUid(getCalendarUuid(targetUri != null));
-        createdCollection.setName(UUID.randomUUID().toString());        
+        boolean isExternalUrl = targetUri != null;
+        createdCollection.setUid(getCalendarUuid(isExternalUrl));
+        createdCollection.setName(getCalendarUuid(isExternalUrl));        
         if (targetUri != null) {
             colorStamp.setTargetUri(targetUri);
         }

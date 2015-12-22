@@ -35,15 +35,17 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.dao.external.CalendarUuidGenerator;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
+import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.acl.DavAce;
+import org.unitedinternet.cosmo.dav.acl.DavAcl;
+import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarLocationException;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarResourceException;
@@ -75,6 +77,8 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.StampUtils;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+
+import com.google.common.collect.Sets;
 
 /**
  * Extends <code>DavCollection</code> to adapt the Cosmo <code>CalendarCollectionItem</code> to the DAV resource model.
@@ -449,14 +453,27 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
 
     @Override
     protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
-        Item item = this.getItem();
-        if (item instanceof CollectionItem) {
-            if (CalendarUuidGenerator.containsExternalUid(item.getUid())) {
-                // External collection are read-only.
-                privileges.remove(DavPrivilege.WRITE);
-            }
+        if(hasExternalContent(getItem())){
+            return Sets.newHashSet(DavPrivilege.READ);
         }
-        return privileges;
+        return super.getCurrentPrincipalPrivileges();
+    }
+    
+    @Override
+    protected DavAcl getAcl() {
+        if(!hasExternalContent(getItem())){
+            return super.getAcl();
+        }
+        DavAcl result = new DavAcl();
+        DavAce owner = new DavAce.PropertyAce(OWNER);
+        owner.getPrivileges().add(DavPrivilege.READ);
+        owner.setProtected(true);
+        result.getAces().add(owner);
+
+        return result;
+    }
+    
+    private static boolean hasExternalContent(Item item){
+        return item instanceof CollectionItem && CalendarUuidGenerator.containsExternalUid(item.getUid());  
     }
 }
