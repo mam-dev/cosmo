@@ -20,7 +20,9 @@ import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 public class ContentDaoInvocationHandler implements InvocationHandler {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoInvocationHandler.class);
-
+    
+    private static final int WRAPPED_COUNT = 100;
+    
     /**
      * Database DAO.
      */
@@ -92,8 +94,13 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
 
     private static Throwable unwrap(Throwable t) {
         Throwable unwrapped = t;
-        while (unwrapped.getCause() != null) {
+        int count = 0;
+        while (unwrapped.getCause() != null && !unwrapped.getCause().equals(unwrapped)) {
             unwrapped = t.getCause();
+            count++;
+            if (count > WRAPPED_COUNT) {
+                break;
+            }
         }
         return unwrapped;
     }

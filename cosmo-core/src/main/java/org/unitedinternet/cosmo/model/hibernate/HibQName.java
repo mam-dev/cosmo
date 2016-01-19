@@ -15,6 +15,8 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -24,8 +26,9 @@ import org.unitedinternet.cosmo.model.QName;
 /**
  * Hibernate persistent QName.
  */
+@SuppressWarnings("serial")
 @Embeddable
-public class HibQName implements QName {
+public class HibQName implements QName,Serializable {
     
     public static final String DEFAULT_NAMESPACE = "org.unitedinternet.cosmo.default";
     

@@ -12,11 +12,11 @@ import java.util.Set;
 import org.unitedinternet.cosmo.model.NoteItem;
 
 /**
+ * Component that can serve calendar content from an <code>uri</code>.
+ * 
  * @author corneliu dobrota
  */
 public interface ContentSource {
 
-    boolean isContentFrom(String uri);
-    
     Set<NoteItem> getContent(String uri);
 }

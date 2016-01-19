@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -28,8 +29,9 @@ import org.unitedinternet.cosmo.model.TriageStatus;
 /**
  * Hibernate persistent TriageStatus.
  */
+@SuppressWarnings("serial")
 @Embeddable
-public class HibTriageStatus implements TriageStatus {
+public class HibTriageStatus implements TriageStatus, Serializable {
 
     @Column(name = "triagestatuscode")
     private Integer code = null;

@@ -55,18 +55,27 @@
 		class="org.unitedinternet.cosmo.model.hibernate.EntityConverter">
 		<constructor-arg ref="cosmoEntityFactory" />
 	</bean>
+	
+	<bean id="contentConverter" class="org.unitedinternet.cosmo.ext.ContentConverter">
+		<constructor-arg ref="entityConverter" />
+	</bean>
+	
+	<bean id="uriContentSource" class="org.unitedinternet.cosmo.ext.UriContentSource">
+		<constructor-arg ref="contentConverter" />
+		<constructor-arg>
+			<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="contentSourceFactory" class="org.unitedinternet.cosmo.ext.ContentSourceFactoryBean">
+		<constructor-arg ref="uriContentSource"/>
+		<constructor-arg ref="externalComponentInstanceProvider" />
+	</bean>
 
 	<bean id="contentDaoExternal"
-		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">
-		<constructor-arg>
-			<bean class="org.unitedinternet.cosmo.ext.URIContentSource">
-				<constructor-arg ref="entityConverter" />
-				<constructor-arg>
-					<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
-				</constructor-arg>
-			</bean>
-		</constructor-arg>
+		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">		
 		<constructor-arg ref="contentDaoInternal" />
+		<constructor-arg ref="contentSourceFactory"/>
 	</bean>
 
 	<bean id="contentDao"

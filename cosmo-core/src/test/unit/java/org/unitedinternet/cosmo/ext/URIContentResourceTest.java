@@ -20,11 +20,12 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  */
 public class URIContentResourceTest {
 
-    private URIContentSource source;
+    private UriContentSource source;
 
     @Before
     public void setUp() {
-        this.source = new URIContentSource(new EntityConverter(new HibEntityFactory()), Proxy.NO_PROXY);
+        this.source = new UriContentSource(new ContentConverter(new EntityConverter(new HibEntityFactory())),
+                Proxy.NO_PROXY);
     }
 
     @Test
@@ -38,7 +39,8 @@ public class URIContentResourceTest {
     @Test
     @Ignore("Need only for testing purposes.")
     public void shouldReadExternalCalendar() {
-        Set<NoteItem> items = this.source.getContent("https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics");
+        Set<NoteItem> items = this.source.getContent(
+                "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics");
         assertNotNull(items);
         assertFalse(items.isEmpty());
         assertEquals(9, items.size());

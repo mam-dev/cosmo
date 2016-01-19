@@ -1,6 +1,5 @@
 package org.unitedinternet.cosmo.dao.external;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,36 +37,8 @@ public class ContentDaoExternal implements ContentDao {
 
     private final ContentDao contentDaoInternal;
 
-    public ContentDaoExternal(final ContentSource defaultContentSource, final ContentDao contentDaoInternal) {
-        final Set<ContentSource> registeredContentSources = Collections.emptySet();
-        
-        this.contentSource = new ContentSource(){
-            @Override
-            public boolean isContentFrom(String uri) {
-                for(ContentSource registeredContentSource : registeredContentSources){
-                    if(registeredContentSource.isContentFrom(uri)){
-                        return true;
-                    }
-                }
-                
-                return defaultContentSource.isContentFrom(uri);
-            }
-
-            @Override
-            public Set<NoteItem> getContent(String uri) {
-                for(ContentSource registeredContentSource : registeredContentSources){
-                    if(registeredContentSource.isContentFrom(uri)){
-                        return registeredContentSource.getContent(uri);
-                    }
-                }
-                
-                if(defaultContentSource.isContentFrom(uri)){
-                    return defaultContentSource.getContent(uri);
-                }
-                
-                throw new IllegalStateException("Unable to get content from URI [" + uri + "]");
-            }};
-            
+    public ContentDaoExternal(ContentSource contentSource, final ContentDao contentDaoInternal) {
+        this.contentSource = contentSource;
         this.contentDaoInternal = contentDaoInternal;
     }
 

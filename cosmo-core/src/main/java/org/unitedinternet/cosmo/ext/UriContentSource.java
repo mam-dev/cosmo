@@ -5,14 +5,11 @@ import java.io.InputStream;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -20,53 +17,33 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ValidationException;
 
 /**
- * <code>ContentSource</code> able to fetch content from a <code>URI</code>.
+ * <code>ContentSource</code> component that can read ICS content from public URI-s like HTTP URL-s or local file URL-s.
  * 
  * @author daniel grigore
  *
  */
-public class URIContentSource implements ContentSource {
+public class UriContentSource implements ContentSource {
 
     /**
      * Ten seconds timeout for reading content.
      */
     private static final int TIMEOUT = 10 * 1000;
-    private static final Log LOG = LogFactory.getLog(URIContentSource.class);
+    private static final Log LOG = LogFactory.getLog(UriContentSource.class);
 
-    private final EntityConverter entityConverter;
+    private final ContentConverter converter;
 
     private final Proxy proxy;
 
-    public URIContentSource(EntityConverter entityConverter, Proxy proxy) {
+    public UriContentSource(ContentConverter converter, Proxy proxy) {
         super();
-        this.entityConverter = entityConverter;
+        this.converter = converter;
         this.proxy = proxy;
     }
 
     @Override
-    public boolean isContentFrom(String uri) {
-        return uri != null;
-    }
-
-    @Override
     public Set<NoteItem> getContent(String uri) {
-        Set<NoteItem> items = new HashSet<>();
         Calendar calendar = this.readFrom(uri);
-        if (calendar != null) {
-            Set<ICalendarItem> calendarItems = this.entityConverter.convertCalendar(calendar);
-            
-            for (ICalendarItem item : calendarItems) {
-                /**
-                 * Only VEVENT are supported currently. VTODO or VJOURNAL are not yet supported.
-                 */
-                if (item instanceof NoteItem) {
-                    items.add((NoteItem) item);
-                    item.setName(item.getIcalUid() + ".ics");
-                }
-            }
-
-        }
-        return items;
+        return this.converter.asItems(calendar);
     }
 
     private Calendar readFrom(String uri) {
