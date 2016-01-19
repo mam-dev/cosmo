@@ -775,6 +775,7 @@ public class StandardContentService implements ContentService {
         }
         try {
             contentDao.removeBatchContent(parent, contentItems);
+            contentDao.updateCollectionTimestamp(parent);
         } finally {
             lockManager.unlockCollection(parent);
         }   
