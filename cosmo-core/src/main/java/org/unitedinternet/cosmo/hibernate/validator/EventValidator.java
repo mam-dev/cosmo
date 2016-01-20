@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.hibernate.validator;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,8 +42,10 @@ import net.fortuna.ical4j.model.property.RRule;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ResourceUtils;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
 /**
  * Check if a Calendar object contains a valid VEvent
@@ -55,7 +56,9 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
     
     private static final Log LOG = LogFactory.getLog(EventValidator.class);
     
-    private volatile ValidationConfig validationConfig;
+    private static volatile ValidationConfig validationConfig;
+    
+    
     
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
         Calendar calendar = null;
@@ -108,14 +111,10 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
     @Override
     public void initialize(Event constraintAnnotation) {
-        if(validationConfig == null){
-            synchronized(this){
-                validationConfig = new ValidationConfig();
-            }
-        }
+   
     }
     
-    private static final class ValidationConfig {
+    public static final class ValidationConfig implements EnvironmentAware{
         
         private static final String ALLOWED_RECURRENCES_FREQUENCIES_KEY = "cosmo.event.validation.allowed.recurrence.frequencies";
         private static final String FREQUENCIES_SEPARATOR = ",";
@@ -146,38 +145,46 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
         
         private int attendeesMaxSize;
         
-        boolean initialized = true;
         
-        private ValidationConfig (){
-            InputStream is = null;
+        
+        private static int getIntFromPropsFor(Environment environment, String key, Properties defaultProps){
+        	String value = environment.getProperty(key);
+            return Integer.parseInt( value == null ? defaultProps.getProperty(key) : value); 
+        }
+
+
+        public void setEnvironment(Environment environment) {
+			InputStream is = null;
             
             Properties properties = new Properties();
             try {
                 is = EventValidator.class.getResourceAsStream(PROPERTIES_FILE);
                 
                 properties.load(is);
-                
-                summaryMinLength = getIntFromPropsFor(properties, SUMMARY_MIN_LENGTH_KEY);
-                summaryMaxLength = getIntFromPropsFor(properties, SUMMARY_MAX_LENGTH_KEY);
-                
-                locationMinLength = getIntFromPropsFor(properties, LOCATION_MIN_LENGTH_KEY);
-                locationMaxLength = getIntFromPropsFor(properties, LOCATION_MAX_LENGTH_KEY);
-                
-                descriptionMinLength = getIntFromPropsFor(properties, DESCRIPTION_MIN_LENGTH_KEY);
-                descriptionMaxLength = getIntFromPropsFor(properties, DESCRIPTION_MAX_LENGTH_KEY);
-                
-                attendeesMaxSize = getIntFromPropsFor(properties, ATTENDEES_MAX_LENGTH_KEY);
-                
-                String permittedFrequencies = properties.getProperty(ALLOWED_RECURRENCES_FREQUENCIES_KEY);
-                String[] frequencies = permittedFrequencies.split(FREQUENCIES_SEPARATOR);
-                
-                for(String s : frequencies){
-                    allowedRecurrenceFrequencies.add(s.trim());
-                }
-                
+
+				summaryMinLength = getIntFromPropsFor(environment, SUMMARY_MIN_LENGTH_KEY, properties);
+	            summaryMaxLength = getIntFromPropsFor(environment, SUMMARY_MAX_LENGTH_KEY, properties);
+	            
+	            locationMinLength = getIntFromPropsFor(environment, LOCATION_MIN_LENGTH_KEY, properties);
+	            locationMaxLength = getIntFromPropsFor(environment, LOCATION_MAX_LENGTH_KEY, properties);
+	            
+	            descriptionMinLength = getIntFromPropsFor(environment, DESCRIPTION_MIN_LENGTH_KEY, properties);
+	            descriptionMaxLength = getIntFromPropsFor(environment, DESCRIPTION_MAX_LENGTH_KEY, properties);
+	            
+	            attendeesMaxSize = getIntFromPropsFor(environment, ATTENDEES_MAX_LENGTH_KEY, properties);
+	            
+	            
+	            String permittedFrequencies = environment.getProperty(ALLOWED_RECURRENCES_FREQUENCIES_KEY);
+	            String permittedFrequenciesToUse = permittedFrequencies == null ? properties.getProperty(ALLOWED_RECURRENCES_FREQUENCIES_KEY) : permittedFrequencies;
+	            
+	            String[] frequencies = permittedFrequenciesToUse.split(FREQUENCIES_SEPARATOR);
+	            
+	            for(String s : frequencies){
+	                allowedRecurrenceFrequencies.add(s.trim());
+	            }
+            
             } catch (Exception e) {
                 LOG.warn("Failed to initialize validation config", e);
-                initialized = false;
             }finally{
                 if(is != null){
                     try {
@@ -187,11 +194,8 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                     }
                 }
             }
-        }
-        
-        private static int getIntFromPropsFor(Properties properties, String key){
-            return Integer.parseInt(properties.getProperty(key)); 
-        }
+		}
+
     }
     private static enum PropertyValidator{
         SUMMARY(Property.SUMMARY){
@@ -306,11 +310,9 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
             }
             
             
-            if(config.initialized){
-                for(PropertyValidator validator : values()){
-                    if(! validator.isValid(event, config)){
-                        return false; 
-                    }
+            for(PropertyValidator validator : values()){
+                if(!validator.isValid(event, config)){
+                    return false; 
                 }
             }
             
@@ -334,5 +336,9 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
             }
             return true;
         }
+    }
+    
+    public static void setValidationConfig(ValidationConfig validationConfig){
+    	EventValidator.validationConfig = validationConfig;
     }
 }
