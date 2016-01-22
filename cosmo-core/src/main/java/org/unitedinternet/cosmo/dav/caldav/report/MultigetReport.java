@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
  */
 public class MultigetReport extends CaldavMultiStatusReport {
 
-    private static final Pattern HREF_EMAIL_PATTERN = Pattern.compile("/(([\\w-\\.]+)(@|%40)((?:[\\w]+\\.)+)([a-zA-Z]{2,}))(/?)");
+    private static final Pattern HREF_EMAIL_PATTERN = Pattern.compile("/(([\\w-\\.]+)(@|%40)((?:[\\w]+\\.)+)([a-zA-Z]{2,}))(/?)/");
     private static final Pattern RESOURCE_UUID_PATTERN = Pattern.compile("/\\{?\\p{XDigit}{8}-\\p{XDigit}" +
             "{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}\\}?");
     
