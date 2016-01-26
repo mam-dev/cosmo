@@ -45,39 +45,42 @@ public class ContentDaoExternal implements ContentDao {
     @Override
     public Item findItemByPath(String path) {
         PathSegments extPath = new PathSegments(path);
-        
+
         String homeCollectionUid = validHomeCollectionUidFrom(extPath);
-        
+
         String collectionUid = validCollectionUidFrom(extPath);
-        
+
         Item collectionItem = this.contentDaoInternal.findItemByPath(homeCollectionUid + "/" + collectionUid);
-        
+
         if (collectionItem == null) {
-            throw new IllegalArgumentException("Could not find collection for path: " + homeCollectionUid + "/" + collectionUid);
+            throw new IllegalArgumentException(
+                    "Could not find collection for path: " + homeCollectionUid + "/" + collectionUid);
         }
-        
-        CalendarCollectionStamp stamp = (CalendarCollectionStamp) collectionItem.getStamp(CalendarCollectionStamp.class);
-        
-        if(stamp == null){
+
+        CalendarCollectionStamp stamp = (CalendarCollectionStamp) collectionItem
+                .getStamp(CalendarCollectionStamp.class);
+
+        if (stamp == null) {
             throw new IllegalStateException("Found calendar without stamp for path [" + path + "]");
         }
-        
+
         String targetUri = stamp.getTargetUri();
-        
+
         Set<NoteItem> itemsFromUri = this.contentSource.getContent(targetUri);
-        
-        for(NoteItem item : itemsFromUri){
-            item.setOwner(collectionItem.getOwner());
-        }
-        
-        String eventUid = extPath.getEventUid();
-        
-        if(Strings.isNullOrEmpty(eventUid)){
-            return new ExternalCollectionItem((CollectionItem)collectionItem, itemsFromUri);
-        }
-        for(NoteItem noteItem : itemsFromUri){
-            if(eventUid.equals(noteItem.getName())){
-                return noteItem;
+        if (itemsFromUri != null) {
+            for (NoteItem item : itemsFromUri) {
+                item.setOwner(collectionItem.getOwner());
+            }
+
+            String eventUid = extPath.getEventUid();
+
+            if (Strings.isNullOrEmpty(eventUid)) {
+                return new ExternalCollectionItem((CollectionItem) collectionItem, itemsFromUri);
+            }
+            for (NoteItem noteItem : itemsFromUri) {
+                if (eventUid.equals(noteItem.getName())) {
+                    return noteItem;
+                }
             }
         }
         return null;
@@ -85,7 +88,7 @@ public class ContentDaoExternal implements ContentDao {
 
     private static String validCollectionUidFrom(PathSegments extPath) {
         String collectionUid = extPath.getCollectionUid();
-        
+
         if (collectionUid == null || collectionUid.trim().isEmpty()) {
             throw new IllegalArgumentException("Collection path cannot be null or empty.");
         }
@@ -94,7 +97,7 @@ public class ContentDaoExternal implements ContentDao {
 
     private static String validHomeCollectionUidFrom(PathSegments extPath) {
         String homeCollectionUid = extPath.getHomeCollectionUid();
-        
+
         if (homeCollectionUid == null || homeCollectionUid.trim().isEmpty()) {
             throw new IllegalArgumentException("Home path path cannot be null or empty.");
         }
@@ -112,12 +115,15 @@ public class ContentDaoExternal implements ContentDao {
         Set<Item> items = new HashSet<>();
         if (filter != null && filter.getParent() != null) {
             CollectionItem calendarItem = filter.getParent();
-            CalendarCollectionStamp stamp = (CalendarCollectionStamp) calendarItem.getStamp(CalendarCollectionStamp.class);
+            CalendarCollectionStamp stamp = (CalendarCollectionStamp) calendarItem
+                    .getStamp(CalendarCollectionStamp.class);
             if (stamp != null) {
                 String targetUri = stamp.getTargetUri();
                 Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
-                this.postProcess(noteItems);
-                items.addAll(noteItems);
+                if (noteItems != null) {
+                    this.postProcess(noteItems);
+                    items.addAll(noteItems);
+                }
             }
         }
         return items;
