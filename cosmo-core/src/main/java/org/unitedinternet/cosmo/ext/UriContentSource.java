@@ -25,9 +25,9 @@ import net.fortuna.ical4j.model.ValidationException;
 public class UriContentSource implements ContentSource {
 
     /**
-     * Ten seconds timeout for reading content.
+     * Ten seconds DEFAULT timeout for reading content.
      */
-    private static final int TIMEOUT = 10 * 1000;
+    public static final int TIMEOUT = 10 * 1000;
     private static final Log LOG = LogFactory.getLog(UriContentSource.class);
 
     private final ContentConverter converter;
@@ -42,17 +42,21 @@ public class UriContentSource implements ContentSource {
 
     @Override
     public Set<NoteItem> getContent(String uri) {
-        Calendar calendar = this.readFrom(uri);
+        return this.getContent(uri, TIMEOUT);
+    }
+
+    public Set<NoteItem> getContent(String uri, int timeout) {
+        Calendar calendar = this.readFrom(uri, timeout);
         return this.converter.asItems(calendar);
     }
 
-    private Calendar readFrom(String uri) {
+    private Calendar readFrom(String uri, int timeout) {
         InputStream input = null;
         try {
             URL url = new URL(uri);
             URLConnection connection = url.openConnection(this.proxy);
-            connection.setReadTimeout(TIMEOUT);
-            connection.setConnectTimeout(TIMEOUT);
+            connection.setReadTimeout(timeout);
+            connection.setConnectTimeout(timeout);
             connection.connect();
             input = connection.getInputStream();
             Calendar calendar = new CalendarBuilder().build(input);
