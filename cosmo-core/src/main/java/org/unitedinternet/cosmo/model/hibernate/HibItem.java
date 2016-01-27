@@ -46,6 +46,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
@@ -111,7 +113,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     private transient Boolean isActive = Boolean.TRUE;
 
     @OneToMany(targetEntity=HibAttribute.class, mappedBy = "item", 
-            fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+            fetch=FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @MapKeyClass(HibQName.class)
     // turns out this creates a query that is unoptimized for MySQL
     //@Fetch(FetchMode.SUBSELECT)

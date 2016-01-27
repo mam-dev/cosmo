@@ -31,5 +31,17 @@ public interface ItemTombstone extends Tombstone{
      * @param itemUid uid of item removed
      */
     public void setItemUid(String itemUid);
+    
+    
+    /**
+     * @param itemName name of the item external exposed as ical UID
+     */
+    public void setItemName(String itemName);
+    
+    /**
+     * 
+     * @return itemName of <code>Item</code>
+     */
+    public String getItemName();
 
 }

@@ -35,7 +35,10 @@ public class HibItemTombstone extends HibTombstone implements ItemTombstone {
     private static final long serialVersionUID = 6733626121229413324L;
     @Column(name="itemuid", length=255)
     private String itemUid = null;
-
+    
+    @Column(name="itemname", length=255)
+    private String itemName = null;
+    
     /**
      * Constructor.
      */
@@ -45,6 +48,7 @@ public class HibItemTombstone extends HibTombstone implements ItemTombstone {
     public HibItemTombstone(CollectionItem parent, Item item) {
         super(parent);
         itemUid = item.getUid();
+        itemName = item.getName();
     }
    
     /* (non-Javadoc)
@@ -61,6 +65,14 @@ public class HibItemTombstone extends HibTombstone implements ItemTombstone {
         this.itemUid = itemUid;
     }
     
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof ItemTombstone)) {

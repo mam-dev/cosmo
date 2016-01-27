@@ -42,7 +42,6 @@ import org.unitedinternet.cosmo.dao.ItemNotFoundException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.dao.query.ItemPathTranslator;
-import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
@@ -128,17 +127,16 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
      *
      * @see org.unitedinternet.cosmo.dao.ItemDao#findEventStampFromDbByUid(java.lang.String)
      */
-    public BaseEventStamp findEventStampFromDbByUid(String uid) {
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz){
         try {
             // Lookup item by uid
             Query hibQuery = getStatlessSession().getNamedQuery("item.stamps.by.uid")
-                    .setParameter("uid", uid).setFlushMode(null).setCacheMode(null);
+                    .setParameter("uid", internalItemUid).setFlushMode(null).setCacheMode(null);
             @SuppressWarnings("unchecked")
             List<Stamp> stamps = (List<Stamp>) hibQuery.list();
             for(Stamp stamp:stamps) {
-                if(stamp instanceof BaseEventStamp) {
-                    BaseEventStamp eventStamp = (BaseEventStamp) stamp;
-                    return eventStamp;
+                if(clazz.isInstance(stamp)) {
+                    return clazz.cast(stamp);
                 }
             }
         } catch (HibernateException e) {

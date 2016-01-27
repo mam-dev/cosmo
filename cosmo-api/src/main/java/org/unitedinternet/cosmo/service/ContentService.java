@@ -19,12 +19,12 @@ import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -53,14 +53,12 @@ public interface ContentService extends Service {
     public HomeCollectionItem getRootItem(User user, boolean forceReload);
 
     /**
-     * Find an item with the specified id. The return type will be one of
-     * ContentItem, CollectionItem, CalendarCollectionItem, CalendarItem.
-     *
-     * @param uid
-     *            uid of item to find
-     * @return eventStamp represented by uid
+     * Searches for an item stamp by item uid. The implementation will hit directly the the DB. 
+     * @param internalItemUid item internal uid
+     * @param clazz stamp type
+     * @return the item's stamp from the db
      */
-    public BaseEventStamp findEventStampFromDbByUid(String uid);
+    <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz);
     
     /**
      * Find an item with the specified uid. The return type will be one of

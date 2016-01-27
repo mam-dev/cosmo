@@ -28,6 +28,7 @@ import org.unitedinternet.cosmo.model.ItemTombstone;
 public class MockItemTombstone extends MockTombstone implements ItemTombstone {
     
     private String itemUid = null;
+    private String itemName = null;
 
     /**
      * Contructor.
@@ -67,6 +68,16 @@ public class MockItemTombstone extends MockTombstone implements ItemTombstone {
         this.itemUid = itemUid;
     }
     
+    
+    
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
     /**
      * Equals method.
      * {@inheritDoc}
