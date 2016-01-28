@@ -60,15 +60,20 @@
 		<constructor-arg ref="entityConverter" />
 	</bean>
 	
-	<bean id="uriContentSource" class="org.unitedinternet.cosmo.ext.UriContentSource">
+	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
 		<constructor-arg ref="contentConverter" />
 		<constructor-arg>
 			<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
 		</constructor-arg>
+		<constructor-arg>
+		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+		</constructor-arg>
+		<constructor-arg value="${external.content.connection.timeout}"/>
+        <constructor-arg value="${external.content.size}"/>
 	</bean>
 	
 	<bean id="contentSourceFactory" class="org.unitedinternet.cosmo.ext.ContentSourceFactoryBean">
-		<constructor-arg ref="uriContentSource"/>
+		<constructor-arg ref="urlContentSource"/>
 		<constructor-arg ref="externalComponentInstanceProvider" />
 	</bean>
 

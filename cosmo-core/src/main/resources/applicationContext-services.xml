@@ -249,4 +249,16 @@
     <bean id="servletContextListenersDelegate" class="org.unitedinternet.cosmo.servletcontext.ServletContextListenerDelegatesFactoryBean">
 		<constructor-arg ref="externalComponentInstanceProvider"/>
     </bean>
+    
+    <bean id="eventValidatorConfig" class="org.unitedinternet.cosmo.hibernate.validator.EventValidator.ValidationConfig"/>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass"
+			value="org.unitedinternet.cosmo.hibernate.validator.EventValidator" />
+		<property name="targetMethod" value="setValidationConfig" />
+		<property name="arguments">
+		  <array>
+		      <ref bean="eventValidatorConfig"/>
+		  </array>
+		</property>
+    </bean>
 </beans>
