@@ -60,7 +60,7 @@
 		<constructor-arg ref="entityConverter" />
 	</bean>
 	
-	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
+	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.UrlContentReader">
 		<constructor-arg ref="contentConverter" />
 		<constructor-arg>
 			<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
@@ -68,7 +68,11 @@
 		<constructor-arg>
 		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 		</constructor-arg>
-		<constructor-arg value="${external.content.size}"/>
+		<constructor-arg value="${external.content.size}"/>		       
+	</bean>
+	
+	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
+		<constructor-arg ref="urlContentReader" />		
 		<constructor-arg value="${external.content.connection.timeout}"/>        
 	</bean>
 	
