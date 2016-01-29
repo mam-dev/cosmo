@@ -25,6 +25,10 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  */
 public class UrlContentSourceTest {
 
+    private ContentConverter converter;
+
+    private LocalValidatorFactoryBean validator;
+
     private UrlContentSource instanceUnderTest;
 
     @Before
@@ -32,19 +36,15 @@ public class UrlContentSourceTest {
         EventValidator.ValidationConfig validationConfig = new EventValidator.ValidationConfig();
         validationConfig.setEnvironment(Mockito.mock(Environment.class));
         EventValidator.setValidationConfig(validationConfig);
-        
-        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+
+        this.validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
-        
+
         EntityFactory entityFactory = new HibEntityFactory();
         EntityConverter entityConverter = new EntityConverter(entityFactory);
-        ContentConverter contentConverter = new ContentConverter(entityConverter);
-        
-        instanceUnderTest = new UrlContentSource(contentConverter,
-                                                Proxy.NO_PROXY,
-                                                validator, 
-                                                700,
-                                                10000);
+        this.converter = new ContentConverter(entityConverter);
+
+        instanceUnderTest = new UrlContentSource(converter, Proxy.NO_PROXY, validator, 700, 10000);
     }
 
     @Test
@@ -54,16 +54,24 @@ public class UrlContentSourceTest {
         assertEquals(1, items.size());
     }
 
-    @Test(expected=InvalidExternalContentException.class)
-    public void shouldFailAnInvalidEvent(){
+    @Test
+    public void shouldReadRomanianHolidays() {
+        this.instanceUnderTest = new UrlContentSource(converter, Proxy.NO_PROXY, validator, 1024 * 1024, 10000);
+        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"));
+        assertNotNull(items);
+        assertEquals(80, items.size());
+    }
+
+    @Test(expected = InvalidExternalContentException.class)
+    public void shouldFailAnInvalidEvent() {
         instanceUnderTest.getContent(urlForName("invalid-event.ics"));
     }
-    
-    @Test(expected=ExternalContentTooLargeException.class)
-    public void shouldFailTooLargeContent(){
-        instanceUnderTest.getContent(urlForName("2445.ics")); 
+
+    @Test(expected = ExternalContentTooLargeException.class)
+    public void shouldFailTooLargeContent() {
+        instanceUnderTest.getContent(urlForName("2445.ics"));
     }
-    
+
     @Test
     @Ignore("Need only for testing purposes.")
     public void shouldReadExternalCalendar() {
@@ -73,8 +81,8 @@ public class UrlContentSourceTest {
         assertFalse(items.isEmpty());
         assertEquals(9, items.size());
     }
-    
-    private static String urlForName(String name){
-        return "file:///" + new File("src/test/unit/resources/icalendar/" + name).getAbsolutePath(); 
+
+    private static String urlForName(String name) {
+        return "file:///" + new File("src/test/unit/resources/icalendar/" + name).getAbsolutePath();
     }
 }

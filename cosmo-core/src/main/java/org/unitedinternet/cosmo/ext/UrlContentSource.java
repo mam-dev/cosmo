@@ -75,25 +75,19 @@ public class UrlContentSource implements ContentSource {
 
             try {
                 contentStream = connection.getInputStream();
-                byte[] buffer = new byte[1024];
-
                 baos = new ByteArrayOutputStream();
-
                 AtomicInteger counter = new AtomicInteger();
-
-                int readBytes;
-                while ((readBytes = contentStream.read(buffer)) != -1) {
-                    counter.addAndGet(readBytes);
+                byte[] buffer = new byte[1024];
+                int offset = 0;
+                while ((offset = contentStream.read(buffer)) != -1) {
+                    counter.addAndGet(offset);
                     if (counter.get() > allowedContentSizeInBytes) {
                         throw new ExternalContentTooLargeException(
-                                "content from uri " + uri + " is larger then " + this.allowedContentSizeInBytes);
+                                "Content from uri " + uri + " is larger then " + this.allowedContentSizeInBytes);
                     }
-                    baos.write(buffer);
+                    baos.write(buffer, 0, offset);
                 }
-                buffer = null;
-                InputStream calendarInputStream = new ByteArrayInputStream(baos.toByteArray());
-
-                Calendar calendar = new CalendarBuilder().build(calendarInputStream);
+                Calendar calendar = new CalendarBuilder().build(new ByteArrayInputStream(baos.toByteArray()));
                 calendar.validate();
 
                 Set<NoteItem> externalItems = converter.asItems(calendar);
@@ -105,7 +99,6 @@ public class UrlContentSource implements ContentSource {
                 close(contentStream);
                 close(baos);
             }
-
         } catch (IOException | ValidationException | ParserException e) {
             throw wrap(e);
         }
@@ -115,7 +108,6 @@ public class UrlContentSource implements ContentSource {
         if (e instanceof IOException) {
             return new RuntimeException(e);
         }
-
         return new InvalidExternalContentException(e);
     }
 
