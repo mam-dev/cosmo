@@ -38,108 +38,103 @@ public class UrlContentSource implements ContentSource {
     private final ContentConverter converter;
 
     private final Proxy proxy;
-    
+
     private final Validator validator;
-    
+
     private final int allowedContentSizeInBytes;
-    
+
     private final int timeoutInMillis;
-    
-    
-    public UrlContentSource(ContentConverter converter, 
-                            Proxy proxy, 
-                            Validator validator, 
-                            int allowedContentSizeInBytes, 
-                            int timeoutInMillis) {
+
+    public UrlContentSource(ContentConverter converter, Proxy proxy, Validator validator, int allowedContentSizeInBytes,
+            int timeoutInMillis) {
         super();
-        
+
         this.converter = converter;
         this.proxy = proxy;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
         this.timeoutInMillis = timeoutInMillis;
     }
-    
+
     @Override
     public Set<NoteItem> getContent(String uri) {
-        return getContent(uri, timeoutInMillis); 
+        return getContent(uri, timeoutInMillis);
     }
-    
-    @SuppressWarnings("resource")
-    public Set<NoteItem> getContent(String uri, int timeout) {
 
+    public Set<NoteItem> getContent(String uri, int timeout) {
         try {
             URL url = new URL(uri);
-            
+
             URLConnection connection = url.openConnection(this.proxy);
-            
+
             connection.setConnectTimeout(timeoutInMillis);
             connection.setReadTimeout(timeoutInMillis);
-            
+
             InputStream contentStream = null;
             ByteArrayOutputStream baos = null;
-            
-            try{
+
+            try {
                 contentStream = connection.getInputStream();
                 byte[] buffer = new byte[1024];
-                
+
                 baos = new ByteArrayOutputStream();
-                
+
                 AtomicInteger counter = new AtomicInteger();
-                
+
                 int readBytes;
-                while((readBytes = contentStream.read(buffer))!= -1){
+                while ((readBytes = contentStream.read(buffer)) != -1) {
                     counter.addAndGet(readBytes);
-                    if(counter.get() > allowedContentSizeInBytes){
-                        throw new ExternalContentTooLargeException();
+                    if (counter.get() > allowedContentSizeInBytes) {
+                        throw new ExternalContentTooLargeException(
+                                "content from uri " + uri + " is larger then " + this.allowedContentSizeInBytes);
                     }
                     baos.write(buffer);
                 }
                 buffer = null;
                 InputStream calendarInputStream = new ByteArrayInputStream(baos.toByteArray());
-                
+
                 Calendar calendar = new CalendarBuilder().build(calendarInputStream);
                 calendar.validate();
-                
+
                 Set<NoteItem> externalItems = converter.asItems(calendar);
-                
+
                 validate(externalItems);
-                
+
                 return externalItems;
-            }finally{
+            } finally {
                 close(contentStream);
                 close(baos);
             }
-            
+
         } catch (IOException | ValidationException | ParserException e) {
             throw wrap(e);
         }
     }
-    
-    private static RuntimeException wrap(Exception e){
-        if(e instanceof IOException){
+
+    private static RuntimeException wrap(Exception e) {
+        if (e instanceof IOException) {
             return new RuntimeException(e);
         }
-        
+
         return new InvalidExternalContentException(e);
     }
-    
-    private void validate(Set<NoteItem> items){
-        for(Item item:items){
-            for(Stamp stamp : item.getStamps()){
+
+    private void validate(Set<NoteItem> items) {
+        for (Item item : items) {
+            for (Stamp stamp : item.getStamps()) {
                 Set<ConstraintViolation<Stamp>> validationResult = validator.validate(stamp);
-                if(validationResult != null && !validationResult.isEmpty()){
+                if (validationResult != null && !validationResult.isEmpty()) {
                     throw new InvalidExternalContentException();
                 }
             }
         }
     }
-    
-    private static void close(Closeable closeable){
-        if(closeable != null){
-            try{
+
+    private static void close(Closeable closeable) {
+        if (closeable != null) {
+            try {
                 closeable.close();
-            }catch(IOException ioe){
+            } catch (IOException ioe) {
                 LOG.error("Error occured while closing stream ", ioe);
             }
         }

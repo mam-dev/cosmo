@@ -7,8 +7,10 @@
  */
 package org.unitedinternet.cosmo.ext;
 
-public class ExternalContentTooLargeException extends RuntimeException{
+@SuppressWarnings("serial")
+public class ExternalContentTooLargeException extends RuntimeException {
 
-    private static final long serialVersionUID = 1632777261975797172L;
-
+    public ExternalContentTooLargeException(String message) {
+        super(message);
+    }
 }

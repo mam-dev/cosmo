@@ -68,8 +68,8 @@
 		<constructor-arg>
 		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 		</constructor-arg>
-		<constructor-arg value="${external.content.connection.timeout}"/>
-        <constructor-arg value="${external.content.size}"/>
+		<constructor-arg value="${external.content.size}"/>
+		<constructor-arg value="${external.content.connection.timeout}"/>        
 	</bean>
 	
 	<bean id="contentSourceFactory" class="org.unitedinternet.cosmo.ext.ContentSourceFactoryBean">
