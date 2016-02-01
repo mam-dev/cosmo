@@ -594,7 +594,21 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
+	<profiles>
+		<profile>
+			<activation>
+				<property>
+					<name>example</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<modules>
+				<module>cosmo-webapp</module>
+				<module>cosmo-api</module>
+				<module>cosmo-core</module>
+			</modules>
+		</profile>
+	</profiles>
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
