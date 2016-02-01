@@ -48,8 +48,9 @@ Other components can exist without a restriction. All of these are looked up in 
 otherwise are instantiated directly.
 
 
-###Building and running the existing project
-In the project's root directory just run ``mvn tomcat7:run-war``.
+###Building and running the existing demo project
+The cosmo-webapp application is just for demoing purposes. To launch it,
+in the project's root directory just run ``mvn tomcat7:run-war -Dexample=true``.
 The calendar server will be packaged, tested and run. It will be available for CalDAV requests at
 http://localhost:8080/cosmo/dav/.
 The application simply creates a user with an empty calendar called 'calendar' if 
