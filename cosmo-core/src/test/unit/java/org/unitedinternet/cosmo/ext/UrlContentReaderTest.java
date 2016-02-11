@@ -62,7 +62,7 @@ public class UrlContentReaderTest {
         assertEquals(80, items.size());
     }
 
-    @Test(expected = InvalidExternalContentException.class)
+    @Test(expected = ExternalContentInvalidException.class)
     public void shouldFailAnInvalidEvent() {
         instanceUnderTest.getContent(urlForName("invalid-event.ics"), 0);
     }

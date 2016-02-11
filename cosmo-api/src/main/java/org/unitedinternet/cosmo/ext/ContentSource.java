@@ -18,5 +18,5 @@ import org.unitedinternet.cosmo.model.NoteItem;
  */
 public interface ContentSource {
 
-    Set<NoteItem> getContent(String uri) throws ExternalContentTooLargeException, InvalidExternalContentException;
+    Set<NoteItem> getContent(String uri) throws ExternalContentTooLargeException, ExternalContentInvalidException;
 }

@@ -99,15 +99,8 @@ public class UrlContentReader {
                 close(baos);
             }
         } catch (IOException | ValidationException | ParserException e) {
-            throw wrap(e);
+            throw new ExternalContentInvalidException(e);
         }
-    }
-
-    private static RuntimeException wrap(Exception e) {
-        if (e instanceof IOException) {
-            return new RuntimeException(e);
-        }
-        return new InvalidExternalContentException(e);
     }
 
     private void validate(Set<NoteItem> items) {
@@ -115,7 +108,7 @@ public class UrlContentReader {
             for (Stamp stamp : item.getStamps()) {
                 Set<ConstraintViolation<Stamp>> validationResult = validator.validate(stamp);
                 if (validationResult != null && !validationResult.isEmpty()) {
-                    throw new InvalidExternalContentException();
+                    throw new ExternalContentInvalidException();
                 }
             }
         }

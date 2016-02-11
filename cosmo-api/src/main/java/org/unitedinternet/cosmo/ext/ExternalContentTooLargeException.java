@@ -8,7 +8,7 @@
 package org.unitedinternet.cosmo.ext;
 
 @SuppressWarnings("serial")
-public class ExternalContentTooLargeException extends RuntimeException {
+public class ExternalContentTooLargeException extends ExternalContentRuntimeException {
 
     public ExternalContentTooLargeException(String message) {
         super(message);
