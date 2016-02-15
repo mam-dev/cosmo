@@ -106,11 +106,7 @@
 
 	<bean id="eventLogDao" parent="abstractDao"
 		class="org.unitedinternet.cosmo.dao.hibernate.EventLogDaoImpl"
-		init-method="init" destroy-method="destroy" />
-
-	<bean id="serverPropertyDao" parent="abstractDao"
-		class="org.unitedinternet.cosmo.dao.hibernate.ServerPropertyDaoImpl"
-		init-method="init" destroy-method="destroy" />
+		init-method="init" destroy-method="destroy" />	
 
 	<bean id="userDao" parent="abstractDao"
 		class="org.unitedinternet.cosmo.dao.hibernate.UserDaoImpl"

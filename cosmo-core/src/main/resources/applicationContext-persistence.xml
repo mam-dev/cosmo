@@ -111,19 +111,10 @@
     <!--
         a helper for setting up the database schema and loading seed data
     -->
-     <bean id = "cosmoStartupDataInitializer" class="org.unitedinternet.cosmo.service.impl.CosmoStartupDataInitializer">
-        <property name="rootLoginUrl" value="/account/view" />
-        <property name="entityFactory" ref="cosmoEntityFactory" />
-        <property name="userService" ref="userService" />
-        <property name="serverPropertyService" ref="serverPropertyService" />
-    </bean>
 
 	<bean id="dbInitializer" class="org.unitedinternet.cosmo.db.DbInitializerFactoryBean">
-		<constructor-arg ref="serverPropertyService" />
 		<constructor-arg ref="&amp;sessionFactory"/>
 		<constructor-arg ref="jdbcDataSource" />
-		<constructor-arg value="true" />
-		<constructor-arg ref="cosmoStartupDataInitializer"/>
 		<constructor-arg ref="externalComponentInstanceProvider"/>
 	</bean>
 </beans>

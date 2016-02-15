@@ -112,12 +112,6 @@
 		<property name="calendarDao" ref="calendarDao" />
 	</bean>
 
-	<bean id="serverPropertyService"
-		class="org.unitedinternet.cosmo.service.impl.StandardServerPropertyService"
-		init-method="init" destroy-method="destroy">
-		<property name="serverPropertyDao" ref="serverPropertyDao" />
-	</bean>
-
 	<bean id="calendarQueryProcessor"
 		class="org.unitedinternet.cosmo.calendar.query.impl.StandardCalendarQueryProcessor">
 		<property name="calendarDao" ref="calendarDao" />
