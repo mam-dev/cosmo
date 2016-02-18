@@ -1,9 +1,10 @@
 package org.unitedinternet.cosmo.ext;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.net.Proxy;
 import java.util.Set;
 
 import org.junit.Before;
@@ -25,6 +26,8 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  */
 public class UrlContentReaderTest {
 
+    private static final ProxyFactory NO_PROXY_FACTORY = new NoProxyFactory();
+
     private ContentConverter converter;
 
     private LocalValidatorFactoryBean validator;
@@ -44,7 +47,7 @@ public class UrlContentReaderTest {
         EntityConverter entityConverter = new EntityConverter(entityFactory);
         this.converter = new ContentConverter(entityConverter);
 
-        instanceUnderTest = new UrlContentReader(converter, Proxy.NO_PROXY, validator, 700);
+        instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 700);
     }
 
     @Test
@@ -56,7 +59,7 @@ public class UrlContentReaderTest {
 
     @Test
     public void shouldReadRomanianHolidays() {
-        this.instanceUnderTest = new UrlContentReader(converter, Proxy.NO_PROXY, validator, 1024 * 1024);
+        this.instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"), 0);
         assertNotNull(items);
         assertEquals(80, items.size());

@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Set;
@@ -37,17 +36,17 @@ public class UrlContentReader {
 
     private final ContentConverter converter;
 
-    private final Proxy proxy;
+    private final ProxyFactory proxyFactory;
 
     private final Validator validator;
 
     private final int allowedContentSizeInBytes;
 
-    public UrlContentReader(ContentConverter converter, Proxy proxy, Validator validator,
+    public UrlContentReader(ContentConverter converter, ProxyFactory proxyFactory, Validator validator,
             int allowedContentSizeInBytes) {
         super();
         this.converter = converter;
-        this.proxy = proxy;
+        this.proxyFactory = proxyFactory;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
     }
@@ -64,7 +63,7 @@ public class UrlContentReader {
     public Set<NoteItem> getContent(String url, int timeoutInMillis) {
         try {
             URL source = new URL(url);
-            URLConnection connection = source.openConnection(this.proxy);
+            URLConnection connection = source.openConnection(this.proxyFactory.get(source.getHost()));
 
             connection.setConnectTimeout(timeoutInMillis);
             connection.setReadTimeout(timeoutInMillis);
