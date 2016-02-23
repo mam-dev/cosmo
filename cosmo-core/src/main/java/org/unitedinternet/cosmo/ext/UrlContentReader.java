@@ -77,11 +77,16 @@ public class UrlContentReader {
                 AtomicInteger counter = new AtomicInteger();
                 byte[] buffer = new byte[1024];
                 int offset = 0;
+                long startTime = System.currentTimeMillis();
                 while ((offset = contentStream.read(buffer)) != -1) {
                     counter.addAndGet(offset);
                     if (counter.get() > allowedContentSizeInBytes) {
                         throw new ExternalContentTooLargeException(
                                 "Content from url " + url + " is larger then " + this.allowedContentSizeInBytes);
+                    }
+                    long now = System.currentTimeMillis();
+                    if (startTime + timeoutInMillis < now) {
+                        throw new IOException("Too much time spent reading url: " + url);
                     }
                     baos.write(buffer, 0, offset);
                 }

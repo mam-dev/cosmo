@@ -78,9 +78,10 @@ public class UrlContentReaderTest {
     @Test
     @Ignore("Need only for testing purposes.")
     public void shouldReadExternalCalendar() {
+        this.instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
-                0);
+                500);
         assertNotNull(items);
         assertFalse(items.isEmpty());
         assertEquals(9, items.size());
