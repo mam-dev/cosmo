@@ -72,7 +72,8 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
                 Set results = itemFilterProcessor.processFilter(itemFilter);
                 return (Set<ICalendarItem>) results;
             } catch (IllegalArgumentException e) {
-                LOG.warn("", e);
+                /* Set this log message to debug because all iPad requests trigger it and log files get polluted. */
+                LOG.debug("Illegal filter item. Only VCALENDAR is supported so far.", e);
             }
 
             // Use brute-force method if CalendarFilter can't be translated

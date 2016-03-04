@@ -67,7 +67,7 @@ public class CalendarFilterConverter {
         itemFilter.setParent(calendar);
         ComponentFilter rootFilter = calendarFilter.getFilter();
         if (!COMP_VCALENDAR.equalsIgnoreCase(rootFilter.getName())) {
-            throw new IllegalArgumentException("unsupported component filter: " + rootFilter.getName());
+            throw new IllegalArgumentException("Unsupported component filter: " + rootFilter.getName());
         }
 
         for (Iterator it = rootFilter.getComponentFilters().iterator(); it.hasNext(); ) {
