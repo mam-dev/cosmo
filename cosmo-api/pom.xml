@@ -2,13 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.unitedinternet.cosmo</groupId>
+		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
+	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-api</artifactId>
+ 	<version>1.0.1-SNAPSHOT</version>
 
 	<name>cosmo-api</name>
+	<description>Cosmo API</description>
 
 	<properties>
 		<findbugs.suppressions.config.file>findbugs-suppressions.xml</findbugs.suppressions.config.file>
@@ -90,6 +93,9 @@
 	</build>
 
   <scm>
-    <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo/</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
+	<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
+	<url>https://github.com/1and1/</url>
+	<tag>cosmo-multimodule-0.9</tag>
   </scm>
 </project>
