@@ -25,7 +25,9 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  *
  */
 public class UrlContentReaderTest {
-
+    
+    private static final int TIMEOUT = 5 * 1000;
+    
     private static final ProxyFactory NO_PROXY_FACTORY = new NoProxyFactory();
 
     private ContentConverter converter;
@@ -52,7 +54,7 @@ public class UrlContentReaderTest {
 
     @Test
     public void shouldReadLocalCalendar() {
-        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("chandler-plain-event.ics"), 0);
+        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("chandler-plain-event.ics"), TIMEOUT);
         assertNotNull(items);
         assertEquals(1, items.size());
     }
@@ -60,19 +62,19 @@ public class UrlContentReaderTest {
     @Test
     public void shouldReadRomanianHolidays() {
         this.instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
-        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"), 0);
+        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"), TIMEOUT);
         assertNotNull(items);
         assertEquals(80, items.size());
     }
 
     @Test(expected = ExternalContentInvalidException.class)
     public void shouldFailAnInvalidEvent() {
-        instanceUnderTest.getContent(urlForName("invalid-event.ics"), 0);
+        instanceUnderTest.getContent(urlForName("invalid-event.ics"), TIMEOUT);
     }
 
     @Test(expected = ExternalContentTooLargeException.class)
     public void shouldFailTooLargeContent() {
-        instanceUnderTest.getContent(urlForName("2445.ics"), 0);
+        instanceUnderTest.getContent(urlForName("2445.ics"), TIMEOUT);
     }
 
     @Test
@@ -81,7 +83,7 @@ public class UrlContentReaderTest {
         this.instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
-                500);
+                TIMEOUT);
         assertNotNull(items);
         assertFalse(items.isEmpty());
         assertEquals(9, items.size());
