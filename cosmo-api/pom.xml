@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.unitedinternet.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>0.9-RC</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>cosmo-api</artifactId>
 
