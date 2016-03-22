@@ -1,74 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!--
-        Copyright 2005-2006 Open Source Applications Foundation Licensed under
-        the Apache License, Version 2.0 (the "License"); you may not use this
-        file except in compliance with the License. You may obtain a copy of
-        the License at http://www.apache.org/licenses/LICENSE-2.0 Unless
-        required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-        implied. See the License for the specific language governing
-        permissions and limitations under the License.
-    -->
+<!-- Copyright 2005-2006 Open Source Applications Foundation Licensed under 
+	the Apache License, Version 2.0 (the "License"); you may not use this file 
+	except in compliance with the License. You may obtain a copy of the License 
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
+	law or agreed to in writing, software distributed under the License is distributed 
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+	express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="cosmoEntityFactory" class="org.unitedinternet.cosmo.model.hibernate.HibEntityFactory" />
+	<bean id="cosmoEntityFactory"
+		class="org.unitedinternet.cosmo.model.hibernate.HibEntityFactory" />
 
-    <bean id="idGenerator" class="org.unitedinternet.cosmo.util.VersionFourGenerator" />
+	<bean id="idGenerator" class="org.unitedinternet.cosmo.util.VersionFourGenerator" />
 
-    <bean id="secureRandom" class="java.security.SecureRandom" factory-bean="secureRandomFactoryBean"/>
+	<bean id="secureRandom" class="java.security.SecureRandom"
+		factory-bean="secureRandomFactoryBean" />
 
-    <bean id="secureRandomFactoryBean" class="org.springframework.security.core.token.SecureRandomFactoryBean"/>
+	<bean id="secureRandomFactoryBean"
+		class="org.springframework.security.core.token.SecureRandomFactoryBean" />
 
-    <bean id="tokenGenerator"
-          class="org.springframework.security.core.token.KeyBasedPersistenceTokenService" >
-        <property name="serverSecret" value="${cosmo.tikets.serverSecret}"/>
-        <property name="serverInteger" value="${cosmo.tikets.serverInteger}"/>
-        <property name="pseudoRandomNumberBits" value="16"/>
-        <property name="secureRandom" ref="secureRandom"/>
-    </bean>
+	<bean id="tokenGenerator"
+		class="org.springframework.security.core.token.KeyBasedPersistenceTokenService">
+		<property name="serverSecret" value="${cosmo.tikets.serverSecret}" />
+		<property name="serverInteger" value="${cosmo.tikets.serverInteger}" />
+		<property name="pseudoRandomNumberBits" value="16" />
+		<property name="secureRandom" ref="secureRandom" />
+	</bean>
 
-    <bean id="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl" abstract="true">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
+	<bean id="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl"
+		abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 
-    <bean id="contentDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl"
-        init-method="init" destroy-method="destroy">
-        <property name="itemPathTranslator" ref="itemPathTranslator" />
-        <property name="idGenerator">
-            <ref bean="idGenerator" />
-        </property>
-        <property name="ticketKeyGenerator">
-            <ref bean="tokenGenerator" />
-        </property>
-        <property name="itemFilterProcessor">
-            <ref bean="itemFilterProcessor" />
-        </property>
-    </bean>
+	<bean id="contentDaoInternal" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl"
+		init-method="init" destroy-method="destroy">
+		<property name="itemPathTranslator" ref="itemPathTranslator" />
+		<property name="idGenerator">
+			<ref bean="idGenerator" />
+		</property>
+		<property name="ticketKeyGenerator">
+			<ref bean="tokenGenerator" />
+		</property>
+		<property name="itemFilterProcessor">
+			<ref bean="itemFilterProcessor" />
+		</property>
+	</bean>
 
-    <bean id="itemFilterProcessor" parent="abstractDao" class="org.unitedinternet.cosmo.dao.query.hibernate.StandardItemFilterProcessor" />
+	<bean id="entityConverter"
+		class="org.unitedinternet.cosmo.model.hibernate.EntityConverter">
+		<constructor-arg ref="cosmoEntityFactory" />
+	</bean>
+	
+	<bean id="contentConverter" class="org.unitedinternet.cosmo.ext.ContentConverter">
+		<constructor-arg ref="entityConverter" />
+	</bean>
+	
+	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.UrlContentReader">
+		<constructor-arg ref="contentConverter" />
+		<constructor-arg>
+			<bean class="org.unitedinternet.cosmo.ext.EnvironmentProxyFactory" />
+		</constructor-arg>
+		<constructor-arg>
+		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+		</constructor-arg>
+		<constructor-arg value="${external.content.size}"/>		       
+	</bean>
+	
+	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
+		<constructor-arg ref="urlContentReader" />		
+		<constructor-arg value="${external.content.connection.timeout}"/>        
+	</bean>
+	
+	<bean id="contentSourceFactory" class="org.unitedinternet.cosmo.ext.ContentSourceFactoryBean">
+		<constructor-arg ref="urlContentSource"/>
+		<constructor-arg ref="externalComponentInstanceProvider" />
+	</bean>
 
-    <bean id="itemPathTranslator" parent="abstractDao" class="org.unitedinternet.cosmo.dao.query.hibernate.DefaultItemPathTranslator" />
+	<bean id="contentDaoExternal"
+		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">		
+		<constructor-arg ref="contentDaoInternal" />
+		<constructor-arg ref="contentSourceFactory"/>
+	</bean>
 
-    <bean id="eventLogDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.EventLogDaoImpl" init-method="init" destroy-method="destroy"/>
+	<bean id="contentDao"
+		class="org.unitedinternet.cosmo.dao.external.ContentDaoProxyFactory">
+		<constructor-arg>
+			<bean
+				class="org.unitedinternet.cosmo.dao.external.ContentDaoInvocationHandler">
+				<constructor-arg ref="contentDaoInternal" />
+				<constructor-arg ref="contentDaoExternal" />
+			</bean>
+		</constructor-arg>
+	</bean>
 
-    <bean id="serverPropertyDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.ServerPropertyDaoImpl" init-method="init" destroy-method="destroy"/>
+	<bean id="itemFilterProcessor" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.query.hibernate.StandardItemFilterProcessor" />
 
-    <bean id="userDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.UserDaoImpl" init-method="init" destroy-method="destroy">
-        <property name="idGenerator">
-            <ref bean="idGenerator" />
-        </property>
-    </bean>
+	<bean id="itemPathTranslator" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.query.hibernate.DefaultItemPathTranslator" />
 
-    <bean id="calendarDao" parent="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.CalendarDaoImpl" init-method="init">
-        <property name="itemFilterProcessor">
-            <ref bean="itemFilterProcessor" />
-        </property>
-        <property name="entityFactory" ref="cosmoEntityFactory" />
-    </bean>
-    <!--  Transaction Definitions -->
+	<bean id="eventLogDao" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.hibernate.EventLogDaoImpl"
+		init-method="init" destroy-method="destroy" />	
+
+	<bean id="userDao" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.hibernate.UserDaoImpl"
+		init-method="init" destroy-method="destroy">
+		<property name="idGenerator">
+			<ref bean="idGenerator" />
+		</property>
+	</bean>
+
+	<bean id="calendarDao" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.hibernate.CalendarDaoImpl"
+		init-method="init">
+		<property name="itemFilterProcessor">
+			<ref bean="itemFilterProcessor" />
+		</property>
+		<property name="entityFactory" ref="cosmoEntityFactory" />
+	</bean>
+	<!-- Transaction Definitions -->
 
 </beans>

@@ -17,10 +17,11 @@ package org.unitedinternet.cosmo.dao;
 
 import java.util.Set;
 
-import org.unitedinternet.cosmo.model.BaseEventStamp;
+import org.unitedinternet.cosmo.dao.external.ExternalizableContent;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -43,14 +44,12 @@ public interface ItemDao extends Dao {
     public Item findItemByUid(String uid);
 
     /**
-     * Find an item with the specified uid. The return type will be one of
-     * ContentItem, CollectionItem, NoteItem.
-     *
-     * @param uid
-     *            uid of item to find
-     * @return BaseEventStamp represented by uid
+     * Searches for an item stamp by item uid. The implementation will hit directly the the DB. 
+     * @param internalItemUid item internal uid
+     * @param clazz stamp type
+     * @return the item's stamp from the db
      */
-    public BaseEventStamp findEventStampFromDbByUid(String uid);
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz);
     
     /**
      * Find an item with the specified path. The return type will be one of
@@ -60,6 +59,7 @@ public interface ItemDao extends Dao {
      *            path of item to find
      * @return item represented by path
      */
+    @ExternalizableContent
     public Item findItemByPath(String path);
     
     /**
@@ -73,6 +73,7 @@ public interface ItemDao extends Dao {
      *            uid of parent that path is relative to
      * @return item represented by path
      */
+    @ExternalizableContent
     public Item findItemByPath(String path, String parentUid);
     
     /**
@@ -241,6 +242,7 @@ public interface ItemDao extends Dao {
      * @param filter criteria to filter items by
      * @return set of items matching ItemFilter
      */
+    @ExternalizableContent
     public Set<Item> findItems(ItemFilter filter);
 
     /**

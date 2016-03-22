@@ -40,7 +40,8 @@ public interface EntityFactory {
      * @return new ColletionItem
      */
     public CollectionItem createCollection();
-    
+
+    public CollectionItem createCollection(String targetUri);
     
     /**
      * Create new NoteItem
@@ -243,4 +244,5 @@ public interface EntityFactory {
      * @return new XMLAttribute
      */
     public XmlAttribute createXMLAttribute(QName qname, Element e);
+
 }

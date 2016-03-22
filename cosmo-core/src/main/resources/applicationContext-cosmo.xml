@@ -14,7 +14,6 @@
 
     <import resource="applicationContext-persistence.xml"/>
     <import resource="applicationContext-dao.xml"/>
-    <import resource="applicationContext-services.xml"/>
-    <import resource="applicationContext-monitoring.xml"/>
+    <import resource="applicationContext-services.xml"/>    
     <import resource="applicationContext-security-dav.xml"/>
 </beans>

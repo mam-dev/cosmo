@@ -15,7 +15,7 @@
  */
 package org.unitedinternet.cosmo.hibernate.validator;
 
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -25,6 +25,12 @@ import java.util.Set;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
@@ -39,13 +45,6 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.RRule;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
-import org.springframework.util.ResourceUtils;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
 /**
  * Check if a Calendar object contains a valid VEvent

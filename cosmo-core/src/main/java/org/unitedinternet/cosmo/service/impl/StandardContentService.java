@@ -34,7 +34,6 @@ import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -105,21 +104,17 @@ public class StandardContentService implements ContentService {
     }
 
     /**
-     * Find an item with the specified uid.  If the uid is found, return
-     * the item found.  If the uid represents a recurring NoteItem occurrence
-     * (parentUid:recurrenceId), return a NoteOccurrence.
-     *
-     * @param uid
-     *            uid of item to find
-     * @return eventStamp represented by uid
+     * Searches for an item stamp by item uid. The implementation will hit directly the the DB. 
+     * @param internalItemUid item internal uid
+     * @param clazz stamp type
+     * @return the item's stamp from the db
      */
-    public BaseEventStamp findEventStampFromDbByUid(String uid) {
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz){
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding item with uid " + uid);
+            LOG.debug("finding item with uid " + internalItemUid);
         }
-        BaseEventStamp eventStamp = contentDao.findEventStampFromDbByUid(uid);
+        return contentDao.findStampByInternalItemUid(internalItemUid, clazz);
         
-       return eventStamp;
     }
 
     /**

@@ -24,19 +24,19 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.mock.MockCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockHomeCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockItem;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
-import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 
 /**
  * Simple in-memory storage system for mock data access objects.
@@ -71,8 +71,8 @@ public class MockDaoStorage {
      * @param uid The id. The item.
      * @return The item.
      */
-    public EventStamp getItemEventStampByUid(String uid) {
-        return (EventStamp)itemsByUid.get(uid).getStamp(EventStamp.class);
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE getItemStampByUid(String uid, Class<STAMP_TYPE> clazz) {
+        return clazz.cast(itemsByUid.get(uid).getStamp(clazz));
     }
     
     /**

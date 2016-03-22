@@ -67,6 +67,9 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
     
     public static final QName ATTR_CALENDAR_VISIBILITY = new HibQName(
             CalendarCollectionStamp.class, "visibility");
+    
+    public static final QName ATTR_CALENDAR_TARGET_URI = new HibQName(
+            CalendarCollectionStamp.class, "targetUri");
    
     /** default constructor */
     public HibCalendarCollectionStamp() {
@@ -128,6 +131,16 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
     public Calendar getTimezoneCalendar() {
         // calendar stored as ICalendarAttribute on Item
         return HibICalendarAttribute.getValue(getItem(), ATTR_CALENDAR_TIMEZONE);
+    }
+    
+    @Override
+    public void setTargetUri(String targetUri) {
+        HibStringAttribute.setValue(getItem(), ATTR_CALENDAR_TARGET_URI, targetUri);
+    }
+    
+    @Override
+    public String getTargetUri() {
+        return HibStringAttribute.getValue(getItem(), ATTR_CALENDAR_TARGET_URI);
     }
 
     /* (non-Javadoc)

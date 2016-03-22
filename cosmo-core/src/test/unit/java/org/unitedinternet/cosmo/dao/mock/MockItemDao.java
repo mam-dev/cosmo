@@ -29,11 +29,11 @@ import org.unitedinternet.cosmo.dao.ItemDao;
 import org.unitedinternet.cosmo.dao.ItemNotFoundException;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.QName;
+import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -73,8 +73,8 @@ public class MockItemDao implements ItemDao {
      *            id of item to find
      * @return item represented by uid
      */
-    public EventStamp findEventStampFromDbByUid(String id) {
-        return storage.getItemEventStampByUid(id);
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String id, Class<STAMP_TYPE> clazz) {
+        return storage.getItemStampByUid(id, clazz);
     }
     
     /**
