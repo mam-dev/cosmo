@@ -96,16 +96,7 @@
         <filter-name>http-override</filter-name>
         <filter-class>org.unitedinternet.cosmo.filters.HttpOverrideFilter</filter-class>
     </filter>
-    <filter>
-        <filter-name>retry-filter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <param-name>targetBeanName</param-name>
-            <param-value>retryFilter</param-value>
-        </init-param>
-    </filter>
 
-	
 	<filter-mapping>
 	        <filter-name>requestContextFilter</filter-name>
 	        <servlet-name>/*</servlet-name>
@@ -132,12 +123,6 @@
     <filter-mapping>
         <filter-name>http-logging</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Retry filter needs to be last -->
-    <filter-mapping>
-        <filter-name>retry-filter</filter-name>
-        <url-pattern>/dav/*</url-pattern>
     </filter-mapping>
     
     <error-page>
