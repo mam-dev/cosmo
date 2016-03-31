@@ -47,8 +47,6 @@ import org.w3c.dom.Element;
  * end value: an iCalendar "date with UTC time"
  */
 public class TimeRangeFilter implements CaldavConstants {
-
-    Logger LOG = LoggerFactory.getLogger(TimeRangeFilter.class);
     
     private Period period = null;
 
@@ -69,9 +67,7 @@ public class TimeRangeFilter implements CaldavConstants {
      * @param element The DOM Element.
      * @throws ParseException - if something is wrong this exception is thrown.
      */
-    public TimeRangeFilter(Element element, VTimeZone timezone) throws ParseException {
-        LOG.info("New TimeRangeFilter with params element={} and timezone={}", element, timezone);
-        
+    public TimeRangeFilter(Element element, VTimeZone timezone) throws ParseException {        
         // Get start (must be present)
         String start =
             DomUtil.getAttribute(element, ATTR_CALDAV_START, null);
@@ -80,7 +76,6 @@ public class TimeRangeFilter implements CaldavConstants {
         }
 
         DateTime trstart = new DateTime(start);
-        LOG.info("Built trstart={}", trstart);
         if (! trstart.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange start must be UTC", -1);
         }
@@ -95,7 +90,6 @@ public class TimeRangeFilter implements CaldavConstants {
         }
 
         DateTime trend = new DateTime(end);
-        LOG.info("Built trend={}", trend);
         if (! trend.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange end must be UTC", -1);
         }
