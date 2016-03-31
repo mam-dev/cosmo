@@ -23,6 +23,8 @@ import net.fortuna.ical4j.model.component.VTimeZone;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.w3c.dom.Element;
 
@@ -45,6 +47,8 @@ import org.w3c.dom.Element;
  * end value: an iCalendar "date with UTC time"
  */
 public class TimeRangeFilter implements CaldavConstants {
+    
+    Logger LOG = LoggerFactory.getLogger(TimeRangeFilter.class);
 
     private Period period = null;
 
@@ -66,6 +70,8 @@ public class TimeRangeFilter implements CaldavConstants {
      * @throws ParseException - if something is wrong this exception is thrown.
      */
     public TimeRangeFilter(Element element, VTimeZone timezone) throws ParseException {
+        LOG.info("New TimeRangeFilter with params element={} and timezone={}", element, timezone);
+        
         // Get start (must be present)
         String start =
             DomUtil.getAttribute(element, ATTR_CALDAV_START, null);
@@ -74,6 +80,7 @@ public class TimeRangeFilter implements CaldavConstants {
         }
 
         DateTime trstart = new DateTime(start);
+        LOG.info("Built trstart={}", trstart);
         if (! trstart.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange start must be UTC", -1);
         }
@@ -88,6 +95,7 @@ public class TimeRangeFilter implements CaldavConstants {
         }
 
         DateTime trend = new DateTime(end);
+        LOG.info("Built trend={}", trend);
         if (! trend.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange end must be UTC", -1);
         }
