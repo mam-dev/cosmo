@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.mysql.jdbc.AbandonedConnectionCleanupThread;
-
 /**
  * User: izidaru
  * Date: 8/7/13
@@ -29,14 +27,8 @@ public class ContextFinalizer implements ServletContextListener {
                 d = drivers.nextElement();
                 DriverManager.deregisterDriver(d);
             } catch (SQLException ex) {
-            	System.out.println(ex);
+            	ex.printStackTrace();
             }
-        }
-        try {
-            AbandonedConnectionCleanupThread.shutdown();
-        } catch (InterruptedException e) {
-        	System.out.println(e);
-        }
-
+        }       
     }
 }

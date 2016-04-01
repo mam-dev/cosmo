@@ -15,8 +15,7 @@
 		<version>1.0.10-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cosmo-core</artifactId>
-	<version>1.0.10-SNAPSHOT</version>
+	<artifactId>cosmo-core</artifactId>	
 
 
 	<properties>
@@ -95,8 +94,8 @@
 		</dependency>
 		<!-- Databases -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>

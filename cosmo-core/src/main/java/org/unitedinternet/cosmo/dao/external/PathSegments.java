@@ -5,7 +5,6 @@ import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.mysql.jdbc.StringUtils;
 
 /**
  * Represents the path segments as they might appear in the CALDAV requests. e.g. /homeUid/collectionUid/eventUid.
@@ -55,7 +54,7 @@ class PathSegments {
     }
     
     private static String decode(String path){
-        if(StringUtils.isNullOrEmpty(path)){
+        if (path == null || path.trim().isEmpty()) {
             return path;
         }
         try {
