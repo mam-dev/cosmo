@@ -5,10 +5,10 @@ CREATE TABLE `attribute` (
   `attributetype` varchar(16) NOT NULL,
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `createdate` bigint(20) DEFAULT NULL,
-  `etag` varchar(255) DEFAULT NULL,
+  `etag` varchar(128) DEFAULT NULL,
   `modifydate` bigint(20) DEFAULT NULL,
-  `localname` varchar(255) NOT NULL,
-  `namespace` varchar(255) NOT NULL,
+  `localname` varchar(128) NOT NULL,
+  `namespace` varchar(128) NOT NULL,
   `booleanvalue` tinyint(4) DEFAULT NULL,
   `textvalue` longtext,
   `intvalue` bigint(20) DEFAULT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `attribute` (
   KEY `idx_attrname` (`localname`),
   KEY `idx_attrtype` (`attributetype`),
   CONSTRAINT `FKC7AA9CFF55C69C` FOREIGN KEY (`itemid`) REFERENCES `item` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `collection_item`;
 CREATE TABLE `collection_item` (
@@ -92,7 +92,7 @@ CREATE TABLE `event_stamp` (
   KEY `idx_startdt` (`startdate`),
   KEY `idx_enddt` (`enddate`),
   CONSTRAINT `FK1ACFBDDE227B4573` FOREIGN KEY (`stampid`) REFERENCES `stamp` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `item`;
@@ -106,7 +106,7 @@ CREATE TABLE `item` (
   `clientmodifieddate` bigint(20) DEFAULT NULL,
   `displayname` varchar(1024) DEFAULT NULL,
   `itemname` varchar(255) NOT NULL,
-  `uid` varchar(255) NOT NULL,
+  `uid` varchar(128) NOT NULL,
   `version` int(11) NOT NULL,
   `lastmodification` int(11) DEFAULT NULL,
   `lastmodifiedby` varchar(255) DEFAULT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE `item` (
   CONSTRAINT `FK317B136BE46F4` FOREIGN KEY (`ownerid`) REFERENCES `users` (`id`),
   CONSTRAINT `FK317B137B89A346` FOREIGN KEY (`contentdataid`) REFERENCES `content_data` (`id`),
   CONSTRAINT `FK317B13FFE49D06` FOREIGN KEY (`modifiesitemid`) REFERENCES `item` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `multistring_values`;
