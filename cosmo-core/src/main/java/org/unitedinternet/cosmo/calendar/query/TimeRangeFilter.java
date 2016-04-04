@@ -17,16 +17,14 @@ package org.unitedinternet.cosmo.calendar.query;
 
 import java.text.ParseException;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
+import org.w3c.dom.Element;
+
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VTimeZone;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.jackrabbit.webdav.xml.DomUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
-import org.w3c.dom.Element;
 
 /**
  * Represents the CALDAV:time-range element. From sec 9.8:
@@ -74,7 +72,7 @@ public class TimeRangeFilter implements CaldavConstants {
         if (start == null) {
             throw new ParseException("CALDAV:comp-filter time-range requires a start time", -1);
         }
-
+        
         DateTime trstart = new DateTime(start);
         if (! trstart.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange start must be UTC", -1);
@@ -82,14 +80,9 @@ public class TimeRangeFilter implements CaldavConstants {
 
         // Get end (must be present)
         String end =
-            DomUtil.getAttribute(element, ATTR_CALDAV_END, null);
-        if (end == null) {
-            //add one year to date start Iphone ios7 bug
-            end = addOneYearToDateStart(start);
-            //throw new ParseException("CALDAV:comp-filter time-range requires an end time", -1); 
-        }
-
-        DateTime trend = new DateTime(end);
+            DomUtil.getAttribute(element, ATTR_CALDAV_END, null);        
+        DateTime trend = end != null ? new DateTime(end) : addOneYearToDateStart(trstart);
+        
         if (! trend.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange end must be UTC", -1);
         }
@@ -98,12 +91,12 @@ public class TimeRangeFilter implements CaldavConstants {
         setTimezone(timezone);
     }
 
-    private String addOneYearToDateStart(String start) {
-        String year = start.substring(0, 4);
+    private DateTime addOneYearToDateStart(DateTime trstart) {
         
-        return Integer.parseInt(year) + 1 + start.substring(4);
+        DateTime plusOneYear = new DateTime(trstart.getTime() + new Long("31536000000")); // one year in miliseconds
+        plusOneYear.setUtc(true);
+        return plusOneYear;
     }
-
     /**
      * 
      * @param dtStart The timerange start.
