@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
@@ -34,10 +33,8 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.ConflictException;
-import org.unitedinternet.cosmo.dav.ContentLengthRequiredException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.DavResponse;
@@ -46,6 +43,7 @@ import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.UnsupportedMediaTypeException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.AclEvaluator;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
@@ -441,14 +439,12 @@ public abstract class BaseProvider
         boolean chunked = xfer != null && xfer.equals("chunked");
         if (xfer != null && ! chunked){
             throw new BadRequestException("Unknown Transfer-Encoding " + xfer);
+        } 
+        if (request.getContentLength() <= 0){
+            throw new BadRequestException("no content length set to input stream.");
         }
-        if (chunked && request.getContentLength() <= 0){
-            throw new ContentLengthRequiredException();
-        }
-
-        InputStream in = request.getContentLength() > 0 || chunked ?
-            request.getInputStream() : null;
-        return new DavInputContext(request, in);
+        
+        return new DavInputContext(request, request.getInputStream());
     }
     
     /**
