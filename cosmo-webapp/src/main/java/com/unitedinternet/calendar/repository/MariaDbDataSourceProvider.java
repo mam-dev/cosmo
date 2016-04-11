@@ -14,16 +14,14 @@ import org.unitedinternet.cosmo.db.DataSourceType;
 import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
 @CalendarRepository
-public class DataSourceProviderImpl implements DataSourceProvider{
-    
+public class MariaDbDataSourceProvider implements DataSourceProvider {
+
     private DataSource dataSource;
-    private DataSourceType dataSourceType;
-    
-    public DataSourceProviderImpl(DataSource dataSource, DataSourceType dataSourceType){
+
+    public MariaDbDataSourceProvider(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.dataSourceType = dataSourceType;
     }
-    
+
     @Override
     public DataSource getDataSource() {
         return dataSource;
@@ -31,7 +29,7 @@ public class DataSourceProviderImpl implements DataSourceProvider{
 
     @Override
     public DataSourceType getDataSourceType() {
-        return dataSourceType;
+        return DataSourceType.MySQL5InnoDB;
     }
 
 }

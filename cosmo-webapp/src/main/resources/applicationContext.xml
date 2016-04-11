@@ -17,34 +17,31 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     
     <bean id="authenticationProvider" class="com.unitedinternet.calendar.security.DummyAuthenticationProvider"/>
+     
+     <bean id="mariaDbService" class="ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService" init-method="start" destroy-method="stop">
+     	<property name="defaultBaseDir" value="target/maridb/base"/>
+     	<property name="defaultDataDir" value="target/maridb/data"/>
+     	<property name="defaultPort" value="33060"/>     	
+     </bean>
+     
+     <bean id="mariaDbSchemaInit" class="com.unitedinternet.calendar.repository.MariaDbSchemaInit" init-method="init">
+     	<constructor-arg ref="mariaDbService"/>
+     </bean>
     
-    <!--
-    	Make sure the schema is created like below:
-    	
-    	CREATE DATABASE cosmo DEFAULT CHARACTER SET utf8;
-		GRANT ALL ON cosmo.* TO 'cosmo'@'localhost' IDENTIFIED BY 'cosmo';
-		FLUSH PRIVILEGES;
-		
-		And then the table create scripts is run. 
-		
-		/cosmo-core/src/main/resources/db/cosmo-schema.sql 
-    
-     -->
-    
-    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" lazy-init="true" destroy-method="close">
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" lazy-init="true" destroy-method="close" depends-on="mariaDbSchemaInit">
          <property name="driverClassName" value="org.mariadb.jdbc.Driver"/>
-         <property name="url" value="jdbc:mysql://localhost/cosmo?autoReconnect=true"/>
+         <property name="url" value="jdbc:mysql://localhost:33060/cosmo?autoReconnect=true"/>
          <property name="username" value="cosmo"/> 
-         <property name="password" value="cosmo" />
+         <property name="password" value="" />
          <property name="maxActive" value="100"/> 
          <property name="maxIdle" value="20" />
          <property name="maxWait" value="10000"/>
          <property name="testOnBorrow" value="true" />
+         <property name="validationQuery" value="SELECT 1;"/>
     </bean>
        
-    <bean id="dataSourceProviderImpl" class="com.unitedinternet.calendar.repository.DataSourceProviderImpl">
-        <constructor-arg ref="dataSource"/>
-        <constructor-arg value="MySQL5InnoDB"/>
+    <bean id="dataSourceProvider" class="com.unitedinternet.calendar.repository.MariaDbDataSourceProvider">
+        <constructor-arg ref="dataSource"/>        
     </bean>
     
     <bean class="org.unitedinternet.cosmo.service.interceptors.LoggingEventAddHandler"/>
