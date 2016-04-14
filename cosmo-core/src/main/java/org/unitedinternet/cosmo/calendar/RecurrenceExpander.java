@@ -381,7 +381,15 @@ public class RecurrenceExpander {
         Date rangeEnd = 
             org.unitedinternet.cosmo.calendar.util.Dates.getInstance(cal.getTime(), occurrence);
         
-        InstanceList instances = getOcurrences(calendar, occurrence, rangeEnd, null);
+        TimeZone tz = null;
+        
+        for(Object obj : calendar.getComponents(Component.VEVENT)){
+        	VEvent evt = (VEvent)obj;
+        	if(evt.getRecurrenceId() == null && evt.getStartDate() != null){
+        		tz = evt.getStartDate().getTimeZone();
+        	}
+        }
+        InstanceList instances = getOcurrences(calendar, occurrence, rangeEnd, tz);
         
         for(Iterator<Instance> it = instances.values().iterator(); it.hasNext();) {
             Instance instance = it.next();

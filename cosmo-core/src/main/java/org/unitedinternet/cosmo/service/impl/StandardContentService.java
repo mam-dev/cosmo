@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.service.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.RecurrenceId;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1180,11 +1182,26 @@ public class StandardContentService implements ContentService {
         if(eventStamp==null || !eventStamp.isRecurring()) {
             return null;
         }
-        
+        RecurrenceId rid = null; 
+        if(eventStamp.getEvent() != null && eventStamp.getEvent().getStartDate() != null){
+        	DtStart startDate = eventStamp.getEvent().getStartDate();
+        	rid = new RecurrenceId();
+        	try {
+				if(startDate.isUtc()){
+					rid.setUtc(true);
+				}else if(startDate.getTimeZone() != null){
+					rid.setTimeZone(startDate.getTimeZone());
+				}
+				rid.setValue(recurrenceId.toString());
+			} catch (ParseException e) {
+				rid = null;
+			}
+        }
+        net.fortuna.ical4j.model.Date recurrenceIdToUse = rid == null ? recurrenceId : rid.getDate();
         // verify that occurrence date is valid
         RecurrenceExpander expander = new RecurrenceExpander();
-        if(expander.isOccurrence(eventStamp.getEventCalendar(), recurrenceId)) {
-            return NoteOccurrenceUtil.createNoteOccurrence(recurrenceId, parent);
+        if(expander.isOccurrence(eventStamp.getEventCalendar(), recurrenceIdToUse)) {
+            return NoteOccurrenceUtil.createNoteOccurrence(recurrenceIdToUse, parent);
         }
         
         return null;
