@@ -24,7 +24,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  * @author daniel grigore
  *
  */
-public class UrlContentReaderTest {
+public class SimpleUrlContentReaderTest {
     
     private static final int TIMEOUT = 5 * 1000;
     
@@ -49,7 +49,7 @@ public class UrlContentReaderTest {
         EntityConverter entityConverter = new EntityConverter(entityFactory);
         this.converter = new ContentConverter(entityConverter);
 
-        instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 700);
+        instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 700);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class UrlContentReaderTest {
 
     @Test
     public void shouldReadRomanianHolidays() {
-        this.instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"), TIMEOUT);
         assertNotNull(items);
         assertEquals(80, items.size());
@@ -80,7 +80,7 @@ public class UrlContentReaderTest {
     @Test
     @Ignore("Need only for testing purposes.")
     public void shouldReadExternalCalendar() {
-        this.instanceUnderTest = new UrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
                 TIMEOUT);

@@ -60,7 +60,7 @@
 		<constructor-arg ref="entityConverter" />
 	</bean>
 	
-	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.UrlContentReader">
+	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.SimpleUrlContentReader">
 		<constructor-arg ref="contentConverter" />
 		<constructor-arg>
 			<bean class="org.unitedinternet.cosmo.ext.EnvironmentProxyFactory" />
