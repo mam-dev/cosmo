@@ -106,7 +106,7 @@ public class ContentDaoExternal implements ContentDao {
 
     @Override
     public Item findItemByPath(String path, String parentUid) {
-        LOG.info("EXTERNAL Delegating call to internal for parentUid: " + parentUid + " and path: " + path);
+        LOG.debug("EXTERNAL Delegating call to internal for parentUid: " + parentUid + " and path: " + path);
         return this.contentDaoInternal.findItemByPath(path, parentUid);
     }
 

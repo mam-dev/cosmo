@@ -50,7 +50,7 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
 
     private Object invokeExternalDao(String uuid, Method method, Object[] args) throws Throwable {
         try {
-            LOG.info("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args)
+            LOG.debug("EXTERNAL calling method " + method.getName() + " with args: " + Arrays.toString(args)
                     + " for external uuid: " + uuid);
             return method.invoke(this.contentDaoExternal, args);
         } catch (Exception e) {
