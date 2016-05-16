@@ -106,7 +106,6 @@ public class SimpleUrlContentReader implements UrlContentReader {
                     baos.write(buffer, 0, offset);
                 }
                 Calendar calendar = new CalendarBuilder().build(new ByteArrayInputStream(baos.toByteArray()));
-                calendar.validate();
 
                 Set<NoteItem> externalItems = converter.asItems(calendar);
 
@@ -117,7 +116,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
                 close(contentStream);
                 close(baos);
             }
-        } catch (IOException | ValidationException | ParserException e) {
+        } catch (IOException | ParserException e) {
             throw new ExternalContentInvalidException(e);
         }
     }
