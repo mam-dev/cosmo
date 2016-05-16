@@ -366,7 +366,8 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
      * for the entire recurrence series, and expansion is required to determine
      * if the event actually occurs, and to return individual occurences.
      */
-    private HashSet<Item> processResults(List<Item> results, ItemFilter itemFilter) {
+    @Override
+    public Set<Item> processResults(List<Item> results, ItemFilter itemFilter) {
         boolean hasTimeRangeFilter = false;
         boolean includeMasterInResults = true;
         boolean doTimeRangeSecondPass = true;

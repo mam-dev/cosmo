@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao.query;
 
+import java.util.List;
 import java.util.Set;
 
 import org.unitedinternet.cosmo.model.Item;
@@ -31,4 +32,6 @@ public interface ItemFilterProcessor {
      * @return set of items that match filter
      */
     Set<Item> processFilter(ItemFilter filter);
+    
+    Set<Item> processResults(List<Item> results, ItemFilter itemFilter);
 }

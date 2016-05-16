@@ -85,6 +85,7 @@
 		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">		
 		<constructor-arg ref="contentDaoInternal" />
 		<constructor-arg ref="contentSourceFactory"/>
+		<constructor-arg ref="itemFilterProcessor" />
 	</bean>
 
 	<bean id="contentDao"

@@ -1,27 +1,40 @@
 package org.unitedinternet.cosmo.dao.external;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.ext.ContentSource;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.filter.EventStampFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
+import org.unitedinternet.cosmo.model.filter.StampFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
 import com.google.common.base.Strings;
+
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
 
 /**
  * <code>ContentDao</code> that fetches calendar content from external providers.
@@ -37,9 +50,13 @@ public class ContentDaoExternal implements ContentDao {
 
     private final ContentDao contentDaoInternal;
 
-    public ContentDaoExternal(ContentSource contentSource, final ContentDao contentDaoInternal) {
+    private final ItemFilterProcessor itemFilterProcessor;
+
+    public ContentDaoExternal(ContentSource contentSource, final ContentDao contentDaoInternal,
+            ItemFilterProcessor itemFilterProcessor) {
         this.contentSource = contentSource;
         this.contentDaoInternal = contentDaoInternal;
+        this.itemFilterProcessor = itemFilterProcessor;
     }
 
     @Override
@@ -122,7 +139,10 @@ public class ContentDaoExternal implements ContentDao {
                 Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
                 if (noteItems != null) {
                     this.postProcess(noteItems);
-                    items.addAll(noteItems);
+                    this.postFilter(noteItems, filter);
+                    List<Item> itemsList = new ArrayList<Item>(noteItems);
+                    // Processes the recurring events
+                    items.addAll(this.itemFilterProcessor.processResults(itemsList, filter));
                 }
             }
         }
@@ -145,6 +165,65 @@ public class ContentDaoExternal implements ContentDao {
         }
     }
 
+    /**
+     * Applies the specified filter to the list of items. Any non-recurring item that does not comply with the filter is
+     * removed from list.
+     * 
+     * @param noteItems
+     * @param filter
+     */
+    private void postFilter(Set<NoteItem> noteItems, ItemFilter filter) {
+        List<StampFilter> stampFilters = filter.getStampFilters();
+        if (stampFilters == null || stampFilters.isEmpty()) {
+            return;
+        }
+        for (Iterator<NoteItem> iterator = noteItems.iterator(); iterator.hasNext();) {
+            NoteItem item = iterator.next();
+            EventStamp eventStamp = (EventStamp) item.getStamp(EventStamp.class);
+            if (eventStamp == null || eventStamp.isRecurring()) {
+                continue;
+            }
+            if (isOutOfRangeSafely(eventStamp, stampFilters)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Safely computes if the specified event is outside the date range defined by the stamp filters. In case any
+     * exception is thrown then the event is considered to be in range.
+     * 
+     * @param eventStamp
+     * @param stampFilters
+     * @return <code>true</code> if the specified event is outside the range defined by the specified filters.
+     */
+    private static boolean isOutOfRangeSafely(EventStamp eventStamp, List<StampFilter> stampFilters) {
+        try {
+            return isOutOfRange(eventStamp, stampFilters);
+        } catch (Exception e) {
+            LOG.error("Unable to compute isOutOfRange.", e);
+            return false;
+        }
+    }
+
+    private static boolean isOutOfRange(EventStamp eventStamp, List<StampFilter> stampFilters) throws ParseException {
+        for (StampFilter stampFilter : stampFilters) {
+            if (!(stampFilter instanceof EventStampFilter)) {
+                continue;
+            }
+            VEvent vEvent = eventStamp.getMasterEvent();
+            EventStampFilter eventFilter = (EventStampFilter) stampFilter;
+            DtStart dtStart = new DtStart(vEvent.getStartDate().getValue(), eventFilter.getTimezone());
+            DtEnd dtEnd = new DtEnd(vEvent.getEndDate().getValue(), eventFilter.getTimezone());
+            Date filterStartDate = new DateTime(eventFilter.getUTCStart());
+            Date filterEndDate = new DateTime(eventFilter.getUTCEnd());
+            if (dtStart.getDate().after(filterEndDate) || dtEnd.getDate().before(filterStartDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /* All below methods should not be called for external providers */
 
     @Override
@@ -163,7 +242,8 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     @Override
-    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz){
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid,
+            Class<STAMP_TYPE> clazz) {
         throw new UnsupportedOperationException();
     }
 
