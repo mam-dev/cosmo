@@ -18,20 +18,16 @@ package org.unitedinternet.cosmo.dao.hibernate;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.springframework.orm.hibernate4.SessionFactoryUtils;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilterEvaluater;
 import org.unitedinternet.cosmo.dao.CalendarDao;
-import org.unitedinternet.cosmo.dao.query.hibernate.CalendarFilterConverter;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
+import org.unitedinternet.cosmo.dao.query.hibernate.CalendarFilterConverter;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -42,8 +38,11 @@ import org.unitedinternet.cosmo.model.filter.EventStampFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
-import org.springframework.orm.hibernate4.SessionFactoryUtils;
 
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 
 /**
  * Implementation of CalendarDao using Hibernate persistence objects.
@@ -56,35 +55,34 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
     private ItemFilterProcessor itemFilterProcessor = null;
     private EntityConverter entityConverter = new EntityConverter(null);
 
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.CalendarDao#findCalendarItems(org.unitedinternet.cosmo.model.CollectionItem,
-        rg.unitedinternet.cosmo.calendar.query.CalendarFilter)
+    /*
+     * TODO Note that this method is used for CalDav REPORT and it needs to be properly implemented
      */
-    public Set<ICalendarItem> findCalendarItems(CollectionItem collection,
-                                                CalendarFilter filter) {
-
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public Set<ICalendarItem> findCalendarItems(CollectionItem collection, CalendarFilter filter) {
         try {
             CalendarFilterConverter filterConverter = new CalendarFilterConverter();
             try {
-                // translate CalendarFilter to ItemFilter and execute filter
+                // Translate CalendarFilter to ItemFilter and execute filter
                 ItemFilter itemFilter = filterConverter.translateToItemFilter(collection, filter);
                 Set results = itemFilterProcessor.processFilter(itemFilter);
                 return (Set<ICalendarItem>) results;
-            } catch (IllegalArgumentException e) {
+            } catch (Exception e) {
                 /* Set this log message to debug because all iPad requests trigger it and log files get polluted. */
                 LOG.debug("Illegal filter item. Only VCALENDAR is supported so far.", e);
             }
-
-            // Use brute-force method if CalendarFilter can't be translated
-            // to an ItemFilter (slower but at least gets the job done).
+            /*
+             * Use brute-force method if CalendarFilter can't be translated to an ItemFilter (slower but at least gets
+             * the job done).
+             */
             HashSet<ICalendarItem> results = new HashSet<ICalendarItem>();
             Set<Item> itemsToProcess = null;
 
-            // Optimization:
-            // Do a first pass query if possible to reduce the number
-            // of items we have to examine.  Otherwise we have to examine
-            // all items.
+            /*
+             * Optimization: Do a first pass query if possible to reduce the number of items that needs to be examined.
+             * Otherwise we have to examine all items.
+             */
             ItemFilter firstPassItemFilter = filterConverter.getFirstPassFilter(collection, filter);
             if (firstPassItemFilter != null) {
                 itemsToProcess = itemFilterProcessor.processFilter(firstPassItemFilter);
@@ -116,22 +114,27 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         }
     }
 
-//THIS FILTER DOESN'T TAKE ACCOUNT OF TIMEZONE AND ADDS PREVIOUS ALL DAY EVENTS
-    /* (non-Javadoc)
+    // THIS FILTER DOESN'T TAKE ACCOUNT OF TIMEZONE AND ADDS PREVIOUS ALL DAY EVENTS
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.dao.CalendarDao#findEvents(org.unitedinternet.cosmo.model.CollectionItem,
-     *  net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
+     * net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
      */
-    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, boolean expandRecurringEvents) {
+    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd,
+            boolean expandRecurringEvents) {
 
         return findEvents(collection, rangeStart, rangeEnd, null, expandRecurringEvents);
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.dao.CalendarDao#findEvents(org.unitedinternet.cosmo.model.CollectionItem,
-     *  net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
+     * net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
      */
-    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, 
-            Date rangeEnd, String timezoneId, boolean expandRecurringEvents) {
+    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timezoneId,
+            boolean expandRecurringEvents) {
 
         // Create a NoteItemFilter that filters by parent
         NoteItemFilter itemFilter = new NoteItemFilter();
@@ -139,12 +142,12 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
 
         // and EventStamp by timeRange
         EventStampFilter eventFilter = new EventStampFilter();
-      
-        if(timezoneId != null){
+
+        if (timezoneId != null) {
             TimeZone timeZone = TimeZoneRegistryFactory.getInstance().createRegistry().getTimeZone(timezoneId);
             eventFilter.setTimezone(timeZone);
         }
-        
+
         eventFilter.setTimeRange(rangeStart, rangeEnd);
         eventFilter.setExpandRecurringEvents(expandRecurringEvents);
         itemFilter.getStampFilters().add(eventFilter);
@@ -158,18 +161,15 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         }
     }
 
-
     /*
      * (non-Javadoc)
      * 
      * @see org.unitedinternet.cosmo.dao.CalendarDao#findEventByIcalUid(java.lang.String,
-     *      org.unitedinternet.cosmo.model.CollectionItem)
+     * org.unitedinternet.cosmo.model.CollectionItem)
      */
-    public ContentItem findEventByIcalUid(String uid,
-                                          CollectionItem calendar) {
+    public ContentItem findEventByIcalUid(String uid, CollectionItem calendar) {
         try {
-            Query hibQuery = getSession().getNamedQuery(
-                    "event.by.calendar.icaluid");
+            Query hibQuery = getSession().getNamedQuery("event.by.calendar.icaluid");
             hibQuery.setParameter("calendar", calendar);
             hibQuery.setParameter("uid", uid);
             return (ContentItem) hibQuery.uniqueResult();
@@ -179,7 +179,6 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         }
     }
 
-
     public ItemFilterProcessor getItemFilterProcessor() {
         return itemFilterProcessor;
     }
@@ -188,10 +187,8 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         this.itemFilterProcessor = itemFilterProcessor;
     }
 
-
     /**
-     * Initializes the DAO, sanity checking required properties and defaulting
-     * optional properties.
+     * Initializes the DAO, sanity checking required properties and defaulting optional properties.
      */
     public void init() {
 
@@ -202,19 +199,18 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         if (entityFactory == null) {
             throw new IllegalStateException("entityFactory is required");
         }
-        
+
         entityConverter = new EntityConverter(this.entityFactory);
     }
-
 
     @Override
     public Set<ICalendarItem> findCalendarEvents(Calendar calendar, User cosmoUser) {
         return entityConverter.convertCalendar(calendar);
     }
 
-
     /**
-     * @param entityFactory the entityFactory to set
+     * @param entityFactory
+     *            the entityFactory to set
      */
     public void setEntityFactory(EntityFactory entityFactory) {
         this.entityFactory = entityFactory;
