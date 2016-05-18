@@ -76,20 +76,19 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
              * Use brute-force method if CalendarFilter can't be translated to an ItemFilter (slower but at least gets
              * the job done).
              */
-            HashSet<ICalendarItem> results = new HashSet<ICalendarItem>();
-            Set<Item> itemsToProcess = null;
+            Set<ICalendarItem> results = new HashSet<ICalendarItem>();
+            Set<Item> itemsToProcess = collection.getChildren();
 
             /*
              * Optimization: Do a first pass query if possible to reduce the number of items that needs to be examined.
              * Otherwise we have to examine all items.
              */
-            ItemFilter firstPassItemFilter = filterConverter.getFirstPassFilter(collection, filter);
-            if (firstPassItemFilter != null) {
-                itemsToProcess = itemFilterProcessor.processFilter(firstPassItemFilter);
-            } else {
-                itemsToProcess = collection.getChildren();
-            }
-
+            /* TODO Left only for historical reasons.
+             * ItemFilter firstPassItemFilter = filterConverter.getFirstPassFilter(collection, filter); if
+             * (firstPassItemFilter != null) { itemsToProcess = itemFilterProcessor.processFilter(firstPassItemFilter);
+             * } else { itemsToProcess = collection.getChildren(); }
+             */
+            
             CalendarFilterEvaluater evaluater = new CalendarFilterEvaluater();
 
             // Evaluate filter against all calendar items

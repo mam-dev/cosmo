@@ -23,7 +23,6 @@ import org.unitedinternet.cosmo.model.Stamp;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.ValidationException;
 
 /**
  * Default implementation of {@link UrlContentReader} that reads and validates content.

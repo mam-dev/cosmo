@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,7 +66,8 @@ public class ContentDaoExternal implements ContentDao {
 
         String collectionUid = validCollectionUidFrom(extPath);
 
-        Item collectionItem = this.contentDaoInternal.findItemByPath(homeCollectionUid + "/" + collectionUid);
+        CollectionItem collectionItem = (CollectionItem) this.contentDaoInternal
+                .findItemByPath(homeCollectionUid + "/" + collectionUid);
 
         if (collectionItem == null) {
             throw new IllegalArgumentException(
@@ -83,16 +83,11 @@ public class ContentDaoExternal implements ContentDao {
 
         String targetUri = stamp.getTargetUri();
 
-        Set<NoteItem> itemsFromUri = this.contentSource.getContent(targetUri);
+        Set<NoteItem> itemsFromUri = this.getContent(targetUri, collectionItem);
         if (itemsFromUri != null) {
-            for (NoteItem item : itemsFromUri) {
-                item.setOwner(collectionItem.getOwner());
-            }
-
             String eventUid = extPath.getEventUid();
-
             if (Strings.isNullOrEmpty(eventUid)) {
-                return new ExternalCollectionItem((CollectionItem) collectionItem, itemsFromUri);
+                return new ExternalCollectionItem(collectionItem, itemsFromUri);
             }
             for (NoteItem noteItem : itemsFromUri) {
                 if (eventUid.equals(noteItem.getName())) {
@@ -136,9 +131,8 @@ public class ContentDaoExternal implements ContentDao {
                     .getStamp(CalendarCollectionStamp.class);
             if (stamp != null) {
                 String targetUri = stamp.getTargetUri();
-                Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
+                Set<NoteItem> noteItems = this.getContent(targetUri, calendarItem);
                 if (noteItems != null) {
-                    this.postProcess(noteItems);
                     this.postFilter(noteItems, filter);
                     List<Item> itemsList = new ArrayList<Item>(noteItems);
                     // Processes the recurring events
@@ -150,19 +144,27 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     /**
-     * Post process external <code>NoteItem</code>-s to make them ready to be displayed.
+     * Gets a set of <code>NoteItem</code> from specified <code>targetUri</code> as children of the specified
+     * <code>parent</code> ready to be displayed.
      * 
-     * @param noteItems
-     *            note items to be processed.
+     * @param targetUri
+     * @param parent
+     * @return a set of <code>NoteItem</code> from specified <code>targetUri</code> as children of the specified
+     *         <code>parent</code> ready to be displayed
      */
-    private void postProcess(Set<NoteItem> noteItems) {
-        for (NoteItem item : noteItems) {
-            HibNoteItem hibItem = (HibNoteItem) item;
-            String eTag = hibItem.getEntityTag();
-            if (eTag == null || eTag.trim().isEmpty()) {
-                hibItem.setEntityTag(UUID.randomUUID().toString());
+    private Set<NoteItem> getContent(String targetUri, CollectionItem parent) {
+        Set<NoteItem> noteItems = this.contentSource.getContent(targetUri);
+        if (noteItems != null) {
+            for (NoteItem item : noteItems) {
+                HibNoteItem hibItem = (HibNoteItem) item;
+                hibItem.setOwner(parent.getOwner());
+                String eTag = hibItem.getEntityTag();
+                if (eTag == null || eTag.trim().isEmpty()) {
+                    hibItem.setEntityTag(hibItem.calculateEntityTag());
+                }
             }
         }
+        return noteItems;
     }
 
     /**
