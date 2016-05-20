@@ -2,7 +2,9 @@ package org.unitedinternet.cosmo.dao.external;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -10,10 +12,14 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
+import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
 /**
  * 
@@ -35,7 +41,7 @@ public class ContentDaoInvocationHandlerTest {
         this.contentDaoProxy = new ContentDaoProxyFactory(
                 new ContentDaoInvocationHandler(contentDaoInternal, contentDaoExternal)).getObject();
     }
-       
+
     @Test
     public void shouldSuccessfullyDelegateCallToInternalDaoForNonExternalizableMethod() {
         String uuid = UuidExternalGenerator.getNext();
@@ -76,5 +82,15 @@ public class ContentDaoInvocationHandlerTest {
         filter.setParent(parent);
         this.contentDaoProxy.findItems(filter);
         verify(contentDaoExternal, times(1)).findItems(filter);
+    }
+
+    @Test(expected = CaldavExceptionForbidden.class)
+    public void shouldThrowExceptionWhenCreatingEventInExternalCalendar() {
+        HibCollectionItem delegate = new HibCollectionItem();
+        delegate.setUid(UuidExternalGenerator.getNext());
+        NoteItem child = new HibNoteItem();
+        CollectionItem item = new ExternalCollectionItem(delegate, new HashSet<Item>());
+        when(contentDaoExternal.createContent(item, child)).thenThrow(new CaldavExceptionForbidden(""));
+        this.contentDaoProxy.createContent(item, child);
     }
 }

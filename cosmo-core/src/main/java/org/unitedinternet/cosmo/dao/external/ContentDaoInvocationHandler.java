@@ -20,9 +20,9 @@ import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 public class ContentDaoInvocationHandler implements InvocationHandler {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoInvocationHandler.class);
-    
+
     private static final int WRAPPED_COUNT = 100;
-    
+
     /**
      * Database DAO.
      */
@@ -82,6 +82,11 @@ public class ContentDaoInvocationHandler implements InvocationHandler {
                     CollectionItem parent = filter.getParent();
                     if (parent != null) {
                         path = parent.getUid();
+                    }
+                } else if (arg instanceof ExternalCollectionItem) {
+                    ExternalCollectionItem external = (ExternalCollectionItem) arg;
+                    if (external.getDelegate() != null) {
+                        path = external.getDelegate().getUid();
                     }
                 }
                 if (path != null && UuidExternalGenerator.containsExternalUid(path)) {

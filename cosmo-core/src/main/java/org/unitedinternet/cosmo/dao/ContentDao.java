@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.dao;
 import java.util.Date;
 import java.util.Set;
 
+import org.unitedinternet.cosmo.dao.external.ExternalizableContent;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.User;
@@ -75,6 +76,7 @@ public interface ContentDao extends ItemDao {
      *            content to create
      * @return newly created content
      */
+    @ExternalizableContent
     public ContentItem createContent(CollectionItem parent, ContentItem content);
     
     /**

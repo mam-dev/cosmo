@@ -8,13 +8,13 @@
 package org.unitedinternet.cosmo.dav.caldav;
 
 /**
- * Exception extension for caldav.
- * Errors MUST be properly returned to client. Otherwise, clients will retry to
- * make the request(which will fail again) producing unnecessary load.
+ * Exception extension for CalDAV. Errors MUST be properly returned to client. Otherwise, clients will retry to make the
+ * request(which will fail again) producing unnecessary load.
  * 
  * @author izidaru
  *
  */
+@SuppressWarnings("serial")
 public class CaldavExceptionForbidden extends RuntimeException {
 
     public CaldavExceptionForbidden(String message) {

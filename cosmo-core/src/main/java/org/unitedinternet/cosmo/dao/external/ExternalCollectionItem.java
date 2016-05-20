@@ -22,14 +22,18 @@ import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.Tombstone;
 import org.unitedinternet.cosmo.model.User;
 
-class ExternalCollectionItem implements CollectionItem{
-    
+class ExternalCollectionItem implements CollectionItem {
+
     private CollectionItem delegate;
     private Set<? extends Item> children;
-    
-    ExternalCollectionItem(CollectionItem delegate, Set<? extends Item> children){
+
+    ExternalCollectionItem(CollectionItem delegate, Set<? extends Item> children) {
         this.delegate = delegate;
         this.children = children;
+    }
+
+    public CollectionItem getDelegate() {
+        return delegate;
     }
 
     public Date getCreationDate() {
@@ -38,7 +42,7 @@ class ExternalCollectionItem implements CollectionItem{
 
     @SuppressWarnings("unchecked")
     public Set<Item> getChildren() {
-        return (Set<Item>)children;
+        return (Set<Item>) children;
     }
 
     public Date getModifiedDate() {

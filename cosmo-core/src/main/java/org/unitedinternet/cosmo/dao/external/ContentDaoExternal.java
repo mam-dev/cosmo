@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
+import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.ext.ContentSource;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -369,9 +370,12 @@ public class ContentDaoExternal implements ContentDao {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 
+     */
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
-        throw new UnsupportedOperationException();
+        throw new CaldavExceptionForbidden("Readonly calendar.");
     }
 
     @Override
