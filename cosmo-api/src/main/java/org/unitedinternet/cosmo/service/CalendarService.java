@@ -41,7 +41,7 @@ public interface CalendarService extends Service {
      * @return Set<ContentItem> set ContentItem objects that contain EventStamps that occur
      *         int the given timeRange
      */
-    Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart,
+    Set<Item> findEvents(CollectionItem collection, Date rangeStart,
             Date rangeEnd, String timeZoneId, boolean expandRecurringEvents);
 
     /**
