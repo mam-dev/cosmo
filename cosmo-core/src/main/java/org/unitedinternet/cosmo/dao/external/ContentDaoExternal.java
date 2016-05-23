@@ -159,6 +159,7 @@ public class ContentDaoExternal implements ContentDao {
             for (NoteItem item : noteItems) {
                 HibNoteItem hibItem = (HibNoteItem) item;
                 hibItem.setOwner(parent.getOwner());
+                hibItem.addParent(parent);
                 String eTag = hibItem.getEntityTag();
                 if (eTag == null || eTag.trim().isEmpty()) {
                     hibItem.setEntityTag(hibItem.calculateEntityTag());
