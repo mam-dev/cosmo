@@ -52,6 +52,7 @@ public interface ContentDao extends ItemDao {
      * @param children children to updated
      * @return updated collection
      */
+    @ExternalizableContent
     public CollectionItem updateCollection(CollectionItem collection,
             Set<ContentItem> children);
 
@@ -121,7 +122,6 @@ public interface ContentDao extends ItemDao {
      *            content item to update
      * @return updated content item
      */
-    @ExternalizableContent
     public ContentItem updateContent(ContentItem content);
 
    
@@ -131,7 +131,6 @@ public interface ContentDao extends ItemDao {
      * @param content
      *            content item to remove
      */
-    @ExternalizableContent
     public void removeContent(ContentItem content);
     
     /**

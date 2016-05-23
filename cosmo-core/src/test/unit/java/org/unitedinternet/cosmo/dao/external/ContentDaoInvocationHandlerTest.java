@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -14,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -92,5 +94,17 @@ public class ContentDaoInvocationHandlerTest {
         CollectionItem item = new ExternalCollectionItem(delegate, new HashSet<Item>());
         when(contentDaoExternal.createContent(item, child)).thenThrow(new CaldavExceptionForbidden(""));
         this.contentDaoProxy.createContent(item, child);
+    }
+    
+    @Test(expected = CaldavExceptionForbidden.class)
+    public void shouldThrowExceptionWhenUpdatingExternalCalendar() {
+        HibCollectionItem delegate = new HibCollectionItem();
+        delegate.setUid(UuidExternalGenerator.getNext());
+        NoteItem child = new HibNoteItem();
+        Set<ContentItem> children = new HashSet<>();
+        children.add(child);
+        CollectionItem item = new ExternalCollectionItem(delegate, new HashSet<Item>());
+        when(contentDaoExternal.updateCollection(item, children)).thenThrow(new CaldavExceptionForbidden(""));
+        this.contentDaoProxy.updateCollection(item, children);
     }
 }
