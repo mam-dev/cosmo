@@ -52,6 +52,7 @@ public interface ContentDao extends ItemDao {
      * @param children children to updated
      * @return updated collection
      */
+    @ExternalizableContent
     public CollectionItem updateCollection(CollectionItem collection,
             Set<ContentItem> children);
 

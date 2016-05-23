@@ -363,7 +363,7 @@ public class ContentDaoExternal implements ContentDao {
 
     @Override
     public CollectionItem updateCollection(CollectionItem collection, Set<ContentItem> children) {
-        throw new UnsupportedOperationException();
+        throw new CaldavExceptionForbidden("Readonly calendar.");
     }
 
     @Override
@@ -401,12 +401,12 @@ public class ContentDaoExternal implements ContentDao {
 
     @Override
     public ContentItem updateContent(ContentItem content) {
-        throw new CaldavExceptionForbidden("Readonly calendar.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void removeContent(ContentItem content) {
-        throw new CaldavExceptionForbidden("Readonly calendar.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
