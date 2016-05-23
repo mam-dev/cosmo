@@ -400,12 +400,12 @@ public class ContentDaoExternal implements ContentDao {
 
     @Override
     public ContentItem updateContent(ContentItem content) {
-        throw new UnsupportedOperationException();
+        throw new CaldavExceptionForbidden("Readonly calendar.");
     }
 
     @Override
     public void removeContent(ContentItem content) {
-        throw new UnsupportedOperationException();
+        throw new CaldavExceptionForbidden("Readonly calendar.");
     }
 
     @Override
