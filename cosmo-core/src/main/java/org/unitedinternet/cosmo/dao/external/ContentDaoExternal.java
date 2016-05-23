@@ -216,11 +216,12 @@ public class ContentDaoExternal implements ContentDao {
             }
             VEvent vEvent = eventStamp.getMasterEvent();
             EventStampFilter eventFilter = (EventStampFilter) stampFilter;
-            DtStart dtStart = new DtStart(vEvent.getStartDate().getValue(), eventFilter.getTimezone());
-            DtEnd dtEnd = new DtEnd(vEvent.getEndDate().getValue(), eventFilter.getTimezone());
+            Date dtStart = new DtStart(vEvent.getStartDate().getValue(), eventFilter.getTimezone()).getDate();
+            Date dtEnd = new DtEnd(vEvent.getEndDate().getValue(), eventFilter.getTimezone()).getDate();
             Date filterStartDate = new DateTime(eventFilter.getUTCStart());
             Date filterEndDate = new DateTime(eventFilter.getUTCEnd());
-            if (dtStart.getDate().after(filterEndDate) || dtEnd.getDate().before(filterStartDate)) {
+            if (dtStart.after(filterEndDate) || dtStart.equals(filterEndDate) || dtEnd.before(filterStartDate)
+                    || dtEnd.equals(filterStartDate)) {
                 return true;
             }
         }
