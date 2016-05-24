@@ -10,9 +10,12 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.hibernate.validator.EventValidator;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -25,9 +28,9 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  *
  */
 public class SimpleUrlContentReaderTest {
-    
+
     private static final int TIMEOUT = 5 * 1000;
-    
+
     private static final ProxyFactory NO_PROXY_FACTORY = new NoProxyFactory();
 
     private ContentConverter converter;
@@ -36,8 +39,12 @@ public class SimpleUrlContentReaderTest {
 
     private UrlContentReader instanceUnderTest;
 
+    @Mock
+    private ExternalComponentInstanceProvider instanceProvider;
+
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         EventValidator.ValidationConfig validationConfig = new EventValidator.ValidationConfig();
         validationConfig.setEnvironment(Mockito.mock(Environment.class));
         EventValidator.setValidationConfig(validationConfig);
@@ -49,7 +56,7 @@ public class SimpleUrlContentReaderTest {
         EntityConverter entityConverter = new EntityConverter(entityFactory);
         this.converter = new ContentConverter(entityConverter);
 
-        instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 700);
+        instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 700, instanceProvider);
     }
 
     @Test
@@ -61,7 +68,8 @@ public class SimpleUrlContentReaderTest {
 
     @Test
     public void shouldReadRomanianHolidays() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024,
+                instanceProvider);
         Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"), TIMEOUT);
         assertNotNull(items);
         assertEquals(80, items.size());
@@ -80,7 +88,8 @@ public class SimpleUrlContentReaderTest {
     @Test
     @Ignore("Need only for testing purposes.")
     public void shouldReadExternalCalendar() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024,
+                instanceProvider);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
                 TIMEOUT);

@@ -16,6 +16,8 @@ import javax.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
+import org.unitedinternet.cosmo.metadata.Callback;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
@@ -45,13 +47,16 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private final int allowedContentSizeInBytes;
 
+    private final ExternalComponentInstanceProvider instanceProvider;
+
     public SimpleUrlContentReader(ContentConverter converter, ProxyFactory proxyFactory, Validator validator,
-            int allowedContentSizeInBytes) {
+            int allowedContentSizeInBytes, ExternalComponentInstanceProvider instanceProvider) {
         super();
         this.converter = converter;
         this.proxyFactory = proxyFactory;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
+        this.instanceProvider = instanceProvider;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
      * @param headersMap
      *            headers to be sent when making the request to the specified URL
      * @return content read from the specified <code>url</code>
-     */    
+     */
     public Set<NoteItem> getContent(String url, int timeoutInMillis, RequestOptions options) {
         try {
             URL source = build(url, options);
@@ -105,6 +110,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
                     baos.write(buffer, 0, offset);
                 }
                 Calendar calendar = new CalendarBuilder().build(new ByteArrayInputStream(baos.toByteArray()));
+                this.postProcess(calendar);
 
                 Set<NoteItem> externalItems = converter.asItems(calendar);
 
@@ -117,6 +123,14 @@ public class SimpleUrlContentReader implements UrlContentReader {
             }
         } catch (IOException | ParserException e) {
             throw new ExternalContentInvalidException(e);
+        }
+    }
+
+    private void postProcess(Calendar calendar) {
+        Set<? extends ContentSourceProcessor> processors = this.instanceProvider
+                .getImplInstancesAnnotatedWith(Callback.class, ContentSourceProcessor.class);
+        for (ContentSourceProcessor processor : processors) {
+            processor.postProcess(calendar);
         }
     }
 
