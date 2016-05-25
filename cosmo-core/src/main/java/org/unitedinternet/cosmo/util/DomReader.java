@@ -143,7 +143,7 @@ public class DomReader {
         String ns = reader.getNamespaceURI();
         if (ns != null && !ns.equals("")) {
             String prefix = reader.getPrefix();
-            String qualified = prefix != null ? prefix + ":" + local : local;
+            String qualified = prefix != null && !prefix.isEmpty()? prefix + ":" + local : local;
             e = d.createElementNS(ns, qualified);
         } else {
             e = d.createElement(local);
