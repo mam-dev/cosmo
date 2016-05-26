@@ -14,9 +14,12 @@ import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.ext.ContentSource;
+import org.unitedinternet.cosmo.ext.ExternalContentRuntimeException;
+import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
@@ -183,7 +186,7 @@ public class ContentDaoExternal implements ContentDao {
         }
         for (Iterator<NoteItem> iterator = noteItems.iterator(); iterator.hasNext();) {
             NoteItem item = iterator.next();
-            EventStamp eventStamp = (EventStamp) item.getStamp(EventStamp.class);
+            BaseEventStamp eventStamp = (BaseEventStamp) item.getStamp(BaseEventStamp.class);
             if (eventStamp == null || eventStamp.isRecurring()) {
                 continue;
             }
@@ -201,7 +204,7 @@ public class ContentDaoExternal implements ContentDao {
      * @param stampFilters
      * @return <code>true</code> if the specified event is outside the range defined by the specified filters.
      */
-    private static boolean isOutOfRangeSafely(EventStamp eventStamp, List<StampFilter> stampFilters) {
+    private static boolean isOutOfRangeSafely(BaseEventStamp eventStamp, List<StampFilter> stampFilters) {
         try {
             return isOutOfRange(eventStamp, stampFilters);
         } catch (Exception e) {
@@ -210,12 +213,21 @@ public class ContentDaoExternal implements ContentDao {
         }
     }
 
-    private static boolean isOutOfRange(EventStamp eventStamp, List<StampFilter> stampFilters) throws ParseException {
+    private static boolean isOutOfRange(BaseEventStamp eventStamp, List<StampFilter> stampFilters)
+            throws ParseException {
         for (StampFilter stampFilter : stampFilters) {
             if (!(stampFilter instanceof EventStampFilter)) {
                 continue;
             }
-            VEvent vEvent = eventStamp.getMasterEvent();
+            VEvent vEvent = null;
+            if (eventStamp instanceof EventStamp) {
+                vEvent = ((EventStamp) eventStamp).getMasterEvent();
+            } else if (eventStamp instanceof EventExceptionStamp) {
+                vEvent = ((EventExceptionStamp) eventStamp).getExceptionEvent();
+            } else {
+                throw new ExternalContentRuntimeException("Unknown event stamp class: " + eventStamp.getClass());
+            }
+
             EventStampFilter eventFilter = (EventStampFilter) stampFilter;
             Date dtStart = new DtStart(vEvent.getStartDate().getValue(), eventFilter.getTimezone()).getDate();
             Date dtEnd = new DtEnd(vEvent.getEndDate().getValue(), eventFilter.getTimezone()).getDate();
