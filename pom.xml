@@ -67,7 +67,7 @@
 		<stax.version>1.0.1</stax.version>
 		<woodstox.version>4.0.6</woodstox.version>
 
-		<httpclient.version>4.3.6</httpclient.version>
+		<httpclient.version>4.5.2</httpclient.version>
 		<jackson.version>1.9.12</jackson.version>
 		<abdera.version>1.1.3</abdera.version>
 

@@ -63,7 +63,7 @@
 	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.SimpleUrlContentReader">
 		<constructor-arg ref="contentConverter" />
 		<constructor-arg>
-			<bean class="org.unitedinternet.cosmo.ext.EnvironmentProxyFactory" />
+			<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
 		</constructor-arg>
 		<constructor-arg>
 		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />

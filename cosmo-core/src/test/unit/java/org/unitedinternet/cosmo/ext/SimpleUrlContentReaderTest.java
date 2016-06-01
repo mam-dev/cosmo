@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import java.util.Set;
 
 import org.junit.Before;
@@ -27,11 +26,10 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  * @author daniel grigore
  *
  */
+@Ignore
 public class SimpleUrlContentReaderTest {
 
     private static final int TIMEOUT = 5 * 1000;
-
-    private static final ProxyFactory NO_PROXY_FACTORY = new NoProxyFactory();
 
     private ContentConverter converter;
 
@@ -56,49 +54,39 @@ public class SimpleUrlContentReaderTest {
         EntityConverter entityConverter = new EntityConverter(entityFactory);
         this.converter = new ContentConverter(entityConverter);
 
-        instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 700, instanceProvider);
-    }
-
-    @Test
-    public void shouldReadLocalCalendar() {
-        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("chandler-plain-event.ics"), TIMEOUT);
-        assertNotNull(items);
-        assertEquals(1, items.size());
+        instanceUnderTest = new SimpleUrlContentReader(converter, null, validator, 700, instanceProvider);
     }
 
     @Test
     public void shouldReadRomanianHolidays() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024,
-                instanceProvider);
-        Set<NoteItem> items = this.instanceUnderTest.getContent(urlForName("romanian-holidays.ics"), TIMEOUT);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, null, validator, 1024 * 1024, instanceProvider);
+        Set<NoteItem> items = this.instanceUnderTest.getContent(
+                "https://calendar.google.com/calendar/ical/ro.romanian%23holiday%40group.v.calendar.google.com/public/basic.ics",
+                TIMEOUT);
         assertNotNull(items);
         assertEquals(80, items.size());
     }
 
     @Test(expected = ExternalContentInvalidException.class)
     public void shouldFailAnInvalidEvent() {
-        instanceUnderTest.getContent(urlForName("invalid-event.ics"), TIMEOUT);
+        instanceUnderTest.getContent("http://google.com", TIMEOUT);
     }
 
     @Test(expected = ExternalContentTooLargeException.class)
     public void shouldFailTooLargeContent() {
-        instanceUnderTest.getContent(urlForName("2445.ics"), TIMEOUT);
+        instanceUnderTest.getContent(
+                "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
+                TIMEOUT);
     }
 
     @Test
-    @Ignore("Need only for testing purposes.")
     public void shouldReadExternalCalendar() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, NO_PROXY_FACTORY, validator, 1024 * 1024,
-                instanceProvider);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, null, validator, 1024 * 1024, instanceProvider);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
                 TIMEOUT);
         assertNotNull(items);
         assertFalse(items.isEmpty());
         assertEquals(9, items.size());
-    }
-
-    private static String urlForName(String name) {
-        return "file:///" + new File("src/test/unit/resources/icalendar/" + name).getAbsolutePath();
     }
 }

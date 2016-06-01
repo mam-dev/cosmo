@@ -5,8 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,6 +16,14 @@ import javax.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.MessageConstraints;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.metadata.Callback;
 import org.unitedinternet.cosmo.model.Item;
@@ -30,18 +38,21 @@ import net.fortuna.ical4j.model.Calendar;
  * Default implementation of {@link UrlContentReader} that reads and validates content.
  * 
  * @author daniel grigore
- * @author corneliu dobrota
+ *
  */
 public class SimpleUrlContentReader implements UrlContentReader {
 
     private static final Log LOG = LogFactory.getLog(SimpleUrlContentReader.class);
+
+    private static final int MAX_LINE_LENGTH = 512;
+    private static final int MAX_HEADER_COUNT = 20;
 
     private static final String Q_MARK = "?";
     private static final String AND = "&";
 
     private final ContentConverter converter;
 
-    private final ProxyFactory proxyFactory;
+    private final HttpHost proxy;
 
     private final Validator validator;
 
@@ -49,11 +60,11 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private final ExternalComponentInstanceProvider instanceProvider;
 
-    public SimpleUrlContentReader(ContentConverter converter, ProxyFactory proxyFactory, Validator validator,
+    public SimpleUrlContentReader(ContentConverter converter, HttpHost proxy, Validator validator,
             int allowedContentSizeInBytes, ExternalComponentInstanceProvider instanceProvider) {
         super();
         this.converter = converter;
-        this.proxyFactory = proxyFactory;
+        this.proxy = proxy;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
         this.instanceProvider = instanceProvider;
@@ -76,22 +87,22 @@ public class SimpleUrlContentReader implements UrlContentReader {
      * @return content read from the specified <code>url</code>
      */
     public Set<NoteItem> getContent(String url, int timeoutInMillis, RequestOptions options) {
+        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
         try {
             URL source = build(url, options);
-            URLConnection connection = source.openConnection(this.proxyFactory.get(source.getHost()));
-
-            connection.setConnectTimeout(timeoutInMillis);
-            connection.setReadTimeout(timeoutInMillis);
-
+            HttpGet request = new HttpGet(source.toURI());
             for (Entry<String, String> entry : options.headers().entrySet()) {
-                connection.setRequestProperty(entry.getKey(), entry.getValue());
+                request.addHeader(entry.getKey(), entry.getValue());
             }
+
+            client = buildClient(timeoutInMillis);
+            response = client.execute(request);
 
             InputStream contentStream = null;
             ByteArrayOutputStream baos = null;
-
             try {
-                contentStream = connection.getInputStream();
+                contentStream = response.getEntity().getContent();
                 baos = new ByteArrayOutputStream();
                 AtomicInteger counter = new AtomicInteger();
                 byte[] buffer = new byte[1024];
@@ -121,9 +132,25 @@ public class SimpleUrlContentReader implements UrlContentReader {
                 close(contentStream);
                 close(baos);
             }
-        } catch (IOException | ParserException e) {
+        } catch (IOException | URISyntaxException | ParserException e) {
             throw new ExternalContentInvalidException(e);
+        } finally {
+            close(response);
+            close(client);
         }
+    }
+
+    private CloseableHttpClient buildClient(int timeoutInMillis) {
+        RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(timeoutInMillis)
+                .setConnectTimeout(timeoutInMillis).setRedirectsEnabled(false).setProxy(this.proxy).build();
+
+        return HttpClientBuilder.create().setDefaultRequestConfig(config)
+                .setDefaultConnectionConfig(
+                        ConnectionConfig
+                                .custom().setMessageConstraints(MessageConstraints.custom()
+                                        .setMaxHeaderCount(MAX_HEADER_COUNT).setMaxLineLength(MAX_LINE_LENGTH).build())
+                                .build())
+                .build();
     }
 
     private void postProcess(Calendar calendar) {
@@ -168,4 +195,5 @@ public class SimpleUrlContentReader implements UrlContentReader {
             }
         }
     }
+
 }
