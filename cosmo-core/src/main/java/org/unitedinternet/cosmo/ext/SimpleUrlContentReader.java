@@ -44,8 +44,9 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private static final Log LOG = LogFactory.getLog(SimpleUrlContentReader.class);
 
-    private static final int MAX_LINE_LENGTH = 512;
+    private static final int MAX_LINE_LENGTH = 2048;
     private static final int MAX_HEADER_COUNT = 20;
+    private static final int MAX_REDIRECTS = 10;
 
     private static final String Q_MARK = "?";
     private static final String AND = "&";
@@ -142,8 +143,8 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private CloseableHttpClient buildClient(int timeoutInMillis) {
         RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(timeoutInMillis)
-                .setConnectTimeout(timeoutInMillis).setRedirectsEnabled(false).setProxy(this.proxy).build();
-
+                .setConnectTimeout(timeoutInMillis).setRedirectsEnabled(true).setMaxRedirects(MAX_REDIRECTS)
+                .setProxy(this.proxy).build();
         return HttpClientBuilder.create().setDefaultRequestConfig(config)
                 .setDefaultConnectionConfig(
                         ConnectionConfig
