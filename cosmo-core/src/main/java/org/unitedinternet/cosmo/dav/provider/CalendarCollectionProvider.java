@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,11 +29,19 @@ import org.unitedinternet.cosmo.dav.DavRequest;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.ExistsException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarLocationException;
 import org.unitedinternet.cosmo.dav.caldav.MissingParentException;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavItemCollection;
+import org.unitedinternet.cosmo.model.BaseEventStamp;
+import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.model.Stamp;
+
+import net.fortuna.ical4j.model.Calendar;
 
 /**
  * <p>
@@ -89,5 +98,48 @@ public class CalendarCollectionProvider extends CollectionProvider {
             ms.addResponse(msr);
             response.sendMultiStatus(ms);
         
+    }
+    
+    @Override
+    protected void spool(DavRequest request, DavResponse response, WebDavResource resource, boolean withEntity) throws CosmoDavException, IOException {
+    	Enumeration<String> acceptHeaders = request.getHeaders("Accept");
+    	
+    	if(acceptHeaders != null){
+    		while(acceptHeaders.hasMoreElements()){
+    			String headerValue = acceptHeaders.nextElement();
+    			if("text/ics".equalsIgnoreCase(headerValue)){
+    				writeContentOnResponse(response, resource);
+    				return;
+    			}
+    		}
+    	}
+    	super.spool(request, response, resource, withEntity);
+    }
+    
+    private void writeContentOnResponse(DavResponse response, WebDavResource resource) throws IOException{
+    	//strip the content if there's a ticket with free-busy access
+    	if(!(resource instanceof DavCalendarCollection)){
+    		throw new IllegalStateException("Incompatible resource type for this provider");
+    	}
+    	DavCalendarCollection davCollection = DavCalendarCollection.class.cast(resource);
+    	CollectionItem collectionItem = (CollectionItem)davCollection.getItem();
+    	
+    	Calendar result = new Calendar();
+    	
+    	for(Item item : collectionItem.getChildren()){
+    		if(!NoteItem.class.isInstance(item)){
+    			continue;
+    		}
+    		for(Stamp s : item.getStamps()){
+    			if(BaseEventStamp.class.isInstance(s)){
+    				BaseEventStamp baseEventStamp = BaseEventStamp.class.cast(s);
+    				result.getComponents().add(baseEventStamp.getEvent());
+    			}
+    		}
+    	}
+    	
+    	response.setContentType("text/ics");
+    	response.getWriter().write(result.toString());
+    	response.flushBuffer();
     }
 }
