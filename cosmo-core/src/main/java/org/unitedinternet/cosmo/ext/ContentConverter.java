@@ -1,11 +1,13 @@
 package org.unitedinternet.cosmo.ext;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
 import net.fortuna.ical4j.model.Calendar;
 
@@ -33,9 +35,13 @@ public class ContentConverter {
                 /**
                  * Only VEVENT are supported currently. VTODO or VJOURNAL are not yet supported.
                  */
-                if (item instanceof NoteItem) {
-                    items.add((NoteItem) item);
-                    item.setName(item.getIcalUid() + ".ics");
+                if (item instanceof HibNoteItem) {
+                    HibNoteItem noteItem = (HibNoteItem) item;
+                    Date now = new Date();
+                    noteItem.setCreationDate(now);
+                    noteItem.setModifiedDate(now);
+                    items.add(noteItem);
+                    noteItem.setName(noteItem.getIcalUid() + ".ics");
                 }
             }
         }
