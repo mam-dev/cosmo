@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>1.0.27-SNAPSHOT</version>
+		<version>1.0.27</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>	
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
 			<artifactId>cosmo-api</artifactId>
-			<version>1.0.27-SNAPSHOT</version>
+			<version>1.0.27</version>
 		</dependency>
 
 		<!-- Apache commons -->
