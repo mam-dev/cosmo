@@ -25,11 +25,13 @@ public class AttributeFilter {
     
     private QName qname;
     private boolean isMissing = false;
+    private Object value;
     
     public AttributeFilter() {}
     
     public AttributeFilter(Attribute attribute) {
         this.qname = attribute.getQName();
+        this.value = attribute.getValue();
     }
 
     public QName getQname() {
@@ -42,6 +44,11 @@ public class AttributeFilter {
      */
     public void setQname(QName qname) {
         this.qname = qname;
+    }
+    
+    
+    public Object getValue() {
+        return value;
     }
     
     public boolean isMissing() {

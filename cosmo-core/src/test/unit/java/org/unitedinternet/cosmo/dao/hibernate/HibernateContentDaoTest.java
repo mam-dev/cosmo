@@ -25,16 +25,15 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.validation.ConstraintViolationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.model.property.ProdId;
-
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.dao.ItemNotFoundException;
@@ -58,6 +57,7 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.ItemTombstone;
 import org.unitedinternet.cosmo.model.MultiValueStringAttribute;
 import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.model.StringAttribute;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.TimestampAttribute;
 import org.unitedinternet.cosmo.model.Tombstone;
@@ -66,6 +66,9 @@ import org.unitedinternet.cosmo.model.TriageStatusUtil;
 import org.unitedinternet.cosmo.model.UidInUseException;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.XmlAttribute;
+import org.unitedinternet.cosmo.model.filter.EqualsExpression;
+import org.unitedinternet.cosmo.model.filter.ItemFilter;
+import org.unitedinternet.cosmo.model.filter.StringAttributeFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibAvailabilityItem;
 import org.unitedinternet.cosmo.model.hibernate.HibBooleanAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibCalendarAttribute;
@@ -89,7 +92,9 @@ import org.unitedinternet.cosmo.model.hibernate.HibXmlAttribute;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.model.property.ProdId;
 
 /**
  * Test for HibernateContentDao
@@ -534,6 +539,39 @@ public class HibernateContentDaoTest extends AbstractHibernateDaoTestCase {
         ICalendarAttribute ica = (ICalendarAttribute) queryItem.getAttribute(new HibQName("icalattribute"));
         Assert.assertEquals(calendar, ica.getValue());
     }
+    
+    
+    @Test
+    public void testFindByAttribute() throws Exception {
+        String testUser = "testuser";
+        String attributeName = "targetUri";
+        String attributeValue = "http://something";
+
+        User user = getUser(userDao, "testuser");
+        CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
+
+        CollectionItem collectionItem1 = this.generateTestCollection(UUID.randomUUID().toString(), testUser);
+        StringAttribute attr = new HibStringAttribute(new HibQName(attributeName), attributeValue);
+        collectionItem1.addAttribute(attr);
+        contentDao.createCollection(root, collectionItem1);
+
+        CollectionItem collectionItem2 = this.generateTestCollection(UUID.randomUUID().toString(), testUser);
+        collectionItem2.addAttribute(new HibStringAttribute(new HibQName(attributeName), UUID.randomUUID().toString()));
+        contentDao.createCollection(root, collectionItem2);
+
+        clearSession();
+
+        ItemFilter filter = new ItemFilter();
+        StringAttributeFilter attrFilter = new StringAttributeFilter(attr.getQName());
+        attrFilter.setValue(new EqualsExpression(attr.getValue()));
+        filter.getAttributeFilters().add(attrFilter);
+
+        Set<Item> items = this.contentDao.findItems(filter);
+        Assert.assertNotNull(items);
+        Assert.assertFalse(items.isEmpty());
+        Assert.assertEquals(1, items.size());
+    }
+    
 
     /**
      * Test create duplicate root item.
@@ -1857,6 +1895,17 @@ public class HibernateContentDaoTest extends AbstractHibernateDaoTestCase {
         content.setDisplayName(name);
         content.setOwner(getUser(userDao, owner));
         return content;
+    }
+    
+    private CollectionItem generateTestCollection(String name, String owner)
+            throws Exception {
+        CollectionItem collection = new HibCollectionItem();
+        collection.setName(name);
+        collection.setDisplayName(name);        
+        collection.setOwner(getUser(userDao, owner));
+        collection.addAttribute(new HibStringAttribute(new HibQName("customattribute"),
+                "customattributevalue"));
+        return collection;
     }
     
     private org.w3c.dom.Element createTestElement() throws Exception {

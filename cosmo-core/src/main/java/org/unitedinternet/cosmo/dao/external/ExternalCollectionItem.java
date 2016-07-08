@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionItemDetails;
@@ -67,16 +66,7 @@ class ExternalCollectionItem implements CollectionItem {
     }
 
     public String getEntityTag() {
-        /*
-         * External collections rarely change (only when color or name are changed) and for this reason it is important
-         * to calculate the eTag based on the children's eTag.
-         */
-        HashCodeBuilder builder = new HashCodeBuilder();
-        builder.append(this.delegate.getEntityTag());
-        for (Item item : this.children) {
-            builder.append(item.getEntityTag());
-        }
-        return Integer.toString(builder.toHashCode());
+       return delegate.getEntityTag();
     }
 
     public Map<String, Stamp> getStampMap() {

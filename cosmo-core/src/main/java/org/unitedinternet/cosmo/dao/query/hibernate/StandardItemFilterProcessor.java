@@ -53,6 +53,7 @@ import org.unitedinternet.cosmo.model.filter.LikeExpression;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.filter.NullExpression;
 import org.unitedinternet.cosmo.model.filter.StampFilter;
+import org.unitedinternet.cosmo.model.filter.StringAttributeFilter;
 import org.unitedinternet.cosmo.model.filter.TextAttributeFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
@@ -182,6 +183,8 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         for (AttributeFilter attrFilter : filter.getAttributeFilters()) {
             if (attrFilter instanceof TextAttributeFilter) {
                 handleTextAttributeFilter(selectBuf, whereBuf, params, (TextAttributeFilter) attrFilter);
+            } else if (attrFilter instanceof StringAttributeFilter) {
+                handleStringAttributeFilter(selectBuf, whereBuf, params, (StringAttributeFilter) attrFilter);
             } else {
                 handleAttributeFilter(whereBuf, params, attrFilter);
             }
@@ -194,6 +197,16 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
 
         String alias = "ta" + params.size();
         selectBuf.append(", HibTextAttribute " + alias);
+        appendWhere(whereBuf, alias + ".item=i and " + alias + ".qname=:" + alias + "qname");
+        params.put(alias + "qname", filter.getQname());
+        formatExpression(whereBuf, params, alias + ".value", filter.getValue());
+    }
+    
+    private void handleStringAttributeFilter(StringBuffer selectBuf,
+            StringBuffer whereBuf, HashMap<String, Object> params, StringAttributeFilter filter) {
+
+        String alias = "ta" + params.size();
+        selectBuf.append(", HibStringAttribute " + alias);
         appendWhere(whereBuf, alias + ".item=i and " + alias + ".qname=:" + alias + "qname");
         params.put(alias + "qname", filter.getQname());
         formatExpression(whereBuf, params, alias + ".value", filter.getValue());
