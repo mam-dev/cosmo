@@ -27,7 +27,7 @@
 		class="org.springframework.security.core.token.KeyBasedPersistenceTokenService">
 		<property name="serverSecret" value="${cosmo.tikets.serverSecret}" />
 		<property name="serverInteger" value="${cosmo.tikets.serverInteger}" />
-		<property name="pseudoRandomNumberBits" value="16" />
+		<property name="pseudoRandomNumberBytes" value="16" />
 		<property name="secureRandom" ref="secureRandom" />
 	</bean>
 

@@ -93,7 +93,7 @@
 	<!-- filter chain that kicks off request-time processing -->
 
 	<bean id="davFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
-		<security:filter-chain-map path-type="ant">
+		<security:filter-chain-map request-matcher="ant">
 			<security:filter-chain pattern="/**"
 				filters="protocolBasicProcessingFilter,
          				protocolTicketProcessingFilter,
@@ -158,7 +158,7 @@
 	
 	<bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
-		<property name="providers" ref="authenticationProviders"/>
+		<constructor-arg ref="authenticationProviders"/>		
 	</bean>
 	
 	<util:list id="authenticationProviders">
