@@ -59,8 +59,8 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private final int allowedContentSizeInBytes;
 
-    private final ExternalComponentInstanceProvider instanceProvider;
-
+    Set<? extends ContentSourceProcessor> contentSourceProcessors;
+    
     public SimpleUrlContentReader(ContentConverter converter, HttpHost proxy, Validator validator,
             int allowedContentSizeInBytes, ExternalComponentInstanceProvider instanceProvider) {
         super();
@@ -68,7 +68,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
         this.proxy = proxy;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
-        this.instanceProvider = instanceProvider;
+        this.contentSourceProcessors = instanceProvider.getImplInstancesAnnotatedWith(Callback.class, ContentSourceProcessor.class);
     }
 
     @Override
@@ -155,9 +155,8 @@ public class SimpleUrlContentReader implements UrlContentReader {
     }
 
     private void postProcess(Calendar calendar) {
-        Set<? extends ContentSourceProcessor> processors = this.instanceProvider
-                .getImplInstancesAnnotatedWith(Callback.class, ContentSourceProcessor.class);
-        for (ContentSourceProcessor processor : processors) {
+        
+        for (ContentSourceProcessor processor : contentSourceProcessors) {
             processor.postProcess(calendar);
         }
     }
