@@ -43,7 +43,7 @@ import org.unitedinternet.cosmo.model.filter.PageCriteria;
 import org.unitedinternet.cosmo.model.hibernate.BaseModelObject;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
-import org.springframework.orm.hibernate4.SessionFactoryUtils;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 
 /**

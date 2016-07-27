@@ -45,9 +45,7 @@
                 <ref bean="eventStampInterceptor"/>
             </list>
         </property>
-    </bean>
-
-    <bean id="beanValidationEventListener" class="org.hibernate.cfg.beanvalidation.BeanValidationEventListener"/>
+    </bean>    
 
 
     <bean id="sessionFactory" class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
@@ -67,27 +65,32 @@
                 <prop key="hibernate.use_sql_comments">false</prop>
                 <prop key="hibernate.generate_statistics">false</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.dialect">org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect</prop>
+                <prop key="hibernate.id.new_generator_mappings">false</prop>
             </props>
         </property>
         <property name="dataSource">
             <ref bean="jdbcDataSource"/>
         </property>
     </bean>
-
-    <bean id="jdbcDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName">
-            <value>org.hsqldb.jdbc.JDBCDriver</value>
-        </property>
-        <property name="url">
-            <value>jdbc:hsqldb:file:target/testdb</value>
-        </property>
-        <property name="username">
-            <value>sa</value>
-        </property>
-        <property name="password">
-            <value></value>
-        </property>
+    
+     <bean id="mariaDbService" class="ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService" init-method="start" destroy-method="stop">
+     	<property name="defaultBaseDir" value="target/maridb/base"/>
+     	<property name="defaultDataDir" value="target/maridb/data"/>
+     	<property name="defaultPort" value="33060"/>     	
+     </bean>
+        
+    
+    <bean id="jdbcDataSource" class="org.apache.tomcat.jdbc.pool.DataSource" lazy-init="true" destroy-method="close" depends-on="mariaDbService">
+         <property name="driverClassName" value="org.mariadb.jdbc.Driver"/>
+         <property name="url" value="jdbc:mysql://localhost:33060/test?autoReconnect=true"/>
+         <property name="username" value="root"/> 
+         <property name="password" value="" />
+         <property name="maxActive" value="100"/> 
+         <property name="maxIdle" value="20" />
+         <property name="maxWait" value="10000"/>
+         <property name="testOnBorrow" value="true" />
+         <property name="validationQuery" value="SELECT 1;"/>
     </bean>
 
     <alias alias="hibernatePackagesToScan" name="${cosmo.hibernate.hibernatePackagesToScan}"/>
@@ -101,7 +104,7 @@
     to JTA)
 -->
     <bean id="transactionManager"
-          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="dataSource" ref="jdbcDataSource"/>
     </bean>

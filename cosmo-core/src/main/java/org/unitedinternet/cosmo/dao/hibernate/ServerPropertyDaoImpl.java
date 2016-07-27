@@ -21,7 +21,7 @@ import org.hibernate.HibernateException;
 import org.unitedinternet.cosmo.dao.ServerPropertyDao;
 import org.unitedinternet.cosmo.model.ServerProperty;
 import org.unitedinternet.cosmo.model.hibernate.HibServerProperty;
-import org.springframework.orm.hibernate4.SessionFactoryUtils;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 
 /**

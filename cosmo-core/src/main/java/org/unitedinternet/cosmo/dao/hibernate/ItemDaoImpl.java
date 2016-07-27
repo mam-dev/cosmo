@@ -32,8 +32,10 @@ import org.hibernate.LockMode;
 import org.hibernate.ObjectDeletedException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
+import org.hibernate.StatelessSession;
 import org.hibernate.UnresolvableObjectException;
-import org.springframework.orm.hibernate4.SessionFactoryUtils;
+import org.hibernate.cfg.AvailableSettings;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.security.core.token.TokenService;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
@@ -66,7 +68,6 @@ import org.unitedinternet.cosmo.util.VersionFourGenerator;
  */
 public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
 
-    @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(ItemDaoImpl.class);
 
     private VersionFourGenerator idGenerator = null;
@@ -127,23 +128,23 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
      *
      * @see org.unitedinternet.cosmo.dao.ItemDao#findEventStampFromDbByUid(java.lang.String)
      */
-    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz){
-        try {
-            // Lookup item by uid
-            Query hibQuery = getStatlessSession().getNamedQuery("item.stamps.by.uid")
-                    .setParameter("uid", internalItemUid).setFlushMode(null).setCacheMode(null);
-            @SuppressWarnings("unchecked")
-            List<Stamp> stamps = (List<Stamp>) hibQuery.list();
-            for(Stamp stamp:stamps) {
-                if(clazz.isInstance(stamp)) {
+    @SuppressWarnings("unchecked")
+    public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid,
+            Class<STAMP_TYPE> clazz) {
+        try (StatelessSession session = this.openStatelessSession()){
+
+            List<Stamp> stamps = (List<Stamp>) session.createNamedQuery("item.stamps.by.uid")
+                    .setParameter("uid", internalItemUid)
+                    .setHint(AvailableSettings.JPA_SHARED_CACHE_STORE_MODE, null)
+                    .setHint(AvailableSettings.JPA_SHARED_CACHE_RETRIEVE_MODE, null)
+                    .getResultList();
+            for (Stamp stamp : stamps) {
+                if (clazz.isInstance(stamp)) {
                     return clazz.cast(stamp);
                 }
             }
         } catch (HibernateException e) {
-            getStatlessSession().close();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } finally {
-            getStatlessSession().close();
         }
         return null;
     }

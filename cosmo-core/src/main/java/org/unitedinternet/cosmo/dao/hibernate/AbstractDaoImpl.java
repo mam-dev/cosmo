@@ -17,8 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 
 /**
- * Abstract Dao implementation.
- * It is used for general purpose operations.
+ * Abstract Dao implementation. It is used for general purpose operations.
  *
  * @author ccoman
  */
@@ -26,7 +25,6 @@ public abstract class AbstractDaoImpl {
 
     private static final Log LOG = LogFactory.getLog(AbstractDaoImpl.class);
     private SessionFactory sessionFactory;
-
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -40,24 +38,27 @@ public abstract class AbstractDaoImpl {
     }
 
     /**
-     * @return Returns the current Hibernate StatelessSession.
+     * Gets a <b>new</b> Hibernate state less session which needs to be closed after usage, otherwise it will cause
+     * connection leakage.
+     * 
+     * @return a <b>new</b> Hibernate state less session which needs to be closed after usage.
      */
-    protected StatelessSession getStatlessSession() {
+    protected StatelessSession openStatelessSession() {
         return sessionFactory.openStatelessSession();
     }
-    
+
     /**
      * Logs constraint violeation exception
      *
-     * @param cve - if something is wrong this exception is thrown.
+     * @param cve
+     *            - if something is wrong this exception is thrown.
      */
     protected void logConstraintViolationException(ConstraintViolationException cve) {
         // log more info about the constraint violation
         if (LOG.isDebugEnabled()) {
             LOG.debug(cve.getLocalizedMessage());
             for (ConstraintViolation<?> cv : cve.getConstraintViolations()) {
-                LOG.debug("property name: " + cv.getPropertyPath() + " property: "
-                        + cv.getInvalidValue());
+                LOG.debug("property name: " + cv.getPropertyPath() + " property: " + cv.getInvalidValue());
             }
         }
     }

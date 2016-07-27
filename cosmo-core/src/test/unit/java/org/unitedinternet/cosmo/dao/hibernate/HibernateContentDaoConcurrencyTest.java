@@ -42,7 +42,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibQName;
 import org.unitedinternet.cosmo.model.hibernate.HibStringAttribute;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 

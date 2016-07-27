@@ -9,19 +9,18 @@ import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor.TimestampMutabilityPlan;
 import org.unitedinternet.cosmo.CosmoParseException;
 
-
-
 /**
  * Adapter for Timestamp type descriptor.
  * 
  * @author ccoman
  * 
  */
+@SuppressWarnings("serial")
 public class CosmoTimestampTypeDescriptor extends AbstractTypeDescriptor<Date> {
-    
-    private static final long serialVersionUID = 1L;
-    private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     public static final CosmoTimestampTypeDescriptor INSTANCE = new CosmoTimestampTypeDescriptor();
+
+    private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     protected CosmoTimestampTypeDescriptor() {
         super(Date.class, TimestampMutabilityPlan.INSTANCE);
@@ -58,7 +57,7 @@ public class CosmoTimestampTypeDescriptor extends AbstractTypeDescriptor<Date> {
             return null;
         }
         if (Long.class.isAssignableFrom(value.getClass())) {
-            return new Date((Long)value);
+            return new Date((Long) value);
         }
         throw unknownWrap(value.getClass());
     }

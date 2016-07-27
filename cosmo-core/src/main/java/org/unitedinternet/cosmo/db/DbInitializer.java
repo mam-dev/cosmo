@@ -31,6 +31,9 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.tool.hbm2ddl.SchemaValidator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate;
@@ -156,7 +159,12 @@ public class DbInitializer {
      */
     private void validateSchema() {
         try {
-            new SchemaValidator(localSessionFactory.getConfiguration()).validate();
+            StandardServiceRegistry registry = localSessionFactory.getConfiguration()
+                    .getStandardServiceRegistryBuilder().build();
+            MetadataSources sources = new MetadataSources(registry);
+            sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
+            Metadata metadata = sources.buildMetadata(registry);
+            new SchemaValidator().validate(metadata);
             LOG.info("schema validation passed");
         } catch (HibernateException e) {
             LOG.error("error validating schema", e);

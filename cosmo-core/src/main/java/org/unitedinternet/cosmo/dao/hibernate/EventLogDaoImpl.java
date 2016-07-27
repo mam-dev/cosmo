@@ -39,7 +39,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibEventLogEntry;
 import org.unitedinternet.cosmo.model.hibernate.HibItem;
 import org.unitedinternet.cosmo.model.hibernate.HibTicket;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
-import org.springframework.orm.hibernate4.SessionFactoryUtils;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 
 /**

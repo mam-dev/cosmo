@@ -97,10 +97,17 @@
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
+		
 		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<scope>test</scope>
+				<groupId>ch.vorburger.mariaDB4j</groupId>
+				<artifactId>mariaDB4j</artifactId>
+				<scope>test</scope>				
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<scope>test</scope>			
 		</dependency>
 
 		<!-- abdera is the ATOM implementation. This library is still used for 
@@ -184,8 +191,7 @@
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>4.1.4.RELEASE</version>
+			<artifactId>spring-beans</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -197,8 +203,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>4.1.4.RELEASE</version>
+			<artifactId>spring-core</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -206,8 +211,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>4.1.4.RELEASE</version>
+			<artifactId>spring-test</artifactId>			
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -220,8 +224,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>4.1.4.RELEASE</version>
+			<artifactId>spring-jdbc</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

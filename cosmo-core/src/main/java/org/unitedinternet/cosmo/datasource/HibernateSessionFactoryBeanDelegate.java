@@ -15,26 +15,26 @@ import javax.sql.DataSource;
 
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
-import org.hibernate.cache.spi.RegionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.NamingStrategy;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.db.DataSourceProvider;
 import org.unitedinternet.cosmo.db.DataSourceType;
 import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
-@SuppressWarnings("deprecation")
+
 public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionFactory>, InitializingBean{
+
+    private static final String COSMO_MYSQL_DIALECT = "org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect";
+    
     private ExternalComponentInstanceProvider instanceProvider;
     private LocalSessionFactoryBean delegate;
-    private static final String COSMO_MYSQL_DIALECT = "org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect";
     
     public HibernateSessionFactoryBeanDelegate(ExternalComponentInstanceProvider instanceProvider){
         this.instanceProvider = instanceProvider;
@@ -89,28 +89,12 @@ public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionF
         delegate.setEntityInterceptor(entityInterceptor);
     }
 
-    public void setNamingStrategy(NamingStrategy namingStrategy) {
-        delegate.setNamingStrategy(namingStrategy);
-    }
-
     public void setJtaTransactionManager(Object jtaTransactionManager) {
         delegate.setJtaTransactionManager(jtaTransactionManager);
     }
 
     public String toString() {
         return delegate.toString();
-    }
-
-    public void setMultiTenantConnectionProvider(Object multiTenantConnectionProvider) {
-        delegate.setMultiTenantConnectionProvider(multiTenantConnectionProvider);
-    }
-
-    public void setCurrentTenantIdentifierResolver(Object currentTenantIdentifierResolver) {
-        delegate.setCurrentTenantIdentifierResolver(currentTenantIdentifierResolver);
-    }
-
-    public void setCacheRegionFactory(RegionFactory cacheRegionFactory) {
-        delegate.setCacheRegionFactory(cacheRegionFactory);
     }
 
     public void setEntityTypeFilters(TypeFilter... entityTypeFilters) {

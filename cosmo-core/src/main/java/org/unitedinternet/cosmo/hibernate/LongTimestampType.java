@@ -21,17 +21,16 @@ import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.descriptor.sql.BigIntTypeDescriptor;
 
 /**
- * Custom Hibernate type that maps a java.util.Date
- * to a SQL BIGINT column, storing the number of 
- * milliseconds that have passed since Jan 1, 1970 GMT.
+ * Custom Hibernate type that maps a java.util.Date to a SQL BIGINT column, storing the number of milliseconds that have
+ * passed since Jan 1, 1970 GMT.
  *
  */
-public class LongTimestampType extends AbstractSingleColumnStandardBasicType<Date>  {
+public class LongTimestampType extends AbstractSingleColumnStandardBasicType<Date> {
     private static final long serialVersionUID = 1L;
 
     public LongTimestampType() {
         super(BigIntTypeDescriptor.INSTANCE, CosmoTimestampTypeDescriptor.INSTANCE);
-    } 
+    }
 
     public String getName() {
         return "long_timestamp";

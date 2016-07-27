@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.TimeZoneType;
 import org.hibernate.type.Type;
 import org.hibernate.usertype.CompositeUserType;
@@ -78,25 +78,6 @@ public class CalendarType implements CompositeUserType {
         }
     }
 
-    @Override
-    public Object nullSafeGet(ResultSet rs, String[] names,
-            SessionImplementor session, Object owner) throws
-            SQLException {
-        TimeZone tz = (TimeZone) TimeZoneType.INSTANCE.nullSafeGet(rs, names[1], session);
-        if(tz==null) {
-            tz = TimeZone.getDefault();
-        }
-        Calendar cal = org.hibernate.type.CalendarType.INSTANCE.nullSafeGet(rs, names[0], session);
-        cal.setTimeZone(tz);
-        return cal;
-    }
-
-    @Override
-    public void nullSafeSet(PreparedStatement st, Object obj, int index,
-            SessionImplementor session) throws HibernateException, SQLException {
-        org.hibernate.type.CalendarType.INSTANCE.nullSafeSet(st, obj, index, session);
-        TimeZoneType.INSTANCE.nullSafeSet(st, obj == null ? null : ((Calendar) obj).getTimeZone(), index+1, session);
-    }
 
     @Override
     public boolean equals(Object val1, Object val2){
@@ -122,12 +103,7 @@ public class CalendarType implements CompositeUserType {
     public boolean isMutable() {
         return true;
     }
-
-    @Override
-    public Object assemble(Serializable cached, SessionImplementor session,
-            Object owner) {
-        return deepCopy(cached);
-    }
+   
 
     @Override
     public Object deepCopy(Object obj) {
@@ -137,14 +113,40 @@ public class CalendarType implements CompositeUserType {
         return ((Calendar) obj).clone();
     }
 
+
     @Override
-    public Serializable disassemble(Object value, SessionImplementor session){
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
+        TimeZone tz = (TimeZone) TimeZoneType.INSTANCE.nullSafeGet(rs, names[1], session);
+        if(tz==null) {
+            tz = TimeZone.getDefault();
+        }
+        Calendar cal = org.hibernate.type.CalendarType.INSTANCE.nullSafeGet(rs, names[0], session);
+        cal.setTimeZone(tz);
+        return cal;
+    }
+
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
+        org.hibernate.type.CalendarType.INSTANCE.nullSafeSet(st, value, index, session);
+        TimeZoneType.INSTANCE.nullSafeSet(st, value == null ? null : ((Calendar) value).getTimeZone(), index+1, session);
+    }
+
+    @Override
+    public Serializable disassemble(Object value, SharedSessionContractImplementor session) throws HibernateException {
         return (Serializable) deepCopy(value);
     }
 
     @Override
-    public Object replace(Object original, Object target, SessionImplementor session,
-            Object owner)  {
+    public Object assemble(Serializable cached, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException {
+        return deepCopy(cached);
+    }
+
+    @Override
+    public Object replace(Object original, Object target, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException {
         return deepCopy(original);
     }
 

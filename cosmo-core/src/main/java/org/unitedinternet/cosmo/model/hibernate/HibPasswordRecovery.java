@@ -15,6 +15,9 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -28,7 +31,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
@@ -77,7 +79,7 @@ public class HibPasswordRecovery extends BaseModelObject implements PasswordReco
         this.user = user;
         this.key = key;
         this.timeout = timeout;
-        this.created = new Date();
+        this.created = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.SECONDS));
     }
    
     /* (non-Javadoc)
