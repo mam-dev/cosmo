@@ -997,7 +997,10 @@ public class EntityConverter {
 
         // calculate triage status based on start date
         java.util.Date now =java.util.Calendar.getInstance().getTime();
-        boolean later = event.getStartDate().getDate().after(now);
+        Date eventStartDate = event.getStartDate() != null && event.getStartDate().getDate() != null 
+        		? event.getStartDate().getDate()
+        		:new Date();
+        boolean later = eventStartDate.after(now);
         int code = later ? TriageStatus.CODE_LATER : TriageStatus.CODE_DONE;
         
         TriageStatus triageStatus = note.getTriageStatus();
