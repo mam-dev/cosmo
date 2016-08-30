@@ -69,7 +69,7 @@
 		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 		</constructor-arg>
 		<constructor-arg value="${external.content.size}"/>		
-		<constructor-arg ref="externalComponentInstanceProvider" />       
+		<constructor-arg ref="externalComponentInstanceProvider" />
 	</bean>
 	
 	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">

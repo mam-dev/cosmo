@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.validation.ConstraintViolation;
@@ -24,6 +25,11 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.metadata.Callback;
 import org.unitedinternet.cosmo.model.Item;
@@ -40,10 +46,12 @@ import net.fortuna.ical4j.model.Calendar;
  * @author daniel grigore
  *
  */
-public class SimpleUrlContentReader implements UrlContentReader {
+public class SimpleUrlContentReader implements UrlContentReader, ApplicationContextAware, InitializingBean {
 
     private static final Log LOG = LogFactory.getLog(SimpleUrlContentReader.class);
 
+    private static final String NON_PROXYED_HOSTS_KEY = "external.content.non.proxyed.hosts";
+    
     private static final int MAX_LINE_LENGTH = 2048;
     private static final int MAX_HEADER_COUNT = 20;
     private static final int MAX_REDIRECTS = 10;
@@ -60,15 +68,21 @@ public class SimpleUrlContentReader implements UrlContentReader {
     private final int allowedContentSizeInBytes;
 
     Set<? extends ContentSourceProcessor> contentSourceProcessors;
+
+    private Environment environment;
     
-    public SimpleUrlContentReader(ContentConverter converter, HttpHost proxy, Validator validator,
-            int allowedContentSizeInBytes, ExternalComponentInstanceProvider instanceProvider) {
-        super();
+    private final Set<String> nonProxyedHosts = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    
+    public SimpleUrlContentReader(ContentConverter converter, 
+    								HttpHost proxy, Validator validator,
+    								int allowedContentSizeInBytes, 
+    								ExternalComponentInstanceProvider instanceProvider) {
         this.converter = converter;
         this.proxy = proxy;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
         this.contentSourceProcessors = instanceProvider.getImplInstancesAnnotatedWith(Callback.class, ContentSourceProcessor.class);
+        
     }
 
     @Override
@@ -97,7 +111,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
                 request.addHeader(entry.getKey(), entry.getValue());
             }
 
-            client = buildClient(timeoutInMillis);
+            client = buildClient(timeoutInMillis, source);
             response = client.execute(request);
 
             InputStream contentStream = null;
@@ -141,10 +155,10 @@ public class SimpleUrlContentReader implements UrlContentReader {
         }
     }
 
-    private CloseableHttpClient buildClient(int timeoutInMillis) {
+    private CloseableHttpClient buildClient(int timeoutInMillis, URL url) {
         RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(timeoutInMillis)
                 .setConnectTimeout(timeoutInMillis).setRedirectsEnabled(true).setMaxRedirects(MAX_REDIRECTS)
-                .setProxy(this.proxy).build();
+                .setProxy(nonProxyedHosts.contains(url.getHost()) ? null : this.proxy).build();
         return HttpClientBuilder.create().setDefaultRequestConfig(config)
                 .setDefaultConnectionConfig(
                         ConnectionConfig
@@ -196,4 +210,19 @@ public class SimpleUrlContentReader implements UrlContentReader {
         }
     }
 
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		environment = applicationContext.getEnvironment();
+		
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		String nonProxyedHostsList = environment.getProperty(NON_PROXYED_HOSTS_KEY);
+		if(nonProxyedHostsList != null){
+        	for(String host : nonProxyedHostsList.split(",")){
+        		nonProxyedHosts.add(host.trim());
+        	}
+        }
+	}
 }
