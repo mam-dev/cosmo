@@ -40,7 +40,7 @@
 		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
 		<validation-api.version>1.1.0.Final</validation-api.version>
 		<javax.el.version>2.2.4</javax.el.version>
-		<jackrabbit.version>2.9.0</jackrabbit.version>
+		<jackrabbit.version>2.13.2</jackrabbit.version>
 		<ical4j.version>1.0.6</ical4j.version>
 		<icu4j.version>54.1.1</icu4j.version>		
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
