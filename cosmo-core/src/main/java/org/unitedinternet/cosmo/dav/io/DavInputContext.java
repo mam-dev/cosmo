@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.jackrabbit.webdav.io.InputContextImpl;
-import org.apache.jackrabbit.server.io.IOUtil;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
@@ -108,8 +108,8 @@ public class DavInputContext extends InputContextImpl
         if (getContentType() == null) {
             throw new BadRequestException("No media type specified");
         }
-        String mediaType = IOUtil.getMimeType(getContentType());
-        if (! IOUtil.getMimeType(mediaType).equals(CT_ICALENDAR)) {
+        String mediaType = ContentTypeUtil.getMimeType(getContentType());
+        if (! ContentTypeUtil.getMimeType(mediaType).equals(CT_ICALENDAR)) {
             throw new UnsupportedCalendarDataException(mediaType);
         }
 

@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.server.io.IOUtil;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.io.InputContext;
@@ -353,7 +353,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
                       getDisplayName());
         }
 
-        context.setContentType(IOUtil.buildContentType("text/html", "UTF-8"));
+        context.setContentType(ContentTypeUtil.buildContentType("text/html", "UTF-8"));
         context.setModificationTime(getModificationTime());
         context.setETag(getETag());
 

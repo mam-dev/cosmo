@@ -19,10 +19,8 @@ import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.jackrabbit.server.io.IOUtil;
 import org.apache.jackrabbit.webdav.DavServletResponse;
-
+import org.springframework.util.FileCopyUtils;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 
 /**
@@ -46,7 +44,7 @@ public abstract class SimpleReport extends ReportBase {
             response.setStatus(DavServletResponse.SC_OK);
             response.setContentType(contentType);
             response.setCharacterEncoding(encoding);
-            IOUtil.spool(stream, response.getOutputStream());
+            FileCopyUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (Exception e) {
             throw new CosmoDavException(e);

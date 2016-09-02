@@ -15,7 +15,7 @@
  */
 package org.unitedinternet.cosmo.dav.property;
 
-import org.apache.jackrabbit.server.io.IOUtil;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 
 /**
@@ -34,6 +34,6 @@ public class ContentType extends StandardDavProperty {
 
     private static String mt(String type,
                              String encoding) {
-        return IOUtil.buildContentType(type, encoding);
+        return ContentTypeUtil.buildContentType(type, encoding);
     }
 }

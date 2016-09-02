@@ -176,18 +176,6 @@
 				<version>${icu4j.version}</version>
 			</dependency>
 
-
-			<!-- required by jcr-server -->
-			<dependency>
-				<groupId>org.apache.jackrabbit</groupId>
-				<artifactId>jackrabbit-jcr-server</artifactId>
-				<version>${jackrabbit.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.jackrabbit</groupId>
-				<artifactId>jackrabbit-jcr-commons</artifactId>
-				<version>${jackrabbit.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.apache.jackrabbit</groupId>
 				<artifactId>jackrabbit-webdav</artifactId>

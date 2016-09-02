@@ -21,14 +21,14 @@ import java.io.InputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.server.io.IOUtil;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.springframework.util.FileCopyUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
+import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
@@ -39,6 +39,7 @@ import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.DataSizeException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.FileItem;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 
 /**
  * Extends <code>DavResourceBase</code> to adapt the Cosmo
@@ -96,7 +97,7 @@ public class DavFile extends DavContentBase {
         FileItem content = (FileItem) getItem();
 
         String contentType =
-            IOUtil.buildContentType(content.getContentType(),
+            ContentTypeUtil.buildContentType(content.getContentType(),
                                     content.getContentEncoding());
         outputContext.setContentType(contentType);
 
@@ -117,7 +118,7 @@ public class DavFile extends DavContentBase {
             return;
         }
 
-        IOUtil.spool(content.getContentInputStream(),
+        FileCopyUtils.copy(content.getContentInputStream(),
                      outputContext.getOutputStream());
     }
 
@@ -141,12 +142,12 @@ public class DavFile extends DavContentBase {
 
             String contentType = inputContext.getContentType();
             if (contentType != null) {
-                file.setContentType(IOUtil.getMimeType(contentType));
+                file.setContentType(ContentTypeUtil.getMimeType(contentType));
             }
             else {
-                file.setContentType(IOUtil.getMimeType(file.getName()));
+                file.setContentType(ContentTypeUtil.getMimeType(file.getName()));
             }
-            String contentEncoding = IOUtil.getEncoding(contentType);
+            String contentEncoding = ContentTypeUtil.getEncoding(contentType);
             if (contentEncoding != null) {
                 file.setContentEncoding(contentEncoding);
             }
@@ -193,12 +194,12 @@ public class DavFile extends DavContentBase {
         }
 
         if (name.equals(DavPropertyName.GETCONTENTTYPE)) {
-            String type = IOUtil.getMimeType(text);
+            String type = ContentTypeUtil.getMimeType(text);
             if (StringUtils.isBlank(type)) {
                 throw new BadRequestException("Property " + name + " requires a valid media type");
             }
             content.setContentType(type);
-            content.setContentEncoding(IOUtil.getEncoding(text));
+            content.setContentEncoding(ContentTypeUtil.getEncoding(text));
         }
     }
 
