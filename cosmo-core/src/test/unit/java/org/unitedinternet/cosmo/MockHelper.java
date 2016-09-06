@@ -35,6 +35,8 @@ import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserIdentity;
+import org.unitedinternet.cosmo.model.UserIdentitySupplier;
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.security.mock.MockSecurityManager;
@@ -47,6 +49,9 @@ import org.unitedinternet.cosmo.service.impl.StandardContentService;
 import org.unitedinternet.cosmo.service.impl.StandardTriageStatusQueryProcessor;
 import org.unitedinternet.cosmo.service.impl.StandardUserService;
 import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
+
+import com.google.common.collect.Sets;
+
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 
 /**
@@ -61,6 +66,13 @@ public class MockHelper extends TestHelper {
     private StandardCalendarQueryProcessor calendarQueryProcessor;
     private User user;
     private HomeCollectionItem homeCollection;
+    private UserIdentitySupplier userIdentitySupplier = new UserIdentitySupplier() {
+		
+		@Override
+		public UserIdentity forUser(User user) {
+			return UserIdentity.of(Sets.newHashSet(user.getEmail()), user.getFirstName(), user.getLastName());
+		}
+	};
     
     /**
      * Constructor.
@@ -405,5 +417,9 @@ public class MockHelper extends TestHelper {
 
     public ICalendarClientFilterManager getClientFilterManager() {
         return clientFilterManager;
+    }
+    
+    public UserIdentitySupplier getUserIdentitySupplier(){
+    	return userIdentitySupplier;
     }
 }

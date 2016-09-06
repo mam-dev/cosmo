@@ -67,6 +67,8 @@ import org.unitedinternet.cosmo.dav.property.LastModified;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserIdentity;
+import org.unitedinternet.cosmo.model.UserIdentitySupplier;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
 
@@ -106,14 +108,17 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
     private User user;
     private DavUserPrincipalCollection parent;
     private DavAcl acl;
+    private UserIdentitySupplier userIdentitySupplier;
 
     public DavUserPrincipal(User user,
                             DavResourceLocator locator,
-                            DavResourceFactory factory)
+                            DavResourceFactory factory,
+                            UserIdentitySupplier userIdentitySupplier)
         throws CosmoDavException {
         super(locator, factory);
         this.user = user;
         this.acl = makeAcl();
+        this.userIdentitySupplier = userIdentitySupplier;
     }
 
 
@@ -136,9 +141,10 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
     }
 
     public String getDisplayName() {
-        String firstName = user.getFirstName();
-        String lastName = user.getLastName();
-        String email = user.getEmail();
+    	UserIdentity userIdentity = userIdentitySupplier.forUser(user);
+        String firstName = userIdentity.getFirstName();
+        String lastName = userIdentity.getLastName();
+        String email = userIdentity.getEmails().isEmpty() ? "" : userIdentity.getEmails().iterator().next();
         
         String toReturn = null;
         
@@ -313,7 +319,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
         
         // for now scheduling is an option
         if(isSchedulingEnabled()) {
-            properties.add(new CalendarUserAddressSet(user));
+            properties.add(new CalendarUserAddressSet(user, userIdentitySupplier));
             properties.add(new ScheduleInboxURL(getResourceLocator(), user));
             properties.add(new ScheduleOutboxURL(getResourceLocator(), user));
         }

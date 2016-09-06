@@ -42,6 +42,7 @@ import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserIdentitySupplier;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.UserService;
@@ -64,19 +65,26 @@ public class StandardResourceFactory
     private CalendarQueryProcessor calendarQueryProcessor;
     private ICalendarClientFilterManager clientFilterManager;
     private boolean schedulingEnabled = false;
+    private UserIdentitySupplier userIdentitySupplier;
 
     public StandardResourceFactory(ContentService contentService,
                                    UserService userService,
                                    CosmoSecurityManager securityManager,
                                    EntityFactory entityFactory,
                                    CalendarQueryProcessor calendarQueryProcessor,
-                                   ICalendarClientFilterManager clientFilterManager) {
+                                   ICalendarClientFilterManager clientFilterManager,
+                                   UserIdentitySupplier userIdentitySupplier,
+                                   boolean schedulingEnabled) {
+    	
+    	
         this.contentService = contentService;
         this.userService = userService;
         this.securityManager = securityManager;
         this.entityFactory = entityFactory;
         this.calendarQueryProcessor = calendarQueryProcessor;
         this.clientFilterManager = clientFilterManager;
+        this.userIdentitySupplier = userIdentitySupplier;
+        this.schedulingEnabled = schedulingEnabled;
     }
 
     /**
@@ -264,7 +272,7 @@ public class StandardResourceFactory
                                     UriTemplate.Match match)
         throws CosmoDavException {
         User user = userService.getUser(match.get("username"));
-        return user != null ? new DavUserPrincipal(user, locator, this) :
+        return user != null ? new DavUserPrincipal(user, locator, this, userIdentitySupplier) :
             null;
     }
 
@@ -297,9 +305,5 @@ public class StandardResourceFactory
 
     public boolean isSchedulingEnabled() {
         return schedulingEnabled;
-    }
-
-    public void setSchedulingEnabled(boolean schedulingEnabled) {
-        this.schedulingEnabled = schedulingEnabled;
     }
 }

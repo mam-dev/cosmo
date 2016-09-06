@@ -51,7 +51,9 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
                                         getSecurityManager(),
                                         getEntityFactory(),
                                         getCalendarQueryProcessor(),
-                                        getClientFilterManager());
+                                        getClientFilterManager(),
+                                        getUserIdentitySupplier(),
+                                        false);
         locatorFactory = new StandardResourceLocatorFactory();
         try {
             baseUrl = new URL("http", "localhost", -1, "/dav");
@@ -119,7 +121,7 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         String path = TEMPLATE_USER.bind(false, user.getUsername());
         DavResourceLocator locator =
             locatorFactory.createResourceLocatorByPath(baseUrl, path);
-        return new DavUserPrincipal(user, locator, resourceFactory);
+        return new DavUserPrincipal(user, locator, resourceFactory, getUserIdentitySupplier());
     }
 
     /**

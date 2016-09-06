@@ -15,10 +15,13 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.property;
 
+import java.util.Set;
+
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserIdentitySupplier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,38 +32,36 @@ import org.w3c.dom.Element;
  * containing the URI of the user address.
  */
 public class CalendarUserAddressSet extends StandardDavProperty implements CaldavConstants {
-
+	private final Set<String> userEmails;
     /**
      * Create CalendarUserAddressSet object based on given parameters
      * @param locator DavResourceLocator
      * @param user Cosmo User
      */
-    public CalendarUserAddressSet(User user) {
-        super(CALENDARUSERADDRESSSET, href(user), true);
+    public CalendarUserAddressSet(User user, UserIdentitySupplier identitySupplier) {
+        super(CALENDARUSERADDRESSSET, identitySupplier.forUser(user).getEmails(), true);
+        this.userEmails = identitySupplier.forUser(user).getEmails();
     }
 
-    /**
-     * @return href value of this element
-     */
-    public String getHref() {
-        return (String) getValue();
-    }
+   
 
     
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.dav.property.StandardDavProperty#toXml(org.w3c.dom.Document)
      */
     public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+        Element calendarUserAddressSetNode = getName().toXml(document);
+        
+        for(String emailAddress : userEmails){
+	        Element e = DomUtil.createElement(document, XML_HREF, NAMESPACE);
+	        DomUtil.setText(e, href(emailAddress));
+	        calendarUserAddressSetNode.appendChild(e);
+        }
 
-        Element e = DomUtil.createElement(document, XML_HREF, NAMESPACE);
-        DomUtil.setText(e, getHref());
-        name.appendChild(e);
-
-        return name;
+        return calendarUserAddressSetNode;
     }
 
-    private static String href(User user) {
-        return "mailto:" + user.getEmail();
+    private static String href(String emailAddress) {
+        return "mailto:" + emailAddress;
     }
 }

@@ -129,27 +129,15 @@
 
 	<!-- dav protocol resources -->
 
-	<bean id="davResourceFactory" class="org.unitedinternet.cosmo.dav.StandardResourceFactory">
-		<constructor-arg>
-			<ref bean="contentService" />
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="userService" />
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="securityManager" />
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="cosmoEntityFactory" />
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="calendarQueryProcessor" />
-		</constructor-arg>
-		<constructor-arg>
-			<ref bean="iCalendarClientFilterManager" />
-		</constructor-arg>
-
-		<property name="schedulingEnabled" value="${cosmo.caldav.schedulingEnabled}" />
+	<bean id="davResourceFactory" class="org.unitedinternet.cosmo.dav.StandardResourceFactoryFactoryBean">
+		<constructor-arg ref="contentService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="securityManager" />
+		<constructor-arg ref="cosmoEntityFactory" />
+		<constructor-arg ref="calendarQueryProcessor" />
+		<constructor-arg ref="iCalendarClientFilterManager" />
+        <constructor-arg ref="externalComponentInstanceProvider"/>
+		<constructor-arg value="${cosmo.caldav.schedulingEnabled}" />
 	</bean>
 
 	<bean id="davResourceLocatorFactory"
