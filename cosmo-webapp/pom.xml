@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>cosmo-multimodule</artifactId>
 		<groupId>net.oneandone.cosmo</groupId>
-		<version>1.1.1-SNAPSHOT</version>
+		<version>1.4.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
