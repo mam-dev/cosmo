@@ -38,6 +38,7 @@ import org.unitedinternet.cosmo.model.filter.EventStampFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
@@ -64,10 +65,12 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         try {
             CalendarFilterConverter filterConverter = new CalendarFilterConverter();
             try {
-                // Translate CalendarFilter to ItemFilter and execute filter
-                ItemFilter itemFilter = filterConverter.translateToItemFilter(collection, filter);
-                Set results = itemFilterProcessor.processFilter(itemFilter);
-                return (Set<ICalendarItem>) results;
+                if (collection instanceof HibCollectionItem) {
+                    // Translate CalendarFilter to ItemFilter and execute filter. This does not make sense for external collections which are
+                    ItemFilter itemFilter = filterConverter.translateToItemFilter(collection, filter);
+                    Set results = itemFilterProcessor.processFilter(itemFilter);
+                    return (Set<ICalendarItem>) results;
+                }
             } catch (Exception e) {
                 /* Set this log message to debug because all iPad requests trigger it and log files get polluted. */
                 LOG.debug("Illegal filter item. Only VCALENDAR is supported so far.", e);
@@ -112,20 +115,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-
-    // THIS FILTER DOESN'T TAKE ACCOUNT OF TIMEZONE AND ADDS PREVIOUS ALL DAY EVENTS
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.CalendarDao#findEvents(org.unitedinternet.cosmo.model.CollectionItem,
-     * net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
-     */
-    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd,
-            boolean expandRecurringEvents) {
-
-        return findEvents(collection, rangeStart, rangeEnd, null, expandRecurringEvents);
-    }
-
+    
     /*
      * (non-Javadoc)
      * 
