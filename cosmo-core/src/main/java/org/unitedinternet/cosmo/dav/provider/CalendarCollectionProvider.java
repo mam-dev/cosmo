@@ -27,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.springframework.core.env.Environment;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavRequest;
@@ -48,9 +50,11 @@ import org.unitedinternet.cosmo.model.Ticket;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
 
 /**
  * <p>
@@ -62,6 +66,11 @@ import net.fortuna.ical4j.model.component.VEvent;
  */
 public class CalendarCollectionProvider extends CollectionProvider {
     private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
+    
+    private static final String PRODUCT_ID_KEY = "calendar.server.productId";
+	
+	
+	private volatile String productId;
 
     public CalendarCollectionProvider(DavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
@@ -113,7 +122,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
             while (acceptHeaders.hasMoreElements()) {
                 String headerValue = acceptHeaders.nextElement();
                 if ("text/calendar".equalsIgnoreCase(headerValue)) {
-                    writeContentOnResponse(response, resource);
+                    writeContentOnResponse(request, response, resource);
                     return;
                 }
             }
@@ -121,7 +130,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         super.spool(request, response, resource, withEntity);
     }
 
-    private void writeContentOnResponse(DavResponse response, WebDavResource resource) throws IOException {
+    private void writeContentOnResponse(DavRequest request, DavResponse response, WebDavResource resource) throws IOException {
         // strip the content if there's a ticket with free-busy access
         if (!(resource instanceof DavCalendarCollection)) {
             throw new IllegalStateException("Incompatible resource type for this provider");
@@ -129,7 +138,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         DavCalendarCollection davCollection = DavCalendarCollection.class.cast(resource);
         CollectionItem collectionItem = (CollectionItem) davCollection.getItem();
 
-        Calendar result = getCalendarFromCollection(collectionItem);
+        Calendar result = getCalendarFromCollection(request, collectionItem);
 
         Ticket contextTicket = getSecurityContext().getTicket();
         Set<Ticket> collectionTickets = collectionItem.getTickets();
@@ -221,10 +230,22 @@ public class CalendarCollectionProvider extends CollectionProvider {
      * @param collectionItem
      * @return
      */
-    private Calendar getCalendarFromCollection(CollectionItem collectionItem) {
-
+    private Calendar getCalendarFromCollection(DavRequest req, CollectionItem collectionItem) {
         Calendar result = new Calendar();
-
+        
+        if(productId == null){
+        	synchronized (this) {
+				if(productId == null){
+					Environment environment = WebApplicationContextUtils.findWebApplicationContext(req.getServletContext()).getEnvironment();
+					productId = environment.getProperty(PRODUCT_ID_KEY);
+				}
+			}
+        }
+        
+        result.getProperties().add(new ProdId(productId));
+        result.getProperties().add(Version.VERSION_2_0);
+        result.getProperties().add(CalScale.GREGORIAN);
+        
         for (Item item : collectionItem.getChildren()) {
             if (!NoteItem.class.isInstance(item)) {
                 continue;
