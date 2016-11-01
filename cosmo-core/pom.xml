@@ -20,6 +20,7 @@
 
 	<properties>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+		<javadoc.opts>-Xdoclint:none</javadoc.opts>
 		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
 		<maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
 		<maven-clean-plugin.version>2.1.1</maven-clean-plugin.version>
@@ -479,7 +480,38 @@
 						<effort>Max</effort>
 					</configuration>
 				</plugin>
-
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<additionalparam>${javadoc.opts}</additionalparam>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<reportPlugins>
+							<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-javadoc-plugin</artifactId>
+								<configuration>
+									<additionalparam>${javadoc.opts}</additionalparam>
+								</configuration>
+							</plugin>
+						</reportPlugins>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
