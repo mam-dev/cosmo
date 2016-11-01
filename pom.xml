@@ -30,7 +30,6 @@
 		<maven-jar-plugin.version>2.3.2</maven-jar-plugin.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
-		<javadoc.opts>-Xdoclint:none</javadoc.opts>
 		<org.springframework.security.version>4.1.1.RELEASE</org.springframework.security.version>
 		<org.springframework.version>4.3.1.RELEASE</org.springframework.version>
 		<qxlint.report.profile>false</qxlint.report.profile>
@@ -565,27 +564,11 @@
 							<goal>jar</goal>
 						</goals>
 						<configuration>
-							<additionalparam>${javadoc.opts}</additionalparam>
+							<additionalparam>-Xdoclint:none</additionalparam>
 							<failOnError>false</failOnError>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.4</version>
-				<configuration>
-					<reportPlugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<configuration>
-								<additionalparam>${javadoc.opts}</additionalparam>
-							</configuration>
-						</plugin>
-					</reportPlugins>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
