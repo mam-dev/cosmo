@@ -420,7 +420,7 @@ public class ContextServiceExtensionsAdviceTest {
         
         proxyService.createContent(rootCollection, contentItem);
         
-        Mockito.verify(mockAddHandler).beforeAdd(Mockito.eq(rootCollection), Mockito.anySet());
+        Mockito.verify(mockAddHandler).beforeAdd(Mockito.eq(rootCollection), Mockito.any(Set.class));
     }
     
     /**
