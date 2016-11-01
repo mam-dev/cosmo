@@ -492,6 +492,7 @@
 							</goals>
 							<configuration>
 								<additionalparam>${javadoc.opts}</additionalparam>
+								<failOnError>false</failOnError>
 							</configuration>
 						</execution>
 					</executions>
