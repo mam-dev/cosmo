@@ -51,6 +51,7 @@ import org.unitedinternet.cosmo.model.Ticket;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
@@ -181,7 +182,13 @@ public class CalendarCollectionProvider extends CollectionProvider {
             VEvent freeBusyEvent = event;
             // remove alarms
             freeBusyEvent.getAlarms().clear();
-
+            PropertyList eventProperies = freeBusyEvent.getProperties();
+            eventProperies.removeAll(eventProperies.getProperties(Property.ATTENDEE));
+            eventProperies.removeAll(eventProperies.getProperties(Property.LOCATION));
+            eventProperies.removeAll(eventProperies.getProperties(Property.CATEGORIES));
+            eventProperies.removeAll(eventProperies.getProperties(Property.ATTACH));
+            eventProperies.removeAll(eventProperies.getProperties(Property.DESCRIPTION));
+            
             ArrayList<Property> properties = freeBusyEvent.getProperties();
             for (Property property : properties) {
                 hideSensitiveData((Property) property);
@@ -204,18 +211,6 @@ public class CalendarCollectionProvider extends CollectionProvider {
             switch (property.getName()) {
             case Property.SUMMARY:
                 property.setValue("Busy");
-                break;
-            case Property.DESCRIPTION:
-                property.setValue("Busy");
-                break;
-            case Property.LOCATION:
-                property.setValue("Busy");
-                break;
-            case Property.ATTENDEE:
-                property.setValue("");
-                break;
-            case Property.ORGANIZER:
-                property.setValue("");
                 break;
             default:
                 break;
