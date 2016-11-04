@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -164,9 +165,9 @@ public class CalendarCollectionProvider extends CollectionProvider {
         try {
             //make a copy of the original calendar
             Calendar freeBusyCal = new Calendar(result);
-            ArrayList<Component> events = freeBusyCal.getComponents(Component.VEVENT);
+            List<Component> events = freeBusyCal.getComponents(Component.VEVENT);
             for (Component event : events) {
-                event = getFreeBusyEvent((VEvent) event);
+                event = this.getFreeBusyEvent((VEvent) event);
             }
             return freeBusyCal;
         } catch (ParseException | IOException | URISyntaxException e) {
@@ -183,6 +184,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
             // remove alarms
             freeBusyEvent.getAlarms().clear();
             PropertyList eventProperies = freeBusyEvent.getProperties();
+            eventProperies.removeAll(eventProperies.getProperties(Property.ORGANIZER));
             eventProperies.removeAll(eventProperies.getProperties(Property.ATTENDEE));
             eventProperies.removeAll(eventProperies.getProperties(Property.LOCATION));
             eventProperies.removeAll(eventProperies.getProperties(Property.CATEGORIES));
