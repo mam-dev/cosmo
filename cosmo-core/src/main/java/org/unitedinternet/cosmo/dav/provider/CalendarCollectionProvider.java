@@ -57,6 +57,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 
 /**
  * <p>
@@ -67,12 +68,14 @@ import net.fortuna.ical4j.model.property.Version;
  * @see DavCalendarCollection
  */
 public class CalendarCollectionProvider extends CollectionProvider {
+
     private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
-    
+
+    private static final String FREE_BUSY_X_PROPERTY = Property.EXPERIMENTAL_PREFIX + "FREE-BUSY";
+
     private static final String PRODUCT_ID_KEY = "calendar.server.productId";
-	
-	
-	private volatile String productId;
+
+    private volatile String productId;
 
     public CalendarCollectionProvider(DavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
@@ -132,7 +135,8 @@ public class CalendarCollectionProvider extends CollectionProvider {
         super.spool(request, response, resource, withEntity);
     }
 
-    private void writeContentOnResponse(DavRequest request, DavResponse response, WebDavResource resource) throws IOException {
+    private void writeContentOnResponse(DavRequest request, DavResponse response, WebDavResource resource)
+            throws IOException {
         // strip the content if there's a ticket with free-busy access
         if (!(resource instanceof DavCalendarCollection)) {
             throw new IllegalStateException("Incompatible resource type for this provider");
@@ -149,7 +153,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
                 result = getFreeBusyCalendar(result);
             }
         }
-        
+
         response.setContentType("text/calendar");
         response.getWriter().write(result.toString());
         response.flushBuffer();
@@ -163,8 +167,9 @@ public class CalendarCollectionProvider extends CollectionProvider {
     private Calendar getFreeBusyCalendar(Calendar result) {
 
         try {
-            //make a copy of the original calendar
+            // make a copy of the original calendar
             Calendar freeBusyCal = new Calendar(result);
+            freeBusyCal.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
             List<Component> events = freeBusyCal.getComponents(Component.VEVENT);
             for (Component event : events) {
                 event = this.getFreeBusyEvent((VEvent) event);
@@ -190,7 +195,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
             eventProperies.removeAll(eventProperies.getProperties(Property.CATEGORIES));
             eventProperies.removeAll(eventProperies.getProperties(Property.ATTACH));
             eventProperies.removeAll(eventProperies.getProperties(Property.DESCRIPTION));
-            
+
             ArrayList<Property> properties = freeBusyEvent.getProperties();
             for (Property property : properties) {
                 hideSensitiveData((Property) property);
@@ -229,20 +234,21 @@ public class CalendarCollectionProvider extends CollectionProvider {
      */
     private Calendar getCalendarFromCollection(DavRequest req, CollectionItem collectionItem) {
         Calendar result = new Calendar();
-        
-        if(productId == null){
-        	synchronized (this) {
-				if(productId == null){
-					Environment environment = WebApplicationContextUtils.findWebApplicationContext(req.getServletContext()).getEnvironment();
-					productId = environment.getProperty(PRODUCT_ID_KEY);
-				}
-			}
+
+        if (productId == null) {
+            synchronized (this) {
+                if (productId == null) {
+                    Environment environment = WebApplicationContextUtils
+                            .findWebApplicationContext(req.getServletContext()).getEnvironment();
+                    productId = environment.getProperty(PRODUCT_ID_KEY);
+                }
+            }
         }
-        
+
         result.getProperties().add(new ProdId(productId));
         result.getProperties().add(Version.VERSION_2_0);
         result.getProperties().add(CalScale.GREGORIAN);
-        
+
         for (Item item : collectionItem.getChildren()) {
             if (!NoteItem.class.isInstance(item)) {
                 continue;
