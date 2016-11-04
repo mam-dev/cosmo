@@ -15,10 +15,15 @@
  */
 package org.unitedinternet.cosmo.dav.provider;
 
+import static net.fortuna.ical4j.model.Property.DTEND;
+import static net.fortuna.ical4j.model.Property.DTSTART;
+import static net.fortuna.ical4j.model.Property.EXDATE;
+import static net.fortuna.ical4j.model.Property.RECURRENCE_ID;
+import static net.fortuna.ical4j.model.Property.RRULE;
+import static net.fortuna.ical4j.model.Property.UID;
+
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
@@ -52,10 +57,10 @@ import org.unitedinternet.cosmo.model.Ticket;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.model.property.XProperty;
 
@@ -71,7 +76,12 @@ public class CalendarCollectionProvider extends CollectionProvider {
 
     private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
 
+    private static final String FREE_BUSY_TEXT = "FreeBusy";
+
     private static final String FREE_BUSY_X_PROPERTY = Property.EXPERIMENTAL_PREFIX + "FREE-BUSY";
+
+    private static final List<String> FREE_BUSY_PROPERTIES = Arrays
+            .asList(new String[] { UID, DTSTART, DTEND, RRULE, RECURRENCE_ID, EXDATE });
 
     private static final String PRODUCT_ID_KEY = "calendar.server.productId";
 
@@ -160,72 +170,40 @@ public class CalendarCollectionProvider extends CollectionProvider {
     }
 
     /**
-     * @param result
+     * @param original
      * @return
      */
     @SuppressWarnings("unchecked")
-    private Calendar getFreeBusyCalendar(Calendar result) {
-
-        try {
-            // make a copy of the original calendar
-            Calendar freeBusyCal = new Calendar(result);
-            freeBusyCal.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
-            List<Component> events = freeBusyCal.getComponents(Component.VEVENT);
-            for (Component event : events) {
-                event = this.getFreeBusyEvent((VEvent) event);
-            }
-            return freeBusyCal;
-        } catch (ParseException | IOException | URISyntaxException e) {
-            throw new RuntimeException(e);
+    private Calendar getFreeBusyCalendar(Calendar original) {
+        // Make a copy of the original calendar
+        Calendar copy = new Calendar();
+        copy.getProperties().add(new ProdId(productId));
+        copy.getProperties().add(Version.VERSION_2_0);
+        copy.getProperties().add(CalScale.GREGORIAN);
+        copy.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
+        
+        List<Component> events = original.getComponents(Component.VEVENT);
+        for (Component event : events) {
+            copy.getComponents().add(this.getFreeBusyEvent((VEvent) event));
         }
-
+        return copy;
     }
 
-    @SuppressWarnings("unchecked")
-    private VEvent getFreeBusyEvent(VEvent event) {
+    private VEvent getFreeBusyEvent(VEvent vEvent) {
 
         try {
-            VEvent freeBusyEvent = event;
-            // remove alarms
-            freeBusyEvent.getAlarms().clear();
-            PropertyList eventProperies = freeBusyEvent.getProperties();
-            eventProperies.removeAll(eventProperies.getProperties(Property.ORGANIZER));
-            eventProperies.removeAll(eventProperies.getProperties(Property.ATTENDEE));
-            eventProperies.removeAll(eventProperies.getProperties(Property.LOCATION));
-            eventProperies.removeAll(eventProperies.getProperties(Property.CATEGORIES));
-            eventProperies.removeAll(eventProperies.getProperties(Property.ATTACH));
-            eventProperies.removeAll(eventProperies.getProperties(Property.DESCRIPTION));
-
-            ArrayList<Property> properties = freeBusyEvent.getProperties();
-            for (Property property : properties) {
-                hideSensitiveData((Property) property);
+            VEvent freeBusyEvent = new VEvent();
+            freeBusyEvent.getProperties().add(new Summary(FREE_BUSY_TEXT));
+            for (String propertyName : FREE_BUSY_PROPERTIES) {
+                Property property = vEvent.getProperty(propertyName);
+                if (property != null) {
+                    freeBusyEvent.getProperties().add(property);
+                }
             }
             return freeBusyEvent;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * @param property
-     * @throws ParseException
-     * @throws URISyntaxException
-     * @throws IOException
-     */
-    private void hideSensitiveData(Property property) {
-
-        try {
-            switch (property.getName()) {
-            case Property.SUMMARY:
-                property.setValue("Busy");
-                break;
-            default:
-                break;
-            }
-        } catch (IOException | URISyntaxException | ParseException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     /**
