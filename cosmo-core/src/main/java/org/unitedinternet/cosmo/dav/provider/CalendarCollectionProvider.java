@@ -76,7 +76,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
 
     private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
 
-    private static final String FREE_BUSY_TEXT = "FreeBusy";
+    private static final String FREE_BUSY_TEXT = "Busy";
 
     private static final String FREE_BUSY_X_PROPERTY = Property.EXPERIMENTAL_PREFIX + "FREE-BUSY";
 
