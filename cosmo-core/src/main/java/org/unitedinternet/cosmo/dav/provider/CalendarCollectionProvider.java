@@ -64,6 +64,8 @@ import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.model.property.XProperty;
 
+import static org.unitedinternet.cosmo.icalendar.ICalendarConstants.ICALENDAR_MEDIA_TYPE;
+
 /**
  * <p>
  * An implementation of <code>DavProvider</code> that implements access to <code>DavCalendarCollection</code> resources.
@@ -75,6 +77,8 @@ import net.fortuna.ical4j.model.property.XProperty;
 public class CalendarCollectionProvider extends CollectionProvider {
 
     private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
+
+    private static final String CHARSET_UTF8 = "UTF-8";
 
     private static final String FREE_BUSY_TEXT = "Busy";
 
@@ -136,7 +140,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         if (acceptHeaders != null) {
             while (acceptHeaders.hasMoreElements()) {
                 String headerValue = acceptHeaders.nextElement();
-                if ("text/calendar".equalsIgnoreCase(headerValue)) {
+                if (ICALENDAR_MEDIA_TYPE.equalsIgnoreCase(headerValue)) {
                     writeContentOnResponse(request, response, resource);
                     return;
                 }
@@ -164,7 +168,8 @@ public class CalendarCollectionProvider extends CollectionProvider {
             }
         }
 
-        response.setContentType("text/calendar");
+        response.setContentType(ICALENDAR_MEDIA_TYPE);
+        response.setCharacterEncoding(CHARSET_UTF8);
         response.getWriter().write(result.toString());
         response.flushBuffer();
     }
@@ -181,7 +186,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         copy.getProperties().add(Version.VERSION_2_0);
         copy.getProperties().add(CalScale.GREGORIAN);
         copy.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
-        
+
         List<Component> events = original.getComponents(Component.VEVENT);
         for (Component event : events) {
             copy.getComponents().add(this.getFreeBusyEvent((VEvent) event));
