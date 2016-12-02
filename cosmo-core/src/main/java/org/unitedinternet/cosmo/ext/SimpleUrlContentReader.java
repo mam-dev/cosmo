@@ -53,7 +53,7 @@ public class SimpleUrlContentReader implements UrlContentReader, ApplicationCont
     private static final String NON_PROXYED_HOSTS_KEY = "external.content.non.proxyed.hosts";
     
     private static final int MAX_LINE_LENGTH = 2048;
-    private static final int MAX_HEADER_COUNT = 20;
+    private static final int MAX_HEADER_COUNT = 30;
     private static final int MAX_REDIRECTS = 10;
 
     private static final String Q_MARK = "?";
