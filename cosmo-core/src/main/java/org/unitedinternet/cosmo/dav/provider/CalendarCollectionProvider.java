@@ -167,7 +167,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
                 result = getFreeBusyCalendar(result);
             }
         }
-
+        response.setHeader("ETag", "\""+ resource.getETag() +"\"");
         response.setContentType(ICALENDAR_MEDIA_TYPE);
         response.setCharacterEncoding(CHARSET_UTF8);
         response.getWriter().write(result.toString());
