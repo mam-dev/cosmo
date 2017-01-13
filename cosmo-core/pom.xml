@@ -100,7 +100,12 @@
 		
 		<dependency>
 				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j</artifactId>
+				<artifactId>mariaDB4j-core</artifactId>
+				<scope>test</scope>				
+		</dependency>
+		<dependency>
+				<groupId>ch.vorburger.mariaDB4j</groupId>
+				<artifactId>mariaDB4j-app</artifactId>
 				<scope>test</scope>				
 		</dependency>
 		
