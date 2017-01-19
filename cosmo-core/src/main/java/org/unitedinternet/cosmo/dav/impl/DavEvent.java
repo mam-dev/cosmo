@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.dav.impl;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.component.VEvent;
 
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -81,7 +82,7 @@ public class DavEvent extends DavCalendarResource {
     protected void setCalendar(Calendar calendar)
         throws CosmoDavException {
         
-        ComponentList vevents = calendar.getComponents(Component.VEVENT);
+        ComponentList<VEvent> vevents = calendar.getComponents(Component.VEVENT);
         if (vevents.isEmpty()) {
             throw new UnprocessableEntityException("VCALENDAR does not contain any VEVENTs");
         }

@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.unitedinternet.cosmo.CosmoParseException;
+
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
@@ -44,8 +46,6 @@ import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.util.Dates;
 
-import org.unitedinternet.cosmo.CosmoParseException;
-
 /**
  * A list of instances . Instances are created by adding a component, either the
  * master recurrence component or an overridden instance of one. Its is the
@@ -55,7 +55,7 @@ import org.unitedinternet.cosmo.CosmoParseException;
  * @author cyrusdaboo
  */
 
-public class InstanceList extends TreeMap {
+public class InstanceList extends TreeMap<String, Instance> {
 
     private static final long serialVersionUID = 1838360990532590681L;
     private boolean isUTC = false;
@@ -189,15 +189,13 @@ public class InstanceList extends TreeMap {
             put(instance.getRid().toString(), instance);
         }
         // recurrence dates..
-        PropertyList rDates = comp.getProperties()
+        PropertyList<RDate> rDates = comp.getProperties()
                 .getProperties(Property.RDATE);
-        for (Iterator i = rDates.iterator(); i.hasNext(); ) {
-            RDate rdate = (RDate) i.next();
+        for (RDate rdate : rDates) {            
             // Both PERIOD and DATE/DATE-TIME values allowed
             if (Value.PERIOD.equals(rdate.getParameters().getParameter(
-                    Parameter.VALUE))) {
-                for (Iterator j = rdate.getPeriods().iterator(); j.hasNext(); ) {
-                    Period period = (Period) j.next();
+                    Parameter.VALUE))) {                
+                for (Period period : rdate.getPeriods()) {                    
                     Date periodStart = adjustFloatingDateIfNecessary(period.getStart());
                     Date periodEnd = adjustFloatingDateIfNecessary(period.getEnd());
                     // Add period if it overlaps rage
@@ -208,8 +206,7 @@ public class InstanceList extends TreeMap {
                     }
                 }
             } else {
-                for (Iterator j = rdate.getDates().iterator(); j.hasNext(); ) {
-                    Date startDate = (Date) j.next();
+                for (Date startDate : rdate.getDates()) {                     
                     startDate = convertToUTCIfNecessary(startDate);
                     startDate = adjustFloatingDateIfNecessary(startDate);
                     Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration
@@ -224,8 +221,7 @@ public class InstanceList extends TreeMap {
         }
 
         // recurrence rules..
-        PropertyList rRules = comp.getProperties()
-                .getProperties(Property.RRULE);
+        PropertyList<RRule> rRules = comp.getProperties().getProperties(Property.RRULE);
 
         // Adjust startRange to account for instances that occur before
         // the startRange, and end after it
@@ -238,9 +234,7 @@ public class InstanceList extends TreeMap {
         }
 
 
-        for (Iterator i = rRules.iterator(); i.hasNext(); ) {
-            RRule rrule = (RRule) i.next();
-
+        for (RRule rrule : rRules) {
             //if start and adjustedRangeStart must be in the same timezone
 
             DateList startDates = rrule.getRecur().getDates(start, adjustedRangeStart,
@@ -255,12 +249,9 @@ public class InstanceList extends TreeMap {
             }
         }
         // exception dates..
-        PropertyList exDates = comp.getProperties().getProperties(
-                Property.EXDATE);
-        for (Iterator i = exDates.iterator(); i.hasNext(); ) {
-            ExDate exDate = (ExDate) i.next();
-            for (Iterator j = exDate.getDates().iterator(); j.hasNext(); ) {
-                Date sd = (Date) j.next();
+        PropertyList<ExDate> exDates = comp.getProperties().getProperties(Property.EXDATE);
+        for (ExDate exDate : exDates) {
+            for (Date sd : exDate.getDates()) {
                 sd = convertToUTCIfNecessary(sd);
                 sd = adjustFloatingDateIfNecessary(sd);
                 Instance instance = new Instance(comp, sd, sd);
@@ -268,20 +259,17 @@ public class InstanceList extends TreeMap {
             }
         }
         // exception rules..
-        PropertyList exRules = comp.getProperties().getProperties(
-                Property.EXRULE);
+        PropertyList<ExRule> exRules = comp.getProperties().getProperties(Property.EXRULE);
         if (exRules.size() > 0 && adjustedRangeStart == null) {
             adjustedRangeStart = adjustStartRangeIfNecessary(rangeStart, start, duration);
             ajustedRangeEnd = adjustEndRangeIfNecessary(rangeEnd, start);
         }
 
-        for (Iterator i = exRules.iterator(); i.hasNext(); ) {
-            ExRule exrule = (ExRule) i.next();
+        for (ExRule exrule : exRules) {
             DateList startDates = exrule.getRecur().getDates(start, adjustedRangeStart,
                     ajustedRangeEnd,
                     start instanceof DateTime ? Value.DATE_TIME : Value.DATE);
-            for (Iterator j = startDates.iterator(); j.hasNext(); ) {
-                Date sd = (Date) j.next();
+            for (Date sd : startDates) {
                 Instance instance = new Instance(comp, sd, sd);
                 remove(instance.getRid().toString());
             }
@@ -406,8 +394,8 @@ public class InstanceList extends TreeMap {
             // the current rid, or in the case of no matching rid, the first
             // rid that is greater than the current rid.
             boolean containsKey = containsKey(key);
-            TreeSet sortedKeys = new TreeSet(keySet());
-            for (Iterator iter = sortedKeys.iterator(); iter.hasNext(); ) {
+            TreeSet<String> sortedKeys = new TreeSet<>(keySet());
+            for (Iterator<String> iter = sortedKeys.iterator(); iter.hasNext(); ) {
                 String ikey = (String) iter.next();
                 if (ikey.equals(key) || !containsKey && ikey.compareTo(key) > 0) {
 

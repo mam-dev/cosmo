@@ -24,13 +24,13 @@ package org.unitedinternet.cosmo.model.filter;
 public class StampFilter {
   
     private boolean isMissing = false;
-    private Class stampClass = null;
+    private Class<?> stampClass = null;
     
     public StampFilter() {
         
     }
     
-    public StampFilter(Class stampClass, boolean isMissing) {
+    public StampFilter(Class<?> stampClass, boolean isMissing) {
         this.stampClass = stampClass;
         this.isMissing = isMissing;
     }
@@ -48,7 +48,7 @@ public class StampFilter {
         this.isMissing = isMissing;
     }
     
-    public Class getStampClass() {
+    public Class<?> getStampClass() {
         return stampClass;
     }
     
@@ -57,7 +57,7 @@ public class StampFilter {
      * type.
      * @param stampClass
      */
-    public void setStampClass(Class stampClass) {
+    public void setStampClass(Class<?> stampClass) {
         this.stampClass = stampClass;
     }
 }

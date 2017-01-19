@@ -53,7 +53,7 @@ public class HibQName implements QName,Serializable {
      * @param clazz class to generate namespace from
      * @param localName local name
      */
-    public HibQName(Class clazz, String localName) {
+    public HibQName(Class<?> clazz, String localName) {
         this(clazz.getName(), localName);
     }
     

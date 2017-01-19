@@ -16,12 +16,13 @@
 package org.unitedinternet.cosmo.dao.hibernate;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilterEvaluater;
@@ -157,11 +158,15 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
      * org.unitedinternet.cosmo.model.CollectionItem)
      */
     public ContentItem findEventByIcalUid(String uid, CollectionItem calendar) {
-        try {
-            Query hibQuery = getSession().getNamedQuery("event.by.calendar.icaluid");
-            hibQuery.setParameter("calendar", calendar);
-            hibQuery.setParameter("uid", uid);
-            return (ContentItem) hibQuery.uniqueResult();
+        try {            
+            Query<ContentItem> query = this.getSession().createNamedQuery("event.by.calendar.icaluid", ContentItem.class);
+            query.setParameter("calendar", calendar);
+            query.setParameter("uid", uid);
+            List<ContentItem> resultList  = query.getResultList();
+            if (!resultList.isEmpty()) {
+                return resultList.get(0);
+            }
+            return null;
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);

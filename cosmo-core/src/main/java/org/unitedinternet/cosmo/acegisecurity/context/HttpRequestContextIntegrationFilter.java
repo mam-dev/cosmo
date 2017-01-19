@@ -64,13 +64,13 @@ public class HttpRequestContextIntegrationFilter
     private static final String FILTER_APPLIED =
         "__acegi_request_integration_filter_applied";
 
-    private Class context = SecurityContextImpl.class;
+    private Class<?> context = SecurityContextImpl.class;
 
     /**
      * Sets context.
      * @param secureContext The secure context.
      */
-    public void setContext(Class secureContext) {
+    public void setContext(Class<?> secureContext) {
         this.context = secureContext;
     }
 
@@ -78,7 +78,7 @@ public class HttpRequestContextIntegrationFilter
      * Gets context.
      * @return The context.
      */
-    public Class getContext() {
+    public Class<?> getContext() {
         return context;
     }
 

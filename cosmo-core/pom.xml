@@ -141,7 +141,7 @@
 
 		<!-- ical4j related libs -->
 		<dependency>
-			<groupId>org.mnode.ical4j</groupId>
+			<groupId>net.oneandone.ical4j</groupId>
 			<artifactId>ical4j</artifactId>
 			<exclusions>
 				<exclusion>

@@ -1,6 +1,7 @@
 package org.unitedinternet.cosmo.servletcontext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,7 @@ import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.metadata.Delegate;
 import org.unitedinternet.cosmo.servlet.ServletContextListenerDelegate;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+
 
 /**
  * 

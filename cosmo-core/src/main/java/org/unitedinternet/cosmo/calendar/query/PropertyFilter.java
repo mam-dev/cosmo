@@ -69,7 +69,7 @@ public class PropertyFilter implements DavConstants, CaldavConstants {
 
     private TextMatchFilter textMatchFilter = null;
 
-    private List paramFilters = new ArrayList();
+    private List<ParamFilter> paramFilters = new ArrayList<>();
 
     private String name = null;
 
@@ -193,7 +193,7 @@ public class PropertyFilter implements DavConstants, CaldavConstants {
      * Gets param filters.
      * @return The filters.
      */
-    public List getParamFilters() {
+    public List<ParamFilter> getParamFilters() {
         return paramFilters;
     }
 
@@ -201,7 +201,7 @@ public class PropertyFilter implements DavConstants, CaldavConstants {
      * Sets param filters.
      * @param paramFilters Param filters.
      */
-    public void setParamFilters(List paramFilters) {
+    public void setParamFilters(List<ParamFilter> paramFilters) {
         this.paramFilters = paramFilters;
     }
 

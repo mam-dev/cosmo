@@ -26,7 +26,7 @@ import net.fortuna.ical4j.model.Date;
  * Contains static NoteOccurrence support methods.
  */
 public class NoteOccurrenceUtil {
-    private static final Class[] NOTE_OCCURRENCE_CLASS = new Class[] { NoteOccurrence.class };
+    private static final Class<?>[] NOTE_OCCURRENCE_CLASS = new Class[] { NoteOccurrence.class };
 
     /**
      * Generate a NoteOccurrence for a given recurrence date and

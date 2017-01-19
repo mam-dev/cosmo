@@ -56,7 +56,9 @@ import org.unitedinternet.cosmo.model.Ticket;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
@@ -178,7 +180,6 @@ public class CalendarCollectionProvider extends CollectionProvider {
      * @param original
      * @return
      */
-    @SuppressWarnings("unchecked")
     private Calendar getFreeBusyCalendar(Calendar original) {
         // Make a copy of the original calendar
         Calendar copy = new Calendar();
@@ -187,7 +188,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         copy.getProperties().add(CalScale.GREGORIAN);
         copy.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
 
-        List<Component> events = original.getComponents(Component.VEVENT);
+        ComponentList<CalendarComponent> events = original.getComponents(Component.VEVENT);
         for (Component event : events) {
             copy.getComponents().add(this.getFreeBusyEvent((VEvent) event));
         }

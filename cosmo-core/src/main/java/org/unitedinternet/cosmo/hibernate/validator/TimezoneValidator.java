@@ -20,7 +20,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ValidationException;
+import net.fortuna.ical4j.validate.ValidationException;
 import net.fortuna.ical4j.model.component.VTimeZone;
 
 

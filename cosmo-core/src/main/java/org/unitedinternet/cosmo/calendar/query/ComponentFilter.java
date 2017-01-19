@@ -62,12 +62,12 @@ public class ComponentFilter implements CaldavConstants, ICalendarConstants {
     /**
      * Component filters container.
      */
-    private List componentFilters = new ArrayList();
+    private List<ComponentFilter> componentFilters = new ArrayList<>();
 
     /**
      * Prop filters container.
      */
-    private List propFilters = new ArrayList();
+    private List<PropertyFilter> propFilters = new ArrayList<>();
 
     /**
      * The the CALDAV:is-not-defined element for this filter.
@@ -344,7 +344,7 @@ public class ComponentFilter implements CaldavConstants, ICalendarConstants {
      * Gets component filter.
      * @return The component filter.
      */
-    public List getComponentFilters() {
+    public List<ComponentFilter> getComponentFilters() {
         return componentFilters;
     }
 
@@ -352,7 +352,7 @@ public class ComponentFilter implements CaldavConstants, ICalendarConstants {
      * Sets component filter.
      * @param componentFilters The component filter.
      */
-    public void setComponentFilters(List componentFilters) {
+    public void setComponentFilters(List<ComponentFilter> componentFilters) {
         this.componentFilters = componentFilters;
     }
 
@@ -376,7 +376,7 @@ public class ComponentFilter implements CaldavConstants, ICalendarConstants {
      * Gets prop filters.
      * @return The prop filters.
      */
-    public List getPropFilters() {
+    public List<PropertyFilter> getPropFilters() {
         return propFilters;
     }
 
@@ -384,7 +384,7 @@ public class ComponentFilter implements CaldavConstants, ICalendarConstants {
      * Sets prop filters.
      * @param propFilters The prop filters.
      */
-    public void setPropFilters(List propFilters) {
+    public void setPropFilters(List<PropertyFilter> propFilters) {
         this.propFilters = propFilters;
     }
 

@@ -20,15 +20,16 @@ import java.io.IOException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.ValidationException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import net.fortuna.ical4j.model.component.VToDo;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Check if a Calendar object contains a valid VTODO
@@ -52,14 +53,8 @@ public class TaskValidator implements ConstraintValidator<Task, Calendar> {
             CalendarUtils.parseCalendar(calendar.toString());
             
             // make sure we have a VTODO
-            ComponentList comps = calendar.getComponents();
-            if(comps==null) {
-                LOG.warn("error validating task: " + calendar.toString());
-                return false;
-            }
-            
-            comps = comps.getComponents(Component.VTODO);
-            if(comps==null || comps.size()==0) {
+            ComponentList<VToDo> comps = calendar.getComponents(Component.VTODO);                        
+            if (comps == null || comps.size() == 0) {
                 LOG.warn("error validating task: " + calendar.toString());
                 return false;
             }

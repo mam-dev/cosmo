@@ -226,7 +226,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Item#getStamp(java.lang.Class)
      */
-    public Stamp getStamp(Class clazz) {
+    public Stamp getStamp(Class<?> clazz) {
         for(Stamp stamp : stamps) {
             // only return stamp if it is an instance of the specified class
             if(clazz.isInstance(stamp)) {

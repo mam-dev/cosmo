@@ -31,6 +31,7 @@ import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.property.Completed;
 import net.fortuna.ical4j.model.property.Status;
@@ -158,7 +159,7 @@ public class EntityConverterTest {
         
         // mod should include VTIMEZONES
         Calendar eventCal = ees.getEventCalendar();
-        ComponentList vtimezones = eventCal.getComponents(Component.VTIMEZONE);
+        ComponentList<VTimeZone> vtimezones = eventCal.getComponents(Component.VTIMEZONE);
         Assert.assertEquals(1, vtimezones.size());
         
         
@@ -306,9 +307,9 @@ public class EntityConverterTest {
         
         Assert.assertEquals(1, cal.getComponents().size());
         
-        ComponentList comps = cal.getComponents(Component.VTODO);
+        ComponentList<VToDo> comps = cal.getComponents(Component.VTODO);
         Assert.assertEquals(1, comps.size());
-        VToDo task = (VToDo) comps.get(0);
+        VToDo task = comps.get(0);
         
         Assert.assertNull(task.getDateCompleted());
         Assert.assertNull(ICalendarUtils.getXProperty("X-OSAF-STARRED", task));
@@ -359,7 +360,7 @@ public class EntityConverterTest {
         cal.validate();
         
         // should be a single VEVENT
-        ComponentList comps = cal.getComponents(Component.VEVENT);
+        ComponentList<VEvent> comps = cal.getComponents(Component.VEVENT);
         Assert.assertEquals(1, comps.size());
         VEvent event = (VEvent) comps.get(0);
         
@@ -427,7 +428,7 @@ public class EntityConverterTest {
         
         // test modification VEVENT gets added properly
         Calendar cal = converter.convertNote(master);
-        ComponentList comps = cal.getComponents(Component.VEVENT);
+        ComponentList<VEvent> comps = cal.getComponents(Component.VEVENT);
         Assert.assertEquals(2, comps.size());
         @SuppressWarnings("unused")
 		VEvent masterEvent = (VEvent) comps.get(0);
@@ -487,7 +488,7 @@ public class EntityConverterTest {
         
         Calendar cal = converter.convertNote(master);
         cal.validate();
-        ComponentList comps = cal.getComponents(Component.VEVENT);
+        ComponentList<VEvent> comps = cal.getComponents(Component.VEVENT);
         Assert.assertEquals(2, comps.size());
         VEvent masterEvent = (VEvent) comps.get(0);
         VEvent modEvent = (VEvent) comps.get(1);

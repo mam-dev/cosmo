@@ -23,7 +23,8 @@ import javax.validation.ConstraintValidatorContext;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.ValidationException;
+import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.validate.ValidationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +53,7 @@ public class AvailabilityValidator implements ConstraintValidator<Availability, 
             CalendarUtils.parseCalendar(calendar.toString());
             
             // make sure we have a VAVAILABILITY
-            ComponentList comps = calendar.getComponents();
+            ComponentList<CalendarComponent> comps = calendar.getComponents();
             if(comps==null) {
                 LOG.warn("error validating availability: " + calendar.toString());
                 return false;

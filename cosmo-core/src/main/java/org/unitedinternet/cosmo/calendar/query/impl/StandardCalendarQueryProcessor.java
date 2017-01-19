@@ -19,26 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.PeriodList;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.component.CalendarComponent;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VFreeBusy;
-import net.fortuna.ical4j.model.parameter.FbType;
-import net.fortuna.ical4j.model.property.FreeBusy;
-import net.fortuna.ical4j.model.property.Status;
-import net.fortuna.ical4j.model.property.Transp;
-import net.fortuna.ical4j.model.property.Uid;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,6 +43,24 @@ import org.unitedinternet.cosmo.model.StampUtils;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.PeriodList;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+import net.fortuna.ical4j.model.parameter.FbType;
+import net.fortuna.ical4j.model.property.FreeBusy;
+import net.fortuna.ical4j.model.property.Status;
+import net.fortuna.ical4j.model.property.Transp;
+import net.fortuna.ical4j.model.property.Uid;
 
 /**
  * CalendarQueryProcessor implementation that uses CalendarDao.
@@ -258,7 +258,7 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
         instances.setTimezone(timezone);
 
         // Look at each VEVENT/VFREEBUSY component only
-        ComponentList overrides = new ComponentList();
+        ComponentList<Component> overrides = new ComponentList<>();
         for (Object comp: calendar.getComponents()) {
             if (comp instanceof VEvent) {
                 VEvent vcomp = (VEvent) comp;
@@ -270,10 +270,9 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
                     overrides.add(vcomp);
                 }
             } else if (comp instanceof VFreeBusy) {
-                // Add all FREEBUSY BUSY/BUSY-TENTATIVE/BUSY-UNAVAILABLE to the
-                // periods
+                // Add all FREEBUSY BUSY/BUSY-TENTATIVE/BUSY-UNAVAILABLE to the periods
                 List<FreeBusy> fbs = ((Component)comp).getProperties().getProperties(Property.FREEBUSY);
-                for (FreeBusy fb: fbs) {
+                for (FreeBusy fb : fbs) {                    
                     FbType fbt = (FbType) fb.getParameters().getParameter(
                             Parameter.FBTYPE);
                     if (fbt == null || FbType.BUSY.equals(fbt)) {
@@ -302,7 +301,7 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
         }
 
         // Add start/end period for each instance
-        for (Iterator<Map.Entry<?, ?>> i = instances.entrySet().iterator(); i.hasNext();) {
+        for (Iterator<Entry<String, Instance>> i = instances.entrySet().iterator(); i.hasNext();) {
             Map.Entry<?, ?> entry = i.next();
             
             Object instanceObj = entry.getValue();

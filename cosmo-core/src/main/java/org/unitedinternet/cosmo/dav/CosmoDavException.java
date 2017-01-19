@@ -125,7 +125,7 @@ public class CosmoDavException extends org.apache.jackrabbit.webdav.DavException
             return prefixes.get(namespaceURI).iterator().next();
         }
 
-        public Iterator getPrefixes(String namespaceURI) {
+        public Iterator<String> getPrefixes(String namespaceURI) {
             if (prefixes.get(namespaceURI) == null) {
                 return null;
             }

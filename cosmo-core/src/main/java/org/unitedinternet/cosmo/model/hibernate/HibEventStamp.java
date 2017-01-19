@@ -102,7 +102,7 @@ public class HibEventStamp extends HibBaseEventStamp implements EventStamp {
             return null;
         }
         
-        ComponentList events = getEventCalendar().getComponents().getComponents(
+        ComponentList<VEvent> events = getEventCalendar().getComponents().getComponents(
                 Component.VEVENT);
         
         if(events.size()==0) {
