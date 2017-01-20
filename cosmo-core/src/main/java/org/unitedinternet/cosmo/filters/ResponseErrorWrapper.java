@@ -129,7 +129,7 @@ public class ResponseErrorWrapper extends HttpServletResponseWrapper {
     @Override
     public void setStatus(int sc) {
         // trap 500 server errors
-        if(sc==this.SC_INTERNAL_SERVER_ERROR) {
+        if(sc== SC_INTERNAL_SERVER_ERROR) {
             hasError = true;
         } else {
             super.setStatus(sc);

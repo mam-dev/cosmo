@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.model;
  * An exception that indicates that a collection is locked for
  * exclusive update and may not be concurrently updated.
  */
+@SuppressWarnings("serial")
 public class CollectionLockedException extends RuntimeException {
 
     /** */

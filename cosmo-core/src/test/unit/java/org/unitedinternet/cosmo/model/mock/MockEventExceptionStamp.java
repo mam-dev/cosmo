@@ -73,7 +73,6 @@ public class MockEventExceptionStamp extends MockBaseEventStamp implements
      * Used by the hibernate validator.
      * @return The calendar.
      */
-    @SuppressWarnings("unused")
     @EventException
     private Calendar getValidationCalendar() {
         return getEventCalendar();
@@ -111,7 +110,6 @@ public class MockEventExceptionStamp extends MockBaseEventStamp implements
      * Sets exception event.
      * @param event The event.
      */
-    @SuppressWarnings("unchecked")
     public void setExceptionEvent(VEvent event) {
         if (getEventCalendar()==null) {
             createCalendar();

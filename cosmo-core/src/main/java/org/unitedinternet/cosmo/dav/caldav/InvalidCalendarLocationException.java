@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * An exception indicating that a calendar resource cannot ever be created at
  * the request URI.
  */
+@SuppressWarnings("serial")
 public class InvalidCalendarLocationException
     extends ForbiddenException implements CaldavConstants {
     

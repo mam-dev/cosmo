@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that while the request entity has correct syntax,
  * it includes instructions that cannot be processed.
  */
+@SuppressWarnings("serial")
 public class UnprocessableEntityException extends CosmoDavException {
     
     public UnprocessableEntityException(String message) {

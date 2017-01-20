@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.jackrabbit.webdav.DavMethods;
 import org.apache.jackrabbit.webdav.DavServletRequest;
@@ -33,7 +34,7 @@ import org.unitedinternet.cosmo.CosmoConstants;
  */
 public class CosmoDavMethods {
 	
-    private static HashMap methods = new HashMap();
+    private static Map<String, Integer> methods = new HashMap<>();
 
     /**
      * The MKTICKET method and public constant as defined in

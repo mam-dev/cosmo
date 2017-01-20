@@ -372,7 +372,6 @@ public class ItemFilterEvaluater {
      * @param esf event stamp filter.
      * @return calendar filter.
      */
-    @SuppressWarnings("unchecked")
     private CalendarFilter getCalendarFilter(EventStampFilter esf) {
         ComponentFilter eventFilter = new ComponentFilter(Component.VEVENT);
         eventFilter.setTimeRangeFilter(new TimeRangeFilter(esf.getPeriod().getStart(), esf.getPeriod().getEnd()));

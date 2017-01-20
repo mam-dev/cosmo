@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that a request method is not allowed on a resource
  * that already exists.
  */
+@SuppressWarnings("serial")
 public class ExistsException extends MethodNotAllowedException {
     /**
      * Constructor.

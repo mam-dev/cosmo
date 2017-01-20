@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.calendar.query;
  * RuntimeExceptoin that indicates that an unsupported calendar query
  * was specified.
  */
+@SuppressWarnings("serial")
 public class UnsupportedQueryException extends RuntimeException {
     /**
      * Constructor.

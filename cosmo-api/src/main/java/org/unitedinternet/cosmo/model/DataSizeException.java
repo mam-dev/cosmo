@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.model;
  * An exception indicating that the value provided for an item
  * attribute was too large or too small.
  */
+@SuppressWarnings("serial")
 public class DataSizeException extends RuntimeException {
 
     /**

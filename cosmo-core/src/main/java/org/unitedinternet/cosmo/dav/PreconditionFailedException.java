@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * An exception indicating that a precondition for a request does not exist.
  */
+@SuppressWarnings("serial")
 public class PreconditionFailedException extends CosmoDavException {
     
     public PreconditionFailedException(String message) {

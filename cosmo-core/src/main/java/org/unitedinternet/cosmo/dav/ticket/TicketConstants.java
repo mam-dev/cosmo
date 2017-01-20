@@ -40,15 +40,15 @@ public interface TicketConstants extends DavConstants {
     /** The ticket XML element name <ticket:ticketinfo  */
     String ELEMENT_TICKET_TICKETINFO = "ticketinfo";
     String QN_TICKET_TICKETINFO =
-        DomUtil.getQualifiedName(ELEMENT_TICKET_TICKETINFO, NAMESPACE_TICKET);
+        DomUtil.getExpandedName(ELEMENT_TICKET_TICKETINFO, NAMESPACE_TICKET);
     /** The ticket XML element name <ticket:id  */
     String ELEMENT_TICKET_ID = "id";
     String QN_TICKET_ID =
-        DomUtil.getQualifiedName(ELEMENT_TICKET_ID, NAMESPACE_TICKET);
+        DomUtil.getExpandedName(ELEMENT_TICKET_ID, NAMESPACE_TICKET);
     /** The ticket XML element name <ticket:timeout  */
     String ELEMENT_TICKET_TIMEOUT = "timeout";
     String QN_TICKET_TIMEOUT =
-        DomUtil.getQualifiedName(ELEMENT_TICKET_TIMEOUT, NAMESPACE_TICKET);
+        DomUtil.getExpandedName(ELEMENT_TICKET_TIMEOUT, NAMESPACE_TICKET);
     /** The ticket XML element name <ticket:visits  */
     String ELEMENT_TICKET_VISITS = "visits";
     /** The ticket XML element name <ticket:freebusy  */

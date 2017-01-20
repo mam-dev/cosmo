@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that the server could not proxy to or otherwise
  * communicate with another server.
  */
+@SuppressWarnings("serial")
 public class BadGatewayException extends CosmoDavException {
     
     public BadGatewayException(String message) {

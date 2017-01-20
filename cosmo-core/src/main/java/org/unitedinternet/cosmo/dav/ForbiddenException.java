@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * An exception indicating that the request is not allowed to be processed.
  */
+@SuppressWarnings("serial")
 public class ForbiddenException extends CosmoDavException {
     
     public ForbiddenException(String message) {

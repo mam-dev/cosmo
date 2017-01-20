@@ -21,6 +21,7 @@ import org.unitedinternet.cosmo.model.User;
  * An exception indicating that an existing user is already using the
  * specified username.
  */
+@SuppressWarnings("serial")
 public class DuplicateUsernameException extends ModelValidationException {
 
     /**

@@ -20,6 +20,7 @@ package org.unitedinternet.cosmo.acegisecurity.providers.ticket;
 
 /**
  */
+@SuppressWarnings("serial")
 public class TicketedItemNotFoundException extends TicketException {
 
     /**

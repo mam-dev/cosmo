@@ -32,6 +32,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -39,15 +40,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyClass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Index;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
@@ -356,7 +354,6 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Item#setAttribute(org.unitedinternet.cosmo.model.QName, java.lang.Object)
      */
-    @SuppressWarnings("unchecked")
     public void setAttribute(QName key, Object value) {
         HibAttribute attr = (HibAttribute) attributes.get(key);
 

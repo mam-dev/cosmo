@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that the targeted dav resource is locked by
  * another party.
  */
+@SuppressWarnings("serial")
 public class LockedException extends CosmoDavException {
     /**
      * Constructor.

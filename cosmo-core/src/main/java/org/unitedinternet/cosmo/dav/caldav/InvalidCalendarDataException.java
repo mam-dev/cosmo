@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * An exception indicating that a calendar resource contains missing or
  * invalid calendar data.
  */
+@SuppressWarnings("serial")
 public class InvalidCalendarDataException
     extends ForbiddenException implements CaldavConstants {
     

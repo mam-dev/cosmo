@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.dav.ConflictException;
  * An exception indicating that a calendar resource cannot be created at
  * the request URI until its parent resource has been created.
  */
+@SuppressWarnings("serial")
 public class MissingParentException
     extends ConflictException implements CaldavConstants {
     

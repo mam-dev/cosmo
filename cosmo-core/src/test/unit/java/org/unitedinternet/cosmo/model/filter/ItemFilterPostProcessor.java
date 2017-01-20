@@ -149,8 +149,7 @@ public class ItemFilterPostProcessor {
         }
         
         // Otherwise, add an occurence item for each occurrence
-        for (@SuppressWarnings("unchecked")
-        Iterator<Entry<String, Instance>> it = instances.entrySet()
+        for (Iterator<Entry<String, Instance>> it = instances.entrySet()
                 .iterator(); it.hasNext();) {
             Entry<String, Instance> entry = it.next();
 

@@ -25,6 +25,7 @@ import org.springframework.security.access.AccessDeniedException;
  * DAV resource.
  * </p>
  */
+@SuppressWarnings("serial")
 public class DavAccessDeniedException extends AccessDeniedException {
     private String href;
     private transient DavPrivilege  privilege;

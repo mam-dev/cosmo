@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.model;
  * An exception that indicates that the uid chosen for an item is
  * already in use by another item.
  */
+@SuppressWarnings("serial")
 public class UidInUseException extends RuntimeException {
 
     String uid = null;

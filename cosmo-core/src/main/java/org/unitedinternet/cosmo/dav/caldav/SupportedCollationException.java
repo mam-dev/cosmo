@@ -26,6 +26,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
  * An exception indicating that an unsuppported collation 
  * was specified.
  */
+@SuppressWarnings("serial")
 public class SupportedCollationException
     extends PreconditionFailedException
     implements ICalendarConstants, CaldavConstants {

@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that the request method is not allowed for the
  * targeted resource.
  */
+@SuppressWarnings("serial")
 public class MethodNotAllowedException extends CosmoDavException {
     
     public MethodNotAllowedException(String message) {

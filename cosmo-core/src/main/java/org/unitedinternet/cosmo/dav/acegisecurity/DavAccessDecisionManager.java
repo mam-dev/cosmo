@@ -235,6 +235,7 @@ public class DavAccessDecisionManager
         return userService;
     }
 
+    @SuppressWarnings("serial")
     public static class AclEvaluationException extends Exception {
         private Item item;
         private transient DavPrivilege privilege;

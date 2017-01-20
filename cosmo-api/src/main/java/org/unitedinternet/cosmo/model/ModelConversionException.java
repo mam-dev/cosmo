@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.model;
  * An exception indicating that converting a model object to or from a
  * particular data format failed.
  */
+@SuppressWarnings("serial")
 public class ModelConversionException extends RuntimeException {
 
     /**

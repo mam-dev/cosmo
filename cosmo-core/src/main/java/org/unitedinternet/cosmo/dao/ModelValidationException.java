@@ -21,6 +21,7 @@ import org.springframework.dao.DataIntegrityViolationException;
  * An exception indicating that a model object's data is syntactically
  * incorrect.
  */
+@SuppressWarnings("serial")
 public class ModelValidationException
         extends DataIntegrityViolationException {
 

@@ -27,6 +27,7 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * supported by the targeted resource.
  * </p>
  */
+@SuppressWarnings("serial")
 public class UnsupportedPrivilegeException extends ForbiddenException {
 
     public UnsupportedPrivilegeException(String message) {

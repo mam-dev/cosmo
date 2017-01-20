@@ -44,15 +44,15 @@ public interface AclConstants extends DavConstants {
         "principal-match";
     String ELEMENT_ACL_SELF = "self";
     String QN_ACL_SELF =
-        DomUtil.getQualifiedName(ELEMENT_ACL_SELF, NAMESPACE);
+        DomUtil.getExpandedName(ELEMENT_ACL_SELF, NAMESPACE);
     String ELEMENT_ACL_PRINCIPAL_PROPERTY =
         "principal-property";
     String QN_ACL_PRINCIPAL_PROPERTY =
-        DomUtil.getQualifiedName(ELEMENT_ACL_PRINCIPAL_PROPERTY, NAMESPACE);
+        DomUtil.getExpandedName(ELEMENT_ACL_PRINCIPAL_PROPERTY, NAMESPACE);
     String ELEMENT_ACL_PRINCIPAL_PROPERTY_SEARCH =
         "principal-property-search";
     String QN_ACL_PRINCIPAL_PROPERTY_SEARCH =
-        DomUtil.getQualifiedName(ELEMENT_ACL_PRINCIPAL_PROPERTY_SEARCH,
+        DomUtil.getExpandedName(ELEMENT_ACL_PRINCIPAL_PROPERTY_SEARCH,
                                  NAMESPACE);
 
     /** The ACL property name DAV:alternate-URI-set */

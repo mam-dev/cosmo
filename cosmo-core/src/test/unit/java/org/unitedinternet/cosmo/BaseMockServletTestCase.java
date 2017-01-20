@@ -16,23 +16,19 @@
 package org.unitedinternet.cosmo;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.jackrabbit.webdav.xml.XmlSerializable;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.junit.Before;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletConfig;
+import org.springframework.mock.web.MockServletContext;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.security.mock.MockSecurityManager;
 import org.unitedinternet.cosmo.security.mock.MockTicketPrincipal;
 import org.unitedinternet.cosmo.security.mock.MockUserPrincipal;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletConfig;
-import org.springframework.mock.web.MockServletContext;
 import org.w3c.dom.Document;
 
 /**
@@ -90,40 +86,7 @@ public abstract class BaseMockServletTestCase {
     protected void logInTicket(Ticket ticket) {
         securityManager.setUpMockSecurityContext(new MockTicketPrincipal(ticket));
     }
-
-    /**
-     * Sends xml request.
-     * @param request The request.
-     * @param thing The xml serializable.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    protected void sendXmlRequest(MockHttpServletRequest request,
-                                  XmlSerializable thing)
-        throws Exception {
-        Document doc = BUILDER_FACTORY.newDocumentBuilder().newDocument();
-        doc.appendChild(thing.toXml(doc));
-        sendXmlRequest(request, doc);
-    }
-
-    /**
-     * Sends xml request.
-     * @param request The request.
-     * @param doc The document.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    protected void sendXmlRequest(MockHttpServletRequest request,
-                                  Document doc)
-        throws Exception {
-        OutputFormat format = new OutputFormat("xml", "UTF-8", true);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLSerializer serializer = new XMLSerializer(out, format);
-        serializer.setNamespaces(true);
-        serializer.asDOMSerializer().serialize(doc);
-        request.setContentType("text/xml");
-        request.setCharacterEncoding("UTF-8");
-        // log.debug("content: " + new String(out.toByteArray()));
-        request.setContent(out.toByteArray());;
-    }
+    
 
     /**
      * Reads xml response.

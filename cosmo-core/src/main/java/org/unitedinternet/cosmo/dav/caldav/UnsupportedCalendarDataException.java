@@ -25,6 +25,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
  * An exception indicating that the data enclosed in a calendar resource
  * was not of a supported media type.
  */
+@SuppressWarnings("serial")
 public class UnsupportedCalendarDataException
     extends ForbiddenException
     implements ICalendarConstants, CaldavConstants {

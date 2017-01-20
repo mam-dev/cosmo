@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.dav;
  * An exception indicating that a dav resource has not been modified since
  * it was last requested.
  */
+@SuppressWarnings("serial")
 public class NotModifiedException extends CosmoDavException {
     
     /**

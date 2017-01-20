@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * An exception indicating that a request was ill-formed.
  */
+@SuppressWarnings("serial")
 public class BadRequestException extends CosmoDavException {
     
     public BadRequestException(String message) {

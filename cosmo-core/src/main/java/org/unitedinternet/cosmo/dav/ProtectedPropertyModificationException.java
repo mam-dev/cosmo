@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that the request attempted to modify a
  * protected property.
  */
+@SuppressWarnings("serial")
 public class ProtectedPropertyModificationException
     extends ForbiddenException {
     

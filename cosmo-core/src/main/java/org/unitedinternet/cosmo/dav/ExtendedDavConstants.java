@@ -64,21 +64,21 @@ public interface ExtendedDavConstants extends DavConstants {
 
 
     String QN_PROPFIND =
-        DomUtil.getQualifiedName(XML_PROPFIND, NAMESPACE);
+        DomUtil.getExpandedName(XML_PROPFIND, NAMESPACE);
     String QN_PROPERTYUPDATE =
-        DomUtil.getQualifiedName(XML_PROPERTYUPDATE, NAMESPACE);
+        DomUtil.getExpandedName(XML_PROPERTYUPDATE, NAMESPACE);
     String QN_SET =
-        DomUtil.getQualifiedName(XML_SET, NAMESPACE);
+        DomUtil.getExpandedName(XML_SET, NAMESPACE);
     String QN_REMOVE =
-        DomUtil.getQualifiedName(XML_REMOVE, NAMESPACE);
+        DomUtil.getExpandedName(XML_REMOVE, NAMESPACE);
     String QN_PROP =
-        DomUtil.getQualifiedName(XML_PROP, NAMESPACE);
+        DomUtil.getExpandedName(XML_PROP, NAMESPACE);
     String QN_PRIVILEGE =
-        DomUtil.getQualifiedName(XML_PRIVILEGE, NAMESPACE);
+        DomUtil.getExpandedName(XML_PRIVILEGE, NAMESPACE);
     String QN_HREF =
-        DomUtil.getQualifiedName(XML_HREF, NAMESPACE);
+        DomUtil.getExpandedName(XML_HREF, NAMESPACE);
     String QN_OWNER =
-        DomUtil.getQualifiedName(XML_OWNER, NAMESPACE);
+        DomUtil.getExpandedName(XML_OWNER, NAMESPACE);
 
     CosmoQName RESOURCE_TYPE_COLLECTION =
         new CosmoQName(NAMESPACE.getURI(), XML_COLLECTION, NAMESPACE.getPrefix());

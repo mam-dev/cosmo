@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * An exception indicating that a dav resource was not found.
  */
+@SuppressWarnings("serial")
 public class NotFoundException extends CosmoDavException {
     /**
      * Constructor.

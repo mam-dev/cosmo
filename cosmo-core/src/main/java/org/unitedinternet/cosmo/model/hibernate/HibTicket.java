@@ -35,7 +35,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Index;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.TicketType;

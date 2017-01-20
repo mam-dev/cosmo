@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * An exception indicating that a calendar resource does not obey the
  * restrictions specified in section 4.1 of RFC 4791.
  */
+@SuppressWarnings("serial")
 public class InvalidCalendarResourceException
     extends ForbiddenException implements CaldavConstants {
     

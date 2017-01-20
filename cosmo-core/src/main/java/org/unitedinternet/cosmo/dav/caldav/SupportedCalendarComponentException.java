@@ -28,6 +28,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
  * An exception indicating that a calendar resource did not contain any
  * supported calendar components.
  */
+@SuppressWarnings("serial")
 public class SupportedCalendarComponentException
     extends PreconditionFailedException
     implements ICalendarConstants, CaldavConstants {

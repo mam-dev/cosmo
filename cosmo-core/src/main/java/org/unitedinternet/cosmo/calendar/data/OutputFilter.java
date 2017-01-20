@@ -337,7 +337,7 @@ public class OutputFilter {
         }
     }
 
-    private void filterProperties(PropertyList properties,
+    private void filterProperties(PropertyList<Property> properties,
                                   StringBuffer buffer) {
         if (isAllProperties()) {
             buffer.append(properties.toString());
@@ -348,7 +348,7 @@ public class OutputFilter {
             return;
         }
 
-        for (Property property : (List<Property>) properties) {
+        for (Property property : properties) {
             PropertyMatch pm = testPropertyValue(property.getName());
             if (pm.isMatch()) {
                 if (pm.isValueExcluded()) {

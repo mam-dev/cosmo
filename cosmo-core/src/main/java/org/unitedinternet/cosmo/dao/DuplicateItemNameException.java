@@ -21,6 +21,7 @@ import org.unitedinternet.cosmo.model.Item;
  * An exception indicating that an item with the same parent item
  * exists with the same name.
  */
+@SuppressWarnings("serial")
 public class DuplicateItemNameException extends ModelValidationException {
 
     /**

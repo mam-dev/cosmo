@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.calendar.query;
  * RuntimeExceptoin that indicates that an unsupported collation
  * was specified.
  */
+@SuppressWarnings("serial")
 public class UnsupportedCollationException extends RuntimeException {
     /**
      * Constructor.

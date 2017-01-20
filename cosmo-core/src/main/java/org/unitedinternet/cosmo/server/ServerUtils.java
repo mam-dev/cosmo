@@ -33,10 +33,10 @@ public class ServerUtils implements ServerConstants {
      * {@link #HEADER_TICKET} header and the {@link #PARAM_TICKET}
      * parameter.
      */
-    public static Set findTicketKeys(HttpServletRequest request) {
+    public static Set<String> findTicketKeys(HttpServletRequest request) {
         HashSet<String> keys = new HashSet<String>();
 
-        Enumeration headerValues = request.getHeaders(HEADER_TICKET);
+        Enumeration<String> headerValues = request.getHeaders(HEADER_TICKET);
         if (headerValues != null) {
             while (headerValues.hasMoreElements()) {
                 String value = (String) headerValues.nextElement();

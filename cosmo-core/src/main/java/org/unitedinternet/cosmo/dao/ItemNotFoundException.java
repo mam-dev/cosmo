@@ -20,6 +20,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 /**
  * @author rletness
  */
+@SuppressWarnings("serial")
 public class ItemNotFoundException extends DataRetrievalFailureException {
     /**
      */

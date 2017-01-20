@@ -52,7 +52,7 @@ public interface CaldavConstants {
     /** The CalDAV XML element name <CALDAV:mkcalendar> */
     public static final String ELEMENT_CALDAV_MKCALENDAR = "mkcalendar";
     public static final String QN_MKCALENDAR = 
-        DomUtil.getQualifiedName(ELEMENT_CALDAV_MKCALENDAR, NAMESPACE_CALDAV);
+        DomUtil.getExpandedName(ELEMENT_CALDAV_MKCALENDAR, NAMESPACE_CALDAV);
     /** The CalDAV XML element name <CALDAV:calendar> */
     public static final String ELEMENT_CALDAV_CALENDAR = "calendar";
     /** The CalDAV XML element name <CALDAV:comp> */
@@ -62,11 +62,11 @@ public interface CaldavConstants {
     /** The CalDAV XML element name <CALDAV:calendar-data> */
     public static final String ELEMENT_CALDAV_CALENDAR_DATA = "calendar-data";
     public static final String QN_CALDAV_CALENDAR_DATA = 
-        DomUtil.getQualifiedName(ELEMENT_CALDAV_CALENDAR_DATA, NAMESPACE_CALDAV);
+        DomUtil.getExpandedName(ELEMENT_CALDAV_CALENDAR_DATA, NAMESPACE_CALDAV);
     /** The CalDAV XML element name <CALDAV:timezone> */
     public static final String ELEMENT_CALDAV_TIMEZONE = "timezone";
     public static final String QN_CALDAV_TIMEZONE = 
-        DomUtil.getQualifiedName(ELEMENT_CALDAV_TIMEZONE, NAMESPACE_CALDAV);
+        DomUtil.getExpandedName(ELEMENT_CALDAV_TIMEZONE, NAMESPACE_CALDAV);
     /** The CalDAV XML element name <CALDAV:allcomp> */
     public static final String ELEMENT_CALDAV_ALLCOMP = "allcomp";
     /** The CalDAV XML element name <CALDAV:allprop> */
@@ -92,7 +92,7 @@ public interface CaldavConstants {
     /** The CalDAV XML element name <CALDAV:time-range> */
     public static final String ELEMENT_CALDAV_TIME_RANGE = "time-range";
     public static final String QN_CALDAV_TIME_RANGE = 
-        DomUtil.getQualifiedName(ELEMENT_CALDAV_TIME_RANGE, NAMESPACE_CALDAV);
+        DomUtil.getExpandedName(ELEMENT_CALDAV_TIME_RANGE, NAMESPACE_CALDAV);
     /** The CalDAV XML element name <CALDAV:is-not-defined> */
     public static final String ELEMENT_CALDAV_IS_NOT_DEFINED = "is-not-defined";
     /** The (old) CalDAV XML element name <CALDAV:is-defined> */

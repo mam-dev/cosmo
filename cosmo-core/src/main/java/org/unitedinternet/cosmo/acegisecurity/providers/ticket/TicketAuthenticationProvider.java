@@ -70,7 +70,7 @@ public class TicketAuthenticationProvider
      * @param authentication The authentication.
      * @return The result.
      */
-    public boolean supports(Class authentication) {
+    public boolean supports(Class<?> authentication) {
         return TicketAuthenticationToken.class.
             isAssignableFrom(authentication);
     }

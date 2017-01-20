@@ -20,7 +20,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Index;
 import org.unitedinternet.cosmo.model.ServerProperty;
 
 /**

@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that processing the request would cause a
  * conflict between the targeted resource and another resource.
  */
+@SuppressWarnings("serial")
 public class ConflictException extends CosmoDavException {
     
     public ConflictException(String message) {

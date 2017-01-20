@@ -10,10 +10,11 @@ package org.unitedinternet.cosmo.acegisecurity.providers.ticket;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * Exception in authentication with tocken
- * @author izidaru
+ * Exception in authentication with token
+ * @author iulia zidaru
  *
  */
+@SuppressWarnings("serial")
 public class TicketException extends AuthenticationException {
 
     public TicketException(String msg) {

@@ -19,6 +19,7 @@ package org.unitedinternet.cosmo.model;
  * An exception that indicates that the icalendar uid chosen for an NoteItem
  * already in use by another item.
  */
+@SuppressWarnings("serial")
 public class IcalUidInUseException extends RuntimeException {
     
     public String testUid = null;

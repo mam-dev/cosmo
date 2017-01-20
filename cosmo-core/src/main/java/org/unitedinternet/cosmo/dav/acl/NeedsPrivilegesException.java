@@ -27,6 +27,7 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * to perform the requested method.
  * </p>
  */
+@SuppressWarnings("serial")
 public class NeedsPrivilegesException extends ForbiddenException {
 
     private String href;

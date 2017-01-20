@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * An exception indicating that a calendar resource contained more data
  * than can be stored.
  */
+@SuppressWarnings("serial")
 public class MaxResourceSizeException
     extends ForbiddenException implements CaldavConstants {
     
