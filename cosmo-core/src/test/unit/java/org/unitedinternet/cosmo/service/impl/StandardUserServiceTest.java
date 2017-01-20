@@ -16,13 +16,14 @@
 package org.unitedinternet.cosmo.service.impl;
 
 import java.security.SecureRandom;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
@@ -30,8 +31,6 @@ import org.unitedinternet.cosmo.dao.mock.MockUserDao;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.hibernate.HibPasswordRecovery;
-import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 
 /**
  * Test Case for {@link StandardUserService}.
@@ -80,12 +79,10 @@ public class StandardUserServiceTest {
         User u3 = testHelper.makeDummyUser();
         userDao.createUser(u3);
 
-        Set<User> users = service.getUsers();
-
-        Assert.assertTrue(users.size() == 4); // account for overlord
-        Assert.assertTrue("User 1 not found in users", users.contains(u1));
-        Assert.assertTrue("User 2 not found in users", users.contains(u2));
-        Assert.assertTrue("User 3 not found in users", users.contains(u3));
+        
+        Assert.assertNotNull("User 1 not found in users", userDao.getUser(u1.getUsername()));
+        Assert.assertNotNull("User 2 not found in users", userDao.getUser(u2.getUsername()));
+        Assert.assertNotNull("User 3 not found in users", userDao.getUser(u3.getUsername()));
     }
 
     /**
@@ -181,10 +178,8 @@ public class StandardUserServiceTest {
     public void testRemoveUser() throws Exception {
         User u1 = testHelper.makeDummyUser();
         service.createUser(u1);
-
-        service.removeUser(u1);
-
-        Assert.assertFalse("User not removed", userDao.getUsers().contains(u1));
+        service.removeUser(u1);        
+        Assert.assertNull("User not removed", service.getUser(u1.getUsername()));
     }
 
     /**
@@ -198,7 +193,7 @@ public class StandardUserServiceTest {
 
         service.removeUser(u1.getUsername());
 
-        Assert.assertFalse("User not removed", userDao.getUsers().contains(u1));
+        Assert.assertNull("User not removed", service.getUser(u1.getUsername()));
     }
 
     /**

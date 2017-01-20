@@ -15,24 +15,16 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
-import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
 import org.unitedinternet.cosmo.model.hibernate.HibPasswordRecovery;
 import org.unitedinternet.cosmo.model.hibernate.HibPreference;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Test HibernateUserDao class.
@@ -87,16 +79,6 @@ public class HibernateUserDaoTest extends AbstractHibernateDaoTestCase {
         queryUser1 = userDao.getUserByUid(user1.getUid());
         Assert.assertNotNull(queryUser1);
         verifyUser(user1, queryUser1);
-
-        clearSession();
-
-        // Get all
-        @SuppressWarnings("rawtypes")
-        Set users = userDao.getUsers();
-        Assert.assertNotNull(users);
-        Assert.assertEquals(2, users.size());
-        verifyUserInCollection(user1, users);
-        verifyUserInCollection(user2, users);
 
         clearSession();
 
@@ -324,58 +306,6 @@ public class HibernateUserDaoTest extends AbstractHibernateDaoTestCase {
         clearSession();
     }
     
-    /**
-     * Tests Paginate users.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testPaginatedUsers() throws Exception {
-        User user1 = helper.createDummyUser(userDao, 1);
-        User user2 = helper.createDummyUser(userDao, 2);
-        User user3 = helper.createDummyUser(userDao, 3);
-        User user4 = helper.createDummyUser(userDao, 4);
-
-        clearSession();
-
-        @SuppressWarnings("rawtypes")
-        PageCriteria pageCriteria = new PageCriteria();
-
-        pageCriteria.setPageNumber(1);
-        pageCriteria.setPageSize(2);
-        pageCriteria.setSortAscending(true);
-        pageCriteria.setSortType(User.SortType.NAME);
-
-        @SuppressWarnings("rawtypes")
-        PagedList pagedList = userDao.getUsers(pageCriteria);
-        @SuppressWarnings("rawtypes")
-        List results = pagedList.getList();
-        Assert.assertEquals(2, results.size());
-        Assert.assertEquals(4, pagedList.getTotal());
-        verifyUserInCollection(user1, results);
-        verifyUserInCollection(user2, results);
-
-        clearSession();
-
-        pageCriteria.setPageNumber(2);
-        pagedList = userDao.getUsers(pageCriteria);
-        results = pagedList.getList();
-        Assert.assertEquals(2, results.size());
-        Assert.assertEquals(4, pagedList.getTotal());
-        verifyUserInCollection(user3, results);
-        verifyUserInCollection(user4, results);
-
-        pageCriteria.setSortAscending(false);
-        pageCriteria.setSortType(User.SortType.NAME);
-        pageCriteria.setPageNumber(1);
-
-        pagedList = userDao.getUsers(pageCriteria);
-        results = pagedList.getList();
-        Assert.assertEquals(2, results.size());
-        Assert.assertEquals(4, pagedList.getTotal());
-        verifyUserInCollection(user3, results);
-        verifyUserInCollection(user4, results);
-    }
 
     /**
      * Tests delete user.
@@ -484,24 +414,4 @@ public class HibernateUserDaoTest extends AbstractHibernateDaoTestCase {
         Assert.assertEquals(user1.getLastName(), user2.getLastName());
         Assert.assertEquals(user1.getPassword(), user2.getPassword());
     }
-
-    /**
-     * Verify user in collection.
-     * @param user The user.
-     * @param users The users.
-     */
-    private void verifyUserInCollection(User user, @SuppressWarnings("rawtypes") Collection users) {
-        @SuppressWarnings("rawtypes")
-        Iterator it = users.iterator();
-        while (it.hasNext()) {
-            User nextUser = (User) it.next();
-            if (nextUser.getUsername().equals(user.getUsername())) {
-                verifyUser(user, nextUser);
-                return;
-            }
-        }
-        Assert.fail("specified User doesn't exist in Set: "
-                + user.getUsername());
-    }
-
 }

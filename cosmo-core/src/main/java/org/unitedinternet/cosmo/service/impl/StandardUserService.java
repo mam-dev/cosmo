@@ -23,6 +23,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.token.TokenService;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -30,10 +31,8 @@ import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
 import org.unitedinternet.cosmo.service.OverlordDeletionException;
 import org.unitedinternet.cosmo.service.ServiceEvent;
 import org.unitedinternet.cosmo.service.ServiceListener;
@@ -56,32 +55,6 @@ public class StandardUserService extends BaseService implements UserService {
     private UserDao userDao;
 
     // UserService methods
-
-    /**
-     * Returns an unordered set of all user accounts in the repository.
-     */
-    public Set<User> getUsers() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getting all users");
-        }
-        return userDao.getUsers();
-    }
-
-    /**
-     * Returns the sorted list of user accounts corresponding to the
-     * given <code>PageCriteria</code>.
-     *
-     * @param pageCriteria the pagination criteria
-     */
-    public PagedList<User, User.SortType> getUsers(PageCriteria<User.SortType> pageCriteria) {
-        if (LOG.isDebugEnabled()) {
-            //Fix Log Forging - fortify
-            //Writing unvalidated user input to log files can allow an attacker to forge log entries
-            //or inject malicious content into the logs.
-            LOG.debug("getting users for criteria " + pageCriteria.toString());
-        }
-        return userDao.getUsers(pageCriteria);
-    }
 
     /**
      * Returns the user account identified by the given username.

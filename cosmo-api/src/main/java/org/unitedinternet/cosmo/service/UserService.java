@@ -17,21 +17,13 @@ package org.unitedinternet.cosmo.service;
 
 import java.util.Set;
 
-import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
 
 /**
  * Interface for services that manage user accounts.
  */
 public interface UserService extends Service {
-
-    /**
-     * Returns an unordered set of all user accounts in the repository.
-     */
-    public Set<User> getUsers();
-
 
     /**
      * Returns the user account identified by the given username.
@@ -42,17 +34,6 @@ public interface UserService extends Service {
      * exist
      */
     public User getUser(String username);
-
-    /**
-     * Returns the all user accounts meeting the supplied
-     * <code>PageCriteria</code>'s requirements
-     *
-     * @param pageCriteria the Pagination Criteria for the PagedList
-     *
-     * @throws IllegalArgumentException if an invalid pageNumber is supplied in the <code>PageCriteria</code>
-     */
-    public PagedList<User, User.SortType> getUsers(
-            PageCriteria<User.SortType> pageCriteria);
 
     /**
      * Returns the user account identified by the given email address.

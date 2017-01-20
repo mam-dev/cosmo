@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.ICalendarItem;
+import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 
 /**
@@ -74,7 +75,7 @@ public interface CalendarDao {
      * @return set ContentItem objects that contain EventStamps that occur
      *         int the given timeRange.
      */
-    public Set<ContentItem> findEvents(CollectionItem collection,
+    public Set<Item> findEvents(CollectionItem collection,
                                              Date rangeStart, Date rangeEnd, String timeZoneId,
                                              boolean expandRecurringEvents);
     

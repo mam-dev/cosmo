@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.unitedinternet.cosmo.dao.EventLogDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -81,20 +81,19 @@ public class EventLogDaoImpl extends AbstractDaoImpl implements EventLogDao {
     public List<ItemChangeRecord> findChangesForCollection(
             CollectionItem collection, Date start, Date end) {
         try {
-            Query hibQuery = getSession().getNamedQuery("logEntry.by.collection.date");
+            Query<HibEventLogEntry> hibQuery = getSession().createNamedQuery("logEntry.by.collection.date",
+                    HibEventLogEntry.class);
             hibQuery.setParameter("parentId", ((HibItem) collection).getId());
             hibQuery.setParameter("startDate", start);
             hibQuery.setParameter("endDate", end);
-            List<HibEventLogEntry> results = hibQuery.list();
-
-            ArrayList<ItemChangeRecord> changeRecords = new ArrayList<ItemChangeRecord>();
+            
+            List<HibEventLogEntry> results = hibQuery.getResultList();
+            List<ItemChangeRecord> changeRecords = new ArrayList<>();
 
             for (HibEventLogEntry result : results) {
                 changeRecords.add(convertToItemChangeRecord(result));
             }
-
             return changeRecords;
-
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);

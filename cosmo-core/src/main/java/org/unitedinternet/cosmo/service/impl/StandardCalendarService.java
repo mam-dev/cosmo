@@ -69,7 +69,7 @@ public class StandardCalendarService implements CalendarService {
                 resultSet.addAll(externalItems);
             }
         } else {
-            Set<ContentItem> internalItems = calendarDao.findEvents(collection, rangeStart, rangeEnd, timeZoneId,
+            Set<Item> internalItems = calendarDao.findEvents(collection, rangeStart, rangeEnd, timeZoneId,
                     expandRecurringEvents);
             resultSet.addAll(internalItems);
         }

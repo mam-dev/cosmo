@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.unitedinternet.cosmo.dao.hibernate.query;
+package org.unitedinternet.cosmo.dao.query.hibernate;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -57,7 +57,6 @@ public class CalendarFilterConverterTest {
      * Tests translate item to filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testTranslateItemToFilter() throws Exception {
         CollectionItem calendar = new HibCollectionItem();
@@ -121,7 +120,6 @@ public class CalendarFilterConverterTest {
      * Tests get first pass filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetFirstPassFilter() throws Exception {
         CollectionItem calendar = new HibCollectionItem();

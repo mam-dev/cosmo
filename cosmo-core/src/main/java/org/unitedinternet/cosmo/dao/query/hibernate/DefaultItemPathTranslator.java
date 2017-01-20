@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl;
 import org.unitedinternet.cosmo.dao.query.ItemPathTranslator;
@@ -196,32 +196,20 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
         return parentItem;
     }
 
-    protected Item findRootItemByOwnerAndName(Session session,
-                                              String username, String name) {
-        Query hibQuery = session.getNamedQuery(
-                "item.by.ownerName.name.nullParent").setParameter("username",
-                username).setParameter("name", name);
-
-        List<?> results = hibQuery.list();
-        if (results.size() > 0) {
-            return (Item) results.get(0);
-        } else {
-            return null;
-        }
+    protected Item findRootItemByOwnerAndName(Session session, String username, String name) {
+        Query<Item> query = session.createNamedQuery("item.by.ownerName.name.nullParent", Item.class)
+                .setParameter("username", username).setParameter("name", name);
+        List<Item> items = query.getResultList();
+        return items.size() > 0 ? items.get(0) : null;
     }
 
-    protected Item findItemByParentAndName(Session session, Item parent,
-                                           String name) {
-        Query hibQuery = session.getNamedQuery("item.by.parent.name")
+    protected Item findItemByParentAndName(Session session, Item parent, String name) {
+        Query<Item> query = session.createNamedQuery("item.by.parent.name", Item.class)
                 .setParameter("parent", parent).setParameter("name", name);
-
-        List<?> results = hibQuery.list();
-        if (results.size() > 0) {
-            return (Item) results.get(0);
-        } else {
-            return null;
-        }
+        List<Item> items = query.getResultList();
+        return items.size() > 0 ? items.get(0) : null;
     }
+    
     private static String decode(String urlPath){
         try {
             return  UrlEncoding.decode(urlPath, "UTF-8");

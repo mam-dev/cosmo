@@ -15,25 +15,19 @@
  */
 package org.unitedinternet.cosmo.dao.mock;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
-import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
-import org.unitedinternet.cosmo.model.ArrayPagedList;
+import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
 import org.unitedinternet.cosmo.model.mock.MockAuditableObject;
 import org.unitedinternet.cosmo.model.mock.MockUser;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
@@ -85,37 +79,6 @@ public class MockUserDao implements UserDao {
     }
 
     // UserDao methods
-
-    /**
-     * Gets users.
-     * @return The users.
-     */
-    @SuppressWarnings("unchecked")
-    public Set<User> getUsers() {
-        @SuppressWarnings("rawtypes")
-        Set tmp = new HashSet();
-        for (@SuppressWarnings("rawtypes")
-        Iterator i=usernameIdx.values().iterator(); i.hasNext();) {
-            tmp.add(i.next());
-        }
-        return tmp;
-    }
-
-    /**
-     * Gets users.
-     * {@inheritDoc}
-     * @param pageCriteria The page criteria.
-     * @return Tge page list.
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public PagedList getUsers(PageCriteria pageCriteria) {
-        List list = new ArrayList();
-        for (Iterator i=usernameIdx.values().iterator(); i.hasNext();) {
-            list.add(i.next());
-        }
-        PagedList tmp = new ArrayPagedList(pageCriteria, list);
-        return tmp;
-    }
 
     /**
      * Gets user.

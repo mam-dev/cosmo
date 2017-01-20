@@ -123,7 +123,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
      * @see org.unitedinternet.cosmo.dao.CalendarDao#findEvents(org.unitedinternet.cosmo.model.CollectionItem,
      * net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
      */
-    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timezoneId,
+    public Set<Item> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timezoneId,
             boolean expandRecurringEvents) {
 
         // Create a NoteItemFilter that filters by parent
@@ -143,8 +143,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         itemFilter.getStampFilters().add(eventFilter);
 
         try {
-            Set results = itemFilterProcessor.processFilter(itemFilter);
-            return (Set<ContentItem>) results;
+            return  itemFilterProcessor.processFilter(itemFilter);            
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);

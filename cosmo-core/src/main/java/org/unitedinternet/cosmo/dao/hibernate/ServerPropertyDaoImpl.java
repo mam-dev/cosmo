@@ -15,58 +15,45 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.List;
+
 import org.hibernate.HibernateException;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.unitedinternet.cosmo.dao.ServerPropertyDao;
 import org.unitedinternet.cosmo.model.ServerProperty;
 import org.unitedinternet.cosmo.model.hibernate.HibServerProperty;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
-
 
 /**
  * Implementation of ServerPropertyDao using Hibernate persistent objects.
  */
-public class ServerPropertyDaoImpl extends AbstractDaoImpl implements
-        ServerPropertyDao {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(ServerPropertyDaoImpl.class);
+public class ServerPropertyDaoImpl extends AbstractDaoImpl implements ServerPropertyDao {
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ServerPropertyDao#getServerProperty(java.lang.String)
-     */
+    @Override
     public String getServerProperty(String property) {
         try {
-            ServerProperty prop = (ServerProperty) getSession().createQuery(
-                    "from HibServerProperty where name=:name").setParameter(
-                    "name", property).uniqueResult();
-            if (prop != null) {
-                return prop.getValue();
-            } else {
-                return null;
-            }
+            List<ServerProperty> propertyList = getSession()
+                    .createQuery("from HibServerProperty where name=:name", ServerProperty.class)
+                    .setParameter("name", property).getResultList();
+            return propertyList.size() > 0 ? propertyList.get(0).getValue() : null;
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ServerPropertyDao#setServerProperty(java.lang.String, java.lang.String)
-     */
+    @Override
     public void setServerProperty(String property, String value) {
         try {
-
-            ServerProperty prop = (ServerProperty) getSession().createQuery(
-                    "from HibServerProperty where name=:name").setParameter(
-                    "name", property).uniqueResult();
-            if (prop != null) {
+            List<ServerProperty> propertyList = getSession()
+                    .createQuery("from HibServerProperty where name=:name", ServerProperty.class)
+                    .setParameter("name", property).getResultList();
+            ServerProperty prop = null;
+            if (propertyList.size() > 0) {
+                prop = propertyList.get(0);
                 prop.setValue(value);
-                getSession().update(prop);
             } else {
                 prop = new HibServerProperty(property, value);
-                getSession().save(prop);
             }
-
+            getSession().saveOrUpdate(prop);
             getSession().flush();
 
         } catch (HibernateException e) {

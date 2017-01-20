@@ -18,9 +18,6 @@ package org.unitedinternet.cosmo.dao.mock;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Date;
-
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilterEvaluater;
 import org.unitedinternet.cosmo.dao.CalendarDao;
@@ -30,6 +27,9 @@ import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Date;
 
 /**
  * Mock implementation of <code>CalendarDao</code> useful for testing.
@@ -132,7 +132,7 @@ public class MockCalendarDao extends MockItemDao implements CalendarDao {
     }
 
     @Override
-    public Set<ContentItem> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timeZoneId,
+    public Set<Item> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timeZoneId,
             boolean expandRecurringEvents) {
         throw new UnsupportedOperationException();
     }

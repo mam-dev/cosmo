@@ -96,9 +96,9 @@ public class HibernateEventLogDaoTest extends AbstractHibernateDaoTestCase {
        
        eventLogDao.addEventLogEntries(entries);
        
-       // verify
-       @SuppressWarnings("unchecked")
-       List<HibEventLogEntry> results = session.createQuery("from HibEventLogEntry").list();
+       // verify       
+        List<HibEventLogEntry> results = session.createQuery("from HibEventLogEntry", HibEventLogEntry.class)
+                .getResultList();
        Assert.assertEquals(1, results.size());
        HibEventLogEntry hibEntry = results.get(0);
        
@@ -128,9 +128,9 @@ public class HibernateEventLogDaoTest extends AbstractHibernateDaoTestCase {
         
         eventLogDao.addEventLogEntries(entries);
         
-        // verify
-        @SuppressWarnings("unchecked")
-        List<HibEventLogEntry> results = session.createQuery("from HibEventLogEntry").list();
+        // verify        
+        List<HibEventLogEntry> results = session.createQuery("from HibEventLogEntry", HibEventLogEntry.class)
+                .getResultList();
         Assert.assertEquals(1, results.size());
         HibEventLogEntry hibEntry = results.get(0);
         
@@ -167,9 +167,9 @@ public class HibernateEventLogDaoTest extends AbstractHibernateDaoTestCase {
         
         eventLogDao.addEventLogEntries(entries);
         
-        // verify
-        @SuppressWarnings("unchecked")
-        List<HibEventLogEntry> results = session.createQuery("from HibEventLogEntry order by id1").list();
+        // verify        
+        List<HibEventLogEntry> results = session
+                .createQuery("from HibEventLogEntry order by id1", HibEventLogEntry.class).getResultList();
         Assert.assertEquals(2, results.size());
         HibEventLogEntry hibEntry = results.get(0);
         

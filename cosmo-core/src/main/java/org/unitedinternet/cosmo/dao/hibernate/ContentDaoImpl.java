@@ -18,7 +18,6 @@ package org.unitedinternet.cosmo.dao.hibernate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -42,7 +42,6 @@ import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibItem;
 import org.unitedinternet.cosmo.model.hibernate.HibItemTombstone;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 /**
  * Implementation of ContentDao using hibernate persistence objects
@@ -442,10 +441,9 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
      */
     public void removeUserContent(User user) {
         try {
-            Query query = getSession().getNamedQuery("contentItem.by.owner")
+            Query<ContentItem> query = getSession().createNamedQuery("contentItem.by.owner", ContentItem.class)
                     .setParameter("owner", user);
-
-            List<ContentItem> results = query.list();
+            List<ContentItem> results = query.getResultList();
             for (ContentItem content : results) {
                 removeContentRecursive(content);
             }
@@ -463,27 +461,24 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
         try {
             Set<ContentItem> children = new HashSet<ContentItem>();
-            Query query = null;
+            Query<ContentItem> query = null;
 
             // use custom HQL query that will eager fetch all associations
             if (timestamp == null) {
-                query = getSession().getNamedQuery("contentItem.by.parent")
+                query = getSession().createNamedQuery("contentItem.by.parent", ContentItem.class)
                         .setParameter("parent", collection);
             } else {
-                query = getSession().getNamedQuery("contentItem.by.parent.timestamp")
+                query = getSession().createNamedQuery("contentItem.by.parent.timestamp", ContentItem.class)
                         .setParameter("parent", collection).setParameter(
                                 "timestamp", timestamp);
             }
             query.setFlushMode(FlushMode.MANUAL);
-            List results = query.list();
-            for (Iterator it = results.iterator(); it.hasNext(); ) {
-                ContentItem content = (ContentItem) it.next();
+            List<ContentItem> results = query.getResultList();
+            for (ContentItem content : results) {                 
                 initializeItem(content);
                 children.add(content);
             }
-
             return children;
-
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -861,9 +856,9 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     }
 
     protected void checkForDuplicateICalUid(ICalendarItem item, CollectionItem parent) {
-
-        // TODO: should icalUid be required?  Currrently its not and all
-        // items created by the webui dont' have it.
+        /*
+         * TODO: should icalUid be required? Currrently its not and all items created by the webui dont' have it.
+         */
         if (item.getIcalUid() == null) {
             return;
         }
@@ -874,19 +869,23 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         }
 
         // Lookup item by parent/icaluid
-        Query hibQuery = null;
+        Query<Long> query = null;
         if (item instanceof NoteItem) {
-            hibQuery = getSession().getNamedQuery(
-                    "noteItemId.by.parent.icaluid").setParameter("parentid",
+            query = getSession().createNamedQuery(
+                    "noteItemId.by.parent.icaluid", Long.class).setParameter("parentid",
                     getBaseModelObject(parent).getId()).setParameter("icaluid", item.getIcalUid());
         } else {
-            hibQuery = getSession().getNamedQuery(
-                    "icalendarItem.by.parent.icaluid").setParameter("parentid",
+            query = getSession().createNamedQuery(
+                    "icalendarItem.by.parent.icaluid", Long.class).setParameter("parentid",
                     getBaseModelObject(parent).getId()).setParameter("icaluid", item.getIcalUid());
         }
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-
-        Long itemId = (Long) hibQuery.uniqueResult();
+        query.setFlushMode(FlushMode.MANUAL);
+        
+        Long itemId = null;
+        List<Long> idList = query.getResultList();
+        if (!idList.isEmpty()) {
+            itemId = idList.get(0);
+        }
 
         // if icaluid is in use throw exception
         if (itemId != null) {

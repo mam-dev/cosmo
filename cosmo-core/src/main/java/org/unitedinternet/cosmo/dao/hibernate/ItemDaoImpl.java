@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -31,10 +30,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ObjectDeletedException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
 import org.hibernate.StatelessSession;
 import org.hibernate.UnresolvableObjectException;
 import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.query.Query;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.security.core.token.TokenService;
 import org.unitedinternet.cosmo.CosmoException;
@@ -157,7 +156,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
     public Item findItemByUid(String uid) {
         try {
             // prevent auto flushing when looking up item by uid
-            getSession().setFlushMode(FlushMode.MANUAL);
+            getSession().setHibernateFlushMode(FlushMode.MANUAL);
             return (Item) getSession().byNaturalId(HibItem.class).using("uid", uid).load();
         } catch (HibernateException e) {
             getSession().clear();
@@ -291,12 +290,13 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
 
         try {
             // prevent auto flushing when looking up ticket
-            getSession().setFlushMode(FlushMode.MANUAL);
-            Query hibQuery = getSession().getNamedQuery("ticket.by.key")
+            getSession().setHibernateFlushMode(FlushMode.MANUAL);
+            Query<Ticket> query = getSession().createNamedQuery("ticket.by.key", Ticket.class)
                     .setParameter("key", key);
-            hibQuery.setCacheable(true);
-            hibQuery.setFlushMode(FlushMode.MANUAL);
-            return (Ticket) hibQuery.uniqueResult();
+            query.setCacheable(true);
+            query.setFlushMode(FlushMode.MANUAL);
+            List<Ticket> ticketList = query.getResultList();
+            return ticketList.size() > 0 ? ticketList.get(0) : null;
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -526,15 +526,13 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
      */
     public Set<CollectionItem> findCollectionItems(CollectionItem collectionItem){
         try {
-            HashSet<CollectionItem> children = new HashSet<CollectionItem>();
-            Query hibQuery = getSession().getNamedQuery("collections.children.by.parent")
+            Set<CollectionItem> children = new HashSet<>();
+            Query<CollectionItem> hibQuery = getSession()
+                    .createNamedQuery("collections.children.by.parent", CollectionItem.class)
                     .setParameter("parent", collectionItem);
 
-            List<?> results = hibQuery.list();
-            for (Iterator<?> it = results.iterator(); it.hasNext(); ) {
-                CollectionItem content = (CollectionItem) it.next();
-                children.add(content);
-            }
+            List<CollectionItem> results = hibQuery.getResultList();
+            children.addAll(results);            
             return children;
         } catch (HibernateException e) {
             getSession().clear();
@@ -730,10 +728,10 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
      *                                    in collection
      */
     protected void verifyItemNameUnique(Item item, CollectionItem collection) {
-        Query hibQuery = getSession().getNamedQuery("itemId.by.parentId.name");
-        hibQuery.setParameter("name", item.getName()).setParameter("parentid",
+        Query<Long> query = getSession().createNamedQuery("itemId.by.parentId.name", Long.class);
+        query.setParameter("name", item.getName()).setParameter("parentid",
                 ((HibItem) collection).getId());
-        List<Long> results = hibQuery.list();
+        List<Long> results = query.getResultList();
         if (results.size() > 0) {
             throw new DuplicateItemNameException(item, "item name " + item.getName() +
                     " already exists in collection " + collection.getUid());
@@ -782,68 +780,57 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
         }
     }
 
-    protected Item findItemByParentAndName(Long userDbId, Long parentDbId,
-                                           String name) {
-        Query hibQuery = null;
+    protected Item findItemByParentAndName(Long userDbId, Long parentDbId, String name) {
+        Query<Item> query = null;
         if (parentDbId != null) {
-            hibQuery = getSession().getNamedQuery(
-                    "item.by.ownerId.parentId.name").setParameter("ownerid",
-                    userDbId).setParameter("parentid", parentDbId)
-                    .setParameter("name", name);
+            query = getSession().createNamedQuery("item.by.ownerId.parentId.name", Item.class)
+                    .setParameter("ownerid", userDbId).setParameter("parentid", parentDbId).setParameter("name", name);
 
         } else {
-            hibQuery = getSession().getNamedQuery(
-                    "item.by.ownerId.nullParent.name").setParameter("ownerid",
-                    userDbId).setParameter("name", name);
+            query = getSession().createNamedQuery("item.by.ownerId.nullParent.name", Item.class)
+                    .setParameter("ownerid", userDbId).setParameter("name", name);
         }
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        return (Item) hibQuery.uniqueResult();
+        query.setFlushMode(FlushMode.MANUAL);
+        List<Item> itemList = query.getResultList();
+        return itemList.size() > 0 ? itemList.get(0) : null;
     }
 
-    protected Item findItemByParentAndNameMinusItem(Long userDbId, Long parentDbId,
-                                                    String name, Long itemId) {
-        Query hibQuery = null;
+    protected Item findItemByParentAndNameMinusItem(Long userDbId, Long parentDbId, String name, Long itemId) {
+        Query<Item> query = null;
         if (parentDbId != null) {
-            hibQuery = getSession().getNamedQuery(
-                    "item.by.ownerId.parentId.name.minusItem").setParameter("itemid", itemId)
-                    .setParameter("ownerid",
-                            userDbId).setParameter("parentid", parentDbId)
-                    .setParameter("name", name);
+            query = getSession().createNamedQuery("item.by.ownerId.parentId.name.minusItem", Item.class)
+                    .setParameter("itemid", itemId).setParameter("ownerid", userDbId)
+                    .setParameter("parentid", parentDbId).setParameter("name", name);
         } else {
-            hibQuery = getSession().getNamedQuery(
-                    "item.by.ownerId.nullParent.name.minusItem").setParameter("itemid", itemId)
-                    .setParameter("ownerid",
-                            userDbId).setParameter("name", name);
+            query = getSession().createNamedQuery("item.by.ownerId.nullParent.name.minusItem", Item.class)
+                    .setParameter("itemid", itemId).setParameter("ownerid", userDbId).setParameter("name", name);
         }
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        return (Item) hibQuery.uniqueResult();
+        query.setFlushMode(FlushMode.MANUAL);
+        List<Item> itemList = query.getResultList();
+        return itemList.size() > 0 ? itemList.get(0) : null;
     }
 
     protected HomeCollectionItem findRootItem(Long dbUserId) {
-        Query hibQuery = getSession().getNamedQuery(
-                "homeCollection.by.ownerId").setParameter("ownerid",
-                dbUserId);
-        hibQuery.setCacheable(true);
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-
-        return (HomeCollectionItem) hibQuery.uniqueResult();
+        Query<HomeCollectionItem> query = getSession()
+                .createNamedQuery("homeCollection.by.ownerId", HomeCollectionItem.class)
+                .setParameter("ownerid", dbUserId);
+        query.setCacheable(true);
+        query.setFlushMode(FlushMode.MANUAL);
+        List<HomeCollectionItem> itemList = query.getResultList();
+        return itemList.size() > 0 ? itemList.get(0) : null;
     }
 
     protected void checkForDuplicateUid(Item item) {
         // verify uid not in use
         if (item.getUid() != null) {
-
             // Lookup item by uid
-            Query hibQuery = getSession().getNamedQuery("itemid.by.uid")
-                    .setParameter("uid", item.getUid());
-            hibQuery.setFlushMode(FlushMode.MANUAL);
-
-            Long itemId = (Long) hibQuery.uniqueResult();
-
+            Query<Long> query = getSession().createNamedQuery("itemid.by.uid", Long.class).setParameter("uid",
+                    item.getUid());
+            query.setFlushMode(FlushMode.MANUAL);
+            List<Long> idList = query.getResultList();
             // if uid is in use throw exception
-            if (itemId != null) {
-                throw new UidInUseException(item.getUid(), "uid " + item.getUid()
-                        + " already in use");
+            if (idList.size() > 0) {
+                throw new UidInUseException(item.getUid(), "uid " + item.getUid() + " already in use");
             }
         }
     }

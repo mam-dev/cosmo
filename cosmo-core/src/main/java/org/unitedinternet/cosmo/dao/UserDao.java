@@ -15,12 +15,10 @@
  */
 package org.unitedinternet.cosmo.dao;
 
-import org.unitedinternet.cosmo.model.PagedList;
+import java.util.Set;
+
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
-
-import java.util.Set;
 
 /**
  * Interface for DAOs that manage user resources.
@@ -30,21 +28,6 @@ import java.util.Set;
  * directory").
  */
 public interface UserDao extends Dao {
-
-    /**
-     * Returns an unordered set of all user accounts in the repository.
-     * @return All user accounts.
-     */
-    public Set<User> getUsers();
-
-    /**
-     * Returns the sorted list of user accounts corresponding to the
-     * given <code>PageCriteria</code>.
-     *
-     * @param pageCriteria the pagination criteria
-     * @return The sorted list of the user accounts.
-     */
-    public PagedList getUsers(PageCriteria<User.SortType> pageCriteria);
 
     /**
      * Returns the user account identified by the given username.

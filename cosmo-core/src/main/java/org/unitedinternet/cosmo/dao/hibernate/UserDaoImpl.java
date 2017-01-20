@@ -15,9 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,26 +23,20 @@ import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
+import org.hibernate.query.Query;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.ArrayPagedList;
-import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
 import org.unitedinternet.cosmo.model.hibernate.BaseModelObject;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
-
 
 /**
  * Implemtation of UserDao using Hibernate persistence objects.
@@ -55,9 +47,6 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
     private static final Log LOG = LogFactory.getLog(UserDaoImpl.class);
 
     private VersionFourGenerator idGenerator;
-
-    private static final QueryCriteriaBuilder<User.SortType> QUERY_CRITERIA_BUILDER =
-            new UserQueryCriteriaBuilder<User.SortType>();
 
     public User createUser(User user) {
 
@@ -141,46 +130,13 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         }
     }
 
-    public Set<User> getUsers() {
-        try {
-            HashSet<User> users = new HashSet<User>();
-            Iterator it = getSession().getNamedQuery("user.all").iterate();
-            while (it.hasNext()) {
-                users.add((User) it.next());
-            }
-
-            return users;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    public PagedList getUsers(PageCriteria<User.SortType> pageCriteria) {
-        try {
-            Criteria crit = QUERY_CRITERIA_BUILDER.buildQueryCriteria(
-                    getSession(), pageCriteria);
-            List<User> results = crit.list();
-
-            // Need the total
-            Long size = (Long) getSession().getNamedQuery("user.count")
-                    .uniqueResult();
-
-            return new ArrayPagedList<User, User.SortType>(pageCriteria, results, size.intValue());
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-
     public Set<User> findUsersByPreference(String key, String value) {
         try {
-            Query hibQuery = getSession().getNamedQuery("users.byPreference");
-            hibQuery.setParameter("key", key).setParameter("value", value);
-            List<User> results = hibQuery.list();
+            Query<User> query = getSession().createNamedQuery("users.byPreference", User.class);
+            query.setParameter("key", key).setParameter("value", value);
+            List<User> results = query.getResultList();
 
-            Set<User> users = new HashSet<User>();
+            Set<User> users = new HashSet<>();
 
             // TODO figure out how to load all properties using HQL
             for (User user : results) {
@@ -225,10 +181,10 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
     public User updateUser(User user) {
         try {
             // prevent auto flushing when querying for existing users
-            getSession().setFlushMode(FlushMode.MANUAL);
+            getSession().setHibernateFlushMode(FlushMode.MANUAL);
 
-            User findUser = findUserByUsernameOrEmailIgnoreCaseAndId(getBaseModelObject(user)
-                    .getId(), user.getUsername(), user.getEmail());
+            User findUser = findUserByUsernameOrEmailIgnoreCaseAndId(getBaseModelObject(user).getId(),
+                    user.getUsername(), user.getEmail());
 
             if (findUser != null) {
                 if (findUser.getEmail().equals(user.getEmail())) {
@@ -264,10 +220,11 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
 
     public PasswordRecovery getPasswordRecovery(String key) {
         try {
-            Query hibQuery = getSession().getNamedQuery("passwordRecovery.byKey")
-                    .setParameter("key", key);
-            hibQuery.setCacheable(true);
-            return (PasswordRecovery) hibQuery.uniqueResult();
+            Query<PasswordRecovery> query = getSession()
+                    .createNamedQuery("passwordRecovery.byKey", PasswordRecovery.class).setParameter("key", key);
+            query.setCacheable(true);
+            List<PasswordRecovery> recoveryList = query.getResultList();
+            return recoveryList.size() > 0 ? recoveryList.get(0) : null;
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -309,129 +266,66 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
 
     private User findUserByUsernameIgnoreCase(String username) {
         Session session = getSession();
-        Query hibQuery = session.getNamedQuery("user.byUsername.ignorecase").setParameter(
-                "username", username);
-        hibQuery.setCacheable(true);
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        List users = hibQuery.list();
-        if (users.size() > 0) {
-            return (User) users.get(0);
-        } else {
-            return null;
-        }
+        Query<User> query = session.createNamedQuery("user.byUsername.ignorecase", User.class).setParameter("username",
+                username);
+        query.setCacheable(true);
+        query.setFlushMode(FlushMode.MANUAL);
+        return this.getUserFromQuery(query);
     }
 
-    private User findUserByUsernameOrEmailIgnoreCaseAndId(Long userId,
-                                                          String username, String email) {
+    private User findUserByUsernameOrEmailIgnoreCaseAndId(Long userId, String username, String email) {
         Session session = getSession();
-        Query hibQuery = session.getNamedQuery(
-                "user.byUsernameOrEmail.ignorecase.ingoreId").setParameter(
-                "username", username).setParameter("email", email)
-                .setParameter("userid", userId);
-        hibQuery.setCacheable(true);
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        List users = hibQuery.list();
-        if (users.size() > 0) {
-            return (User) users.get(0);
-        } else {
-            return null;
-        }
+        Query<User> query = session.createNamedQuery("user.byUsernameOrEmail.ignorecase.ingoreId", User.class)
+                .setParameter("username", username).setParameter("email", email).setParameter("userid", userId);
+        query.setCacheable(true);
+        query.setFlushMode(FlushMode.MANUAL);
+        return this.getUserFromQuery(query);
     }
 
     private User findUserByEmail(String email) {
         Session session = getSession();
-        Query hibQuery = session.getNamedQuery("user.byEmail").setParameter(
-                "email", email);
-        hibQuery.setCacheable(true);
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        List users = hibQuery.list();
-        if (users.size() > 0) {
-            return (User) users.get(0);
-        } else {
-            return null;
-        }
+        Query<User> query = session.createNamedQuery("user.byEmail", User.class).setParameter("email", email);
+        query.setCacheable(true);
+        query.setFlushMode(FlushMode.MANUAL);
+        return this.getUserFromQuery(query);
     }
 
     private User findUserByEmailIgnoreCase(String email) {
         Session session = getSession();
-        Query hibQuery = session.getNamedQuery("user.byEmail.ignorecase").setParameter(
-                "email", email);
-        hibQuery.setCacheable(true);
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        List users = hibQuery.list();
-        if (users.size() > 0) {
-            return (User) users.get(0);
-        } else {
-            return null;
-        }
+        Query<User> query = session.createNamedQuery("user.byEmail.ignorecase", User.class).setParameter("email",
+                email);
+        query.setCacheable(true);
+        query.setFlushMode(FlushMode.MANUAL);
+        return this.getUserFromQuery(query);
     }
 
     private User findUserByUid(String uid) {
         Session session = getSession();
-        Query hibQuery = session.getNamedQuery("user.byUid").setParameter(
-                "uid", uid);
-        hibQuery.setCacheable(true);
-        hibQuery.setFlushMode(FlushMode.MANUAL);
-        return (User) hibQuery.uniqueResult();
+        Query<User> query = session.createNamedQuery("user.byUid", User.class).setParameter("uid", uid);
+        query.setCacheable(true);
+        query.setFlushMode(FlushMode.MANUAL);
+        return this.getUserFromQuery(query);
     }
 
-    private void deleteAllPasswordRecoveries(User user) {
-        Session session = getSession();
-        session.getNamedQuery("passwordRecovery.delete.byUser").setParameter(
-                "user", user).executeUpdate();
-    }
 
     private User findUserByActivationId(String id) {
         Session session = getSession();
-        Query hibQuery = session.getNamedQuery("user.byActivationId").setParameter(
-                "activationId", id);
-        hibQuery.setCacheable(true);
-        return (User) hibQuery.uniqueResult();
+        Query<User> query = session.createNamedQuery("user.byActivationId", User.class).setParameter("activationId", id);
+        query.setCacheable(true);
+        return this.getUserFromQuery(query);
     }
-
-    private static class UserQueryCriteriaBuilder<SortType extends User.SortType> extends
-            StandardQueryCriteriaBuilder<SortType> {
-
-        public UserQueryCriteriaBuilder() {
-            super(User.class);
-        }
-
-        protected List<Order> buildOrders(PageCriteria<SortType> pageCriteria) {
-            List<Order> orders = new ArrayList<Order>();
-
-            User.SortType sort = pageCriteria.getSortType();
-            if (sort == null) {
-                sort = User.SortType.USERNAME;
-            }
-
-            if (sort.equals(User.SortType.NAME)) {
-                orders.add(createOrder(pageCriteria, "lastName"));
-                orders.add(createOrder(pageCriteria, "firstName"));
-            } else if (sort.equals(User.SortType.ADMIN)) {
-                orders.add(createOrder(pageCriteria, "admin"));
-            } else if (sort.equals(User.SortType.EMAIL)) {
-                orders.add(createOrder(pageCriteria, "email"));
-            } else if (sort.equals(User.SortType.CREATED)) {
-                orders.add(createOrder(pageCriteria, "CreatedDate"));
-            } else if (sort.equals(User.SortType.LAST_MODIFIED)) {
-                orders.add(createOrder(pageCriteria, "ModifiedDate"));
-            } else if (sort.equals(User.SortType.ACTIVATED)) {
-                orders.add(createOrder(pageCriteria, "activationId"));
-            } else {
-                orders.add(createOrder(pageCriteria, "username"));
-            }
-
-            return orders;
-        }
-
-        private Order createOrder(PageCriteria pageCriteria, String property) {
-            return pageCriteria.isSortAscending() ?
-                    Order.asc(property) :
-                    Order.desc(property);
-        }
+    
+    private User getUserFromQuery(Query<User> query) {
+        List<User> users = query.getResultList();
+        return users.size() > 0 ? users.get(0) : null;
     }
-
-    protected BaseModelObject getBaseModelObject(Object obj) {
+    
+    private void deleteAllPasswordRecoveries(User user) {
+        Session session = getSession();
+        session.getNamedQuery("passwordRecovery.delete.byUser").setParameter("user", user).executeUpdate();
+    }
+    
+    private BaseModelObject getBaseModelObject(Object obj) {
         return (BaseModelObject) obj;
     }
 
