@@ -31,8 +31,11 @@ import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
+import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.User.SortType;
+import org.unitedinternet.cosmo.model.filter.PageCriteria;
 import org.unitedinternet.cosmo.service.OverlordDeletionException;
 import org.unitedinternet.cosmo.service.ServiceEvent;
 import org.unitedinternet.cosmo.service.ServiceListener;
@@ -470,4 +473,5 @@ public class StandardUserService extends BaseService implements UserService {
         contentDao.removeUserContent(user);
         userDao.removeUser(user);
     }
+
 }

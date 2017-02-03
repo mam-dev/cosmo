@@ -16,9 +16,7 @@
 package org.unitedinternet.cosmo.icalendar;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import org.unitedinternet.cosmo.CosmoException;
+import java.util.Iterator;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
@@ -33,6 +31,8 @@ import net.fortuna.ical4j.model.property.DateListProperty;
 import net.fortuna.ical4j.model.property.DateProperty;
 import net.fortuna.ical4j.model.property.ExDate;
 
+import org.unitedinternet.cosmo.CosmoException;
+
 /**
  * ICalendar filter that tailors VEVENTs for
  * iCal 3 clients.  This includes fixing EXDATE
@@ -45,8 +45,9 @@ public class ICal3ClientFilter implements ICalendarClientFilter{
     public void filterCalendar(Calendar calendar) {
        
         try {
-            ComponentList<VEvent> events = calendar.getComponents(Component.VEVENT);
-            for(VEvent event : events) {                 
+            ComponentList events = calendar.getComponents(Component.VEVENT);
+            for(Iterator i = events.iterator(); i.hasNext();) {
+                VEvent event = (VEvent) i.next();
                 // fix VALUE=DATE-TIME instances
                 fixDateTimeProperties(event);
                 // fix EXDATEs
@@ -60,11 +61,13 @@ public class ICal3ClientFilter implements ICalendarClientFilter{
     }
     
     private void fixExDates(Component comp) throws Exception {
-        PropertyList<ExDate> exDates = comp.getProperties(Property.EXDATE);
-        List<Property> toAdd = new ArrayList<>();
-        List<Property> toRemove = new ArrayList<>();
+        PropertyList props = comp.getProperties(Property.EXDATE);
+        ArrayList<Property> toAdd = new ArrayList<Property>();
+        ArrayList<Property> toRemove = new ArrayList<Property>();
         
-        for(ExDate exDate : exDates) {            
+        for(Iterator i=props.iterator();i.hasNext();) {
+            ExDate exDate = (ExDate) i.next();
+            
             // ical likes a single exdate
             if(exDate.getDates().size()==1) {
                 continue;
@@ -74,9 +77,10 @@ public class ICal3ClientFilter implements ICalendarClientFilter{
             toRemove.add(exDate);
             
             // create single dates instead
-            for(Date date : exDate.getDates()) {
+            for(Iterator j=exDate.getDates().iterator();j.hasNext();) {
                 ExDate singleEx = (ExDate) exDate.copy();
-                singleEx.getDates().clear();                 
+                singleEx.getDates().clear();
+                Date date = (Date) j.next();
                 singleEx.getDates().add(date);
                 toAdd.add(singleEx);
             }
@@ -92,8 +96,9 @@ public class ICal3ClientFilter implements ICalendarClientFilter{
     // Remove VALUE=DATE-TIME because it is redundant and for 
     // some reason ical doesn't like it
     private void fixDateTimeProperties(Component component) {
-        PropertyList<Property> props = component.getProperties();
-        for(Property prop : props) {
+        PropertyList props = component.getProperties();
+        for(Iterator<Property> it = props.iterator(); it.hasNext();) {
+            Property prop = it.next();
             if(prop instanceof DateProperty || prop instanceof DateListProperty) {
                 Value v = (Value) prop.getParameter(Parameter.VALUE);
                 if(Value.DATE_TIME.equals(v)) {

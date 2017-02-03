@@ -58,7 +58,7 @@ public class SimpleConnectionProvider implements ConnectionProvider {
     }
 
     @Override
-    public boolean isUnwrappableAs(@SuppressWarnings("rawtypes") Class unwrapType) {
+    public boolean isUnwrappableAs(Class unwrapType) {
         return false;
     }
 

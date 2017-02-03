@@ -16,9 +16,9 @@
 package org.unitedinternet.cosmo.dao.hibernate;
 
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
         "classpath:applicationContext-services.xml",
         "classpath:applicationContext-security-dav.xml",
         "classpath:applicationContext-dao.xml"})
-@Rollback
+@TransactionConfiguration
 @Transactional
 public abstract class AbstractSpringDaoTestCase {
 

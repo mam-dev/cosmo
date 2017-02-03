@@ -46,6 +46,5 @@ public class BufferedServletOutputStreamTest {
         // should be data
         Assert.assertFalse(buf.isEmpty()); 
         Assert.assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(testData), buf.getBufferInputStream()));
-        buf.close();
     }
 }

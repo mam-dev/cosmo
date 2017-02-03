@@ -83,7 +83,8 @@ public class RecurrenceExpander {
      */
     public Date[] calculateRecurrenceRange(Calendar calendar) {
         try{
-            ComponentList<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
+            ComponentList vevents = calendar.getComponents().getComponents(
+                    Component.VEVENT);
             
             List<Component> exceptions = new ArrayList<Component>();
             Component masterComp = null;
@@ -181,12 +182,15 @@ public class RecurrenceExpander {
         // give us the broader range.
         
         // recurrence dates..
-        PropertyList<RDate> rDates = comp.getProperties().getProperties(Property.RDATE);
-        for (RDate rdate : rDates) {
+        PropertyList rDates = comp.getProperties()
+                .getProperties(Property.RDATE);
+        for (Iterator i = rDates.iterator(); i.hasNext();) {
+            RDate rdate = (RDate) i.next();
             // Both PERIOD and DATE/DATE-TIME values allowed
             if (Value.PERIOD.equals(rdate.getParameters().getParameter(
                     Parameter.VALUE))) {
-                for (Period period : rdate.getPeriods()) {
+                for (Iterator j = rdate.getPeriods().iterator(); j.hasNext();) {
+                    Period period = (Period) j.next();
                     if (period.getStart().before(dateRange[0])) {
                         dateRange[0] = period.getStart();
                     }
@@ -196,7 +200,8 @@ public class RecurrenceExpander {
                     
                 }
             } else {
-                for (Date startDate : rdate.getDates()) {
+                for (Iterator j = rdate.getDates().iterator(); j.hasNext();) {
+                    Date startDate = (Date) j.next();
                     Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration
                             .getTime(startDate), startDate);
                     if (startDate.before(dateRange[0])) {
@@ -210,8 +215,10 @@ public class RecurrenceExpander {
         }
 
         // recurrence rules..
-        PropertyList<RRule> rRules = comp.getProperties().getProperties(Property.RRULE);
-        for (RRule rrule : rRules) {
+        PropertyList rRules = comp.getProperties()
+                .getProperties(Property.RRULE);
+        for (Iterator i = rRules.iterator(); i.hasNext();) {
+            RRule rrule = (RRule) i.next();
             Recur recur = rrule.getRecur();
             
             // If this is an infinite recurring event, we are done processing
@@ -291,7 +298,8 @@ public class RecurrenceExpander {
      *         time range
      */
     public InstanceList getOcurrences(Calendar calendar, Date rangeStart, Date rangeEnd, TimeZone timezone) {
-        ComponentList<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
+        ComponentList vevents = calendar.getComponents().getComponents(
+                Component.VEVENT);
         
         List<Component> exceptions = new ArrayList<Component>();
         Component masterComp = null;

@@ -57,7 +57,8 @@ public class CalendarFilterEvaluaterTest {
     /**
      * Tests evaluate filter.
      * @throws Exception - if something is wrong this exception is thrown.
-     */    
+     */
+    @SuppressWarnings({ "unchecked", "static-access" })
     @Test
     public void testEvaluateFilterPropFilter() throws Exception {
         
@@ -77,7 +78,7 @@ public class CalendarFilterEvaluaterTest {
         Assert.assertTrue(evaluater.evaluate(calendar, filter));
         
         textFilter.setValue("ViSiBle");
-        textFilter.setCollation(TextMatchFilter.COLLATION_OCTET);
+        textFilter.setCollation(textFilter.COLLATION_OCTET);
         Assert.assertFalse(evaluater.evaluate(calendar, filter));
         
         textFilter.setCollation(null);
@@ -100,7 +101,8 @@ public class CalendarFilterEvaluaterTest {
     /**
      * Tests evaluate filter .
      * @throws Exception - if something is wrong this exception is thrown.
-     */    
+     */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateFilterParamFilter() throws Exception {
         
@@ -140,7 +142,8 @@ public class CalendarFilterEvaluaterTest {
     /**
      * Tests evaluate filter event: time range filter.
      * @throws Exception - if something is wrong this exception is thrown.
-     */    
+     */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateFilterEventTimeRangeFilter() throws Exception {
         
@@ -172,7 +175,8 @@ public class CalendarFilterEvaluaterTest {
     /**
      * Tests evaluate filter recurring event: time range filter.
      * @throws Exception - if something is wrong this exception is thrown.
-     */    
+     */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateFilterRecurringEventTimeRangeFilter() throws Exception {
         
@@ -205,6 +209,7 @@ public class CalendarFilterEvaluaterTest {
      * Tests evaluate filter property: time range filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateFilterPropertyTimeRangeFilter() throws Exception {
         
@@ -239,6 +244,7 @@ public class CalendarFilterEvaluaterTest {
      * Tests evaluate complicated. 
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateComplicated() throws Exception {
         
@@ -286,7 +292,8 @@ public class CalendarFilterEvaluaterTest {
     /**
      * Tests evaluate VAlarm filter.
      * @throws Exception - if something is wrong this exception is thrown.
-     */    
+     */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVAlarmFilter() throws Exception {
         
@@ -357,6 +364,7 @@ public class CalendarFilterEvaluaterTest {
      * Tests evaluate filter prop filter against exception.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateFilterPropFilterAgainstException() throws Exception {
        
@@ -378,6 +386,7 @@ public class CalendarFilterEvaluaterTest {
      * Tests evaluate VJournal filter prop filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVJournalFilterPropFilter() throws Exception {
         
@@ -408,6 +417,7 @@ public class CalendarFilterEvaluaterTest {
      * Tests evaluate filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVToDoFilterPropFilter() throws Exception {
         
@@ -438,6 +448,7 @@ public class CalendarFilterEvaluaterTest {
      * Tests evaluate filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVToDoTimeRangeFilter() throws Exception {
         
@@ -483,6 +494,7 @@ public class CalendarFilterEvaluaterTest {
      * Evaluates VFree busy filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVFreeBusyFilterFilter() throws Exception {
         
@@ -512,6 +524,7 @@ public class CalendarFilterEvaluaterTest {
      * Evaluates VFreeBusy filter time range.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVFreeBusyFilterFilterTimeRange() throws Exception {
         
@@ -550,6 +563,7 @@ public class CalendarFilterEvaluaterTest {
      * Evaluates VAvailability filter.
      * @throws Exception - if something is wrong this exception is thrown.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testEvaluateVAvailabilityFilter() throws Exception {
         

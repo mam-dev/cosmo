@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.dao.query;
 import java.util.List;
 import java.util.Set;
 
+import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 

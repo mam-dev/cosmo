@@ -130,19 +130,19 @@ public class OutputFilter {
         newCal.getProperties().addAll(calendar.getProperties());
        
         InstanceList instances = new InstanceList();
-        ComponentList<CalendarComponent> overrides = new ComponentList<>();
+        ComponentList overrides = new ComponentList();
         
         // Limit range
         Period period = getLimit();
         
         // Filter override components based on limit range
-        for (CalendarComponent comp: calendar.getComponents()) {
+        for (Object comp: calendar.getComponents()) {
             // Only care about VEVENT, VJOURNAL, VTODO
             if ((comp instanceof VEvent) ||
                 (comp instanceof VJournal) ||
                 (comp instanceof VToDo)) {
                 // Add master component to result Calendar
-                if (comp.getProperties().
+                if (((CalendarComponent)comp).getProperties().
                     getProperty(Property.RECURRENCE_ID) == null) {
                     newCal.getComponents().add(comp);
                     // seed the InstanceList with master component
@@ -160,8 +160,8 @@ public class OutputFilter {
         
         // Add override components to InstanceList.
         // Only add override if it changes anything about the InstanceList.
-        for (CalendarComponent comp : overrides) {
-            if (instances.addOverride(comp, period.getStart(), period.getEnd())) {
+        for (Object comp : overrides) {
+            if (comp instanceof CalendarComponent && instances.addOverride((CalendarComponent)comp, period.getStart(), period.getEnd())) {
                 newCal.getComponents().add(comp);
             }
         }
@@ -182,9 +182,9 @@ public class OutputFilter {
         // Now look at each component and determine whether expansion is
         // required
         InstanceList instances = new InstanceList();
-        ComponentList<CalendarComponent> overrides = new ComponentList<>();
+        ComponentList overrides = new ComponentList();
         Component master = null;
-        for (CalendarComponent comp :calendar.getComponents()) {
+        for (Object comp :calendar.getComponents()) {
             if ((comp instanceof VEvent) ||
                 (comp instanceof VJournal) ||
                 (comp instanceof VToDo)) {
@@ -200,7 +200,7 @@ public class OutputFilter {
             } else if (!(comp instanceof VTimeZone))  {
                 // Create new component and convert properties to UTC
                 try {
-                    CalendarComponent newcomp = (CalendarComponent)comp.copy();
+                    Object newcomp = ((CalendarComponent)(comp)).copy();
                     componentToUTC((CalendarComponent)newcomp);
                     newCal.getComponents().add(newcomp);
                 } catch (Exception e) {
@@ -322,22 +322,22 @@ public class OutputFilter {
         }
 
         // Do to each embedded component
-        ComponentList<? extends CalendarComponent> subcomps = null;
+        ComponentList subcomps = null;
         if (comp instanceof VEvent) {
-            subcomps = ((VEvent) comp).getAlarms() ;
+            subcomps = ((VEvent)comp).getAlarms();
         }
         else if (comp instanceof VToDo) {
             subcomps = ((VToDo)comp).getAlarms();
         }
 
         if (subcomps != null) {
-            for (CalendarComponent subcomp :  subcomps) {
+            for (Component subcomp : (List<Component>) subcomps) {
                 componentToUTC(subcomp);
             }
         }
     }
 
-    private void filterProperties(PropertyList<Property> properties,
+    private void filterProperties(PropertyList properties,
                                   StringBuffer buffer) {
         if (isAllProperties()) {
             buffer.append(properties.toString());
@@ -348,7 +348,7 @@ public class OutputFilter {
             return;
         }
 
-        for (Property property : properties) {
+        for (Property property : (List<Property>) properties) {
             PropertyMatch pm = testPropertyValue(property.getName());
             if (pm.isMatch()) {
                 if (pm.isValueExcluded()) {
@@ -378,7 +378,7 @@ public class OutputFilter {
      * @param subComponents The component list.
      * @param buffer The string buffer.
      */ 
-    private void filterSubComponents(ComponentList<?> subComponents,
+    private void filterSubComponents(ComponentList subComponents,
                                      StringBuffer buffer) {
         if (isAllSubComponents() && getLimit() != null) {
             buffer.append(subComponents.toString());
@@ -389,7 +389,7 @@ public class OutputFilter {
             return;
         }
 
-        for (Component component : subComponents) {
+        for (Component component : (List<Component>) subComponents) {
             if (getLimit() != null && component instanceof VEvent &&
                     ! includeOverride((VEvent) component)) {
                 continue;

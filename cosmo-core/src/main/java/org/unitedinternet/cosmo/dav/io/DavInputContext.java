@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.validate.ValidationException;
+import net.fortuna.ical4j.model.ValidationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -18,7 +18,6 @@ package org.unitedinternet.cosmo.dav.impl;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.component.VJournal;
 
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
@@ -92,7 +91,7 @@ public class DavJournal extends DavCalendarResource {
         throws CosmoDavException {
         NoteItem note = (NoteItem) getItem();
       
-        ComponentList<VJournal> vjournals = cal.getComponents(Component.VJOURNAL);
+        ComponentList vjournals = cal.getComponents(Component.VJOURNAL);
         if (vjournals.isEmpty()) {
             throw new UnprocessableEntityException("VCALENDAR does not contain any VJOURNALS");
         }

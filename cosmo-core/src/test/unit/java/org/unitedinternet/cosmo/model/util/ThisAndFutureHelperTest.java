@@ -18,19 +18,8 @@ package org.unitedinternet.cosmo.model.util;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.unitedinternet.cosmo.model.EventExceptionStamp;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.StampUtils;
-import org.unitedinternet.cosmo.model.hibernate.ModificationUidImpl;
-import org.unitedinternet.cosmo.model.mock.MockEventExceptionStamp;
-import org.unitedinternet.cosmo.model.mock.MockEventStamp;
-import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
@@ -43,6 +32,17 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.unitedinternet.cosmo.model.EventExceptionStamp;
+import org.unitedinternet.cosmo.model.EventStamp;
+import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.model.StampUtils;
+import org.unitedinternet.cosmo.model.hibernate.ModificationUidImpl;
+import org.unitedinternet.cosmo.model.mock.MockEventExceptionStamp;
+import org.unitedinternet.cosmo.model.mock.MockEventStamp;
+import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 
 /**
  * Test EventStamp
@@ -262,10 +262,15 @@ public class ThisAndFutureHelperTest {
         EventStamp es = new MockEventStamp(master);
         master.addStamp(es);
         
-        ComponentList<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
-        List<VEvent> exceptions = new ArrayList<VEvent>();        
-        // get list of exceptions (VEVENT with RECURRENCEID)        
-        for (VEvent event : vevents) {            
+        ComponentList vevents = calendar.getComponents().getComponents(
+                Component.VEVENT);
+        
+        ArrayList<VEvent> exceptions = new ArrayList<VEvent>();
+        
+        // get list of exceptions (VEVENT with RECURRENCEID)
+        for (@SuppressWarnings("unchecked")
+        Iterator<VEvent> i = vevents.iterator(); i.hasNext();) {
+            VEvent event = i.next();
             if (event.getRecurrenceId() != null) {
                 exceptions.add(event);
                 NoteItem mod = new MockNoteItem();

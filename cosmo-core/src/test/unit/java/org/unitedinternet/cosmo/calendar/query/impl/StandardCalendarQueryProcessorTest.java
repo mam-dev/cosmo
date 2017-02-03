@@ -15,6 +15,22 @@
  */
 package org.unitedinternet.cosmo.calendar.query.impl;
 
+import java.util.Iterator;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.PeriodList;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+import net.fortuna.ical4j.model.parameter.FbType;
+import net.fortuna.ical4j.model.property.FreeBusy;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,20 +48,6 @@ import org.unitedinternet.cosmo.model.FreeBusyItem;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
-
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.PeriodList;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.PropertyList;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.model.component.VFreeBusy;
-import net.fortuna.ical4j.model.parameter.FbType;
-import net.fortuna.ical4j.model.property.FreeBusy;
 
 /**
  * Test StandardCalendarQueryProcessorTest using mock implementations.
@@ -261,10 +263,12 @@ public class StandardCalendarQueryProcessorTest {
      * @param periods The periods.
      */
     private void verifyPeriods(VFreeBusy vfb, FbType fbtype, String periods) {
-        PropertyList<FreeBusy> props = vfb.getProperties(Property.FREEBUSY);
+        PropertyList props = vfb.getProperties(Property.FREEBUSY);
         FreeBusy fb = null;
         
-        for(FreeBusy next : props) {            
+        for(@SuppressWarnings("rawtypes")
+		Iterator it = props.iterator();it.hasNext();) {
+            FreeBusy next = (FreeBusy) it.next();
             FbType type = (FbType) next.getParameter(Parameter.FBTYPE);
             if(type==null && fbtype==null) {
                 fb = next;

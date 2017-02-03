@@ -40,8 +40,7 @@ import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.validate.ValidationException;
-import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
@@ -62,7 +61,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
     
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
         Calendar calendar = null;
-        ComponentList<CalendarComponent> comps = null;
+        ComponentList comps = null;
         try {
             calendar = (Calendar) value;
             
@@ -227,7 +226,8 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
             @Override
             protected boolean isValid(VEvent event, ValidationConfig config) {
-                                
+                
+                @SuppressWarnings("unchecked")
                 List<? extends Property> rrules = event.getProperties(prop);
                 if(rrules == null){
                     return true;
@@ -320,6 +320,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
         
         private static boolean areTimeZoneIdsValid(VEvent event){
             for(String propertyName : PROPERTIES_WITH_TIMEZONES){
+                @SuppressWarnings("unchecked")
                 List<Property> props = event.getProperties(propertyName);
                 for(Property p : props){
                     if(p != null && p.getParameter(Parameter.TZID) != null){

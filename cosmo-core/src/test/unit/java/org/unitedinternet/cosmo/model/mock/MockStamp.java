@@ -26,7 +26,6 @@ import org.unitedinternet.cosmo.model.Stamp;
  * Represents an abstract Stamp on an Item. A Stamp is a set of related
  * properties and apis that is associated to an item.
  */
-@SuppressWarnings("serial")
 public abstract class MockStamp extends MockAuditableObject implements
         java.io.Serializable, Stamp {
 

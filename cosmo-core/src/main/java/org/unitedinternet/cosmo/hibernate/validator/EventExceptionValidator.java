@@ -24,8 +24,7 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.validate.ValidationException;
-import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 
@@ -44,7 +43,7 @@ public class EventExceptionValidator implements ConstraintValidator<EventExcepti
     
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
         Calendar calendar = null;
-        ComponentList<CalendarComponent> comps = null;
+        ComponentList comps = null;
         try {
             calendar = (Calendar) value;
             

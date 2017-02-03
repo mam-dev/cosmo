@@ -416,12 +416,13 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Sets recurrence rules.
      * @param recurs List with recurrence rules.
      */
+    @SuppressWarnings("unchecked")
     public void setRecurrenceRules(List<Recur> recurs) {
         if (recurs == null) {
             return;
         }
-        PropertyList<Property> pl = getEvent().getProperties();
-        for (Property rrule : pl.getProperties(Property.RRULE)) {
+        PropertyList pl = getEvent().getProperties();
+        for (RRule rrule : (List<RRule>) pl.getProperties(Property.RRULE)) {
             pl.remove(rrule);
         }
         for (Recur recur : recurs) {
@@ -468,12 +469,13 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Sets exception rules.
      * @param recurs The list.
      */
+    @SuppressWarnings("unchecked")
     public void setExceptionRules(List<Recur> recurs) {
         if (recurs == null) {
             return;
         }
-        PropertyList<Property> pl = getEvent().getProperties();
-        for (Property exrule : pl.getProperties(Property.EXRULE)) {
+        PropertyList pl = getEvent().getProperties();
+        for (ExRule exrule : (List<ExRule>) pl.getProperties(Property.EXRULE)) {
             pl.remove(exrule);
         }
         for (Recur recur : recurs) {
@@ -488,6 +490,7 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Gets recurrence dates.
      * @return The date list.
      */
+    @SuppressWarnings("unchecked")
     public DateList getRecurrenceDates() {
         
         DateList l = null;
@@ -519,14 +522,15 @@ public abstract class MockBaseEventStamp extends MockStamp
     /**
      * Sets recurrence dates.
      * @param dates The date list.
-     */    
+     */
+    @SuppressWarnings("unchecked")
     public void setRecurrenceDates(DateList dates) { 
         if (dates == null) {
             return;
         }
         
-        PropertyList<Property> pl = getEvent().getProperties();
-        for (Property rdate : pl.getProperties(Property.RDATE)) {
+        PropertyList pl = getEvent().getProperties();
+        for (RDate rdate : (List<RDate>) pl.getProperties(Property.RDATE)) {
             pl.remove(rdate);
         }
         if (dates.isEmpty()) {
@@ -835,15 +839,16 @@ public abstract class MockBaseEventStamp extends MockStamp
     /**
      * Sets exception dates.
      * @param dates The date list.
-     */    
+     */
+    @SuppressWarnings("unchecked")
     public void setExceptionDates(DateList dates) {
         if (dates == null) {
             return;
         }
         
-        PropertyList<Property> properties = getEvent().getProperties();
-        for (Property exdate : properties.getProperties(Property.EXDATE)) {
-            properties.remove(exdate);
+        PropertyList pl = getEvent().getProperties();
+        for (ExDate exdate : (List<ExDate>) pl.getProperties(Property.EXDATE)) {
+            pl.remove(exdate);
         }
         if (dates.isEmpty()) {
             return;
@@ -851,7 +856,7 @@ public abstract class MockBaseEventStamp extends MockStamp
         
         ExDate exDate = new ExDate(dates);
         setDateListPropertyValue(exDate);
-        properties.add(exDate);
+        pl.add(exDate);
     }
 
     /* (non-Javadoc)

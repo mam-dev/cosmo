@@ -98,15 +98,17 @@ public class OutboxCollectionProvider extends CollectionProvider {
     }
 
     private void processPostFreeBusyRequest(Calendar calendar, ScheduleMultiResponse ms) {
-        ComponentList<VFreeBusy> freeBusyList = calendar.getComponents(VFreeBusy.VFREEBUSY);
-        for (VFreeBusy vFreeBusy : freeBusyList) {
+        ComponentList freeBusyList = calendar.getComponents(VFreeBusy.VFREEBUSY);
+        for (Object freebusy : freeBusyList) {
+            VFreeBusy vFreeBusy = (VFreeBusy)freebusy;
             Date periodStrart =  vFreeBusy.getStartDate().getDate();
             Date periodEnd =  vFreeBusy.getEndDate().getDate();
             Period period = new Period(new DateTime(periodStrart), new DateTime(periodEnd));
 
             User user = null;
-            PropertyList<Attendee> freeBusyProperties = vFreeBusy.getProperties(Property.ATTENDEE);
-            for (Attendee attendee : freeBusyProperties) {
+            PropertyList freeBusyProperties = vFreeBusy.getProperties(Property.ATTENDEE);
+            for (Object property : freeBusyProperties) {
+                Attendee attendee = (Attendee) property;
                 // since we might have multiple responses for one user lets create a flag here
                 try {
                     String email = attendee.getCalAddress().getSchemeSpecificPart();

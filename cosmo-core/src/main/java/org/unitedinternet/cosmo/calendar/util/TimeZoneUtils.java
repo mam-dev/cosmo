@@ -120,9 +120,9 @@ public class TimeZoneUtils {
      */
     protected static void fixIcuVTimeZone(VTimeZone vtz) {
         for(Iterator<Observance> obIt = vtz.getObservances().iterator();obIt.hasNext();) {
-            PropertyList<RRule> rruleList= obIt.next().getProperties(Property.RRULE);
-            for(RRule rrule: rruleList) {
-                Recur recur = rrule.getRecur();
+            PropertyList rruleList= obIt.next().getProperties(Property.RRULE);
+            for(Object rrule: rruleList) {
+                Recur recur = ((RRule)rrule).getRecur();
                 if(recur.getUntil()!=null) {
                     recur.getUntil().setTime(recur.getUntil().getTime() + ONE_DAY);
                 }

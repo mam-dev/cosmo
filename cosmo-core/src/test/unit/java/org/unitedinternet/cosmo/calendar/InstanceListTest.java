@@ -59,7 +59,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(5, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -122,7 +123,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(5, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -184,7 +186,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -225,7 +228,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(3, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -273,7 +277,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -312,7 +317,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(3, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -360,7 +366,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(5, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -420,7 +427,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -459,7 +467,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -498,7 +507,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -565,7 +575,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(7, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -639,7 +650,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -686,7 +698,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(3, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -734,7 +747,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(3, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -782,7 +796,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(2, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -851,7 +866,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(3, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -899,7 +915,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(1, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -931,7 +948,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(4, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -984,7 +1002,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(5, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -1044,7 +1063,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(3, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -1090,7 +1110,8 @@ public class InstanceListTest {
 
         Assert.assertEquals(5, instances.size());
 
-        Iterator<String> keys = instances.keySet().iterator();
+        @SuppressWarnings("unchecked")
+		Iterator<String> keys = instances.keySet().iterator();
 
         String key = null;
         Instance instance = null;
@@ -1141,7 +1162,7 @@ public class InstanceListTest {
      */
     private static void addToInstanceList(Calendar calendar,
                                           InstanceList instances, Date start, Date end) {
-        ComponentList<VEvent> vevents = calendar.getComponents().getComponents(VEvent.VEVENT);
+        ComponentList vevents = calendar.getComponents().getComponents(VEvent.VEVENT);
 	Iterator<VEvent> it = vevents.iterator();
         boolean addedMaster = false;
         while (it.hasNext()) {

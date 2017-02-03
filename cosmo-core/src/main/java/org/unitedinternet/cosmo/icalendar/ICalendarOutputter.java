@@ -20,7 +20,7 @@ import java.io.OutputStream;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.validate.ValidationException;
+import net.fortuna.ical4j.model.ValidationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
