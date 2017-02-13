@@ -84,7 +84,7 @@ public class CalendarQueryFilterTest {
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
         Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20050902T000000Z", timeRange.getUTCEnd());
+        Assert.assertEquals("20060902T000000Z", timeRange.getUTCEnd());
     }
     /**
      * Tests component filter is not defined.

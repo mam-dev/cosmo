@@ -46,6 +46,8 @@ import net.fortuna.ical4j.model.component.VTimeZone;
  */
 public class TimeRangeFilter implements CaldavConstants {
     
+    private static final Long TWO_YEARS_MILLIS = new Long(63072000000L);
+    
     private Period period = null;
 
     private VTimeZone timezone = null;
@@ -81,7 +83,7 @@ public class TimeRangeFilter implements CaldavConstants {
         // Get end (must be present)
         String end =
             DomUtil.getAttribute(element, ATTR_CALDAV_END, null);        
-        DateTime trend = end != null ? new DateTime(end) : addOneYearToDateStart(trstart);
+        DateTime trend = end != null ? new DateTime(end) : getDefaultEndDate(trstart);
         
         if (! trend.isUtc()) {
             throw new ParseException("CALDAV:param-filter timerange end must be UTC", -1);
@@ -91,11 +93,16 @@ public class TimeRangeFilter implements CaldavConstants {
         setTimezone(timezone);
     }
 
-    private DateTime addOneYearToDateStart(DateTime trstart) {
-        
-        DateTime plusOneYear = new DateTime(trstart.getTime() + new Long("31536000000")); // one year in miliseconds
-        plusOneYear.setUtc(true);
-        return plusOneYear;
+    /**
+     * Calculates a default end date relative to specified start date.
+     * 
+     * @param startDate
+     * @return
+     */
+    private DateTime getDefaultEndDate(DateTime startDate) {
+        DateTime endDate = new DateTime(startDate.getTime() + TWO_YEARS_MILLIS);
+        endDate.setUtc(true);
+        return endDate;
     }
     /**
      * 
