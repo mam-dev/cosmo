@@ -258,7 +258,7 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
         instances.setTimezone(timezone);
 
         // Look at each VEVENT/VFREEBUSY component only
-        ComponentList overrides = new ComponentList();
+        ComponentList<Component> overrides = new ComponentList<>();
         for (Object comp: calendar.getComponents()) {
             if (comp instanceof VEvent) {
                 VEvent vcomp = (VEvent) comp;

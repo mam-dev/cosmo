@@ -19,16 +19,16 @@ package org.unitedinternet.cosmo.dav.caldav;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.unitedinternet.cosmo.calendar.util.CalendarBuilderDispenser;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ValidationException;
+import net.fortuna.ical4j.validate.ValidationException;
 import net.fortuna.ical4j.model.component.VTimeZone;
+
+import org.unitedinternet.cosmo.calendar.util.CalendarBuilderDispenser;
+import org.unitedinternet.cosmo.dav.CosmoDavException;
+import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 
 /**
  * Helper class for extracting a <code>VTimeZone</code> from an iCalendar

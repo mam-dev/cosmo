@@ -83,9 +83,7 @@ public class CalendarFilterEvaluater {
         stack.clear();
         
         // evaluate all component filters
-        for(Iterator it = rootFilter.getComponentFilters().iterator(); it.hasNext();) {
-            ComponentFilter compFilter = (ComponentFilter) it.next();
-            
+        for(ComponentFilter compFilter : rootFilter.getComponentFilters()) {            
             // If any component filter fails to match, then the calendar filter
             // does not match
             if(!evaluateComps(calendar.getComponents(), compFilter)) {
@@ -102,12 +100,11 @@ public class CalendarFilterEvaluater {
      * @param filter The component filter.
      * @return The result.
      */
-    private boolean evaluate(ComponentList comps, ComponentFilter filter) {
+    private boolean evaluate(ComponentList<? extends Component> comps, ComponentFilter filter) {
         // Evaluate component filter against a set of components.
         // If any component matches, then evaluation succeeds.
         // This is basically a big OR
-        for(Iterator<Component> it=comps.iterator();it.hasNext();) {
-            Component parent = it.next();
+        for(Component parent : comps) {
             stack.push(parent);
             if(evaluateComps(getSubComponents(parent),filter)==true) {
                 stack.pop();
@@ -124,13 +121,13 @@ public class CalendarFilterEvaluater {
      * @param filter The property filter.
      * @return The result.
      */
-    private boolean evaluate(ComponentList comps, PropertyFilter filter) {
+    private boolean evaluate(ComponentList<? extends Component> comps, PropertyFilter filter) {
         
         // Evaluate property filter against a set of components.
         // If any component matches, then evaluation succeeds.
         // This is basically a big OR
-        for(Iterator<Component> it=comps.iterator();it.hasNext();) {
-            if(evaluate(it.next(),filter)==true) {
+        for(Component comp : comps) {
+            if(evaluate(comp, filter)==true) {
                 return true;
             }
         }
@@ -143,14 +140,14 @@ public class CalendarFilterEvaluater {
      * @param filter The component filter.
      * @return The result.
      */
-    private boolean evaluateComps(ComponentList components, ComponentFilter filter) {
+    private boolean evaluateComps(ComponentList<? extends Component> components, ComponentFilter filter) {
         
         /*The CALDAV:comp-filter XML element is empty and the
         calendar component type specified by the "name"
         attribute exists in the current scope;*/
         if(filter.getComponentFilters().size()==0 && filter.getPropFilters().size()==0 
                 && filter.getTimeRangeFilter()==null && filter.getIsNotDefinedFilter()==null) {
-            ComponentList comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
+            ComponentList<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
             return comps.size()>0;
         }
         
@@ -159,12 +156,12 @@ public class CalendarFilterEvaluater {
         component type specified by the "name" attribute does not exist
         in the current scope;*/
         if(filter.getIsNotDefinedFilter()!=null) {
-            ComponentList comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
+            ComponentList<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
             return comps.size()==0;
         }
         
         // Match the component
-        ComponentList comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
+        ComponentList<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
         if(comps.size()==0) {
             return false;
         }
@@ -210,7 +207,7 @@ public class CalendarFilterEvaluater {
         enclosing calendar component;*/
         if(filter.getParamFilters().size()==0 && filter.getTimeRangeFilter()==null &&
                 filter.getIsNotDefinedFilter()==null && filter.getTextMatchFilter()==null) {
-            PropertyList props = component.getProperties(filter.getName());
+            PropertyList<Property> props = component.getProperties(filter.getName());
             return props.size()>0;
         }
         
@@ -219,12 +216,12 @@ public class CalendarFilterEvaluater {
         the "name" attribute exists in the enclosing calendar
         component;*/
         if(filter.getIsNotDefinedFilter()!=null) {
-            PropertyList props = component.getProperties(filter.getName());
+            PropertyList<Property> props = component.getProperties(filter.getName());
             return props.size()==0;
         }
         
         // Match the property
-        PropertyList props = component.getProperties(filter.getName());
+        PropertyList<Property> props = component.getProperties(filter.getName());
         if(props.size()==0) {
             return false;
         }
@@ -262,12 +259,12 @@ public class CalendarFilterEvaluater {
      * @param filter The param filter.
      * @return The result.
      */
-    private boolean evaluate(PropertyList props, ParamFilter filter) {
+    private boolean evaluate(PropertyList<Property> props, ParamFilter filter) {
         // Evaluate param filter against a set of properties.
         // If any property matches, then evaluation succeeds.
         // This is basically a big OR
-        for(Iterator<Property> it=props.iterator();it.hasNext();) {
-            if(evaulate(it.next(),filter)==true) {
+        for(Property prop : props) {
+            if(evaulate(prop, filter)==true) {
                 return true;
             }
         }
@@ -317,10 +314,9 @@ public class CalendarFilterEvaluater {
      * @param filter The text match filter.
      * @return The property list.
      */
-    private PropertyList evaluate(PropertyList props, TextMatchFilter filter) {
-        PropertyList results = new PropertyList();
-        for(Iterator<Property> it = props.iterator(); it.hasNext();) {
-            Property prop = it.next();
+    private PropertyList<Property> evaluate(PropertyList<Property> props, TextMatchFilter filter) {
+        PropertyList<Property> results = new PropertyList<>();
+        for(Property prop : props) {
             if(evaluate(prop,filter)==true) {
                 results.add(prop);
             }
@@ -398,7 +394,7 @@ public class CalendarFilterEvaluater {
      * @param filter The time range filter.
      * @return the result.
      */
-    private boolean evaluate(ComponentList comps, TimeRangeFilter filter) {
+    private boolean evaluate(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
         
         Component comp = (Component) comps.get(0);
         
@@ -428,12 +424,12 @@ public class CalendarFilterEvaluater {
      * @param filter The time range filter.
      * @return The result.
      */
-    private boolean evaluate(PropertyList props, TimeRangeFilter filter) {
+    private boolean evaluate(PropertyList<Property> props, TimeRangeFilter filter) {
         // Evaluate timerange filter against a set of properties.
         // If any property matches, then evaluation succeeds.
         // This is basically a big OR
-        for(Iterator<Property> it = props.iterator(); it.hasNext();) {
-            if(evaluate(it.next(),filter)==true) {
+        for(Property prop : props) {
+            if(evaluate(prop, filter)==true) {
                 return true;
             }
         }
@@ -464,7 +460,7 @@ public class CalendarFilterEvaluater {
      * @param component The component.
      * @return The component list.
      */
-    private ComponentList getSubComponents(Component component) {
+    private ComponentList<? extends Component> getSubComponents(Component component) {
         if(component instanceof VEvent) {
             return ((VEvent) component).getAlarms();
         }
@@ -475,7 +471,7 @@ public class CalendarFilterEvaluater {
             return ((VToDo) component).getAlarms();
         }
         
-        return new ComponentList();
+        return new ComponentList<>();
     }
     
     /*
@@ -518,7 +514,7 @@ public class CalendarFilterEvaluater {
      * @param filter The time range filter.
      * @return The result.
      */
-    private boolean evaluateVEventTimeRange(ComponentList comps, TimeRangeFilter filter) {
+    private boolean evaluateVEventTimeRange(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
         
         InstanceList instances = new InstanceList();
         if(filter.getTimezone()!=null) {
@@ -526,8 +522,7 @@ public class CalendarFilterEvaluater {
         }
         ArrayList<Component> mods = new ArrayList<Component>();
         
-        for(Iterator<Component> it=comps.iterator();it.hasNext();) {
-            Component comp = it.next();
+        for(Component comp : comps) {
             // Add master first
             if(comp.getProperty(Property.RECURRENCE_ID)==null) {
                 instances.addComponent(comp, filter.getPeriod().getStart(), filter.getPeriod().getEnd());
@@ -596,14 +591,12 @@ public class CalendarFilterEvaluater {
             return instances.size() > 0;
         }
         
-        PropertyList props = freeBusy.getProperties(Property.FREEBUSY);
+        PropertyList<FreeBusy> props = freeBusy.getProperties(Property.FREEBUSY);
         if(props.size()==0) {
             return false;
         }
         
-        Iterator<FreeBusy> it = props.iterator();
-        while(it.hasNext()) {
-            FreeBusy fb = it.next();
+        for (FreeBusy fb : props) {            
             PeriodList periods = fb.getPeriods();
             Iterator<Period> periodIt = periods.iterator();
             while(periodIt.hasNext()) {
@@ -714,12 +707,11 @@ public class CalendarFilterEvaluater {
      * @return The boolean.
      * 
      */
-    private boolean evaulateVToDoTimeRange(ComponentList comps, TimeRangeFilter filter) {
+    private boolean evaulateVToDoTimeRange(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
         ArrayList<Component> mods = new ArrayList<Component>();
         VToDo master = null;
         
-        for(Iterator<Component> it=comps.iterator();it.hasNext();) {
-            Component comp = it.next();
+        for(Component comp : comps) {
             // Add master first
             if(comp.getProperty(Property.RECURRENCE_ID)==null) {
                 master = (VToDo) comp;
@@ -810,7 +802,7 @@ public class CalendarFilterEvaluater {
        @return The result.
      */
             
-    private boolean evaluateVAlarmTimeRange(ComponentList comps, TimeRangeFilter filter) {
+    private boolean evaluateVAlarmTimeRange(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
         
         // VALARAM must have parent VEVENT or VTODO
         Component parent = stack.peek();
@@ -819,8 +811,11 @@ public class CalendarFilterEvaluater {
         }
        
         // See if trigger-time overlaps the time range for each VALARM
-        for(Iterator<Component> it=comps.iterator();it.hasNext();) {
-            VAlarm alarm = (VAlarm) it.next();
+        for(Component component : comps) {
+            if (!(component instanceof VAlarm)) {
+                continue;
+            }
+            VAlarm alarm = (VAlarm) component;
             Trigger trigger = alarm.getTrigger();
             if(trigger==null) {
                 continue;

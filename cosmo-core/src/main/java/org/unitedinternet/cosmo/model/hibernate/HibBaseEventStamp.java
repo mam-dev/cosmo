@@ -368,10 +368,10 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     public List<Recur> getRecurrenceRules() {
         List<Recur> toReturn = new ArrayList<>();
         VEvent event = getEvent();
-        if(event!=null) {
-                PropertyList rruleProperties = event.getProperties().getProperties(Property.RRULE);
-            for (Object rrule : rruleProperties) {
-            	toReturn.add(((RRule)rrule).getRecur());
+        if(event != null) {
+            PropertyList<RRule> rruleProperties = event.getProperties().getProperties(Property.RRULE);
+            for (RRule rrule : rruleProperties) {
+                toReturn.add(rrule.getRecur());
             }
         }
         return toReturn;
@@ -384,14 +384,13 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         if (recurs == null) {
             return;
         }
-        PropertyList pl = getEvent().getProperties();
-        for (RRule rrule : (List<RRule>) pl.getProperties(Property.RRULE)) {
-            pl.remove(rrule);
+        PropertyList<Property> properties = getEvent().getProperties();
+        for (Property rrule : properties.getProperties(Property.RRULE)) {
+            properties.remove(rrule);
         }
         for (Recur recur : recurs) {
-            pl.add(new RRule(recur));
-        }
-      
+            properties.add(new RRule(recur));
+        }      
     }
 
     /* (non-Javadoc)
@@ -410,12 +409,12 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#getExceptionRules()
      */
     public List<Recur> getExceptionRules() {
-        ArrayList<Recur> l = new ArrayList<Recur>();
-        PropertyList exRuleProperties = getEvent().getProperties().getProperties(Property.EXRULE);
-        for (Object exrule : exRuleProperties) {
-            l.add(((ExRule)exrule).getRecur());
+        List<Recur> toReturn = new ArrayList<Recur>();
+        PropertyList<ExRule> exRuleProperties = getEvent().getProperties().getProperties(Property.EXRULE);
+        for (ExRule exrule : exRuleProperties) {
+            toReturn.add(exrule.getRecur());
         }
-        return l;
+        return toReturn;
     }
 
     /* (non-Javadoc)
@@ -425,12 +424,12 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         if (recurs == null) {
             return;
         }
-        PropertyList pl = getEvent().getProperties();
-        for (ExRule exrule : (List<ExRule>) pl.getProperties(Property.EXRULE)) {
-            pl.remove(exrule);
+        PropertyList<Property> properties = getEvent().getProperties();
+        for (Property exrule : properties.getProperties(Property.EXRULE)) {
+            properties.remove(exrule);
         }
         for (Recur recur : recurs) {
-            pl.add(new ExRule(recur));
+            properties.add(new ExRule(recur));
         }
     }
 
@@ -438,28 +437,26 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#getRecurrenceDates()
      */
     public DateList getRecurrenceDates() {
-        
-        DateList l = null;
-        
+        DateList dateList = null;
+
         VEvent event = getEvent();
-        if(event==null) {
+        if (event == null) {
             return null;
         }
-        
-        PropertyList rDateProperties = getEvent().getProperties().getProperties(Property.RDATE);        
-        for (Object rdate : rDateProperties) {
-            if(l==null) {
-                if(Value.DATE.equals(((RDate)rdate).getParameter(Parameter.VALUE))) {
-                    l = new DateList(Value.DATE);
-                }
-                else {
-                    l = new DateList(Value.DATE_TIME, ((RDate)rdate).getDates().getTimeZone());
+
+        PropertyList<RDate> rDateProperties = getEvent().getProperties().getProperties(Property.RDATE);
+        for (RDate rdate : rDateProperties) {
+            if (dateList == null) {
+                if (Value.DATE.equals(rdate.getParameter(Parameter.VALUE))) {
+                    dateList = new DateList(Value.DATE);
+                } else {
+                    dateList = new DateList(Value.DATE_TIME, rdate.getDates().getTimeZone());
                 }
             }
-            l.addAll(((RDate)rdate).getDates());
+            dateList.addAll(rdate.getDates());
         }
-            
-        return l;
+
+        return dateList;
     }
 
     /* (non-Javadoc)
@@ -470,8 +467,8 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
             return;
         }
         
-        PropertyList rdateList = getEvent().getProperties().getProperties(Property.RDATE);
-        for (Object rdate : rdateList) {
+        PropertyList<RDate> rdateList = getEvent().getProperties().getProperties(Property.RDATE);
+        for (RDate rdate : rdateList) {
             rdateList.remove(rdate);
         }
         if (dates.isEmpty()) {
@@ -487,22 +484,22 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#getExceptionDates()
      */
     public DateList getExceptionDates() {
-        DateList l = null;
-        PropertyList exDatesProperties = getEvent().getProperties().getProperties(Property.EXDATE);
+        DateList dateList = null;
+        PropertyList<ExDate> exDatesProperties = getEvent().getProperties().getProperties(Property.EXDATE);
         
-        for (Object exdate : exDatesProperties) {
-            if(l==null) {
-                if(Value.DATE.equals(((ExDate)exdate).getParameter(Parameter.VALUE))) {
-                    l = new DateList(Value.DATE);
+        for (ExDate exdate : exDatesProperties) {
+            if(dateList==null) {
+                if(Value.DATE.equals(exdate.getParameter(Parameter.VALUE))) {
+                    dateList = new DateList(Value.DATE);
                 }
                 else {
-                    l = new DateList(Value.DATE_TIME, ((ExDate)exdate).getDates().getTimeZone());
+                    dateList = new DateList(Value.DATE_TIME, exdate.getDates().getTimeZone());
                 }
             }
-            l.addAll(((ExDate)exdate).getDates());
+            dateList.addAll(exdate.getDates());
         }
             
-        return l;
+        return dateList;
     }
     
     /* (non-Javadoc)
@@ -519,11 +516,11 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     }
     
     protected VAlarm getDisplayAlarm(VEvent event) {
-        ComponentList alarmsList = event.getAlarms();
-        for(Object alarm: alarmsList) {
-            if (((VAlarm)alarm).getProperties().getProperty(Property.ACTION).equals(
+        ComponentList<VAlarm> alarmsList = event.getAlarms();
+        for(VAlarm alarm: alarmsList) {
+            if (alarm.getProperties().getProperty(Property.ACTION).equals(
                     Action.DISPLAY)) {
-                return (VAlarm)alarm;
+                return alarm;
             }
         }
         
@@ -540,9 +537,9 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
             return;
         }
          
-        ComponentList alarmsList = event.getAlarms();
-        for(Object alarm: alarmsList) {
-            if (((VAlarm)alarm).getProperties().getProperty(Property.ACTION).equals(
+        ComponentList<VAlarm> alarmsList = event.getAlarms();
+        for(VAlarm alarm: alarmsList) {
+            if (alarm.getProperties().getProperty(Property.ACTION).equals(
                     Action.DISPLAY)) {
                 alarmsList.remove(alarm);
             }
@@ -735,9 +732,9 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
             return;
         }
         
-        PropertyList pl = getEvent().getProperties();
-        for (ExDate exdate : (List<ExDate>) pl.getProperties(Property.EXDATE)) {
-            pl.remove(exdate);
+        PropertyList<Property> properties = getEvent().getProperties();
+        for (Property exdate : properties.getProperties(Property.EXDATE)) {
+            properties.remove(exdate);
         }
         if (dates.isEmpty()) {
             return;
@@ -745,7 +742,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         
         ExDate exDate = new ExDate(dates);
         setDateListPropertyValue(exDate);
-        pl.add(exDate);
+        properties.add(exDate);
     }
 
     /* (non-Javadoc)

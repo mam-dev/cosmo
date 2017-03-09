@@ -574,7 +574,7 @@ public class ICalendarUtils {
      * @param component The component.
      * @return list of subcomponents
      */
-    public static ComponentList getSubComponents(Component component) {
+    public static ComponentList<?> getSubComponents(Component component) {
         if(component instanceof VEvent) {
             return ((VEvent) component).getAlarms();
         }
@@ -585,7 +585,7 @@ public class ICalendarUtils {
             return ((VToDo) component).getAlarms();
         }
         
-        return new ComponentList();
+        return new ComponentList<>();
     }
     
     /**
@@ -700,7 +700,7 @@ public class ICalendarUtils {
      * @return first DISPLAY VALARM, null if there is none
      */
     public static VAlarm getDisplayAlarm(Component component) {
-        ComponentList alarms = null;
+        ComponentList<VAlarm> alarms = null;
         
         if(component instanceof VEvent) {
             alarms = ((VEvent) component).getAlarms();

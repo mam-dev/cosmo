@@ -90,14 +90,12 @@ public class FreeBusyUtils {
             return instances.size() > 0;
         }
         
-        PropertyList props = freeBusy.getProperties(Property.FREEBUSY);
+        PropertyList<FreeBusy> props = freeBusy.getProperties(Property.FREEBUSY);
         if (props.size()==0) {
             return false;
         }
         
-        Iterator<FreeBusy> it = props.iterator();
-        while(it.hasNext()) {
-            FreeBusy fb = it.next();
+        for (FreeBusy fb: props) {            
             PeriodList periods = fb.getPeriods();
             Iterator<Period> periodIt = periods.iterator();
             while(periodIt.hasNext()) {
@@ -130,9 +128,8 @@ public class FreeBusyUtils {
         PeriodList busyUnavailablePeriods = new PeriodList();
         
         for(VFreeBusy vfb: components) {
-            PropertyList props = vfb.getProperties(Property.FREEBUSY);
-            for(Iterator it = props.iterator();it.hasNext();) {
-                FreeBusy fb = (FreeBusy) it.next();
+            PropertyList<FreeBusy> props = vfb.getProperties(Property.FREEBUSY);
+            for(FreeBusy fb : props) {                
                 FbType fbt = (FbType)
                     fb.getParameters().getParameter(Parameter.FBTYPE);
                 if (fbt == null || FbType.BUSY.equals(fbt)) {

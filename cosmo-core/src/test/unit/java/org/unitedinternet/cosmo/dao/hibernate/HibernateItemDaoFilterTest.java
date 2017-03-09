@@ -19,13 +19,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
@@ -45,17 +45,15 @@ import org.unitedinternet.cosmo.model.hibernate.HibCalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibEventStamp;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Period;
 
 /**
  * Test findItems() api in ItemDao.
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration
 @Transactional
 public class HibernateItemDaoFilterTest extends AbstractHibernateDaoTestCase {
 

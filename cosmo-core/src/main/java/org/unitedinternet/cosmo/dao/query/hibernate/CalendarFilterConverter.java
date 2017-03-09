@@ -15,8 +15,6 @@
  */
 package org.unitedinternet.cosmo.dao.query.hibernate;
 
-import java.util.Iterator;
-
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.ComponentFilter;
 import org.unitedinternet.cosmo.calendar.query.ParamFilter;
@@ -70,8 +68,7 @@ public class CalendarFilterConverter {
             throw new IllegalArgumentException("Unsupported component filter: " + rootFilter.getName());
         }
 
-        for (Iterator it = rootFilter.getComponentFilters().iterator(); it.hasNext(); ) {
-            ComponentFilter compFilter = (ComponentFilter) it.next();
+        for (ComponentFilter compFilter : rootFilter.getComponentFilters()) {
             handleCompFilter(compFilter, itemFilter);
         }
 
@@ -142,13 +139,11 @@ public class CalendarFilterConverter {
             }
         }
 
-        for (Iterator it = compFilter.getComponentFilters().iterator(); it.hasNext(); ) {
-            ComponentFilter subComp = (ComponentFilter) it.next();
+        for (ComponentFilter subComp : compFilter.getComponentFilters()) {
             throw new IllegalArgumentException("unsupported sub component filter: " + subComp.getName());
         }
 
-        for (Iterator it = compFilter.getPropFilters().iterator(); it.hasNext(); ) {
-            PropertyFilter propFilter = (PropertyFilter) it.next();
+        for (PropertyFilter propFilter : compFilter.getPropFilters()) {
             handleEventPropFilter(propFilter, itemFilter);
         }
     }
@@ -168,8 +163,7 @@ public class CalendarFilterConverter {
 
     private void handleUidPropFilter(PropertyFilter propFilter, NoteItemFilter itemFilter) {
 
-        for (Iterator it = propFilter.getParamFilters().iterator(); it.hasNext(); ) {
-            ParamFilter paramFilter = (ParamFilter) it.next();
+        for (ParamFilter paramFilter : propFilter.getParamFilters()) {
             throw new IllegalArgumentException("unsupported param filter: " + paramFilter.getName());
         }
 
@@ -195,8 +189,7 @@ public class CalendarFilterConverter {
 
     private void handleDescriptionPropFilter(PropertyFilter propFilter, NoteItemFilter itemFilter) {
 
-        for (Iterator it = propFilter.getParamFilters().iterator(); it.hasNext(); ) {
-            ParamFilter paramFilter = (ParamFilter) it.next();
+        for (ParamFilter paramFilter : propFilter.getParamFilters()) {            
             throw new IllegalArgumentException("unsupported param filter: " + paramFilter.getName());
         }
 
@@ -222,8 +215,7 @@ public class CalendarFilterConverter {
 
     private void handleSummaryPropFilter(PropertyFilter propFilter, NoteItemFilter itemFilter) {
 
-        for (Iterator it = propFilter.getParamFilters().iterator(); it.hasNext(); ) {
-            ParamFilter paramFilter = (ParamFilter) it.next();
+        for ( ParamFilter paramFilter : propFilter.getParamFilters()) {
             throw new IllegalArgumentException("unsupported param filter: " + paramFilter.getName());
         }
 

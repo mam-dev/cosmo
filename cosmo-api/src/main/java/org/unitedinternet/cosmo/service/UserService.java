@@ -17,17 +17,13 @@ package org.unitedinternet.cosmo.service;
 
 import java.util.Set;
 
-import org.unitedinternet.cosmo.model.PagedList;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.filter.PageCriteria;
 
 /**
  * Interface for services that manage user accounts.
  */
 public interface UserService extends Service {
-
-
 
     /**
      * Returns the user account identified by the given username.
@@ -38,8 +34,6 @@ public interface UserService extends Service {
      * exist
      */
     public User getUser(String username);
-
-    
 
     /**
      * Returns the user account identified by the given email address.
