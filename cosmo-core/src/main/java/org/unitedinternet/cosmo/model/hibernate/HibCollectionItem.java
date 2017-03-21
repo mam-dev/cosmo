@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,8 +71,6 @@ public class HibCollectionItem extends HibItem implements CollectionItem {
         for(CollectionItemDetails cid: childDetails) {
             children.add(cid.getItem());
         }
-
-        children = Collections.unmodifiableSet(children);
 
         return children;
     }
