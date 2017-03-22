@@ -60,6 +60,22 @@ public class ContextServiceExtensionsAdvice {
         
     }
     
+    
+    /**
+     * Method called when events are imported.
+     */
+    @Around("execution(* org.unitedinternet.cosmo.service.ContentService.createBatchContentItems(..)) &&"
+            + "args(parent, contentItems)")
+    public Object createBatchContentItems(ProceedingJoinPoint pjp,
+            CollectionItem parent, Set<ContentItem> contentItems)
+            throws Throwable {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("in createContent(parent, contentItems)");
+        }
+
+        return handleCreateContentsItemsInternal(pjp, parent, contentItems);
+    }
 
     /**
      * Method called when an event is added.
@@ -136,6 +152,22 @@ public class ContextServiceExtensionsAdvice {
         return removeItemsFromCollectionInternal(pjp, collection, items);
     }
 
+    /**
+     * Method called when an event is removed.
+     */
+    @Around("execution(* org.unitedinternet.cosmo.service.ContentService.removeBatchContentItems(..)) &&"
+            + "args(parent, contentItems)")
+    public Object removeBatchContentItems(ProceedingJoinPoint pjp, CollectionItem parent, 
+            Set<ContentItem> contentItems) throws Throwable {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("in removeItemFromCollection(item, collection)");
+        }
+        Set<Item> items = new HashSet<Item>();
+        items.addAll(contentItems);
+
+        return removeItemsFromCollectionInternal(pjp, parent, items);
+    }
+    
     /**
      * Method called when an event is removed.
      */
