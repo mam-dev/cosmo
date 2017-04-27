@@ -26,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceFactory;
+import org.apache.jackrabbit.webdav.DavResourceIterator;
+import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.DavResourceLocator;
 import org.apache.jackrabbit.webdav.DavSession;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -44,6 +46,10 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.PropEntry;
+import org.apache.jackrabbit.webdav.version.OptionsInfo;
+import org.apache.jackrabbit.webdav.version.OptionsResponse;
+import org.apache.jackrabbit.webdav.version.report.Report;
+import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
@@ -56,6 +62,7 @@ import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.property.Acl;
@@ -75,7 +82,10 @@ import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.MessageStamp;
+import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
@@ -87,6 +97,8 @@ public abstract class CalDavResourceBase implements CalDavResource {
 
 	private static final HashSet<DavPropertyName> LIVE_PROPERTIES = new HashSet<>(0);
 	private static final Set<ReportType> REPORT_TYPES = new HashSet<>(0);
+	
+	static final Set<String> DEAD_PROPERTY_FILTER = new HashSet<String>();
 
 	static {
 		registerLiveProperty(SUPPORTEDREPORTSET);
@@ -102,10 +114,19 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		registerLiveProperty(PRINCIPALCOLLECTIONSET);
 		registerLiveProperty(UUID);
 		registerLiveProperty(TICKETDISCOVERY);
+		
+		 DEAD_PROPERTY_FILTER.add(NoteItem.class.getName());
+	     DEAD_PROPERTY_FILTER.add(MessageStamp.class.getName());
 	}
 
 	private boolean initialized;
 	private DavPropertySet properties;
+	private DavAcl acl;
+	private CosmoSecurityManager securityManager;
+	private ContentService contentService;
+	private DavResourceFactory factory;
+	private Item item;
+	private EntityFactory entityFactory;
 
 	/**
 	 * <p>
@@ -238,12 +259,6 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		// nothing is lockable at the moment
 		throw new UnsupportedOperationException();
 	}
-
-	@Override
-	public abstract DavResourceFactory getFactory();
-
-	@Override
-	public abstract DavSession getSession();
 
 	@Override
 	public String getETag() {
@@ -562,6 +577,8 @@ public abstract class CalDavResourceBase implements CalDavResource {
 
 	        getProperties().remove(name);
 	    }
+	 
+	
 
 	protected abstract void setDeadProperty(WebDavProperty property) throws CosmoDavException;
 
@@ -569,7 +586,9 @@ public abstract class CalDavResourceBase implements CalDavResource {
 
 	protected abstract void updateItem() throws CosmoDavException;
 
-	protected abstract ContentService getContentService();
+	protected ContentService getContentService(){
+		return contentService;
+	}
 
 	/**
 	 * Sets a live DAV property on the resource on resource initialization.
@@ -661,7 +680,9 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	 * principal is an admin user, returns {@link DavPrivilege#ALL}.
 	 * </p>
 	 */
-	protected abstract CosmoSecurityManager getSecurityManager();
+	protected CosmoSecurityManager getSecurityManager(){
+		return securityManager;
+	}
 
 	/**
 	 * <p>
@@ -719,7 +740,9 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		return privileges;
 	}
 
-	protected abstract DavAcl getAcl();
+	protected  DavAcl getAcl(){
+		return acl;
+	}
 	 /**
      * Returns the set of resource types for this resource.
      */
@@ -816,5 +839,96 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	 */
 	protected boolean isLiveProperty(DavPropertyName name) {
 		return LIVE_PROPERTIES.contains(name);
+	}
+	
+	@Override
+	public DavSession getSession() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public DavResourceFactory getFactory() {
+		return factory;
+	}
+	
+    public void removeMember(DavResource member) throws DavException {
+            throw new UnsupportedOperationException();
+     }
+    
+    public DavResourceIterator getMembers() {
+        // while it would be ideal to throw an UnsupportedOperationException,
+        // MultiStatus tries to add a MultiStatusResponse for every member
+        // of a WebDavResource regardless of whether or not it's a collection,
+        // so we need to return an empty iterator.
+        return new DavResourceIteratorImpl(new ArrayList<DavResource>());
+    }
+    
+    public void addMember(DavResource member, InputContext inputContext)throws DavException {
+    	throw new UnsupportedOperationException();
+    }
+    
+    public String getDisplayName() {
+        return getItem().getDisplayName();
+    }
+    
+    public boolean exists() {
+        return getItem()!= null && getItem().getUid() != null;
+    }
+    
+    @Override
+    public WebDavResource[] getReferenceResources(DavPropertyName hrefPropertyName) {
+    	return new WebDavResource[]{};
+    }
+    
+    @Override
+    public void addWorkspace(org.apache.jackrabbit.webdav.DavResource workspace) {
+    	
+    }
+    
+    public Report getReport(ReportInfo reportInfo)
+            throws CosmoDavException {
+            if (! exists()) {
+                throw new NotFoundException();
+            }
+
+            if (! isSupportedReport(reportInfo)) {
+                throw new UnprocessableEntityException("Unknown report " + reportInfo.getReportName());
+            }
+
+            try {
+            	return ReportType.getType(reportInfo).createReport(this, reportInfo);
+            } catch (DavException e){
+                if (e instanceof CosmoDavException) {
+                    throw (CosmoDavException) e;
+                }
+                throw new CosmoDavException(e);
+            }
+        }
+    
+    protected boolean isSupportedReport(ReportInfo info) {
+        for (Iterator<ReportType> i=getReportTypes().iterator(); i.hasNext();) {
+            if (i.next().isRequestedReportType(info)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public OptionsResponse getOptionResponse(OptionsInfo optionsInfo){
+    	return null;
+    }
+    
+    public void setItem(Item item) throws CosmoDavException {
+        this.item = item;
+        loadProperties();
+    }
+    
+    public Item getItem() {
+        return item;
+    }
+
+	public EntityFactory getEntityFactory() {
+		return entityFactory;
 	}
 }

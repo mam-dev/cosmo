@@ -1,5 +1,48 @@
 package org.unitedinternet.cosmo.dav.impl.parallel;
 
-public class FreeBusyFile extends CalDavFileBase{
+import org.unitedinternet.cosmo.dav.CosmoDavException;
+import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.model.FreeBusyItem;
+import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+
+public class FreeBusyFile extends CalDavFileBase{
+	public Calendar getCalendar() {
+        FreeBusyItem freeBusy = (FreeBusyItem) getItem();
+        return freeBusy.getFreeBusyCalendar();
+    }
+
+    /**
+     * <p>
+     * Imports a calendar object containing a VFREEBUSY. 
+     * </p>
+     * @return The calendar imported.
+     * @throws CosmoDavException - if something is wrong this exception is thrown.
+     */
+    public void setCalendar(Calendar cal) throws CosmoDavException {
+        FreeBusyItem freeBusy = (FreeBusyItem) getItem();
+        
+        VFreeBusy vfb = (VFreeBusy) cal.getComponent(Component.VFREEBUSY);
+        if (vfb==null) {
+            throw new UnprocessableEntityException("VCALENDAR does not contain a VFREEBUSY");
+        }
+
+        EntityConverter converter = new EntityConverter(getEntityFactory());
+        converter.convertFreeBusyCalendar(freeBusy, cal);
+    }
+
+    @Override
+    public boolean isCollection() {
+        return false;
+    }
+
+	@Override
+	public CalDavResource getParent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
