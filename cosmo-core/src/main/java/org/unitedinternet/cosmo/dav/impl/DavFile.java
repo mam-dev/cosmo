@@ -124,7 +124,7 @@ public class DavFile extends DavContentBase {
 
     
     /** */
-    protected void populateItem(InputContext inputContext)
+    public void populateItem(InputContext inputContext)
         throws CosmoDavException {
         super.populateItem(inputContext);
 

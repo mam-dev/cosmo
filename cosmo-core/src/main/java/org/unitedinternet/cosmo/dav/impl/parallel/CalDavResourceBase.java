@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.webdav.DavException;
+import org.apache.jackrabbit.webdav.DavLocatorFactory;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
@@ -57,12 +58,12 @@ import org.unitedinternet.cosmo.dao.ItemNotFoundException;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.ExistsException;
+import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.property.Acl;
@@ -82,6 +83,7 @@ import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
+import org.unitedinternet.cosmo.model.DataSizeException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.MessageStamp;
@@ -92,6 +94,7 @@ import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.util.PathUtil;
+import org.w3c.dom.Element;
 
 public abstract class CalDavResourceBase implements CalDavResource {
 
@@ -127,6 +130,10 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	private DavResourceFactory factory;
 	private Item item;
 	private EntityFactory entityFactory;
+	
+	protected DavLocatorFactory davLocatorFactory = null;
+	 protected DavResourceLocator locator = null;
+     protected DavResourceFactory davResourceFactory = null;
 
 	/**
 	 * <p>
@@ -578,11 +585,6 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	        getProperties().remove(name);
 	    }
 	 
-	
-
-	protected abstract void setDeadProperty(WebDavProperty property) throws CosmoDavException;
-
-	protected abstract void removeDeadProperty(DavPropertyName name) throws CosmoDavException;
 
 	protected abstract void updateItem() throws CosmoDavException;
 
@@ -877,8 +879,8 @@ public abstract class CalDavResourceBase implements CalDavResource {
     }
     
     @Override
-    public WebDavResource[] getReferenceResources(DavPropertyName hrefPropertyName) {
-    	return new WebDavResource[]{};
+    public DavResource[] getReferenceResources(DavPropertyName hrefPropertyName) {
+    	return new DavResource[]{};
     }
     
     @Override
@@ -913,6 +915,49 @@ public abstract class CalDavResourceBase implements CalDavResource {
             }
         }
         return false;
+    }
+ 
+    protected void removeDeadProperty(DavPropertyName name) throws CosmoDavException {
+
+        getItem().removeAttribute(propNameToQName(name));
+    }
+ 
+    protected void setDeadProperty(WebDavProperty property)
+            throws CosmoDavException {
+        
+
+        if (property.getValue() == null) {
+            throw new UnprocessableEntityException("Property "
+                    + property.getName() + " requires a value");
+        }
+
+        try {
+        	org.unitedinternet.cosmo.model.QName qname = propNameToQName(property.getName());
+            Element value = (Element) property.getValue();
+            Attribute attr = getItem().getAttribute(qname);
+
+            // first check for existing attribute otherwise add
+            if (attr != null) {
+                attr.setValue(value);
+            } else {
+                getItem().addAttribute(entityFactory.createXMLAttribute(qname, value));
+            }
+        } catch (DataSizeException e) {
+            throw new ForbiddenException(e.getMessage());
+        }
+    }
+
+    
+    protected org.unitedinternet.cosmo.model.QName propNameToQName(DavPropertyName name) {
+        if (name == null) {
+            final String msg = "name cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+
+        Namespace ns = name.getNamespace();
+        String uri = ns != null ? ns.getURI() : "";
+
+        return entityFactory.createQName(uri, name.getName());
     }
     
     public OptionsResponse getOptionResponse(OptionsInfo optionsInfo){

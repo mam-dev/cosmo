@@ -117,7 +117,7 @@ public abstract class DavContentBase extends DavItemResourceBase
     }
 
     /** */
-    protected void populateItem(InputContext inputContext)
+    public void populateItem(InputContext inputContext)
         throws CosmoDavException {
         super.populateItem(inputContext);
 

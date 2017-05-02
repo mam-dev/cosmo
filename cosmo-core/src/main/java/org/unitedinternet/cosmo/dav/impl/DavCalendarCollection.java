@@ -222,7 +222,7 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
     }
 
     /** */
-    protected void populateItem(InputContext inputContext) throws CosmoDavException {
+    public void populateItem(InputContext inputContext) throws CosmoDavException {
         super.populateItem(inputContext);
 
         CalendarCollectionStamp cc = getCalendarCollectionStamp();

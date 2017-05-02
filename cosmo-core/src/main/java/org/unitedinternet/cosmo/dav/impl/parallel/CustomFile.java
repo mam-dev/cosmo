@@ -170,14 +170,12 @@ public class CustomFile extends CalDavFileBase{
 
 			@Override
 			public Calendar getCalendar() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
 
 			@Override
 			protected void setCalendar(Calendar calendar) throws CosmoDavException {
-				// TODO Auto-generated method stub
 				
 			}
 }

@@ -262,48 +262,7 @@ public abstract class CalDavFileBase extends CalDavResourceBase implements CalDa
 	        return new HashSet<QName>();
 	    }
 	    
-	    protected void removeDeadProperty(DavPropertyName name) throws CosmoDavException {
 
-	        getItem().removeAttribute(propNameToQName(name));
-	    }
-	    
-	    private org.unitedinternet.cosmo.model.QName propNameToQName(DavPropertyName name) {
-	        if (name == null) {
-	            final String msg = "name cannot be null";
-	            throw new IllegalArgumentException(msg);
-	        }
-
-	        Namespace ns = name.getNamespace();
-	        String uri = ns != null ? ns.getURI() : "";
-
-	        return entityFactory.createQName(uri, name.getName());
-	    }
-	    
-	    protected void setDeadProperty(WebDavProperty property)
-	            throws CosmoDavException {
-	        
-
-	        if (property.getValue() == null) {
-	            throw new UnprocessableEntityException("Property "
-	                    + property.getName() + " requires a value");
-	        }
-
-	        try {
-	        	org.unitedinternet.cosmo.model.QName qname = propNameToQName(property.getName());
-	            Element value = (Element) property.getValue();
-	            Attribute attr = getItem().getAttribute(qname);
-
-	            // first check for existing attribute otherwise add
-	            if (attr != null) {
-	                attr.setValue(value);
-	            } else {
-	                getItem().addAttribute(entityFactory.createXMLAttribute(qname, value));
-	            }
-	        } catch (DataSizeException e) {
-	            throw new ForbiddenException(e.getMessage());
-	        }
-	    }
-	    
 	    @Override
 		public boolean isCollection() {
 			// TODO Auto-generated method stub

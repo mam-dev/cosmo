@@ -116,7 +116,7 @@ public abstract class DavCalendarResource extends DavContentBase
     // DavResourceBase methods
 
     @Override
-    protected void populateItem(InputContext inputContext)
+    public void populateItem(InputContext inputContext)
         throws CosmoDavException {
         super.populateItem(inputContext);
 

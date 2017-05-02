@@ -367,7 +367,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
      * Sets the properties of the item backing this resource from the given
      * input context.
      */
-    protected void populateItem(InputContext inputContext)
+    public void populateItem(InputContext inputContext)
             throws CosmoDavException {
         if (log.isDebugEnabled()) {
             log.debug("populating item for " + getResourcePath());
@@ -409,7 +409,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
      * Sets the attributes the item backing this resource from the given
      * property set.
      */
-    protected MultiStatusResponse populateAttributes(DavPropertySet properties) {
+    public MultiStatusResponse populateAttributes(DavPropertySet properties) {
         if (log.isDebugEnabled()) {
             log.debug("populating attributes for " + getResourcePath());
         }
