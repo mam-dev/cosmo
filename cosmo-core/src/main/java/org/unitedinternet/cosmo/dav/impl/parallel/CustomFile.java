@@ -13,18 +13,32 @@ import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.ContentLanguage;
 import org.unitedinternet.cosmo.dav.property.ContentLength;
 import org.unitedinternet.cosmo.dav.property.ContentType;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.DataSizeException;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.FileItem;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 
 import net.fortuna.ical4j.model.Calendar;
 
 public class CustomFile extends CalDavFileBase{
-	 public void writeTo(OutputContext outputContext)
+	 
+
+
+	public CustomFile(FileItem item, 
+						CalDavResourceLocator calDavResourceLocator,
+						CalDavResourceFactory calDavResourceFactory, 
+						EntityFactory entityFactory) {
+		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
+	}
+
+
+	public void writeTo(OutputContext outputContext)
 		        throws CosmoDavException, IOException {
 		        if (! exists()) {
 		            throw new IllegalStateException("cannot spool a nonexistent resource");

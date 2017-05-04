@@ -120,7 +120,7 @@ public class DefaultCalDavResourceLocator implements CalDavResourceLocator{
 	}
 
 	@Override
-	public DavResourceLocator getParentLocator() {
+	public CalDavResourceLocator getParentLocator() {
 		return factory.createResourceLocatorByPath(context,
                 PathUtil.getParentPath(path));
 	}

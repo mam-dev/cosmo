@@ -24,7 +24,6 @@ import java.util.Set;
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.webdav.DavException;
-import org.apache.jackrabbit.webdav.DavLocatorFactory;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
@@ -70,6 +69,9 @@ import org.unitedinternet.cosmo.dav.acl.property.Acl;
 import org.unitedinternet.cosmo.dav.acl.property.CurrentUserPrivilegeSet;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocatorFactory;
 import org.unitedinternet.cosmo.dav.property.CreationDate;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.Etag;
@@ -100,7 +102,7 @@ public abstract class CalDavResourceBase implements CalDavResource {
 
 	private static final HashSet<DavPropertyName> LIVE_PROPERTIES = new HashSet<>(0);
 	private static final Set<ReportType> REPORT_TYPES = new HashSet<>(0);
-	
+
 	static final Set<String> DEAD_PROPERTY_FILTER = new HashSet<String>();
 
 	static {
@@ -117,9 +119,9 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		registerLiveProperty(PRINCIPALCOLLECTIONSET);
 		registerLiveProperty(UUID);
 		registerLiveProperty(TICKETDISCOVERY);
-		
-		 DEAD_PROPERTY_FILTER.add(NoteItem.class.getName());
-	     DEAD_PROPERTY_FILTER.add(MessageStamp.class.getName());
+
+		DEAD_PROPERTY_FILTER.add(NoteItem.class.getName());
+		DEAD_PROPERTY_FILTER.add(MessageStamp.class.getName());
 	}
 
 	private boolean initialized;
@@ -130,11 +132,22 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	private DavResourceFactory factory;
 	private Item item;
 	private EntityFactory entityFactory;
-	
-	protected DavLocatorFactory davLocatorFactory = null;
-	 protected DavResourceLocator locator = null;
-     protected DavResourceFactory davResourceFactory = null;
 
+	protected CalDavResourceLocatorFactory calDavLocatorFactory = null;
+	protected CalDavResourceLocator calDavResourceLocator = null;
+	protected CalDavResourceFactory calDavResourceFactory = null;
+
+	
+	public CalDavResourceBase (Item item, 
+								CalDavResourceLocator calDavResourceLocator,
+								CalDavResourceFactory calDavResourceFactory, 
+								EntityFactory entityFactory){
+		this.item = item;
+		this.calDavResourceLocator = calDavResourceLocator;
+		this.calDavResourceFactory = calDavResourceFactory;
+		this.entityFactory = entityFactory;
+	}
+	
 	/**
 	 * <p>
 	 * Registers the name of a live property.
@@ -565,30 +578,25 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		return msr;
 	}
 
-	 protected void removeLiveProperty(DavPropertyName name)
-	            throws CosmoDavException {
-	        if (getItem() == null) {
-	            return;
-	        }
+	protected void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
+		if (getItem() == null) {
+			return;
+		}
 
-	        if (name.equals(DavPropertyName.CREATIONDATE)
-	                || name.equals(DavPropertyName.GETLASTMODIFIED)
-	                || name.equals(DavPropertyName.GETETAG)
-	                || name.equals(DavPropertyName.DISPLAYNAME)
-	                || name.equals(DavPropertyName.RESOURCETYPE)
-	                || name.equals(DavPropertyName.ISCOLLECTION)
-	                || name.equals(OWNER) || name.equals(PRINCIPALCOLLECTIONSET)
-	                || name.equals(TICKETDISCOVERY) || name.equals(UUID)) {
-	            throw new ProtectedPropertyModificationException(name);
-	        }
+		if (name.equals(DavPropertyName.CREATIONDATE) || name.equals(DavPropertyName.GETLASTMODIFIED)
+				|| name.equals(DavPropertyName.GETETAG) || name.equals(DavPropertyName.DISPLAYNAME)
+				|| name.equals(DavPropertyName.RESOURCETYPE) || name.equals(DavPropertyName.ISCOLLECTION)
+				|| name.equals(OWNER) || name.equals(PRINCIPALCOLLECTIONSET) || name.equals(TICKETDISCOVERY)
+				|| name.equals(UUID)) {
+			throw new ProtectedPropertyModificationException(name);
+		}
 
-	        getProperties().remove(name);
-	    }
-	 
+		getProperties().remove(name);
+	}
 
 	protected abstract void updateItem() throws CosmoDavException;
 
-	protected ContentService getContentService(){
+	protected ContentService getContentService() {
 		return contentService;
 	}
 
@@ -603,33 +611,28 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	 *             for a property that does not accept them or if an invalid
 	 *             value is specified
 	 */
-	 protected void setLiveProperty(WebDavProperty property, boolean create)
-	            throws CosmoDavException {
-		 	Item item = getItem();
-	        if (item == null) {
-	            return;
-	        }
+	protected void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
+		Item item = getItem();
+		if (item == null) {
+			return;
+		}
 
-	        DavPropertyName name = property.getName();
-	        if (property.getValue() == null) {
-	            throw new UnprocessableEntityException("Property " + name
-	                    + " requires a value");
-	        }
+		DavPropertyName name = property.getName();
+		if (property.getValue() == null) {
+			throw new UnprocessableEntityException("Property " + name + " requires a value");
+		}
 
-	        if (name.equals(DavPropertyName.CREATIONDATE)
-	                || name.equals(DavPropertyName.GETLASTMODIFIED)
-	                || name.equals(DavPropertyName.GETETAG)
-	                || name.equals(DavPropertyName.RESOURCETYPE)
-	                || name.equals(DavPropertyName.ISCOLLECTION)
-	                || name.equals(OWNER) || name.equals(PRINCIPALCOLLECTIONSET)
-	                || name.equals(TICKETDISCOVERY) || name.equals(UUID)) {
-	            throw new ProtectedPropertyModificationException(name);
-	        }
+		if (name.equals(DavPropertyName.CREATIONDATE) || name.equals(DavPropertyName.GETLASTMODIFIED)
+				|| name.equals(DavPropertyName.GETETAG) || name.equals(DavPropertyName.RESOURCETYPE)
+				|| name.equals(DavPropertyName.ISCOLLECTION) || name.equals(OWNER)
+				|| name.equals(PRINCIPALCOLLECTIONSET) || name.equals(TICKETDISCOVERY) || name.equals(UUID)) {
+			throw new ProtectedPropertyModificationException(name);
+		}
 
-	        if (name.equals(DavPropertyName.DISPLAYNAME)) {
-	            item.setDisplayName(property.getValueText());
-	        }
-	    }
+		if (name.equals(DavPropertyName.DISPLAYNAME)) {
+			item.setDisplayName(property.getValueText());
+		}
+	}
 
 	/**
 	 * Calls {@link #setLiveProperty(WebDavProperty)} or
@@ -682,7 +685,7 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	 * principal is an admin user, returns {@link DavPrivilege#ALL}.
 	 * </p>
 	 */
-	protected CosmoSecurityManager getSecurityManager(){
+	protected CosmoSecurityManager getSecurityManager() {
 		return securityManager;
 	}
 
@@ -742,75 +745,81 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		return privileges;
 	}
 
-	protected  DavAcl getAcl(){
+	protected DavAcl getAcl() {
 		return acl;
 	}
-	 /**
-     * Returns the set of resource types for this resource.
-     */
-	
-	protected void loadLiveProperties(DavPropertySet properties) {
-		Item item = getItem();
-        if (item == null) {
-            return;
-        }
-
-        properties.add(new CreationDate(item.getCreationDate()));
-        properties.add(new LastModified(item.getModifiedDate()));
-        properties.add(new Etag(getETag()));
-        properties.add(new DisplayName(getDisplayName()));
-        properties.add(new ResourceType(getResourceTypes()));
-        properties.add(new IsCollection(isCollection()));
-        //TODO: change the way commented objects are created
-       /* properties.add(new Owner(getResourceLocator(), item.getOwner()));
-        properties.add(new PrincipalCollectionSet(getResourceLocator()));
-        properties.add(new TicketDiscovery(getResourceLocator(), getTickets()));*/
-        properties.add(new Uuid(item.getUid()));
-    }
 
 	/**
-     * Returns a list of names of <code>Attribute</code>s that should not be
-     * exposed through DAV as dead properties.
-     */
-    protected abstract Set<String> getDeadPropertyFilter();
-    
-    /**
-     * Returns the set of resource types for this resource.
-     */
-    protected abstract Set<javax.xml.namespace.QName> getResourceTypes();
-    
-    protected void loadDeadProperties(DavPropertySet properties) {
-        for (Iterator<Map.Entry<QName, Attribute>> i = getItem().getAttributes().entrySet().iterator(); i.hasNext();) {
-            Map.Entry<QName, Attribute> entry = i.next();
+	 * Returns the set of resource types for this resource.
+	 */
 
-            // skip attributes that are not meant to be shown as dead
-            // properties
-            if (getDeadPropertyFilter().contains(entry.getKey().getNamespace())) {
-                continue;
-            }
+	protected void loadLiveProperties(DavPropertySet properties) {
+		Item item = getItem();
+		if (item == null) {
+			return;
+		}
 
-            DavPropertyName propName = qNameToPropName(entry.getKey());
+		properties.add(new CreationDate(item.getCreationDate()));
+		properties.add(new LastModified(item.getModifiedDate()));
+		properties.add(new Etag(getETag()));
+		properties.add(new DisplayName(getDisplayName()));
+		properties.add(new ResourceType(getResourceTypes()));
+		properties.add(new IsCollection(isCollection()));
+		// TODO: change the way commented objects are created
+		/*
+		 * properties.add(new Owner(getResourceLocator(), item.getOwner()));
+		 * properties.add(new PrincipalCollectionSet(getResourceLocator()));
+		 * properties.add(new TicketDiscovery(getResourceLocator(),
+		 * getTickets()));
+		 */
+		properties.add(new Uuid(item.getUid()));
+	}
 
-            // ignore live properties, as they'll be loaded separately
-            if (isLiveProperty(propName)) {
-                continue;
-            }
+	/**
+	 * Returns a list of names of <code>Attribute</code>s that should not be
+	 * exposed through DAV as dead properties.
+	 */
+	protected abstract Set<String> getDeadPropertyFilter();
 
-            // XXX: language
-            Object propValue = entry.getValue().getValue();
-            properties.add(new StandardDavProperty(propName, propValue, false));
-        }
-    }
-    private DavPropertyName qNameToPropName(QName qname) {
-        // no namespace at all
-        if ("".equals(qname.getNamespace())) {
-            return DavPropertyName.create(qname.getLocalName());
-        }
+	/**
+	 * Returns the set of resource types for this resource.
+	 */
+	protected abstract Set<javax.xml.namespace.QName> getResourceTypes();
 
-        Namespace ns = Namespace.getNamespace(qname.getNamespace());
+	protected void loadDeadProperties(DavPropertySet properties) {
+		for (Iterator<Map.Entry<QName, Attribute>> i = getItem().getAttributes().entrySet().iterator(); i.hasNext();) {
+			Map.Entry<QName, Attribute> entry = i.next();
 
-        return DavPropertyName.create(qname.getLocalName(), ns);
-    }
+			// skip attributes that are not meant to be shown as dead
+			// properties
+			if (getDeadPropertyFilter().contains(entry.getKey().getNamespace())) {
+				continue;
+			}
+
+			DavPropertyName propName = qNameToPropName(entry.getKey());
+
+			// ignore live properties, as they'll be loaded separately
+			if (isLiveProperty(propName)) {
+				continue;
+			}
+
+			// XXX: language
+			Object propValue = entry.getValue().getValue();
+			properties.add(new StandardDavProperty(propName, propValue, false));
+		}
+	}
+
+	private DavPropertyName qNameToPropName(QName qname) {
+		// no namespace at all
+		if ("".equals(qname.getNamespace())) {
+			return DavPropertyName.create(qname.getLocalName());
+		}
+
+		Namespace ns = Namespace.getNamespace(qname.getNamespace());
+
+		return DavPropertyName.create(qname.getLocalName(), ns);
+	}
+
 	protected void loadProperties() {
 		if (initialized) {
 			return;
@@ -842,136 +851,131 @@ public abstract class CalDavResourceBase implements CalDavResource {
 	protected boolean isLiveProperty(DavPropertyName name) {
 		return LIVE_PROPERTIES.contains(name);
 	}
-	
+
 	@Override
 	public DavSession getSession() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public DavResourceFactory getFactory() {
 		return factory;
 	}
-	
-    public void removeMember(DavResource member) throws DavException {
-            throw new UnsupportedOperationException();
-     }
-    
-    public DavResourceIterator getMembers() {
-        // while it would be ideal to throw an UnsupportedOperationException,
-        // MultiStatus tries to add a MultiStatusResponse for every member
-        // of a WebDavResource regardless of whether or not it's a collection,
-        // so we need to return an empty iterator.
-        return new DavResourceIteratorImpl(new ArrayList<DavResource>());
-    }
-    
-    public void addMember(DavResource member, InputContext inputContext)throws DavException {
-    	throw new UnsupportedOperationException();
-    }
-    
-    public String getDisplayName() {
-        return getItem().getDisplayName();
-    }
-    
-    public boolean exists() {
-        return getItem()!= null && getItem().getUid() != null;
-    }
-    
-    @Override
-    public DavResource[] getReferenceResources(DavPropertyName hrefPropertyName) {
-    	return new DavResource[]{};
-    }
-    
-    @Override
-    public void addWorkspace(org.apache.jackrabbit.webdav.DavResource workspace) {
-    	
-    }
-    
-    public Report getReport(ReportInfo reportInfo)
-            throws CosmoDavException {
-            if (! exists()) {
-                throw new NotFoundException();
-            }
 
-            if (! isSupportedReport(reportInfo)) {
-                throw new UnprocessableEntityException("Unknown report " + reportInfo.getReportName());
-            }
+	public void removeMember(DavResource member) throws DavException {
+		throw new UnsupportedOperationException();
+	}
 
-            try {
-            	return ReportType.getType(reportInfo).createReport(this, reportInfo);
-            } catch (DavException e){
-                if (e instanceof CosmoDavException) {
-                    throw (CosmoDavException) e;
-                }
-                throw new CosmoDavException(e);
-            }
-        }
-    
-    protected boolean isSupportedReport(ReportInfo info) {
-        for (Iterator<ReportType> i=getReportTypes().iterator(); i.hasNext();) {
-            if (i.next().isRequestedReportType(info)) {
-                return true;
-            }
-        }
-        return false;
-    }
- 
-    protected void removeDeadProperty(DavPropertyName name) throws CosmoDavException {
+	public DavResourceIterator getMembers() {
+		// while it would be ideal to throw an UnsupportedOperationException,
+		// MultiStatus tries to add a MultiStatusResponse for every member
+		// of a WebDavResource regardless of whether or not it's a collection,
+		// so we need to return an empty iterator.
+		return new DavResourceIteratorImpl(new ArrayList<DavResource>());
+	}
 
-        getItem().removeAttribute(propNameToQName(name));
-    }
- 
-    protected void setDeadProperty(WebDavProperty property)
-            throws CosmoDavException {
-        
+	public void addMember(DavResource member, InputContext inputContext) throws DavException {
+		throw new UnsupportedOperationException();
+	}
 
-        if (property.getValue() == null) {
-            throw new UnprocessableEntityException("Property "
-                    + property.getName() + " requires a value");
-        }
+	public String getDisplayName() {
+		return getItem().getDisplayName();
+	}
 
-        try {
-        	org.unitedinternet.cosmo.model.QName qname = propNameToQName(property.getName());
-            Element value = (Element) property.getValue();
-            Attribute attr = getItem().getAttribute(qname);
+	public boolean exists() {
+		return getItem() != null && getItem().getUid() != null;
+	}
 
-            // first check for existing attribute otherwise add
-            if (attr != null) {
-                attr.setValue(value);
-            } else {
-                getItem().addAttribute(entityFactory.createXMLAttribute(qname, value));
-            }
-        } catch (DataSizeException e) {
-            throw new ForbiddenException(e.getMessage());
-        }
-    }
+	@Override
+	public DavResource[] getReferenceResources(DavPropertyName hrefPropertyName) {
+		return new DavResource[] {};
+	}
 
-    
-    protected org.unitedinternet.cosmo.model.QName propNameToQName(DavPropertyName name) {
-        if (name == null) {
-            final String msg = "name cannot be null";
-            throw new IllegalArgumentException(msg);
-        }
+	@Override
+	public void addWorkspace(org.apache.jackrabbit.webdav.DavResource workspace) {
 
-        Namespace ns = name.getNamespace();
-        String uri = ns != null ? ns.getURI() : "";
+	}
 
-        return entityFactory.createQName(uri, name.getName());
-    }
-    
-    public OptionsResponse getOptionResponse(OptionsInfo optionsInfo){
-    	return null;
-    }
-    
-    public void setItem(Item item) throws CosmoDavException {
-        this.item = item;
-        loadProperties();
-    }
-    
-    public Item getItem() {
-        return item;
-    }
+	public Report getReport(ReportInfo reportInfo) throws CosmoDavException {
+		if (!exists()) {
+			throw new NotFoundException();
+		}
+
+		if (!isSupportedReport(reportInfo)) {
+			throw new UnprocessableEntityException("Unknown report " + reportInfo.getReportName());
+		}
+
+		try {
+			return ReportType.getType(reportInfo).createReport(this, reportInfo);
+		} catch (DavException e) {
+			if (e instanceof CosmoDavException) {
+				throw (CosmoDavException) e;
+			}
+			throw new CosmoDavException(e);
+		}
+	}
+
+	protected boolean isSupportedReport(ReportInfo info) {
+		for (Iterator<ReportType> i = getReportTypes().iterator(); i.hasNext();) {
+			if (i.next().isRequestedReportType(info)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected void removeDeadProperty(DavPropertyName name) throws CosmoDavException {
+
+		getItem().removeAttribute(propNameToQName(name));
+	}
+
+	protected void setDeadProperty(WebDavProperty property) throws CosmoDavException {
+
+		if (property.getValue() == null) {
+			throw new UnprocessableEntityException("Property " + property.getName() + " requires a value");
+		}
+
+		try {
+			org.unitedinternet.cosmo.model.QName qname = propNameToQName(property.getName());
+			Element value = (Element) property.getValue();
+			Attribute attr = getItem().getAttribute(qname);
+
+			// first check for existing attribute otherwise add
+			if (attr != null) {
+				attr.setValue(value);
+			} else {
+				getItem().addAttribute(entityFactory.createXMLAttribute(qname, value));
+			}
+		} catch (DataSizeException e) {
+			throw new ForbiddenException(e.getMessage());
+		}
+	}
+
+	protected org.unitedinternet.cosmo.model.QName propNameToQName(DavPropertyName name) {
+		if (name == null) {
+			final String msg = "name cannot be null";
+			throw new IllegalArgumentException(msg);
+		}
+
+		Namespace ns = name.getNamespace();
+		String uri = ns != null ? ns.getURI() : "";
+
+		return entityFactory.createQName(uri, name.getName());
+	}
+
+	public OptionsResponse getOptionResponse(OptionsInfo optionsInfo) {
+		return null;
+	}
+
+	public void setItem(Item item) throws CosmoDavException {
+		this.item = item;
+		loadProperties();
+	}
+
+	public Item getItem() {
+		return item;
+	}
 
 	public EntityFactory getEntityFactory() {
 		return entityFactory;

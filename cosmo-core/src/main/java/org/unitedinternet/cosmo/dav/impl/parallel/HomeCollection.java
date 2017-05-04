@@ -16,10 +16,21 @@ import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 
 public class HomeCollection extends CalDavCollectionBase {
+
+	public HomeCollection(HomeCollectionItem item, 
+							CalDavResourceLocator locator,
+							CalDavResourceFactory calDavResourceFactory, 
+							EntityFactory entityFactory) {
+		super(item, locator, calDavResourceFactory, entityFactory);
+	}
 
 	@Override
 	public void addContent(DavContent content, InputContext input) throws CosmoDavException {

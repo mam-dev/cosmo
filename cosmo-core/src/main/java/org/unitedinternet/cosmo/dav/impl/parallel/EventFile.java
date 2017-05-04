@@ -3,6 +3,9 @@ package org.unitedinternet.cosmo.dav.impl.parallel;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.StampUtils;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
@@ -13,6 +16,14 @@ import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.VEvent;
 
 public class EventFile extends CalDavFileBase{
+
+	public EventFile(NoteItem item, 
+						CalDavResourceLocator locator,
+						CalDavResourceFactory calDavResourceFactory, 
+						EntityFactory entityFactory) {
+		super(item, locator, calDavResourceFactory, entityFactory);
+	}
+
 
 	@Override
 	public CalDavResource getParent() {

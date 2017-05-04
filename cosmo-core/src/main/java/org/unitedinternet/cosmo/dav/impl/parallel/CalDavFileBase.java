@@ -16,16 +16,13 @@ import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
-import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.springframework.util.FileCopyUtils;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
-import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarLocationException;
 import org.unitedinternet.cosmo.dav.caldav.UidConflictException;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
@@ -35,19 +32,19 @@ import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavItemResource;
 import org.unitedinternet.cosmo.dav.io.DavInputContext;
 import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.ContentLength;
 import org.unitedinternet.cosmo.dav.property.ContentType;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
 import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.DataSizeException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.IcalUidInUseException;
+import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
-import org.w3c.dom.Element;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Period;
@@ -55,10 +52,18 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 
 public abstract class CalDavFileBase extends CalDavResourceBase implements CalDavFile {
 	
-	 private static final Log LOG = LogFactory.getLog(CalDavFileBase.class);
+	 public CalDavFileBase(Item item, 
+			 				CalDavResourceLocator calDavResourceLocator,
+			 				CalDavResourceFactory calDavResourceFactory, 
+			 				EntityFactory entityFactory) {
+		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
+	}
+
+
+	private static final Log LOG = LogFactory.getLog(CalDavFileBase.class);
 	 
 	 public static final String ICALENDAR_MEDIA_TYPE = "text/calendar";
-	 private static final Set<ReportType> REPORT_TYPES =new HashSet<ReportType>();
+	 private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 	    
 	    static {
 	        registerLiveProperty(DavPropertyName.GETCONTENTLENGTH);
@@ -71,8 +76,6 @@ public abstract class CalDavFileBase extends CalDavResourceBase implements CalDa
 
 	    private CalendarQueryProcessor calendarQueryProcessor;
 	    
-	    private EntityFactory entityFactory;
-
 	       
 	    // WebDavResource methods
 
@@ -86,7 +89,7 @@ public abstract class CalDavFileBase extends CalDavResourceBase implements CalDa
 	    }
 
 	    @Override
-	    public void copy(org.apache.jackrabbit.webdav.DavResource destination,
+	    public void copy(DavResource destination,
 	            boolean shallow) throws org.apache.jackrabbit.webdav.DavException {
 	        validateDestination(destination);
 	        try {
@@ -265,7 +268,6 @@ public abstract class CalDavFileBase extends CalDavResourceBase implements CalDa
 
 	    @Override
 		public boolean isCollection() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 }

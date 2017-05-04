@@ -22,7 +22,7 @@ public interface CalDavResourceLocatorFactory extends DavLocatorFactory{
 	 * @return The locator for the resource at the specified path relative to
 	 *         the given context URL.
 	 */
-	DavResourceLocator createResourceLocatorByPath(URL context, String path);
+	CalDavResourceLocator createResourceLocatorByPath(URL context, String path);
 	
 	
 	/**

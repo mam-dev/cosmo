@@ -9,6 +9,7 @@ import org.apache.jackrabbit.webdav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocatorFactory;
 import org.unitedinternet.cosmo.model.User;
 
@@ -34,7 +35,7 @@ public class DefaultCalDavResourceLocatorFactory  implements CalDavResourceLocat
 	}
 
 	@Override
-	public DavResourceLocator createResourceLocatorByPath(URL context, String path) {
+	public CalDavResourceLocator createResourceLocatorByPath(URL context, String path) {
 		 return new DefaultCalDavResourceLocator(context, path, this);
 	}
 

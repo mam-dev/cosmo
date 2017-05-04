@@ -8,10 +8,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.DavResource;
-import org.apache.jackrabbit.webdav.DavResourceFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.DavResourceLocator;
@@ -24,20 +22,28 @@ import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.LockedException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
 import org.unitedinternet.cosmo.dav.impl.DavContentBase;
 import org.unitedinternet.cosmo.dav.impl.DavItemCollection;
 import org.unitedinternet.cosmo.dav.impl.DavItemContent;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
 import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.util.CosmoQName;
 
-public abstract class CalDavCollectionBase extends CalDavResourceBase
-		implements CalDavCollection, ExtendedDavConstants {
+public abstract class CalDavCollectionBase extends CalDavResourceBase implements CalDavCollection, ExtendedDavConstants {
+
+	public CalDavCollectionBase(Item item, 
+								CalDavResourceLocator calDavResourceLocator,
+								CalDavResourceFactory calDavResourceFactory, 
+								EntityFactory entityFactory) {
+		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
+	}
 
 	public static final CosmoQName RESOURCE_TYPE_COLLECTION = new CosmoQName(NAMESPACE.getURI(), XML_COLLECTION,
 			NAMESPACE.getPrefix());
@@ -65,15 +71,14 @@ public abstract class CalDavCollectionBase extends CalDavResourceBase
 
 	@Override
 	public boolean isCollection() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 	public DavResource findMember(String href) throws DavException {
         return memberToResource(href);
     }
 	protected DavResource memberToResource(String uri) throws DavException {
-		return davResourceFactory.createResource(locator, null);
+		return calDavResourceFactory.createResource(calDavResourceLocator, getItem());
 	}
 
 	protected DavResource memberToResource(Item item) throws DavException {
@@ -84,8 +89,8 @@ public abstract class CalDavCollectionBase extends CalDavResourceBase
 			throw new CosmoDavException(e);
 		}
 
-		DavResourceLocator locator = davLocatorFactory.createResourceLocator(null, path);
-		return davResourceFactory.createResource(locator, getSession());
+		DavResourceLocator locator = calDavLocatorFactory.createResourceLocator(null, path);
+		return calDavResourceFactory.createResource(locator, getSession());
 	}
 
 	public DavResourceIterator getCollectionMembers() {

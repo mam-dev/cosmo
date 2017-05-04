@@ -28,9 +28,12 @@ import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
 import org.unitedinternet.cosmo.dav.impl.DavEvent;
 import org.unitedinternet.cosmo.dav.impl.DavItemContent;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
 import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.IcalUidInUseException;
 import org.unitedinternet.cosmo.model.Item;
@@ -59,6 +62,13 @@ public class CalendarCollection extends CalDavCollectionBase {
 	        DEAD_PROPERTY_FILTER.add(CollectionItem.class.getName());
 	    }
 	
+	public CalendarCollection(CollectionItem item, 
+								CalDavResourceLocator locator,
+								CalDavResourceFactory calDavResourceFactory, 
+								EntityFactory entityFactory) {
+			super(item, locator, calDavResourceFactory, entityFactory);
+		}
+
 	@Override
 	public CalDavResource getParent() {
 		// TODO Auto-generated method stub

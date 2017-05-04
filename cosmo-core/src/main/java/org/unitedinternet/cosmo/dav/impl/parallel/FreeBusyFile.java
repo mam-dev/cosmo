@@ -3,6 +3,9 @@ package org.unitedinternet.cosmo.dav.impl.parallel;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.FreeBusyItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 
@@ -11,6 +14,13 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.VFreeBusy;
 
 public class FreeBusyFile extends CalDavFileBase{
+	public FreeBusyFile(FreeBusyItem item, 	
+						CalDavResourceLocator locator,
+						CalDavResourceFactory calDavResourceFactory, 
+						EntityFactory entityFactory) {
+		super(item, locator, calDavResourceFactory, entityFactory);
+	}
+
 	public Calendar getCalendar() {
         FreeBusyItem freeBusy = (FreeBusyItem) getItem();
         return freeBusy.getFreeBusyCalendar();

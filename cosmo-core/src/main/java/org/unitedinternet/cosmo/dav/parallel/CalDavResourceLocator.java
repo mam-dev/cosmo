@@ -63,6 +63,6 @@ public interface CalDavResourceLocator extends DavResourceLocator{
 	/**
 	 * Returns a locator identifying the parent resource.
 	 */
-	DavResourceLocator getParentLocator();
+	CalDavResourceLocator getParentLocator();
 
 }

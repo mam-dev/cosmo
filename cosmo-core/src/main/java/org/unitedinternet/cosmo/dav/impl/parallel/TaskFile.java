@@ -3,6 +3,9 @@ package org.unitedinternet.cosmo.dav.impl.parallel;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 
@@ -14,7 +17,14 @@ import net.fortuna.ical4j.model.component.VToDo;
 public class TaskFile extends CalDavFileBase{
 	 // our methods
 
-    /**
+    public TaskFile(NoteItem item, 
+    				CalDavResourceLocator locator,
+    				CalDavResourceFactory calDavResourceFactory, 
+    				EntityFactory entityFactory) {
+		super(item, locator, calDavResourceFactory, entityFactory);
+	}
+
+	/**
      * <p>
      * Exports the stamp as a calendar object containing a single VTODO.
      * Sets the following properties:
