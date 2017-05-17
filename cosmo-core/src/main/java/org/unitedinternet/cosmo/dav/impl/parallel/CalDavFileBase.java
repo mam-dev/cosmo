@@ -50,7 +50,7 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.component.VFreeBusy;
 
-public abstract class CalDavFileBase extends CalDavResourceBase implements CalDavFile {
+public abstract class CalDavFileBase extends CalDavContentResourceBase implements CalDavFile {
 	
 	 public CalDavFileBase(Item item, 
 			 				CalDavResourceLocator calDavResourceLocator,

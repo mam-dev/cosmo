@@ -2,7 +2,10 @@ package org.unitedinternet.cosmo.dav.impl.parallel;
 
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 
@@ -12,7 +15,12 @@ import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.VJournal;
 
 public class JournalFile extends CalDavFileBase{
-	  /**
+	  public JournalFile(Item item, CalDavResourceLocator calDavResourceLocator,
+			CalDavResourceFactory calDavResourceFactory, EntityFactory entityFactory) {
+		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
+	}
+
+	/**
      * <p>
      * Exports the item as a calendar object containing a single VJOURNAL,
      * ignoring any stamps that may be associated with the item. Sets the
@@ -59,10 +67,4 @@ public class JournalFile extends CalDavFileBase{
     public boolean isCollection() {
         return false;
     }
-
-	@Override
-	public CalDavResource getParent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

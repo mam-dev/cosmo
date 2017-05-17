@@ -25,9 +25,8 @@ import org.unitedinternet.cosmo.dav.caldav.report.MultigetReport;
 import org.unitedinternet.cosmo.dav.caldav.report.QueryReport;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
-import org.unitedinternet.cosmo.dav.impl.DavEvent;
 import org.unitedinternet.cosmo.dav.impl.DavItemContent;
-import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -69,11 +68,6 @@ public class CalendarCollection extends CalDavCollectionBase {
 			super(item, locator, calDavResourceFactory, entityFactory);
 		}
 
-	@Override
-	public CalDavResource getParent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String getSupportedMethods() {
@@ -82,12 +76,12 @@ public class CalendarCollection extends CalDavCollectionBase {
     }
 
 	@Override
-	protected void saveContent(DavItemContent member) throws CosmoDavException {
+	protected void saveContent(CalDavFile  member) throws CosmoDavException {
         if (!(member instanceof DavCalendarResource)) {
             throw new IllegalArgumentException("member not DavCalendarResource");
         }
 
-        if (member instanceof DavEvent) {
+        if (member instanceof EventFile) {
             saveEvent(member);
         } else {
             try {
@@ -98,7 +92,7 @@ public class CalendarCollection extends CalDavCollectionBase {
         }
     }
 	
-	private void saveEvent(DavItemContent member) throws CosmoDavException {
+	private void saveEvent(CalDavFile member) throws CosmoDavException {
 
 		ContentItem content = (ContentItem) member.getItem();
 		EventStamp event = StampUtils.getEventStamp(content);
@@ -154,7 +148,7 @@ public class CalendarCollection extends CalDavCollectionBase {
 		}
 	}
 
-	private void validateDestination(org.apache.jackrabbit.webdav.DavResource destination) throws CosmoDavException {
+	private void validateDestination(DavResource destination) throws CosmoDavException {
 		if (destination instanceof WebDavResource
 				&& ((WebDavResource) destination).getParent() instanceof DavCalendarCollection) {
 			throw new InvalidCalendarLocationException(

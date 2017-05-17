@@ -40,7 +40,7 @@ public class DefaultCalDavResourceLocatorFactory  implements CalDavResourceLocat
 	}
 
 	@Override
-	public DavResourceLocator createResourceLocatorByUri(URL context, String uriText) throws CosmoDavException {
+	public CalDavResourceLocator createResourceLocatorByUri(URL context, String uriText) throws CosmoDavException {
 		 try {
 	            URI uri = new URI(uriText);
 
@@ -107,13 +107,13 @@ public class DefaultCalDavResourceLocatorFactory  implements CalDavResourceLocat
     }
 
 	@Override
-	public DavResourceLocator createHomeLocator(URL context, User user) throws CosmoDavException {
+	public CalDavResourceLocator createHomeLocator(URL context, User user) throws CosmoDavException {
 		 String path = TEMPLATE_HOME.bind(user.getUsername());
 	     return new DefaultCalDavResourceLocator(context, path, this);
 	}
 
 	@Override
-	public DavResourceLocator createPrincipalLocator(URL context, User user) throws CosmoDavException {
+	public CalDavResourceLocator createPrincipalLocator(URL context, User user) throws CosmoDavException {
 		 String path = TEMPLATE_USER.bind(user.getUsername());
 	     return new DefaultCalDavResourceLocator(context, path, this);
 	}

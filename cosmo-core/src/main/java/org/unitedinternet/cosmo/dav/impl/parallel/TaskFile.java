@@ -72,10 +72,4 @@ public class TaskFile extends CalDavFileBase{
     public boolean isCollection() {
         return false;
     }
-
-	@Override
-	public CalDavResource getParent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

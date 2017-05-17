@@ -18,15 +18,10 @@ import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.LockedException;
-import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
-import org.unitedinternet.cosmo.dav.impl.DavContentBase;
-import org.unitedinternet.cosmo.dav.impl.DavItemCollection;
-import org.unitedinternet.cosmo.dav.impl.DavItemContent;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -36,12 +31,10 @@ import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.util.CosmoQName;
 
-public abstract class CalDavCollectionBase extends CalDavResourceBase implements CalDavCollection, ExtendedDavConstants {
+public class CalDavCollectionBase extends CalDavContentResourceBase implements CalDavCollection, ExtendedDavConstants {
 
-	public CalDavCollectionBase(Item item, 
-								CalDavResourceLocator calDavResourceLocator,
-								CalDavResourceFactory calDavResourceFactory, 
-								EntityFactory entityFactory) {
+	public CalDavCollectionBase(Item item, CalDavResourceLocator calDavResourceLocator,
+			CalDavResourceFactory calDavResourceFactory, EntityFactory entityFactory) {
 		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
 	}
 
@@ -73,10 +66,11 @@ public abstract class CalDavCollectionBase extends CalDavResourceBase implements
 	public boolean isCollection() {
 		return true;
 	}
-	
+
 	public DavResource findMember(String href) throws DavException {
-        return memberToResource(href);
-    }
+		return memberToResource(href);
+	}
+
 	protected DavResource memberToResource(String uri) throws DavException {
 		return calDavResourceFactory.createResource(calDavResourceLocator, getItem());
 	}
@@ -108,9 +102,9 @@ public abstract class CalDavCollectionBase extends CalDavResourceBase implements
 		}
 	}
 
-	protected void saveContent(DavItemContent member) throws CosmoDavException {
+	protected void saveContent(CalDavFile member) throws CosmoDavException {
 		CollectionItem collection = (CollectionItem) getItem();
-		ContentItem content = (ContentItem) member.getItem();
+		ContentItem content =  (ContentItem)member.getItem();
 
 		try {
 			if (content.getCreationDate() != null) {
@@ -126,46 +120,55 @@ public abstract class CalDavCollectionBase extends CalDavResourceBase implements
 
 		member.setItem(content);
 	}
-	
-	public MultiStatusResponse addCollection(DavCollection collection, DavPropertySet properties) throws CosmoDavException {
-        if(!(collection instanceof DavCollectionBase)){
-            throw new IllegalArgumentException("Expected instance of :[" + DavCollectionBase.class.getName() + "]");
-        }
-        
-        DavCollectionBase base = (DavCollectionBase) collection;
-        base.populateItem(null);
-        MultiStatusResponse msr = base.populateAttributes(properties);
-        if (!hasNonOK(msr)) {
-            saveSubcollection(base);
-            members.add(base);
-        }
-        return msr;
-    }
-	
-	protected void saveSubcollection(DavItemCollection member)
-            throws CosmoDavException {
-        CollectionItem collection = (CollectionItem) getItem();
-        CollectionItem subcollection = (CollectionItem) member.getItem();
 
-        
+	@Override
+	public MultiStatusResponse addCollection(CalDavCollection collection, DavPropertySet properties)
+			throws CosmoDavException {
+		if (!(collection instanceof CalDavCollectionBase)) {
+			throw new IllegalArgumentException("Expected instance of :[" + CalDavCollectionBase.class.getName() + "]");
+		}
 
-        try {
-            subcollection = getContentService().createCollection(collection,
-                    subcollection);
-            member.setItem(subcollection);
-        } catch (CollectionLockedException e) {
-            throw new LockedException();
-        }
-    }
-	
-	public void addContent(DavContent content, InputContext context) throws CosmoDavException {
-        if(!(content instanceof DavContentBase)) {
-            throw new IllegalArgumentException("Expected instance of : [" + DavContentBase.class.getName() + "]");
-        }
-        
-        DavContentBase base = (DavContentBase) content;
-        base.populateItem(context);
-        saveContent(base);
-        members.add(base);
-    }
+		CalDavCollectionBase base = (CalDavCollectionBase) collection;
+		base.populateItem(null);
+		MultiStatusResponse msr = base.populateAttributes(properties);
+		if (!hasNonOK(msr)) {
+			saveSubcollection(base);
+			members.add(base);
+		}
+		return msr;
+	}
+
+	protected void saveSubcollection(CalDavCollection member) throws CosmoDavException {
+		CollectionItem collection = (CollectionItem) getItem();
+		CollectionItem subcollection = (CollectionItem) member.getItem();
+
+		try {
+			subcollection = getContentService().createCollection(collection, subcollection);
+			member.setItem(subcollection);
+		} catch (CollectionLockedException e) {
+			throw new LockedException();
+		}
+	}
+
+	@Override
+	public void addContent(CalDavFile content, InputContext context) throws CosmoDavException {
+		if (!(content instanceof CalDavFileBase)) {
+			throw new IllegalArgumentException("Expected instance of : [" + CalDavFileBase.class.getName() + "]");
+		}
+
+		CalDavFileBase base = (CalDavFileBase) content;
+		base.populateItem(context);
+		saveContent(base);
+		members.add(base);
+	}
+
+	@Override
+	public String getSupportedMethods() {
+		// If resource doesn't exist, then options are limited
+		if (!exists()) {
+			return "OPTIONS, TRACE, PUT, MKCOL, MKCALENDAR";
+		}
+		return "OPTIONS, GET, HEAD, PROPFIND, PROPPATCH, TRACE, COPY, DELETE, MOVE, MKTICKET, DELTICKET, REPORT";
+
+	}
 }

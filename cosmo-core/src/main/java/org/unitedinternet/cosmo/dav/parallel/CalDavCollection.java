@@ -7,19 +7,17 @@ import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
 
-public interface CalDavCollection extends CalDavResource{
+public interface CalDavCollection extends CalDavContentResource{
 	  /**
      * Adds a new content item to this resource.
      */
-    void addContent(DavContent content, InputContext input) throws CosmoDavException;
+    void addContent(CalDavFile content, InputContext input) throws CosmoDavException;
 
     /**
      * Adds a new collection to this resource.
      */
-    MultiStatusResponse addCollection(DavCollection collection, DavPropertySet properties) throws CosmoDavException;
+    MultiStatusResponse addCollection(CalDavCollection collection, DavPropertySet properties) throws CosmoDavException;
 
     /**
      * Returns the member resource at the given absolute href.

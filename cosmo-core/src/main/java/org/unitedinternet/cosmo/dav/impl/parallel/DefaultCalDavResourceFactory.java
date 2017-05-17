@@ -124,7 +124,7 @@ public class DefaultCalDavResourceFactory implements CalDavResourceFactory, Exte
             return new CalendarCollection(entityFactory.createCollection(), locator, this, entityFactory);
         }
         if (request.getMethod().equals("MKCOL")) {
-            return new DavCollectionBase(locator, this, entityFactory);
+            return new CalDavCollectionBase(entityFactory.createCollection(), locator, this, entityFactory);
         }
         if (request.getMethod().equals("PUT")) {
             // will be replaced by the provider if a different resource
@@ -145,7 +145,7 @@ public class DefaultCalDavResourceFactory implements CalDavResourceFactory, Exte
                     return new EventFile(entityFactory.createNote(),locator, this, entityFactory);
                 }
                 else {
-                    return new DavCollectionBase(locator, this, entityFactory);
+                    return new CalDavCollectionBase(entityFactory.createCollection(), locator, this, entityFactory);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class DefaultCalDavResourceFactory implements CalDavResourceFactory, Exte
 
         match = TEMPLATE_USERS.match(uri);
         if (match != null) {
-            return new DavUserPrincipalCollection(locator, this);
+            return new CalDavUserPrincipalCollection(locator, this);
         }
 
         match = TEMPLATE_USER.match(uri);
@@ -185,12 +185,12 @@ public class DefaultCalDavResourceFactory implements CalDavResourceFactory, Exte
         if(schedulingEnabled) {
             match = TEMPLATE_USER_INBOX.match(uri);
             if (match != null) {
-                return new InboxCollection(locator, this);
+                return new CalDavInboxCollection(locator, this);
             }
             
             match = TEMPLATE_USER_OUTBOX.match(uri);
             if (match != null) {
-                return new OutboxCollection(locator, this);
+                return new CalDavOutboxCollection(locator, this);
             }
         }
 
@@ -211,7 +211,7 @@ public class DefaultCalDavResourceFactory implements CalDavResourceFactory, Exte
 
 	 protected CalDavResource createUserPrincipalResource(CalDavResourceLocator locator, UriTemplate.Match match) throws CosmoDavException {
      User user = userService.getUser(match.get("username"));
-     return user != null ? new DavUserPrincipal(user, locator, this, userIdentitySupplier) : null;
+     return user != null ? new CalDavUserPrincipal(user, locator, this, userIdentitySupplier) : null;
  }
 
 	@Override

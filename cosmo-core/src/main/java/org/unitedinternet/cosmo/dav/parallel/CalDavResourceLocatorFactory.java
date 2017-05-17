@@ -3,7 +3,6 @@ package org.unitedinternet.cosmo.dav.parallel;
 import java.net.URL;
 
 import org.apache.jackrabbit.webdav.DavLocatorFactory;
-import org.apache.jackrabbit.webdav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.model.User;
 
@@ -43,7 +42,7 @@ public interface CalDavResourceLocatorFactory extends DavLocatorFactory{
 	 * @throws CosmoDavException
 	 *             - if something is wrong this exception is thrown.
 	 */
-	DavResourceLocator createResourceLocatorByUri(URL context, String uri) throws CosmoDavException;
+	CalDavResourceLocator createResourceLocatorByUri(URL context, String uri) throws CosmoDavException;
 	
 	/**
 	 * <p>
@@ -58,7 +57,7 @@ public interface CalDavResourceLocatorFactory extends DavLocatorFactory{
 	 * @throws CosmoDavException
 	 *             - if something is wrong this exception is thrown.
 	 */
-	DavResourceLocator createHomeLocator(URL context, User user) throws CosmoDavException;
+	CalDavResourceLocator createHomeLocator(URL context, User user) throws CosmoDavException;
 
 	/**
 	 * <p>
@@ -73,5 +72,5 @@ public interface CalDavResourceLocatorFactory extends DavLocatorFactory{
 	 * @throws CosmoDavException
 	 *             - if something is wrong this exception is thrown.
 	 */
-	DavResourceLocator createPrincipalLocator(URL context, User user) throws CosmoDavException;
+	CalDavResourceLocator createPrincipalLocator(URL context, User user) throws CosmoDavException;
 }

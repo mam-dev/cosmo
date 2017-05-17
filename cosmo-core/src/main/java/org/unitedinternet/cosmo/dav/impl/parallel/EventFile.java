@@ -2,7 +2,6 @@ package org.unitedinternet.cosmo.dav.impl.parallel;
 
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -23,14 +22,6 @@ public class EventFile extends CalDavFileBase{
 						EntityFactory entityFactory) {
 		super(item, locator, calDavResourceFactory, entityFactory);
 	}
-
-
-	@Override
-	public CalDavResource getParent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	@Override
 	 public Calendar getCalendar() {

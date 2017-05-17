@@ -20,6 +20,7 @@ import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.User;
 
 import org.w3c.dom.Element;
@@ -39,11 +40,14 @@ public class CalendarHomeSet extends StandardDavProperty
      * @param locator WebDavResource locator.
      * @param user The user.
      */
-    public CalendarHomeSet(DavResourceLocator locator,
-                           User user) {
+    public CalendarHomeSet(DavResourceLocator locator, User user) {
         super(CALENDARHOMESET, href(locator, user), true);
     }
 
+    
+    public CalendarHomeSet(CalDavResourceLocator locator, User user) {
+        super(CALENDARHOMESET, href(locator, user), true);
+    }
     public String getHref() {
         return (String) getValue();
     }
@@ -62,8 +66,11 @@ public class CalendarHomeSet extends StandardDavProperty
         return name;
     }
 
-    private static String href(DavResourceLocator locator,
-                               User user) {
+    private static String href(DavResourceLocator locator, User user) {
+        return TEMPLATE_HOME.bindAbsolute(locator.getBaseHref(), user.getUsername());
+    }
+    
+    private static String href(CalDavResourceLocator locator, User user) {
         return TEMPLATE_HOME.bindAbsolute(locator.getBaseHref(), user.getUsername());
     }
 }
