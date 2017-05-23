@@ -839,13 +839,14 @@ public class InstanceListTest {
 
         InstanceList instances = new InstanceList();
 
-        TimeZone tz = TIMEZONE_REGISTRY.getTimeZone("Australia/Sydney");//+7
+        TimeZone tz = TIMEZONE_REGISTRY.getTimeZone("Australia/Melbourne");//+10
         instances.setTimezone(tz);
 
-        // This range in UTC translates to
-        // 20070103T010000 to 20070105T010000 in Australia/Sydney local time
+        /*
+         * This range in UTC translates to 20070103T010000 to 20070105T010000 in Australia/Melbourne local time.
+         */
         DateTime start = new DateTime("20070102T140000Z");
-        DateTime end = new DateTime("20070104T140000Z");
+        DateTime end = new DateTime("20070104T150000Z");
 
         addToInstanceList(calendar, instances, start, end);
 
