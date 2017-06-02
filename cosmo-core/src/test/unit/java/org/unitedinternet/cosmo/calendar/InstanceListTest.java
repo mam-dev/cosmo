@@ -846,7 +846,7 @@ public class InstanceListTest {
          * This range in UTC translates to 20070103T010000 to 20070105T010000 in Australia/Melbourne local time.
          */
         DateTime start = new DateTime("20070102T140000Z");
-        DateTime end = new DateTime("20070104T150000Z");
+        DateTime end = new DateTime("20070104T160000Z");
 
         addToInstanceList(calendar, instances, start, end);
 
