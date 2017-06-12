@@ -35,9 +35,12 @@ public class ContentSourceFactoryBean implements FactoryBean<ContentSource> {
                 .getImplInstancesAnnotatedWith(Callback.class, ContentSource.class);
         if (!contentSourceSet.isEmpty()) {
             if (contentSourceSet.size() != 1) {
-                throw new IllegalArgumentException("Found more than one implementaion of ContentSource.");
+                throw new IllegalArgumentException("Found more than one implementation of ContentSource.");
             }
             ContentSource contentSource = contentSourceSet.iterator().next();
+            if (contentSource == null) {
+                throw new NullPointerException("null content source defined.");
+            }
             LOG.info("EXTERNAL - using @Provided-ContentSource implementation class: " + contentSource);
             return contentSource;
         }
