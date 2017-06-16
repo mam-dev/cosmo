@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -18,6 +19,7 @@ import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.WebdavResponse;
+import org.apache.jackrabbit.webdav.WebdavResponseImpl;
 import org.apache.jackrabbit.webdav.lock.ActiveLock;
 import org.apache.jackrabbit.webdav.observation.EventDiscovery;
 import org.apache.jackrabbit.webdav.observation.Subscription;
@@ -34,10 +36,14 @@ import org.w3c.dom.Element;
 public class DefaultCalDavResponse implements CalDavResponse, DavConstants, TicketConstants {
 	private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
 
-	 private static final Log LOG = LogFactory.getLog(DefaultCalDavResponse.class);
+	private static final Log LOG = LogFactory.getLog(DefaultCalDavResponse.class);
 	 
 	private WebdavResponse webDavResponseTarget;
 
+	public DefaultCalDavResponse(HttpServletResponse servletResponse){
+		this.webDavResponseTarget = new WebdavResponseImpl(servletResponse);
+	}
+	
 	public void sendSubscriptionResponse(Subscription subscription) throws IOException {
 		webDavResponseTarget.sendSubscriptionResponse(subscription);
 	}

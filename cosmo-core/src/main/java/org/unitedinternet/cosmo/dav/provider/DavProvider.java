@@ -17,12 +17,12 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.DavResponse;
+import org.unitedinternet.cosmo.dav.DavContent;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 
 /**
  * <p>
@@ -31,78 +31,78 @@ import org.unitedinternet.cosmo.dav.DavResponse;
  */
 public interface DavProvider {
 
-    void get(DavRequest request,
-                    DavResponse response,
-                    WebDavResource resource)
+    void get(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void head(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    void head(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void propfind(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource)
+    void propfind(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource)
         throws CosmoDavException, IOException;
     
-    void proppatch(DavRequest request,
-                          DavResponse response,
-                          WebDavResource resource)
+    void proppatch(CalDavRequest request,
+                          CalDavResponse response,
+                          CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void put(DavRequest request,
-                    DavResponse response,
+    void put(CalDavRequest request,
+                    CalDavResponse response,
                     DavContent content)
         throws CosmoDavException, IOException;
 
-    void post(DavRequest request,
-            DavResponse response,
-            WebDavResource resource)
+    void post(CalDavRequest request,
+            CalDavResponse response,
+            CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void delete(DavRequest request,
-                       DavResponse response,
-                       WebDavResource resource)
+    void delete(CalDavRequest request,
+                       CalDavResponse response,
+                       CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void copy(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    void copy(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void move(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    void move(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void mkcol(DavRequest request,
-                      DavResponse response,
-                      DavCollection collection)
+    void mkcol(CalDavRequest request,
+                      CalDavResponse response,
+                      CalDavCollection collection)
         throws CosmoDavException, IOException;
 
-    void report(DavRequest request,
-                       DavResponse response,
-                       WebDavResource resource)
+    void report(CalDavRequest request,
+                       CalDavResponse response,
+                       CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void mkcalendar(DavRequest request,
-                           DavResponse response,
-                           DavCollection collection)
+    void mkcalendar(CalDavRequest request,
+                           CalDavResponse response,
+                           CalDavCollection collection)
         throws CosmoDavException, IOException;
 
-    void mkticket(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource)
+    void mkticket(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void delticket(DavRequest request,
-                          DavResponse response,
-                          WebDavResource resource)
+    void delticket(CalDavRequest request,
+                          CalDavResponse response,
+                          CalDavResource resource)
         throws CosmoDavException, IOException;
 
-    void acl(DavRequest request,
-                    DavResponse response,
-                    WebDavResource resource)
+    void acl(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource resource)
         throws CosmoDavException, IOException;
 }

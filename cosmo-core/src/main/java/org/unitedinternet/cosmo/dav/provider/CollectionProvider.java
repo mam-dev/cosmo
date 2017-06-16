@@ -50,7 +50,7 @@ public class CollectionProvider extends BaseProvider {
 
     // DavProvider methods
 
-    public void put(DavRequest request,
+    public void put(CalDavRequest request,
                     DavResponse response,
                     DavContent content)
         throws CosmoDavException, IOException {

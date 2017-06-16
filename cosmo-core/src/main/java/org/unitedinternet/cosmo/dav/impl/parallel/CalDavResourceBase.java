@@ -31,7 +31,11 @@ import org.apache.jackrabbit.webdav.lock.LockInfo;
 import org.apache.jackrabbit.webdav.lock.LockManager;
 import org.apache.jackrabbit.webdav.lock.Scope;
 import org.apache.jackrabbit.webdav.lock.Type;
+import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
+import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
+import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
+import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.PropEntry;
 import org.apache.jackrabbit.webdav.version.report.Report;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
@@ -39,6 +43,7 @@ import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
+import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
@@ -87,12 +92,17 @@ public abstract class CalDavResourceBase implements CalDavResource {
 
 	protected CalDavResourceLocatorFactory calDavLocatorFactory = null;
 	protected CalDavResourceLocator calDavResourceLocator = null;
+	
+
 	protected CalDavResourceFactory calDavResourceFactory = null;
+
+	private DavPropertySet properties;
 
 	public CalDavResourceBase(CalDavResourceLocator calDavResourceLocator,
 			CalDavResourceFactory calDavResourceFactory) {
 		this.calDavResourceLocator = calDavResourceLocator;
 		this.calDavResourceFactory = calDavResourceFactory;
+		this.properties = new DavPropertySet();
 	}
 
 	/**
@@ -195,6 +205,131 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		}
 
 	}
+
+	public MultiStatusResponse updateProperties(DavPropertySet setProperties, DavPropertyNameSet removePropertyNames)
+			throws CosmoDavException {
+		if (!exists()) {
+			throw new NotFoundException();
+		}
+
+		MultiStatusResponse msr = new MultiStatusResponse(getHref(), null);
+
+		ArrayList<DavPropertyName> df = new ArrayList<DavPropertyName>();
+		CosmoDavException error = null;
+		DavPropertyName failed = null;
+
+		org.apache.jackrabbit.webdav.property.DavProperty<?> property = null;
+		for (DavPropertyIterator i = setProperties.iterator(); i.hasNext();) {
+			try {
+				property = i.nextProperty();
+				setResourceProperty((WebDavProperty) property, false);
+				df.add(property.getName());
+				msr.add(property.getName(), 200);
+			} catch (CosmoDavException e) {
+				// we can only report one error message in the
+				// responsedescription, so even if multiple properties would
+				// fail, we return 424 for the second and subsequent failures
+				// as well
+				if (error == null) {
+					error = e;
+					failed = property.getName();
+				} else {
+					df.add(property.getName());
+				}
+			}
+		}
+
+		DavPropertyName name = null;
+		for (DavPropertyNameIterator i = removePropertyNames.iterator(); i.hasNext();) {
+			try {
+				name = (DavPropertyName) i.next();
+				removeResourceProperty(name);
+				df.add(name);
+				msr.add(name, 200);
+			} catch (CosmoDavException e) {
+				// we can only report one error message in the
+				// responsedescription, so even if multiple properties would
+				// fail, we return 424 for the second and subsequent failures
+				// as well
+				if (error == null) {
+					error = e;
+					failed = name;
+				} else {
+					df.add(name);
+				}
+			}
+		}
+
+		if (error != null) {
+			// replace the other response with a new one, since we have to
+			// change the response code for each of the properties that would
+			// have been set successfully
+			msr = new MultiStatusResponse(getHref(), error.getMessage());
+			for (DavPropertyName n : df) {
+				msr.add(n, 424);
+			}
+			msr.add(failed, error.getErrorCode());
+		}
+
+		return msr;
+	}
+
+	/**
+	 * Calls {@link #removeLiveProperty(DavPropertyName)} or
+	 * {@link removeDeadProperty(DavPropertyName)}.
+	 */
+	protected void removeResourceProperty(DavPropertyName name) throws CosmoDavException {
+		if (name.equals(SUPPORTEDREPORTSET)) {
+			throw new ProtectedPropertyModificationException(name);
+		}
+
+		if (isLiveProperty(name)) {
+			removeLiveProperty(name);
+		} else {
+			removeDeadProperty(name);
+		}
+
+		properties.remove(name);
+	}
+
+	/**
+	 * Removes a live DAV property from the resource.
+	 *
+	 * @param name
+	 *            the name of the property to remove
+	 *
+	 * @throws CosmoDavException
+	 *             if the property is protected
+	 */
+	protected abstract void removeLiveProperty(DavPropertyName name) throws CosmoDavException;
+
+	protected void setResourceProperty(WebDavProperty property, boolean create) throws CosmoDavException {
+		DavPropertyName name = property.getName();
+		if (name.equals(SUPPORTEDREPORTSET)) {
+			throw new ProtectedPropertyModificationException(name);
+		}
+
+		if (isLiveProperty(property.getName())) {
+			setLiveProperty(property, create);
+		} else {
+			setDeadProperty(property);
+		}
+
+		properties.add(property);
+	}
+
+	/**
+	 * Sets a live DAV property on the resource on resource initialization.
+	 *
+	 * @param property
+	 *            the property to set
+	 *
+	 * @throws CosmoDavException
+	 *             if the property is protected or if a null value is specified
+	 *             for a property that does not accept them or if an invalid
+	 *             value is specified
+	 */
+	protected abstract void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException;
 
 	public static boolean hasNonOK(MultiStatusResponse msr) {
 		if (msr == null || msr.getStatus() == null) {
@@ -405,4 +540,7 @@ public abstract class CalDavResourceBase implements CalDavResource {
 		return false;
 	}
 
+	public CalDavResourceLocator getCalDavResourceLocator() {
+		return calDavResourceLocator;
+	}
 }

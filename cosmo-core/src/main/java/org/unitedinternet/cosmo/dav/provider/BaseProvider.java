@@ -34,16 +34,11 @@ import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResourceLocator;
-import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.UnsupportedMediaTypeException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.AclEvaluator;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
@@ -54,11 +49,16 @@ import org.unitedinternet.cosmo.dav.acl.UserAclEvaluator;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
-import org.unitedinternet.cosmo.dav.impl.DavFile;
 import org.unitedinternet.cosmo.dav.impl.DavInboxCollection;
 import org.unitedinternet.cosmo.dav.impl.DavItemResource;
 import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CustomFile;
 import org.unitedinternet.cosmo.dav.io.DavInputContext;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -78,7 +78,7 @@ public abstract class BaseProvider
     implements DavProvider, DavConstants, AclConstants, TicketConstants {
     private static final Log LOG = LogFactory.getLog(BaseProvider.class);
 
-    private DavResourceFactory resourceFactory;
+    private CalDavResourceFactory resourceFactory;
     private EntityFactory entityFactory;
     
     /**
@@ -86,7 +86,7 @@ public abstract class BaseProvider
      * @param resourceFactory 
      * @param entityFactory 
      */
-    public BaseProvider(DavResourceFactory resourceFactory,
+    public BaseProvider(CalDavResourceFactory resourceFactory,
             EntityFactory entityFactory) {
         this.resourceFactory = resourceFactory;
         this.entityFactory = entityFactory;
@@ -97,9 +97,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void get(DavRequest request,
-                    DavResponse response,
-                    WebDavResource resource)
+    public void get(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource resource)
         throws CosmoDavException, IOException {
         spool(request, response, resource, true);
     }
@@ -108,9 +108,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void head(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void head(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         spool(request, response, resource, false);
     }
@@ -119,13 +119,7 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void post(
-            DavRequest request
-            , DavResponse response
-            , WebDavResource resource
-            )
-    throws CosmoDavException, IOException 
-    {
+    public void post(CalDavRequest request, CalDavResponse response, CalDavResource resource)throws CosmoDavException, IOException{
         throw new MethodNotAllowedException("POST not allowed for a collection");
     }
     
@@ -133,9 +127,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void propfind(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource)
+    public void propfind(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -174,9 +168,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void proppatch(DavRequest request,
-                          DavResponse response,
-                          WebDavResource resource)
+    public void proppatch(CalDavRequest request,
+                          CalDavResponse response,
+                          CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -191,13 +185,16 @@ public abstract class BaseProvider
         response.sendMultiStatus(ms);
     }
     
+    
+	
+    
     /**
      * 
      * {@inheritDoc}
      */
-    public void delete(DavRequest request,
-                       DavResponse response,
-                       WebDavResource resource)
+    public void delete(CalDavRequest request,
+                       CalDavResponse response,
+                       CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -221,9 +218,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void copy(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void copy(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -234,9 +231,7 @@ public abstract class BaseProvider
         if (! (depth == DEPTH_0 || depth == DEPTH_INFINITY)){
             throw new BadRequestException("Depth for COPY must be 0 or infinity");
         }
-        WebDavResource destination =
-            resolveDestination(request.getDestinationResourceLocator(),
-                               resource);
+        CalDavResource destination = resolveDestination(request.getDestinationResourceLocator(), resource);
         validateDestination(request, destination);
 
         checkCopyMoveAccess(resource, destination);
@@ -259,18 +254,16 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void move(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void move(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
         }
         checkNoRequestBody(request);
 
-        WebDavResource destination =
-            resolveDestination(request.getDestinationResourceLocator(),
-                               resource);
+        CalDavResource destination = resolveDestination(request.getDestinationResourceLocator(), resource);
         validateDestination(request, destination);
 
         checkCopyMoveAccess(resource, destination);
@@ -293,9 +286,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void report(DavRequest request,
-                       DavResponse response,
-                       WebDavResource resource)
+    public void report(CalDavRequest request,
+                       CalDavResponse response,
+                       CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -327,9 +320,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void mkticket(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource)
+    public void mkticket(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -355,9 +348,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void delticket(DavRequest request,
-                          DavResponse response,
-                          WebDavResource resource)
+    public void delticket(CalDavRequest request,
+                          CalDavResponse response,
+                          CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -387,9 +380,9 @@ public abstract class BaseProvider
      * 
      * {@inheritDoc}
      */
-    public void acl(DavRequest request,
-                    DavResponse response,
-                    WebDavResource resource)
+    public void acl(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource resource)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
             throw new NotFoundException();
@@ -410,9 +403,9 @@ public abstract class BaseProvider
      * @throws CosmoDavException 
      * @throws IOException 
      */
-    protected void spool(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource,
+    protected void spool(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource,
                          boolean withEntity)
         throws CosmoDavException, IOException {
         if (! resource.exists()){
@@ -423,7 +416,7 @@ public abstract class BaseProvider
         if (LOG.isDebugEnabled()){
             LOG.debug("spooling resource " + resource.getResourcePath());
         }
-        resource.writeTo(createOutputContext(response, withEntity));
+        resource.spool(createOutputContext(response, withEntity));
         response.flushBuffer();
     }
     /**
@@ -433,8 +426,7 @@ public abstract class BaseProvider
      * @throws CosmoDavException 
      * @throws IOException 
      */
-    protected InputContext createInputContext(DavRequest request)
-        throws CosmoDavException, IOException {
+    protected InputContext createInputContext(CalDavRequest request)throws CosmoDavException, IOException {
         String xfer = request.getHeader("Transfer-Encoding");
         boolean chunked = xfer != null && xfer.equals("chunked");
         if (xfer != null && ! chunked){
@@ -454,7 +446,7 @@ public abstract class BaseProvider
      * @return OutputContext
      * @throws IOException 
      */
-    protected OutputContext createOutputContext(DavResponse response,
+    protected OutputContext createOutputContext(CalDavResponse response,
                                                 boolean withEntity)
         throws IOException {
         OutputStream out = withEntity ? response.getOutputStream() : null;
@@ -468,15 +460,14 @@ public abstract class BaseProvider
      * @return WebDavResource 
      * @throws CosmoDavException 
      */
-    protected WebDavResource resolveDestination(DavResourceLocator locator,
-                                             WebDavResource original)
+    protected CalDavResource resolveDestination(CalDavResourceLocator locator,
+                                             CalDavResource original)
         throws CosmoDavException {
         if (locator == null){
             return null;
         }
-        WebDavResource destination = resourceFactory.resolve(locator);
-        return destination != null ? destination :
-            new DavFile(locator, resourceFactory, entityFactory);
+        CalDavResource destination = resourceFactory.resolve(locator);
+        return destination != null ? destination : new CustomFile(locator, resourceFactory, entityFactory);
     }
 
     /**
@@ -485,13 +476,12 @@ public abstract class BaseProvider
      * @param destination WebDavResource
      * @throws CosmoDavException 
      */
-    protected void validateDestination(DavRequest request,
-                                       WebDavResource destination)
+    protected void validateDestination(CalDavRequest request, CalDavResource destination)
         throws CosmoDavException {
         if (destination == null){
             throw new BadRequestException("Destination required");
         }
-        if (destination.getResourceLocator().equals(request.getResourceLocator())){
+        if (destination.getCalDavResourceLocator().equals(request.getResourceLocator())){
             throw new ForbiddenException("Destination URI is the same as the original resource URI");
         }
         if (destination.exists() && ! request.isOverwrite()){
@@ -508,8 +498,8 @@ public abstract class BaseProvider
      * @param destination WebDavResource
      * @throws CosmoDavException 
      */
-    protected void checkCopyMoveAccess(WebDavResource source,
-                                       WebDavResource destination)
+    protected void checkCopyMoveAccess(CalDavResource source,
+                                       CalDavResource destination)
         throws CosmoDavException {
         // XXX refactor a BaseItemProvider so we don't have to do this check
         if (! (source instanceof DavItemResource)){
@@ -526,10 +516,10 @@ public abstract class BaseProvider
             return;
         }
 
-        WebDavResource toCheck = destination.exists() ?
+        CalDavResource toCheck = destination.exists() ?
             destination : destination.getParent();
         Item item = ((DavItemResource)toCheck).getItem();
-        DavResourceLocator locator = toCheck.getResourceLocator();
+        CalDavResourceLocator locator = toCheck.getCalDavResourceLocator();
         String href = locator.getHref(toCheck.isCollection());
         DavPrivilege privilege = destination.exists() ?
             DavPrivilege.WRITE : DavPrivilege.BIND;
@@ -579,7 +569,7 @@ public abstract class BaseProvider
      * @param privilege DavPrivilege
      * @return boolean
      */
-    protected boolean hasPrivilege(WebDavResource resource,
+    protected boolean hasPrivilege(CalDavResource resource,
                                    AclEvaluator evaluator,
                                    DavPrivilege privilege) {
         boolean hasPrivilege = false;
@@ -618,7 +608,7 @@ public abstract class BaseProvider
         return false;
     }
 
-    protected void checkPropFindAccess(WebDavResource resource,
+    protected void checkPropFindAccess(CalDavResource resource,
                                        DavPropertyNameSet props,
                                        int type)
         throws CosmoDavException {
@@ -668,8 +658,7 @@ public abstract class BaseProvider
         throw new NotFoundException();
     }
 
-    protected void checkReportAccess(WebDavResource resource,
-                                     ReportInfo info)
+    protected void checkReportAccess(CalDavResource resource, ReportInfo info)
         throws CosmoDavException {
         AclEvaluator evaluator = createAclEvaluator();
 
@@ -704,7 +693,7 @@ public abstract class BaseProvider
      * @param request DavRequest
      * @throws CosmoDavException 
      */
-    protected void checkNoRequestBody(DavRequest request)
+    protected void checkNoRequestBody(CalDavRequest request)
         throws CosmoDavException {
         boolean hasBody = false;
         try {
@@ -727,7 +716,7 @@ public abstract class BaseProvider
      * @return depth
      * @throws CosmoDavException 
      */
-    protected int getDepth(DavRequest request)
+    protected int getDepth(CalDavRequest request)
         throws CosmoDavException {
         try {
             return request.getDepth();
@@ -740,7 +729,7 @@ public abstract class BaseProvider
         return getResourceFactory().getSecurityManager().getSecurityContext();
     }
 
-    public DavResourceFactory getResourceFactory() {
+    public CalDavResourceFactory getResourceFactory() {
         return resourceFactory;
     }
     

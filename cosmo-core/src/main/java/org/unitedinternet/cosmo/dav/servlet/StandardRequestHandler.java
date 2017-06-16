@@ -44,6 +44,7 @@ import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
+import org.unitedinternet.cosmo.dav.impl.CalDavCollectionBase;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
 import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
@@ -51,6 +52,19 @@ import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
 import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
 import org.unitedinternet.cosmo.dav.impl.StandardDavRequest;
 import org.unitedinternet.cosmo.dav.impl.StandardDavResponse;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavOutboxCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipal;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipalCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavRequest;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResponse;
+import org.unitedinternet.cosmo.dav.impl.parallel.HomeCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocatorFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.dav.provider.CalendarCollectionProvider;
 import org.unitedinternet.cosmo.dav.provider.CalendarResourceProvider;
 import org.unitedinternet.cosmo.dav.provider.CollectionProvider;
@@ -82,8 +96,8 @@ public class StandardRequestHandler
     private static final Log LOG =
         LogFactory.getLog(StandardRequestHandler.class);
 
-    private DavResourceLocatorFactory locatorFactory;
-    private DavResourceFactory resourceFactory;
+    private CalDavResourceLocatorFactory locatorFactory;
+    private CalDavResourceFactory resourceFactory;
     private EntityFactory entityFactory;
     // RequestHandler methods
                
@@ -105,14 +119,14 @@ public class StandardRequestHandler
                               HttpServletResponse response)
         throws ServletException, IOException {
         dumpRequest(request);
-        DavRequest wreq = null;
-        DavResponse wres = null;
+        CalDavRequest wreq = null;
+        CalDavResponse wres = null;
         
         try {
             wreq = createDavRequest(request);
             wres = createDavResponse(response);
 
-            WebDavResource resource = resolveTarget(wreq);
+            CalDavResource resource = resolveTarget(wreq);
             preconditions(wreq, wres, resource);
             process(wreq, wres, resource);
         } catch (Exception e) {
@@ -155,9 +169,9 @@ public class StandardRequestHandler
      * <li>The <code>If-Unmodified-Since</code> request header</li>
      * </ul>
      */
-    protected void preconditions(DavRequest request,
-                                 DavResponse response,
-                                 WebDavResource resource)
+    protected void preconditions(CalDavRequest request,
+                                 CalDavResponse response,
+                                 CalDavResource resource)
         throws CosmoDavException, IOException {
         ifMatch(request, response, resource);
         ifNoneMatch(request, response, resource);
@@ -226,9 +240,9 @@ public class StandardRequestHandler
      * specific provider method is chosen by examining the request method.
      * </p>
      */
-    protected void process(DavRequest request,
-                           DavResponse response,
-                           WebDavResource resource)
+    protected void process(CalDavRequest request,
+                           CalDavResponse response,
+                           CalDavResource resource)
         throws IOException, CosmoDavException {
         DavProvider provider = createProvider(resource);
 
@@ -308,26 +322,26 @@ public class StandardRequestHandler
      * <li> file resource: {@link FileProvider}</li>
      * </ul>
      */
-    protected DavProvider createProvider(WebDavResource resource) {
-        if (resource instanceof DavHomeCollection) {
+    protected DavProvider createProvider(CalDavResource resource) {
+        if (resource instanceof HomeCollection) {
             return new HomeCollectionProvider(resourceFactory, entityFactory);
         }
-        if (resource instanceof DavOutboxCollection) {
+        if (resource instanceof CalDavOutboxCollection) {
             return new OutboxCollectionProvider(resourceFactory, entityFactory);
         }
-        if (resource instanceof DavCalendarCollection) {
+        if (resource instanceof CalendarCollection) {
             return new CalendarCollectionProvider(resourceFactory, entityFactory);
         }
-        if (resource instanceof DavCollectionBase) {
+        if (resource instanceof CalDavCollectionBase) {
             return new CollectionProvider(resourceFactory, entityFactory);
         }
-        if (resource instanceof DavCalendarResource) {
+        if (resource instanceof CalDavFile) {
             return new CalendarResourceProvider(resourceFactory, entityFactory);
         }
-        if (resource instanceof DavUserPrincipalCollection) {
+        if (resource instanceof CalDavUserPrincipalCollection) {
             return new UserPrincipalCollectionProvider(resourceFactory, entityFactory);
         }
-        if (resource instanceof DavUserPrincipal) {
+        if (resource instanceof CalDavUserPrincipal) {
             return new UserPrincipalProvider(resourceFactory, entityFactory);
         }
         return new FileProvider(resourceFactory, entityFactory);
@@ -339,14 +353,14 @@ public class StandardRequestHandler
      * provided <code>HttpServletRequest</code>.
      * </p>
      */
-    protected DavRequest createDavRequest(HttpServletRequest request) {
+    protected CalDavRequest createDavRequest(HttpServletRequest request) {
         // Create buffered request if method is PUT so we can retry
         // on concurrency exceptions
         if (request.getMethod().equals("PUT")) {
-            return new StandardDavRequest(request, locatorFactory, entityFactory, true);
+            return new DefaultCalDavRequest(request, locatorFactory, entityFactory, true);
         }
         else {
-            return new StandardDavRequest(request, locatorFactory, entityFactory);
+            return new DefaultCalDavRequest(request, locatorFactory, entityFactory);
         }
     }
 
@@ -356,8 +370,8 @@ public class StandardRequestHandler
      * provided <code>HttpServletResponse</code>.
      * </p>
      */
-    protected DavResponse createDavResponse(HttpServletResponse response) {
-        return new StandardDavResponse(response);
+    protected CalDavResponse createDavResponse(HttpServletResponse response) {
+        return new DefaultCalDavResponse(response);
     }
 
     /**
@@ -366,7 +380,7 @@ public class StandardRequestHandler
      * resource targeted by the request.
      * </p>
      */
-    protected WebDavResource resolveTarget(DavRequest request)
+    protected CalDavResource resolveTarget(CalDavRequest request)
         throws CosmoDavException {
         return resourceFactory.resolve(request.getResourceLocator(), request);
     }
@@ -382,19 +396,19 @@ public class StandardRequestHandler
         }
     }
 
-    public DavResourceLocatorFactory getResourceLocatorFactory() {
+    public CalDavResourceLocatorFactory getResourceLocatorFactory() {
         return locatorFactory;
     }
 
-    public void setResourceLocatorFactory(DavResourceLocatorFactory factory) {
+    public void setResourceLocatorFactory(CalDavResourceLocatorFactory factory) {
         locatorFactory = factory;
     }
 
-    public DavResourceFactory getResourceFactory() {
+    public CalDavResourceFactory getResourceFactory() {
         return resourceFactory;
     }
 
-    public void setResourceFactory(DavResourceFactory factory) {
+    public void setResourceFactory(CalDavResourceFactory factory) {
         resourceFactory = factory;
     }
     
@@ -406,9 +420,9 @@ public class StandardRequestHandler
         this.entityFactory = entityFactory;
     }
 
-    private void ifMatch(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource)
+    private void ifMatch(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource)
         throws CosmoDavException, IOException {
         EntityTag[] requestEtags = request.getIfMatch();
         if (requestEtags.length == 0) {
@@ -429,9 +443,9 @@ public class StandardRequestHandler
         throw new PreconditionFailedException("If-Match disallows conditional request");
     }
 
-    private void ifNoneMatch(DavRequest request,
-                             DavResponse response,
-                             WebDavResource resource)
+    private void ifNoneMatch(CalDavRequest request,
+                             CalDavResponse response,
+                             CalDavResource resource)
         throws CosmoDavException, IOException {
         EntityTag[] requestEtags = request.getIfNoneMatch();
         if (requestEtags.length == 0) {
@@ -457,8 +471,8 @@ public class StandardRequestHandler
         }
     }
 
-    private void ifModifiedSince(DavRequest request,
-                                 WebDavResource resource)
+    private void ifModifiedSince(CalDavRequest request,
+                                 CalDavResource resource)
         throws CosmoDavException, IOException {
         if (resource == null) {
             return;
@@ -482,8 +496,8 @@ public class StandardRequestHandler
         throw new NotModifiedException();
     }
 
-    private void ifUnmodifiedSince(DavRequest request,
-                                   WebDavResource resource)
+    private void ifUnmodifiedSince(CalDavRequest request,
+                                   CalDavResource resource)
         throws CosmoDavException, IOException {
         if (resource == null) {
             return;
@@ -507,7 +521,7 @@ public class StandardRequestHandler
         throw new PreconditionFailedException("If-Unmodified-Since disallows conditional request");
     }
 
-    private EntityTag etag(WebDavResource resource) {
+    private EntityTag etag(CalDavResource resource) {
         if (resource == null) {
             return null;
         }
@@ -522,12 +536,12 @@ public class StandardRequestHandler
         return new EntityTag(etag);
     }
 
-    private boolean deservesNotModified(DavRequest request) {
+    private boolean deservesNotModified(CalDavRequest request) {
         return "GET".equals(request.getMethod()) || "HEAD".equals(request.getMethod());
     }
 
-    private void options(DavResponse response,
-                         WebDavResource resource) {
+    private void options(CalDavResponse response,
+                         CalDavResource resource) {
         response.setStatus(200);
         response.addHeader("Allow", resource.getSupportedMethods());
         response.addHeader("DAV", resource.getComplianceClass());

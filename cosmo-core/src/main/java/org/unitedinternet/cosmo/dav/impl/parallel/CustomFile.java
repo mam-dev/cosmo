@@ -31,6 +31,11 @@ public class CustomFile extends CalDavFileBase {
 			CalDavResourceFactory calDavResourceFactory, EntityFactory entityFactory) {
 		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
 	}
+	
+	public CustomFile( CalDavResourceLocator calDavResourceLocator,
+			CalDavResourceFactory calDavResourceFactory, EntityFactory entityFactory) {
+		super(entityFactory.createFileItem(), calDavResourceLocator, calDavResourceFactory, entityFactory);
+	}
 
 	public void writeTo(OutputContext outputContext) throws CosmoDavException, IOException {
 		if (!exists()) {

@@ -24,6 +24,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
@@ -38,6 +39,7 @@ import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceLocator;
 import org.apache.jackrabbit.webdav.DavSession;
 import org.apache.jackrabbit.webdav.WebdavRequest;
+import org.apache.jackrabbit.webdav.WebdavRequestImpl;
 import org.apache.jackrabbit.webdav.bind.BindInfo;
 import org.apache.jackrabbit.webdav.bind.RebindInfo;
 import org.apache.jackrabbit.webdav.bind.UnbindInfo;
@@ -101,7 +103,25 @@ public class DefaultCalDavRequest
 	private CalDavResourceLocator locator;
 	private CalDavResourceLocator destinationLocator;
 	private EntityFactory entityFactory;
+	
+	//TODO: clarify bufferRequestContent
+	public DefaultCalDavRequest(HttpServletRequest request,
+            					CalDavResourceLocatorFactory locatorFactory, 
+            					EntityFactory entityFactory,
+            					boolean bufferRequestContent){
+		
+		this.requestTarget = new WebdavRequestImpl(request, locatorFactory);
+		this.locatorFactory = locatorFactory;
+		this.entityFactory = entityFactory;
+	}
+	public DefaultCalDavRequest(HttpServletRequest request,
+			CalDavResourceLocatorFactory locatorFactory, 
+			EntityFactory entityFactory){
 
+		this.requestTarget = new WebdavRequestImpl(request, locatorFactory);
+		this.locatorFactory = locatorFactory;
+		this.entityFactory = entityFactory;
+	}
 	public RebindInfo getRebindInfo() throws DavException {
 		return requestTarget.getRebindInfo();
 	}
