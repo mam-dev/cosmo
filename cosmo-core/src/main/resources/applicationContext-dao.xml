@@ -60,11 +60,13 @@
 		<constructor-arg ref="entityConverter" />
 	</bean>
 	
+	<bean id="proxyFactory" class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" >
+				<constructor-arg ref="externalComponentInstanceProvider"/>
+	</bean>
+	
 	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.SimpleUrlContentReader">
 		<constructor-arg ref="contentConverter" />
-		<constructor-arg>
-			<bean class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" />
-		</constructor-arg>
+		<constructor-arg ref="proxyFactory"/>		
 		<constructor-arg>
 		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 		</constructor-arg>

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -27,8 +28,11 @@ import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.filter.EqualsExpression;
 import org.unitedinternet.cosmo.model.filter.EventStampFilter;
+import org.unitedinternet.cosmo.model.filter.FilterCriteria;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
+import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.filter.StampFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
@@ -180,13 +184,25 @@ public class ContentDaoExternal implements ContentDao {
      * @param filter
      */
     private void postFilter(Set<NoteItem> noteItems, ItemFilter filter) {
+    	Object eventUid = null;
+    	
+    	if(filter instanceof NoteItemFilter && ((NoteItemFilter) filter).getIcalUid() instanceof EqualsExpression){
+    		eventUid = ((EqualsExpression)((NoteItemFilter) filter).getIcalUid()).getValue();
+    	}
+    	
+    	
         List<StampFilter> stampFilters = filter.getStampFilters();
-        if (stampFilters == null || stampFilters.isEmpty()) {
-            return;
-        }
+        
+        
         for (Iterator<NoteItem> iterator = noteItems.iterator(); iterator.hasNext();) {
             NoteItem item = iterator.next();
             BaseEventStamp eventStamp = (BaseEventStamp) item.getStamp(BaseEventStamp.class);
+            
+            if(eventUid != null && !Objects.equals(eventUid, item.getIcalUid())){
+            	iterator.remove();
+            	continue;
+            }
+            
             if (eventStamp == null || eventStamp.isRecurring()) {
                 continue;
             }
@@ -205,6 +221,9 @@ public class ContentDaoExternal implements ContentDao {
      * @return <code>true</code> if the specified event is outside the range defined by the specified filters.
      */
     private static boolean isOutOfRangeSafely(BaseEventStamp eventStamp, List<StampFilter> stampFilters) {
+    	if(stampFilters == null || stampFilters.isEmpty()){
+    		return false;
+    	}
         try {
             return isOutOfRange(eventStamp, stampFilters);
         } catch (Exception e) {

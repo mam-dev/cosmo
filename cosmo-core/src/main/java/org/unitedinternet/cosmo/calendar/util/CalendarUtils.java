@@ -152,7 +152,6 @@ public class CalendarUtils implements ICalendarConstants {
         try {
             return new Calendar(calendar);
         } catch (Exception e) {
-           e.printStackTrace();
            throw new CosmoException("error copying calendar: " + calendar, e);
         } 
     }

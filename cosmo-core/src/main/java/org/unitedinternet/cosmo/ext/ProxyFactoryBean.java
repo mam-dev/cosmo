@@ -1,13 +1,14 @@
 package org.unitedinternet.cosmo.ext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.net.URL;
+import java.util.Set;
+
 import org.apache.http.HttpHost;
-import org.springframework.beans.BeansException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.env.Environment;
+import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
+import org.unitedinternet.cosmo.metadata.Callback;
 
 /**
  * <code>Factory</code> that creates a <code>HttpHost</code> by reading the environment properties.
@@ -15,43 +16,49 @@ import org.springframework.core.env.Environment;
  * @author daniel grigore
  *
  */
-public class ProxyFactoryBean implements ApplicationContextAware, FactoryBean<HttpHost> {
+public class ProxyFactoryBean implements FactoryBean<ProxyFactory> {
 
-    static final String PROP_PROXY_HOST = "external.proxy.host";
-    static final String PROP_PROXY_PORT = "external.proxy.port";
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyFactoryBean.class);
 
-    private static final Log LOG = LogFactory.getLog(ProxyFactoryBean.class);
+    private static final ProxyFactory DEFAULT_PROXY_FACTORY = new ProxyFactory() {
 
-    private Environment env;
-
-    public ProxyFactoryBean() {
-        super();
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.env = applicationContext.getEnvironment();
-    }
-
-    @Override
-    public HttpHost getObject() throws Exception {
-        String proxyHost = env.getProperty(PROP_PROXY_HOST);
-        String proxyPort = env.getProperty(PROP_PROXY_PORT);
-        if (proxyHost != null && !proxyHost.trim().isEmpty() && proxyPort != null && !proxyPort.trim().isEmpty()) {
-            LOG.info("NET Setting proxy host: " + proxyHost + " and port: " + proxyPort
-                    + " for getting external content.");
-            return new HttpHost(proxyHost, new Integer(proxyPort));
+        @Override
+        public HttpHost getProxy(URL url) {
+            return null;
         }
-        return null;
+    };
+
+    private final ExternalComponentInstanceProvider instanceProvider;
+
+    public ProxyFactoryBean(ExternalComponentInstanceProvider instanceProvider) {
+        super();
+        this.instanceProvider = instanceProvider;
+    }
+
+    @Override
+    public ProxyFactory getObject() throws Exception {
+        Set<? extends ProxyFactory> proxyFactorySet = this.instanceProvider
+                .getImplInstancesAnnotatedWith(Callback.class, ProxyFactory.class);
+        if (proxyFactorySet.size() > 0) {
+            if (proxyFactorySet.size() != 1) {
+                throw new IllegalArgumentException("Found more implementation of: " + ProxyFactory.class.getName());
+            }
+            ProxyFactory proxyFactory = proxyFactorySet.iterator().next();
+            LOG.info("NET use proxyFactory implementation ", proxyFactory.getClass());
+            return proxyFactory;
+        }
+        LOG.info("NET use no proxy.");
+        return DEFAULT_PROXY_FACTORY;
     }
 
     @Override
     public Class<?> getObjectType() {
-        return HttpHost.class;
+        return ProxyFactory.class;
     }
 
     @Override
     public boolean isSingleton() {
         return true;
     }
+
 }
