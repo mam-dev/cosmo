@@ -2,7 +2,6 @@ package org.unitedinternet.cosmo.dav.impl.parallel;
 
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -23,6 +22,12 @@ public class TaskFile extends CalDavFileBase{
     				EntityFactory entityFactory) {
 		super(item, locator, calDavResourceFactory, entityFactory);
 	}
+    
+    public TaskFile(CalDavResourceLocator locator,
+					CalDavResourceFactory calDavResourceFactory, 
+					EntityFactory entityFactory) {
+    	this(entityFactory.createNote(), locator, calDavResourceFactory, entityFactory);
+    }
 
 	/**
      * <p>

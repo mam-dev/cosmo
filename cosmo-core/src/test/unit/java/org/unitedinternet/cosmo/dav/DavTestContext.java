@@ -18,6 +18,11 @@ package org.unitedinternet.cosmo.dav;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.impl.StandardDavRequest;
 import org.unitedinternet.cosmo.dav.impl.StandardDavResponse;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavRequest;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResourceLocatorFactory;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResponse;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,6 +39,11 @@ public class DavTestContext {
     private StandardDavRequest davRequest;
     private StandardDavResponse davResponse;
     private EntityFactory entityFactory; 
+    
+    
+    //PARALLEL
+    private CalDavRequest calDavRequest;
+    private CalDavResponse calDavResponse;
 
     /**
      * Constructor.
@@ -45,6 +55,10 @@ public class DavTestContext {
         entityFactory = new HibEntityFactory();
         davRequest = new StandardDavRequest(httpRequest, locatorFactory, entityFactory);
         davResponse = new StandardDavResponse(httpResponse);
+        
+        //PARALLEL
+        calDavRequest = new DefaultCalDavRequest(httpRequest, new DefaultCalDavResourceLocatorFactory(), entityFactory);
+        calDavResponse = new DefaultCalDavResponse(httpResponse);
     }
 
     /**
@@ -93,4 +107,12 @@ public class DavTestContext {
             throw new CosmoException(e);
         }
     }
+
+	public CalDavRequest getCalDavRequest() {
+		return calDavRequest;
+	}
+
+	public CalDavResponse getCalDavResponse() {
+		return calDavResponse;
+	}
 }

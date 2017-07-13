@@ -20,6 +20,13 @@ public class FreeBusyFile extends CalDavFileBase{
 						EntityFactory entityFactory) {
 		super(item, locator, calDavResourceFactory, entityFactory);
 	}
+	
+	
+	public FreeBusyFile(CalDavResourceLocator locator,
+			CalDavResourceFactory calDavResourceFactory, 
+			EntityFactory entityFactory) {
+		super(entityFactory.createNote(), locator, calDavResourceFactory, entityFactory);
+}
 
 	public Calendar getCalendar() {
         FreeBusyItem freeBusy = (FreeBusyItem) getItem();

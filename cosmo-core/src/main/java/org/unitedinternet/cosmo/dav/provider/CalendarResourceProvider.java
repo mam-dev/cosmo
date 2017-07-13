@@ -38,7 +38,18 @@ import org.unitedinternet.cosmo.dav.impl.DavFreeBusy;
 import org.unitedinternet.cosmo.dav.impl.DavItemResourceBase;
 import org.unitedinternet.cosmo.dav.impl.DavJournal;
 import org.unitedinternet.cosmo.dav.impl.DavTask;
+import org.unitedinternet.cosmo.dav.impl.parallel.AvailabilityFile;
+import org.unitedinternet.cosmo.dav.impl.parallel.EventFile;
+import org.unitedinternet.cosmo.dav.impl.parallel.FreeBusyFile;
+import org.unitedinternet.cosmo.dav.impl.parallel.JournalFile;
+import org.unitedinternet.cosmo.dav.impl.parallel.TaskFile;
 import org.unitedinternet.cosmo.dav.io.DavInputContext;
+import org.unitedinternet.cosmo.dav.parallel.CalDavContentResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.server.ServerConstants;
@@ -57,16 +68,15 @@ public class CalendarResourceProvider extends FileProvider {
     private static final Log LOG =
         LogFactory.getLog(CalendarResourceProvider.class);
 
-    public CalendarResourceProvider(DavResourceFactory resourceFactory,
-            EntityFactory entityFactory) {
+    public CalendarResourceProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
     
     // DavProvider methods
 
-    public void put(DavRequest request,
-                    DavResponse response,
-                    DavContent content)
+    public void put(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource content)
         throws CosmoDavException, IOException {
 
         // do content.getParent() check only for normal auth only, ticket auth is on the item only, not its parent.
@@ -79,66 +89,66 @@ public class CalendarResourceProvider extends FileProvider {
         DavInputContext ctx = (DavInputContext) createInputContext(request);
         if (! content.exists()) {
             content = createCalendarResource(request, response,
-                                             content.getResourceLocator(),
+                                             content.getCalDavResourceLocator(),
                                              ctx.getCalendar());
         }
         
         // case when event updates comes through a ticket, 
         // the ticket is attached to the item (event) and not ticket is associated to the parent item (calendar)
-        if(request.getHeader(ServerConstants.HEADER_TICKET) != null && content instanceof DavEvent ) {
-            ((DavEvent) content).updateContent(content, ctx);
+        if(request.getHeader(ServerConstants.HEADER_TICKET) != null && content instanceof EventFile ) {
+            ((EventFile) content).updateContent(content, ctx);
         } else {
-            content.getParent().addContent(content, ctx);
+            content.getParent().addContent((CalDavContentResource)content, ctx);
         }
         response.setStatus(status);
         // since the iCalendar body is parsed and re-serialized for storage,
         // it's possible that what will be served for subsequent GETs is
         // slightly different than what was provided in the PUT, so send a
         // weak etag
-        response.setHeader("ETag", "W/" + ((DavItemResourceBase) content).getETag());
+        response.setHeader("ETag", "W/" +  content.getETag());
     }
 
-    protected WebDavResource resolveDestination(DavResourceLocator locator,
-                                             WebDavResource original)
+    protected CalDavResource resolveDestination(CalDavResourceLocator locator,
+                                             CalDavResource original)
         throws CosmoDavException {
         if (locator == null) {
             return null;
         }
-        if (original instanceof DavTask) {
-            return new DavTask(locator, getResourceFactory(), getEntityFactory());
+        
+        if (original instanceof TaskFile) {
+            return new TaskFile(locator, getResourceFactory(), getEntityFactory());
         }
-        if (original instanceof DavJournal) {
-            return new DavJournal(locator, getResourceFactory(), getEntityFactory());
+        if (original instanceof JournalFile) {
+            return new JournalFile(locator, getResourceFactory(), getEntityFactory());
         }
-        if (original instanceof DavFreeBusy) {
-            return new DavFreeBusy(locator, getResourceFactory(), getEntityFactory());
+        if (original instanceof FreeBusyFile) {
+            return new FreeBusyFile(locator, getResourceFactory(), getEntityFactory());
         }
-        if (original instanceof DavAvailability) {
-            return new DavAvailability(locator, getResourceFactory(), getEntityFactory());
+        if (original instanceof AvailabilityFile) {
+            return new AvailabilityFile(locator, getResourceFactory(), getEntityFactory());
         }
-        return new DavEvent(locator, getResourceFactory(), getEntityFactory());
+        return new EventFile(locator, getResourceFactory(), getEntityFactory());
     }
 
-    protected DavContent createCalendarResource(DavRequest request,
-                                                DavResponse response,
-                                                DavResourceLocator locator,
+    protected CalDavResource createCalendarResource(CalDavRequest request,
+                                                CalDavResponse response,
+                                                CalDavResourceLocator locator,
                                                 Calendar calendar)
         throws CosmoDavException {
         if (!calendar.getComponents(Component.VEVENT).isEmpty()) {
-            return new DavEvent(locator, getResourceFactory(), getEntityFactory());
+            return new EventFile(locator, getResourceFactory(), getEntityFactory());
         }
         if (!calendar.getComponents(Component.VTODO).isEmpty()) {
-            return new DavTask(locator, getResourceFactory(), getEntityFactory());
+            return new TaskFile(locator, getResourceFactory(), getEntityFactory());
         }
         if (!calendar.getComponents(Component.VJOURNAL).isEmpty()) {
-            return new DavJournal(locator, getResourceFactory(), getEntityFactory());
+            return new JournalFile(locator, getResourceFactory(), getEntityFactory());
         }
         if (!calendar.getComponents(Component.VFREEBUSY).isEmpty()) {
-            return new DavFreeBusy(locator, getResourceFactory(), getEntityFactory());
+            return new FreeBusyFile(locator, getResourceFactory(), getEntityFactory());
         }
-        if (!calendar.getComponents(ICalendarConstants.COMPONENT_VAVAILABLITY)
-                .isEmpty()) {
-            return new DavAvailability(locator, getResourceFactory(), getEntityFactory());
+        if (!calendar.getComponents(ICalendarConstants.COMPONENT_VAVAILABLITY).isEmpty()) {
+            return new AvailabilityFile(locator, getResourceFactory(), getEntityFactory());
         }
         throw new SupportedCalendarComponentException();
   }

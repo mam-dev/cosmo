@@ -1,7 +1,10 @@
 package org.unitedinternet.cosmo.dav.impl.parallel;
 
+import org.apache.jackrabbit.webdav.io.InputContext;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.parallel.CalDavContentResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -23,6 +26,11 @@ public class EventFile extends CalDavFileBase{
 		super(item, locator, calDavResourceFactory, entityFactory);
 	}
 
+	public EventFile( CalDavResourceLocator locator,
+			CalDavResourceFactory calDavResourceFactory, 
+			EntityFactory entityFactory) {
+		super(entityFactory.createNote(), locator, calDavResourceFactory, entityFactory);
+}
 	@Override
 	 public Calendar getCalendar() {
         Calendar calendar = new EntityConverter(null).convertNote((NoteItem)getItem());
@@ -40,5 +48,14 @@ public class EventFile extends CalDavFileBase{
         }
 
         StampUtils.getEventStamp(getItem()).setEventCalendar(calendar);
+    }
+    
+    public void updateContent(CalDavResource content, InputContext context) throws CosmoDavException {
+    	if(!(content instanceof CalDavContentResource)){
+    		throw new IllegalArgumentException("Expected instances of  [" + CalDavContentResource.class.getSimpleName() + "]");
+    	}
+    	
+        ((CalDavContentResourceBase)content).populateItem(context);
+        updateItem();
     }
 }

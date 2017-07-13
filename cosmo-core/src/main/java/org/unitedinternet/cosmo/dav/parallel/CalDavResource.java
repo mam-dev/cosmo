@@ -23,7 +23,7 @@ public interface CalDavResource extends DeltaVResource {
 
 	MultiStatusResponse updateProperties(DavPropertySet setProperties, DavPropertyNameSet removePropertyNames) throws CosmoDavException;
 
-	CalDavResource getParent() throws CosmoDavException;
+	CalDavCollection getParent() throws CosmoDavException;
 	
 	CalDavResourceLocator getCalDavResourceLocator();
 }

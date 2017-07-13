@@ -15,9 +15,17 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
 
 public class AvailabilityFile extends CalDavFileBase {
-	public AvailabilityFile(Item item, CalDavResourceLocator locator, CalDavResourceFactory calDavResourceFactory,
+	public AvailabilityFile(Item item, 
+							CalDavResourceLocator locator, 
+							CalDavResourceFactory calDavResourceFactory,
 			EntityFactory entityFactory) {
 		super(item, locator, calDavResourceFactory, entityFactory);
+	}
+	
+	public AvailabilityFile(CalDavResourceLocator locator, 
+							CalDavResourceFactory calDavResourceFactory,
+							EntityFactory entityFactory) {
+		super(entityFactory.createNote(), locator, calDavResourceFactory, entityFactory);
 	}
 
 	public Calendar getCalendar() {

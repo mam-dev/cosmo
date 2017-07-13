@@ -12,7 +12,7 @@ public interface CalDavCollection extends CalDavContentResource{
 	  /**
      * Adds a new content item to this resource.
      */
-    void addContent(CalDavFile content, InputContext input) throws CosmoDavException;
+    void addContent(CalDavContentResource content, InputContext input) throws CosmoDavException;
 
     /**
      * Adds a new collection to this resource.

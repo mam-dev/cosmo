@@ -19,14 +19,13 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
 import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
@@ -42,16 +41,15 @@ public class HomeCollectionProvider extends CollectionProvider {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(HomeCollectionProvider.class);
 
-    public HomeCollectionProvider(DavResourceFactory resourceFactory,
-            EntityFactory entityFactory) {
+    public HomeCollectionProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
 
     // DavProvider methods
 
-    public void delete(DavRequest request,
-                       DavResponse response,
-                       WebDavResource resource)
+    public void delete(CalDavRequest request,
+                       CalDavResponse response,
+                       CalDavResource resource)
         throws CosmoDavException, IOException {
         if (resource instanceof DavHomeCollection) {
             throw new MethodNotAllowedException("DELETE not allowed for home collection");
@@ -59,9 +57,9 @@ public class HomeCollectionProvider extends CollectionProvider {
         super.delete(request, response, resource);
     }
 
-    public void copy(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void copy(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         if (resource instanceof DavHomeCollection) {
             throw new MethodNotAllowedException("COPY not allowed for home collection");
@@ -69,9 +67,9 @@ public class HomeCollectionProvider extends CollectionProvider {
         super.copy(request, response, resource);
     }
 
-    public void move(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void move(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         if (resource instanceof DavHomeCollection) {
             throw new MethodNotAllowedException("MOVE not allowed for home collection");

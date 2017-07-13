@@ -24,6 +24,12 @@ import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavEvent;
 import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResourceLocatorFactory;
+import org.unitedinternet.cosmo.dav.impl.parallel.HomeCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocatorFactory;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
@@ -38,6 +44,12 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
     private DavResourceLocator homeLocator;
 
     private URL baseUrl;
+    
+    
+    //PARALLEL
+    private CalDavResourceFactory calDavResourceFactory;
+    private CalDavResourceLocatorFactory calDavResourceLocatorFactory;
+    private CalDavResourceLocator calDavHomeLocator;
 
     /**
      * Constructor.
@@ -55,6 +67,11 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
                                         getUserIdentitySupplier(),
                                         false);
         locatorFactory = new StandardResourceLocatorFactory();
+        
+        //PARALLEL
+        calDavResourceFactory = new DefaultCalDavResourceFactory(getContentService(), getUserService(), getSecurityManager(), getEntityFactory(), getCalendarQueryProcessor(), getClientFilterManager(), getUserIdentitySupplier(), true);
+        calDavResourceLocatorFactory = new DefaultCalDavResourceLocatorFactory();
+        
         try {
             baseUrl = new URL("http", "localhost", -1, "/dav");
         } catch (Exception e) {
@@ -73,6 +90,8 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         String path = TEMPLATE_HOME.bind(false, getUser().getUsername());
         homeLocator =
             locatorFactory.createResourceLocatorByPath(baseUrl, path);
+        
+        calDavHomeLocator = calDavResourceLocatorFactory.createResourceLocatorByUri(baseUrl, path);
     }
 
     /**
@@ -109,6 +128,10 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         return new DavHomeCollection(getHomeCollection(), homeLocator,
                                      resourceFactory, getEntityFactory());
     }
+    
+    public HomeCollection newCalDavHomeCollection(){
+    	return new HomeCollection(getHomeCollection(), calDavHomeLocator, calDavResourceFactory, getEntityFactory());
+    }
 
     /**
      * Gets principal.
@@ -141,6 +164,10 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         return locatorFactory.
             createResourceLocatorByPath(homeLocator.getContext(), path);
     }
+    
+    public CalDavResourceLocator createCalDavResourceLocator(String path){
+    	return (CalDavResourceLocator) calDavResourceLocatorFactory.createResourceLocator(calDavHomeLocator.getBaseHref(), path);
+    }
 
     /**
      * Creates member locator.
@@ -152,6 +179,10 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         String path = locator.getPath() + "/" + segment;
         return locatorFactory.
             createResourceLocatorByPath(locator.getContext(), path);
+    }
+    
+    public CalDavResourceLocator createMemberLocator(CalDavResourceLocator locator, String segment){
+    	return (CalDavResourceLocator) calDavResourceLocatorFactory.createResourceLocator(locator.getPath(), segment); 
     }
 
     /**
@@ -206,4 +237,16 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
             createMemberLocator(parent.getResourceLocator(), item.getName());
         return new DavEvent(item, locator, resourceFactory, getEntityFactory());
     }
+
+	public CalDavResourceFactory getCalDavResourceFactory() {
+		return calDavResourceFactory;
+	}
+
+	public CalDavResourceLocatorFactory getCalDavResourceLocatorFactory() {
+		return calDavResourceLocatorFactory;
+	}
+
+	public CalDavResourceLocator getCalDavHomeLocator() {
+		return calDavHomeLocator;
+	}
 }

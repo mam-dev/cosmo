@@ -22,12 +22,13 @@ import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.ExistsException;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
@@ -43,23 +44,22 @@ public class CollectionProvider extends BaseProvider {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(CollectionProvider.class);
 
-    public CollectionProvider(DavResourceFactory resourceFactory,
-            EntityFactory entityFactory) {
+    public CollectionProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
 
     // DavProvider methods
 
     public void put(CalDavRequest request,
-                    DavResponse response,
-                    DavContent content)
+                    CalDavResponse response,
+                    CalDavResource content)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("PUT not allowed for a collection");
     }
 
-    public void mkcol(DavRequest request,
-                      DavResponse response,
-                      DavCollection collection)
+    public void mkcol(CalDavRequest request,
+                      CalDavResponse response,
+                      CalDavCollection collection)
         throws CosmoDavException, IOException {
         if (collection.exists()) {
             throw new ExistsException();
@@ -74,9 +74,9 @@ public class CollectionProvider extends BaseProvider {
     }
     
 
-    public void mkcalendar(DavRequest request,
-                           DavResponse response,
-                           DavCollection collection)
+    public void mkcalendar(CalDavRequest request,
+                           CalDavResponse response,
+                           CalDavCollection collection)
         throws CosmoDavException, IOException {  
         throw new UnsupportedOperationException();
     }

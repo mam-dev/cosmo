@@ -18,7 +18,6 @@ package org.unitedinternet.cosmo.dav.provider;
 import java.io.IOException;
 
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
@@ -53,7 +52,7 @@ public interface DavProvider {
 
     void put(CalDavRequest request,
                     CalDavResponse response,
-                    DavContent content)
+                    CalDavResource content)
         throws CosmoDavException, IOException;
 
     void post(CalDavRequest request,

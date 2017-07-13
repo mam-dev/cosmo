@@ -21,6 +21,7 @@ import static net.fortuna.ical4j.model.Property.EXDATE;
 import static net.fortuna.ical4j.model.Property.RECURRENCE_ID;
 import static net.fortuna.ical4j.model.Property.RRULE;
 import static net.fortuna.ical4j.model.Property.UID;
+import static org.unitedinternet.cosmo.icalendar.ICalendarConstants.ICALENDAR_MEDIA_TYPE;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,11 +42,15 @@ import org.unitedinternet.cosmo.dav.DavRequest;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.ExistsException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarLocationException;
 import org.unitedinternet.cosmo.dav.caldav.MissingParentException;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavItemCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -65,8 +70,6 @@ import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.model.property.XProperty;
-
-import static org.unitedinternet.cosmo.icalendar.ICalendarConstants.ICALENDAR_MEDIA_TYPE;
 
 /**
  * <p>
@@ -93,13 +96,13 @@ public class CalendarCollectionProvider extends CollectionProvider {
 
     private volatile String productId;
 
-    public CalendarCollectionProvider(DavResourceFactory resourceFactory, EntityFactory entityFactory) {
+    public CalendarCollectionProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
 
     // DavProvider methods
     @Override
-    public void mkcalendar(DavRequest request, DavResponse response, DavCollection collection)
+    public void mkcalendar(CalDavRequest request, CalDavResponse response, CalDavCollection collection)
             throws CosmoDavException, IOException {
         if (collection.exists()) {
             throw new ExistsException();
@@ -135,8 +138,10 @@ public class CalendarCollectionProvider extends CollectionProvider {
     }
 
     @Override
-    protected void spool(DavRequest request, DavResponse response, WebDavResource resource, boolean withEntity)
-            throws CosmoDavException, IOException {
+    protected void spool(CalDavRequest request, 
+    					CalDavResponse response, 
+    					CalDavResource resource, 
+    					boolean withEntity)throws CosmoDavException, IOException {
         Enumeration<String> acceptHeaders = request.getHeaders("Accept");
 
         if (acceptHeaders != null) {
@@ -151,7 +156,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         super.spool(request, response, resource, withEntity);
     }
 
-    private void writeContentOnResponse(DavRequest request, DavResponse response, WebDavResource resource)
+    private void writeContentOnResponse(CalDavRequest request, CalDavResponse response, CalDavResource resource)
             throws IOException {
         // strip the content if there's a ticket with free-busy access
         if (!(resource instanceof DavCalendarCollection)) {
@@ -216,7 +221,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
      * @param collectionItem
      * @return
      */
-    private Calendar getCalendarFromCollection(DavRequest req, CollectionItem collectionItem) {
+    private Calendar getCalendarFromCollection(CalDavRequest req, CollectionItem collectionItem) {
         Calendar result = new Calendar();
 
         if (productId == null) {

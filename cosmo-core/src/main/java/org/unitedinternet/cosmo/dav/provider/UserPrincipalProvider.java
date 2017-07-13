@@ -19,15 +19,14 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
+import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
@@ -43,65 +42,64 @@ public class UserPrincipalProvider extends BaseProvider {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(UserPrincipalProvider.class);
 
-    public UserPrincipalProvider(DavResourceFactory resourceFactory,
-            EntityFactory entityFactory) {
+    public UserPrincipalProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
 
     // DavProvider methods
 
-    public void put(DavRequest request,
-                    DavResponse response,
-                    DavContent content)
+    public void put(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource content)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("PUT not allowed for user principal");
     }
 
-    public void delete(DavRequest request,
-                       DavResponse response,
-                       WebDavResource resource)
+    public void delete(CalDavRequest request,
+                       CalDavResponse response,
+                       CalDavResource resource)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("DELETE not allowed for user principal");
     }
 
-    public void copy(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void copy(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("COPY not allowed for user principal");
     }
 
-    public void move(DavRequest request,
-                     DavResponse response,
-                     WebDavResource resource)
+    public void move(CalDavRequest request,
+                     CalDavResponse response,
+                     CalDavResource resource)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("MOVE not allowed for user principal");
     }
 
-    public void mkcol(DavRequest request,
-                      DavResponse response,
-                      DavCollection collection)
+    public void mkcol(CalDavRequest request,
+                      CalDavResponse response,
+                      CalDavCollection collection)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("MKCOL not allowed for user principal");
     }
 
-    public void mkcalendar(DavRequest request,
-                           DavResponse response,
-                           DavCollection collection)
+    public void mkcalendar(CalDavRequest request,
+                           CalDavResponse response,
+                           CalDavCollection collection)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("MKCALENDAR not allowed for user principal");
     }
 
-    public void mkticket(DavRequest request,
-                         DavResponse response,
-                         WebDavResource resource)
+    public void mkticket(CalDavRequest request,
+                         CalDavResponse response,
+                         CalDavResource resource)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("MKTICKET not allowed for user principal");
     }
 
-    public void delticket(DavRequest request,
-                          DavResponse response,
-                          WebDavResource resource)
+    public void delticket(CalDavRequest request,
+                          CalDavResponse response,
+                          CalDavResource resource)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("DELTICKET not allowed for user principal");
     }

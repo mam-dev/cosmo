@@ -26,13 +26,11 @@ import javax.validation.ValidationException;
 import org.apache.abdera.util.EntityTag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.web.HttpRequestHandler;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
@@ -41,17 +39,8 @@ import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
-import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
-import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.dav.impl.CalDavCollectionBase;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
-import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
-import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
-import org.unitedinternet.cosmo.dav.impl.StandardDavRequest;
-import org.unitedinternet.cosmo.dav.impl.StandardDavResponse;
 import org.unitedinternet.cosmo.dav.impl.parallel.CalDavOutboxCollection;
 import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipal;
 import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipalCollection;
@@ -59,6 +48,7 @@ import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavRequest;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResponse;
 import org.unitedinternet.cosmo.dav.impl.parallel.HomeCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
 import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
@@ -79,8 +69,6 @@ import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.server.ServerConstants;
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.web.HttpRequestHandler;
 
 /**
  * <p>
@@ -289,18 +277,18 @@ public class StandardRequestHandler
             if (resource.isCollection()) {
                 if (request.getMethod().equals("MKCOL")) {
                     provider.mkcol(request, response,
-                                   (DavCollection)resource);
+                                   (CalDavCollection)resource);
                 }
                 else if (request.getMethod().equals("MKCALENDAR")) {
                     provider.mkcalendar(request, response,
-                                        (DavCollection)resource);
+                                        (CalDavCollection)resource);
                 }
                 else {
                     throw new MethodNotAllowedException(request.getMethod() + " not allowed for a collection");
                 }
             } else {
                 if (request.getMethod().equals("PUT")) {
-                    provider.put(request, response, (DavContent)resource);
+                    provider.put(request, response, resource);
                 }
                 else {
                     throw new MethodNotAllowedException(request.getMethod() + " not allowed for a non-collection resource");

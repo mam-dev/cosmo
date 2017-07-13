@@ -43,6 +43,7 @@ import org.unitedinternet.cosmo.dav.caldav.property.CalendarHomeSet;
 import org.unitedinternet.cosmo.dav.caldav.property.CalendarUserAddressSet;
 import org.unitedinternet.cosmo.dav.caldav.property.ScheduleInboxURL;
 import org.unitedinternet.cosmo.dav.caldav.property.ScheduleOutboxURL;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
@@ -53,7 +54,6 @@ import org.unitedinternet.cosmo.dav.property.IsCollection;
 import org.unitedinternet.cosmo.dav.property.LastModified;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserIdentity;
 import org.unitedinternet.cosmo.model.UserIdentitySupplier;
@@ -383,7 +383,7 @@ public class CalDavUserPrincipal extends CalDavResourceBase implements CaldavCon
 	}
 
 	@Override
-	public CalDavResource getParent() throws CosmoDavException {
+	public CalDavCollection getParent() throws CosmoDavException {
 		// TODO Auto-generated method stub
 		return null;
 	}

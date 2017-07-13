@@ -24,7 +24,7 @@ import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalPropertySearchReport;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalSearchPropertySetReport;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
-import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavContentResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.CurrentUserPrincipal;
@@ -148,7 +148,7 @@ public class CalDavUserPrincipalCollection extends CalDavCollectionBase {
 	}
 
 	@Override
-	public void addContent(CalDavFile content, InputContext context) throws CosmoDavException {
+	public void addContent(CalDavContentResource content, InputContext context) throws CosmoDavException {
 		throw new UnsupportedOperationException();
 	}
 

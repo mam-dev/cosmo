@@ -21,14 +21,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
 import org.unitedinternet.cosmo.dav.impl.DavFile;
 import org.unitedinternet.cosmo.dav.impl.DavItemResourceBase;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
@@ -44,40 +45,39 @@ public class FileProvider extends BaseProvider {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(FileProvider.class);
 
-    public FileProvider(DavResourceFactory resourceFactory,
-            EntityFactory entityFactory) {
+    public FileProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
 
     // DavProvider methods
 
-    public void put(DavRequest request,
-                    DavResponse response,
-                    DavContent content)
+    public void put(CalDavRequest request,
+                    CalDavResponse response,
+                    CalDavResource content)
         throws CosmoDavException, IOException {
         if (! content.getParent().exists()) {
             throw new ConflictException("One or more intermediate collections must be created");
         }
         
-        if(!(content instanceof DavItemResourceBase)){
-            throw new IllegalArgumentException("Expected type for 'content' is: [" + DavItemResourceBase.class.getName() + "]");
+        if(!(content instanceof CalDavFile)){
+            throw new IllegalArgumentException("Expected type for 'content' is: [" + CalDavFile.class.getName() + "]");
         }
         int status = content.exists() ? 204 : 201;
-        content.getParent().addContent(content, createInputContext(request));
+        ((CalDavCollection)content.getParent()).addContent((CalDavFile)content, createInputContext(request));
         response.setStatus(status);
         response.setHeader("ETag", ((DavItemResourceBase) content).getETag());
     }
 
-    public void mkcol(DavRequest request,
-                      DavResponse response,
-                      DavCollection collection)
+    public void mkcol(CalDavRequest request,
+                      CalDavResponse response,
+                      CalDavCollection collection)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("MKCOL not allowed for a file");
     }
 
-    public void mkcalendar(DavRequest request,
-                           DavResponse response,
-                           DavCollection collection)
+    public void mkcalendar(CalDavRequest request,
+                           CalDavResponse response,
+                           CalDavCollection collection)
         throws CosmoDavException, IOException {
         throw new MethodNotAllowedException("MKCALENDAR not allowed for a file");
     }

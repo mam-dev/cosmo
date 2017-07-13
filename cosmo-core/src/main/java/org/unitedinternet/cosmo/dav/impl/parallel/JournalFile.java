@@ -15,10 +15,18 @@ import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.VJournal;
 
 public class JournalFile extends CalDavFileBase{
-	  public JournalFile(Item item, CalDavResourceLocator calDavResourceLocator,
-			CalDavResourceFactory calDavResourceFactory, EntityFactory entityFactory) {
+	  public JournalFile(Item item, 
+		  				CalDavResourceLocator calDavResourceLocator,
+		  				CalDavResourceFactory calDavResourceFactory, 
+		  				EntityFactory entityFactory) {
 		super(item, calDavResourceLocator, calDavResourceFactory, entityFactory);
 	}
+	  
+	  public JournalFile(CalDavResourceLocator calDavResourceLocator,
+				CalDavResourceFactory calDavResourceFactory, 
+				EntityFactory entityFactory) {
+		  super(entityFactory.createNote(), calDavResourceLocator, calDavResourceFactory, entityFactory);
+}
 
 	/**
      * <p>

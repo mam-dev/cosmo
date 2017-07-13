@@ -86,8 +86,7 @@ public abstract class BaseProvider
      * @param resourceFactory 
      * @param entityFactory 
      */
-    public BaseProvider(CalDavResourceFactory resourceFactory,
-            EntityFactory entityFactory) {
+    public BaseProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         this.resourceFactory = resourceFactory;
         this.entityFactory = entityFactory;
     }

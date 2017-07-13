@@ -17,6 +17,21 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
+import org.unitedinternet.cosmo.dav.CosmoDavException;
+import org.unitedinternet.cosmo.dav.DavResponse;
+import org.unitedinternet.cosmo.dav.caldav.ScheduleMultiResponse;
+import org.unitedinternet.cosmo.dav.caldav.ScheduleResponse;
+import org.unitedinternet.cosmo.dav.io.DavInputContext;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
+import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.User;
+
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
@@ -28,20 +43,6 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.RequestStatus;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.caldav.ScheduleMultiResponse;
-import org.unitedinternet.cosmo.dav.caldav.ScheduleResponse;
-import org.unitedinternet.cosmo.dav.io.DavInputContext;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.User;
 
 /**
  * <p>
@@ -55,7 +56,7 @@ import org.unitedinternet.cosmo.model.User;
 public class OutboxCollectionProvider extends CollectionProvider {
     private static final Log LOG = LogFactory.getLog(OutboxCollectionProvider.class);
 
-    public OutboxCollectionProvider(DavResourceFactory resourceFactory, EntityFactory entityFactory) {
+    public OutboxCollectionProvider(CalDavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
 
@@ -68,7 +69,7 @@ public class OutboxCollectionProvider extends CollectionProvider {
      * org.unitedinternet.cosmo.dav.WebDavResource)
      */
     @Override
-    public void post(DavRequest request, DavResponse response, WebDavResource resource) throws CosmoDavException, IOException {
+    public void post(CalDavRequest request, CalDavResponse response, CalDavResource resource) throws CosmoDavException, IOException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Handling POST method for Outbox");
         }

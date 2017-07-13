@@ -21,6 +21,7 @@ import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavContentResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
@@ -151,7 +152,7 @@ public class CalDavCollectionBase extends CalDavContentResourceBase implements C
 	}
 
 	@Override
-	public void addContent(CalDavFile content, InputContext context) throws CosmoDavException {
+	public void addContent(CalDavContentResource content, InputContext context) throws CosmoDavException {
 		if (!(content instanceof CalDavFileBase)) {
 			throw new IllegalArgumentException("Expected instance of : [" + CalDavFileBase.class.getName() + "]");
 		}
