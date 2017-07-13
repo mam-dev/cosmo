@@ -18,7 +18,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>1.5.1-SNAPSHOT</version>
+	<version>1.6.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -40,7 +40,7 @@
 		<validation-api.version>1.1.0.Final</validation-api.version>
 		<javax.el.version>2.2.4</javax.el.version>
 		<jackrabbit.version>2.13.2</jackrabbit.version>
-		<ical4j.version>2.0.1</ical4j.version>
+		<ical4j.version>2.0.3</ical4j.version>
 		<icu4j.version>54.1.1</icu4j.version>		
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
 		<aopalliance.version>1.0</aopalliance.version>
@@ -609,7 +609,7 @@
 		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 		<url>https://github.com/1and1/</url>
-		<tag>cosmo-multimodule-1.4.6-SNAPSHOT</tag>
+		<tag>cosmo-multimodule-1.5.3</tag>
 	</scm>
 	
 	<repositories>

@@ -282,17 +282,20 @@ public class ContextServiceExtensionsAdvice {
      */
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.createCollection(..)) &&"
             + "args(parent, collection)")
-    public CollectionItem createCollection(ProceedingJoinPoint pjp,
-            CollectionItem parent, CollectionItem collection) throws Throwable {
+    public CollectionItem createCollection(ProceedingJoinPoint pjp, CollectionItem parent, CollectionItem collection)
+            throws Throwable {
         if (LOG.isDebugEnabled()) {
             LOG.debug("In  ContextServiceExtensionsAdvice: createCollection(parent, collection, children)");
         }
 
-        for (CollectionCreateHandler collectionCreate : createHandlers) {
-            collectionCreate.beforeCreateCollection(collection);
+        for (CollectionCreateHandler handler : this.createHandlers) {
+            handler.beforeCreateCollection(collection);
         }
-
-        return (CollectionItem) pjp.proceed();
+        CollectionItem toReturn = (CollectionItem) pjp.proceed();
+        for (CollectionCreateHandler handler : this.createHandlers) {
+            handler.afterCreateCollection(collection);
+        }
+        return toReturn;
     }
 
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.removeCollection(..)) &&"
