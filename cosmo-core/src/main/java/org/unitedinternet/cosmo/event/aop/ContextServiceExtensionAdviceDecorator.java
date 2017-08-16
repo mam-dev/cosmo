@@ -11,6 +11,7 @@ import org.unitedinternet.cosmo.service.interceptors.CollectionCreateHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionDeleteHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionUpdateHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventAddHandler;
+import org.unitedinternet.cosmo.service.interceptors.EventMoveHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventRemoveHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
 
@@ -61,6 +62,7 @@ public class ContextServiceExtensionAdviceDecorator {
         this.advice.setAddHandlers(this.getInterceptorsList(EventAddHandler.class));
         this.advice.setUpdateHandlers(this.getInterceptorsList(EventUpdateHandler.class));
         this.advice.setRemoveHandlers(this.getInterceptorsList(EventRemoveHandler.class));
+        this.advice.setMoveHandlers(this.getInterceptorsList(EventMoveHandler.class));
         this.advice.setCreateHandlers(this.getInterceptorsList(CollectionCreateHandler.class));
         this.advice.setUpdateCollectionHandlers(this.getInterceptorsList(CollectionUpdateHandler.class));
         this.advice.setDeleteHandlers(this.getInterceptorsList(CollectionDeleteHandler.class));
