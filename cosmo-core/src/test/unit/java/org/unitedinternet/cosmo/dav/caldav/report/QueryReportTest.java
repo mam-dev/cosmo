@@ -25,6 +25,10 @@ import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
 import org.unitedinternet.cosmo.dav.impl.DavFile;
 import org.unitedinternet.cosmo.dav.impl.mock.MockCalendarResource;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavCollectionBase;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CustomFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.BaseReportTestCase;
 
 /**
@@ -38,7 +42,7 @@ public class QueryReportTest extends BaseReportTestCase {
      */
     @Test
     public void testWrongType() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("query");
 
         QueryReport report = new QueryReport();
@@ -73,7 +77,8 @@ public class QueryReportTest extends BaseReportTestCase {
      */
     @Test
     public void testQuerySelfNonCalendarResource() throws Exception {
-        WebDavResource test = makeTarget(DavFile.class);
+        // XXX-Review this
+        CalDavResource test = makeTarget(CustomFile.class);
         QueryReport report = makeReport("query1.xml", DEPTH_0, test);
         try {
             report.doQuerySelf(test);
@@ -87,7 +92,7 @@ public class QueryReportTest extends BaseReportTestCase {
      */
     @Test
     public void testQuerySelfCalendarCollection() throws Exception {
-        WebDavResource test = makeTarget(DavCalendarCollection.class);
+        CalDavResource test = makeTarget(CalendarCollection.class);
         QueryReport report = makeReport("query1.xml", DEPTH_0, test);
         try {
             report.doQuerySelf(test);
@@ -102,7 +107,7 @@ public class QueryReportTest extends BaseReportTestCase {
      */
     @Test
     public void testQuerySelfNonCalendarCollection() throws Exception {
-        WebDavResource test = makeTarget(DavCollectionBase.class);
+        CalDavResource test = makeTarget(CalDavCollectionBase.class);
         QueryReport report = makeReport("query1.xml", DEPTH_0, test);
         try {
             report.doQuerySelf(test);
@@ -117,8 +122,8 @@ public class QueryReportTest extends BaseReportTestCase {
      */
     @Test
     public void testQueryChildrenCalendarCollection() throws Exception {
-        DavCollection test = (DavCollection)
-            makeTarget(DavCalendarCollection.class);
+        CalendarCollection test = (CalendarCollection)
+            makeTarget(CalendarCollection.class);
         QueryReport report = makeReport("query1.xml", DEPTH_1, test);
         try {
             report.doQueryChildren(test);
@@ -133,8 +138,8 @@ public class QueryReportTest extends BaseReportTestCase {
      */
     @Test
     public void testQueryChildrenNonCalendarCollection() throws Exception {
-        DavCollection test = (DavCollection)
-            makeTarget(DavCollectionBase.class);
+        CalDavCollectionBase test = (CalDavCollectionBase)
+            makeTarget(CalDavCollectionBase.class);
         QueryReport report = makeReport("query1.xml", DEPTH_0, test);
         try {
             report.doQueryChildren(test);
@@ -151,7 +156,7 @@ public class QueryReportTest extends BaseReportTestCase {
      * @return The query report.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    private QueryReport makeReport(String reportXml, int depth,  WebDavResource target)
+    private QueryReport makeReport(String reportXml, int depth,  CalDavResource target)
         throws Exception {
         return (QueryReport)
             super.makeReport(QueryReport.class, reportXml, depth, target);

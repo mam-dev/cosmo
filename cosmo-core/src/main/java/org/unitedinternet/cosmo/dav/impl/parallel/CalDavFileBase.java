@@ -248,7 +248,7 @@ public abstract class CalDavFileBase extends CalDavContentResourceBase implement
 	    }
 
 	    /** */
-	    protected void setLiveProperty(WebDavProperty property, boolean create)
+	    public void setLiveProperty(WebDavProperty property, boolean create)
 	        throws CosmoDavException {
 	        super.setLiveProperty(property, create);
 

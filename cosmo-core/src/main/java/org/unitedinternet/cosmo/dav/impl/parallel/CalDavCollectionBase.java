@@ -12,7 +12,6 @@ import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
-import org.apache.jackrabbit.webdav.DavResourceLocator;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
@@ -23,6 +22,7 @@ import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavContentResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -50,7 +50,8 @@ public class CalDavCollectionBase extends CalDavContentResourceBase implements C
 		return rt;
 	}
 
-	protected Set<String> getDeadPropertyFilter() {
+	// XXX-Review this
+	public Set<String> getDeadPropertyFilter() {
 		return DEAD_PROPERTY_FILTER;
 	}
 
@@ -68,15 +69,15 @@ public class CalDavCollectionBase extends CalDavContentResourceBase implements C
 		return true;
 	}
 
-	public DavResource findMember(String href) throws DavException {
+	public CalDavResource findMember(String href) throws CosmoDavException {
 		return memberToResource(href);
 	}
 
-	protected DavResource memberToResource(String uri) throws DavException {
+	protected CalDavResource memberToResource(String uri) throws CosmoDavException {
 		return calDavResourceFactory.createResource(calDavResourceLocator, getItem());
 	}
 
-	protected DavResource memberToResource(Item item) throws DavException {
+	protected CalDavResource memberToResource(Item item) throws CosmoDavException {
 		String path;
 		try {
 			path = getResourcePath() + "/" + URLEncoder.encode(item.getName(), "UTF-8");
@@ -84,8 +85,8 @@ public class CalDavCollectionBase extends CalDavContentResourceBase implements C
 			throw new CosmoDavException(e);
 		}
 
-		DavResourceLocator locator = calDavLocatorFactory.createResourceLocator(null, path);
-		return calDavResourceFactory.createResource(locator, getSession());
+		CalDavResourceLocator locator = calDavLocatorFactory.createResourceLocatorByUri(null, path);
+		return calDavResourceFactory.createResource(locator, item);
 	}
 
 	public DavResourceIterator getCollectionMembers() {
@@ -172,4 +173,8 @@ public class CalDavCollectionBase extends CalDavContentResourceBase implements C
 		return "OPTIONS, GET, HEAD, PROPFIND, PROPPATCH, TRACE, COPY, DELETE, MOVE, MKTICKET, DELTICKET, REPORT";
 
 	}
+	
+	public boolean isExcludedFromFreeBusyRollups() {
+	        return ((CollectionItem) getItem()).isExcludeFreeBusyRollup();
+	    }
 }

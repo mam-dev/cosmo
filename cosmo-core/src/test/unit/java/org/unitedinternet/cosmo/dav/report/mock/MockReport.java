@@ -20,14 +20,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.DavServletResponse;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
-
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,7 +73,7 @@ public class MockReport extends ReportBase {
      * @param resource Dav resource.
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
-    protected void doQuerySelf(WebDavResource resource) throws CosmoDavException {
+    protected void doQuerySelf(CalDavResource resource) throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("querying " + resource.getResourcePath());
         }
@@ -87,7 +85,7 @@ public class MockReport extends ReportBase {
      * @param collection Dav collection.
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
-     protected void doQueryChildren(DavCollection collection) throws CosmoDavException {
+     protected void doQueryChildren(CalDavCollection collection) throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("querying children of " + collection.getResourcePath());
         }

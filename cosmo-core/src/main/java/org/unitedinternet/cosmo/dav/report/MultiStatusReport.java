@@ -23,6 +23,7 @@ import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -63,7 +64,7 @@ public abstract class MultiStatusReport extends ReportBase {
 
         DavPropertyNameSet resultProps = createResultPropSpec();
 
-        for (WebDavResource result : getResults()) {
+        for (CalDavResource result : getResults()) {
             MultiStatusResponse msr =
                     buildMultiStatusResponse(result, resultProps);
             multistatus.addResponse(msr);
@@ -79,11 +80,11 @@ public abstract class MultiStatusReport extends ReportBase {
      * specified resource including the specified properties.
      */
     protected MultiStatusResponse
-    buildMultiStatusResponse(WebDavResource resource,
+    buildMultiStatusResponse(CalDavResource resource,
                              DavPropertyNameSet props)
             throws CosmoDavException {
         if (props.isEmpty()) {
-            String href = resource.getResourceLocator().
+            String href = resource.getCalDavResourceLocator().
                     getHref(resource.isCollection());
             return new MultiStatusResponse(href, 200);
         }

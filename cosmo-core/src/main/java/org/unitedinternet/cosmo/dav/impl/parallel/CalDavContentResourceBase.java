@@ -75,7 +75,7 @@ public abstract class CalDavContentResourceBase extends CalDavResourceBase imple
 	private EntityFactory entityFactory;
 	
 	private boolean initialized;
-	private DavPropertySet properties;
+	private DavPropertySet properties = new DavPropertySet() ;
 
 	public CalDavContentResourceBase(Item item, CalDavResourceLocator calDavResourceLocator,
 			CalDavResourceFactory calDavResourceFactory, EntityFactory entityFactory) {
@@ -484,7 +484,9 @@ public abstract class CalDavContentResourceBase extends CalDavResourceBase imple
 
 		properties.remove(name);
 	}
-	protected void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
+	
+	// XXX-Review this only used in tests
+	public void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
 		if (getItem() == null) {
 			return;
 		}
@@ -511,7 +513,8 @@ public abstract class CalDavContentResourceBase extends CalDavResourceBase imple
 	 *             for a property that does not accept them or if an invalid
 	 *             value is specified
 	 */
-	protected void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
+	// XXX-Review this only used in tests
+	public void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
 		Item item = getItem();
 		if (item == null) {
 			return;

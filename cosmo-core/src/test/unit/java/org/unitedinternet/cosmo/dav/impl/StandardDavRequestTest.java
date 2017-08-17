@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
+import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavRequest;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
@@ -40,8 +41,8 @@ public class StandardDavRequestTest extends BaseDavTestCase {
 
         MockHttpServletRequest httpRequest =
             new MockHttpServletRequest();
-        StandardDavRequest request =
-            new StandardDavRequest(httpRequest,
+        DefaultCalDavRequest request =
+            new DefaultCalDavRequest(httpRequest,
                                    testHelper.getResourceLocatorFactory(),
                                    testHelper.getEntityFactory());
 
@@ -58,8 +59,8 @@ public class StandardDavRequestTest extends BaseDavTestCase {
         MockHttpServletRequest httpRequest =
             new MockHttpServletRequest();
         httpRequest.addHeader("Depth", "bad value");
-        StandardDavRequest request =
-            new StandardDavRequest(httpRequest,
+        DefaultCalDavRequest request =
+            new DefaultCalDavRequest(httpRequest,
                                    testHelper.getResourceLocatorFactory(),
                                    testHelper.getEntityFactory());
 
@@ -82,8 +83,8 @@ public class StandardDavRequestTest extends BaseDavTestCase {
         MockHttpServletRequest httpRequest =
             new MockHttpServletRequest();
         httpRequest.setContentType("text/xml");
-        StandardDavRequest request =
-            new StandardDavRequest(httpRequest,
+        DefaultCalDavRequest request =
+            new DefaultCalDavRequest(httpRequest,
                                    testHelper.getResourceLocatorFactory(),
                                    testHelper.getEntityFactory());
 

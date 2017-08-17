@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.dav.impl;
 
 import java.util.Set;
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +26,7 @@ import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.property.SupportedCollationSet;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavCollectionBase;
 import org.unitedinternet.cosmo.model.CollectionItem;
 
 /**
@@ -43,7 +43,7 @@ public class DavCalendarCollectionTest extends BaseDavTestCase
     public void testSupportedCollationSetProperty() throws Exception {
         CollectionItem col = testHelper.makeAndStoreDummyCalendarCollection();
         
-        DavHomeCollection home = testHelper.initializeHomeResource();
+        CalDavCollectionBase home = testHelper.initializeHomeResource();
 
         DavCollection dcc =
             (DavCalendarCollection) testHelper.findMember(home, col.getName());

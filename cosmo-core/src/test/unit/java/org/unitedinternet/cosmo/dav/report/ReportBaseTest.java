@@ -23,7 +23,7 @@ import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.mock.MockReport;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibCalendarCollectionStamp;
@@ -45,7 +45,7 @@ public class ReportBaseTest extends BaseDavTestCase
      */
     @Test
     public void testDepthInfinity() throws Exception {
-        DavHomeCollection home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         CollectionItem coll1 = testHelper.
             makeAndStoreDummyCollection(testHelper.getHomeCollection());

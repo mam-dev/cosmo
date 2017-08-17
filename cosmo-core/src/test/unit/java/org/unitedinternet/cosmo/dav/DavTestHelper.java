@@ -20,13 +20,15 @@ import java.net.URL;
 import org.junit.Before;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.MockHelper;
-import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavEvent;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavCollectionBase;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipal;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResourceLocatorFactory;
+import org.unitedinternet.cosmo.dav.impl.parallel.EventFile;
 import org.unitedinternet.cosmo.dav.impl.parallel.HomeCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocatorFactory;
@@ -39,9 +41,6 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  * DavTestHelper.
  */
 public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
-    private StandardResourceFactory resourceFactory;
-    private StandardResourceLocatorFactory locatorFactory;
-    private DavResourceLocator homeLocator;
 
     private URL baseUrl;
     
@@ -57,23 +56,14 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
     public DavTestHelper() {
         super();
 
-        resourceFactory =
-            new StandardResourceFactory(getContentService(),
-                                        getUserService(),
-                                        getSecurityManager(),
-                                        getEntityFactory(),
-                                        getCalendarQueryProcessor(),
-                                        getClientFilterManager(),
-                                        getUserIdentitySupplier(),
-                                        false);
-        locatorFactory = new StandardResourceLocatorFactory();
+        
         
         //PARALLEL
         calDavResourceFactory = new DefaultCalDavResourceFactory(getContentService(), getUserService(), getSecurityManager(), getEntityFactory(), getCalendarQueryProcessor(), getClientFilterManager(), getUserIdentitySupplier(), true);
         calDavResourceLocatorFactory = new DefaultCalDavResourceLocatorFactory();
         
         try {
-            baseUrl = new URL("http", "localhost", -1, "/dav");
+            baseUrl = new URL("http", "localhost", -1, "/test");
         } catch (Exception e) {
             throw new CosmoException(e);
         }
@@ -88,8 +78,6 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         super.setUp();
 
         String path = TEMPLATE_HOME.bind(false, getUser().getUsername());
-        homeLocator =
-            locatorFactory.createResourceLocatorByPath(baseUrl, path);
         
         calDavHomeLocator = calDavResourceLocatorFactory.createResourceLocatorByUri(baseUrl, path);
     }
@@ -98,24 +86,24 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * Gets resource factory.
      * @return Dav resource factory.
      */
-    public DavResourceFactory getResourceFactory() {
-        return resourceFactory;
+    public CalDavResourceFactory getResourceFactory() {
+        return this.calDavResourceFactory;
     }
 
     /**
      * Gets resource locator factory.
      * @return The dav resource locator factory.
      */
-    public DavResourceLocatorFactory getResourceLocatorFactory() {
-        return locatorFactory;
+    public CalDavResourceLocatorFactory getResourceLocatorFactory() {
+        return this.calDavResourceLocatorFactory;
     }
 
     /**
      * Gets home locator.
      * @return The dav resource locator.
      */
-    public DavResourceLocator getHomeLocator() {
-        return homeLocator;
+    public CalDavResourceLocator getHomeLocator() {
+        return this.calDavHomeLocator;
     }
 
     /**
@@ -123,10 +111,10 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @return The dav home collection.
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
-    public DavHomeCollection initializeHomeResource()
+    public CalDavCollectionBase initializeHomeResource()
         throws CosmoDavException {
-        return new DavHomeCollection(getHomeCollection(), homeLocator,
-                                     resourceFactory, getEntityFactory());
+        return new HomeCollection(getHomeCollection(), calDavHomeLocator,
+                                     calDavResourceFactory, getEntityFactory());
     }
     
     public HomeCollection newCalDavHomeCollection(){
@@ -139,12 +127,12 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @return The dav user principal.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    public DavUserPrincipal getPrincipal(User user)
+    public CalDavUserPrincipal getPrincipal(User user)
         throws Exception {
         String path = TEMPLATE_USER.bind(false, user.getUsername());
-        DavResourceLocator locator =
-            locatorFactory.createResourceLocatorByPath(baseUrl, path);
-        return new DavUserPrincipal(user, locator, resourceFactory, getUserIdentitySupplier());
+        CalDavResourceLocator locator =
+            calDavResourceLocatorFactory.createResourceLocatorByPath(baseUrl, path);
+        return new CalDavUserPrincipal(user, locator, calDavResourceFactory, getUserIdentitySupplier());
     }
 
     /**
@@ -152,7 +140,7 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @return The dav test context.
      */
     public DavTestContext createTestContext() {
-        return new DavTestContext(locatorFactory);
+        return new DavTestContext(calDavResourceLocatorFactory);
     }
 
     /**
@@ -160,9 +148,9 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @param path The path.
      * @return The dav resource locator.
      */
-    public DavResourceLocator createLocator(String path) {
-        return locatorFactory.
-            createResourceLocatorByPath(homeLocator.getContext(), path);
+    public CalDavResourceLocator createLocator(String path) {
+        return this.calDavResourceLocatorFactory.createResourceLocatorByPath(this.calDavHomeLocator.getContext(), path);
+            
     }
     
     public CalDavResourceLocator createCalDavResourceLocator(String path){
@@ -175,15 +163,12 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @param segment The segment.
      * @return The dav resource locator.
      */
-    public DavResourceLocator createMemberLocator(DavResourceLocator locator, String segment) {
+    public CalDavResourceLocator createMemberLocator(CalDavResourceLocator locator, String segment) {
         String path = locator.getPath() + "/" + segment;
-        return locatorFactory.
+        return calDavResourceLocatorFactory.
             createResourceLocatorByPath(locator.getContext(), path);
     }
-    
-    public CalDavResourceLocator createMemberLocator(CalDavResourceLocator locator, String segment){
-    	return (CalDavResourceLocator) calDavResourceLocatorFactory.createResourceLocator(locator.getPath(), segment); 
-    }
+       
 
     /**
      * Finds member.
@@ -192,10 +177,10 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @return The dav resource.
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
-    public WebDavResource findMember(DavCollection collection,
+    public CalDavResource findMember(CalDavCollection collection,
                                   String segment)
         throws CosmoDavException {
-        String href = collection.getResourceLocator().getHref(false) + "/" +
+        String href = collection.getCalDavResourceLocator().getHref(false) + "/" +
             UriTemplate.escapeSegment(segment);
         return collection.findMember(href);
     }
@@ -206,16 +191,16 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @return The dav calendar collection.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    public DavCalendarCollection initializeDavCalendarCollection(String name)
+    public CalendarCollection initializeDavCalendarCollection(String name)
         throws Exception {
         CollectionItem collection = (CollectionItem)
             getHomeCollection().getChildByName(name);
         if (collection == null) {
             collection = makeAndStoreDummyCalendarCollection(name);
         }
-        DavResourceLocator locator =  createMemberLocator(homeLocator, collection.getName());
-        return new DavCalendarCollection(collection, locator,
-                                         resourceFactory, getEntityFactory());
+        CalDavResourceLocator locator =  createMemberLocator(calDavHomeLocator, collection.getName());
+        return new CalendarCollection(collection, locator, calDavResourceFactory, getEntityFactory());
+        
     }
 
     /**
@@ -225,7 +210,7 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * @return Dav event.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    public DavEvent initializeDavEvent(DavCalendarCollection parent,
+    public EventFile initializeDavEvent(CalendarCollection parent,
                                        String name)
         throws Exception {
         CollectionItem collection = (CollectionItem) parent.getItem();
@@ -233,9 +218,9 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
         if (item == null) {
             item = makeAndStoreDummyItem(collection, name);
         }
-        DavResourceLocator locator =
-            createMemberLocator(parent.getResourceLocator(), item.getName());
-        return new DavEvent(item, locator, resourceFactory, getEntityFactory());
+        CalDavResourceLocator locator =
+            createMemberLocator(parent.getCalDavResourceLocator(), item.getName());
+        return new EventFile(item, locator, calDavResourceFactory, getEntityFactory());
     }
 
 	public CalDavResourceFactory getCalDavResourceFactory() {

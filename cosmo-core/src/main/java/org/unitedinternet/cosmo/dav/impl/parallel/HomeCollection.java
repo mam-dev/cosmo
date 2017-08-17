@@ -9,7 +9,7 @@ import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -25,7 +25,7 @@ public class HomeCollection extends CalDavCollectionBase {
 	}
 
 	@Override
-	public WebDavResource findMember(String href) throws CosmoDavException {
+	public CalDavResource findMember(String href) throws CosmoDavException {
 		// TODO Auto-generated method stub
 		return null;
 	}

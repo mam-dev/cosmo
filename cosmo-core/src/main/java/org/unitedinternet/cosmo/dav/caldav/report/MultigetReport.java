@@ -34,14 +34,15 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.springframework.web.util.UriUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
-import org.springframework.web.util.UriUtils;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.w3c.dom.Element;
 
 /**
@@ -110,7 +111,7 @@ public class MultigetReport extends CaldavMultiStatusReport {
             throw new BadRequestException("Expected at most one " + QN_HREF);
         }
 
-        URL resourceUrl = ((WebDavResource)getResource()). getResourceLocator().
+        URL resourceUrl = getResource(). getCalDavResourceLocator().
             getUrl(true, getResource().isCollection());
         String resourceUUID = null;
         Matcher resourceUUIDMatcher = RESOURCE_UUID_PATTERN.matcher(resourceUrl.getPath());
@@ -155,10 +156,10 @@ public class MultigetReport extends CaldavMultiStatusReport {
         return davHref;
     }
     
-    protected void doQuerySelf(WebDavResource resource)
+    protected void doQuerySelf(CalDavResource resource)
         throws CosmoDavException {}
 
-    protected void doQueryChildren(DavCollection collection)
+    protected void doQueryChildren(CalDavCollection collection)
         throws CosmoDavException {}
 
     /**
@@ -168,10 +169,10 @@ public class MultigetReport extends CaldavMultiStatusReport {
         throws CosmoDavException {
         DavPropertyNameSet propspec = createResultPropSpec();
 
-        if (getResource() instanceof DavCollection) {
-            DavCollection collection = (DavCollection) getResource();
+        if (getResource() instanceof CalDavCollection) {
+            CalDavCollection collection = (CalDavCollection) getResource();
             for (String href : hrefs) {
-                WebDavResource target = collection.findMember(href);
+                CalDavResource target = collection.findMember(href);
                 if (target != null) {
                     getMultiStatus().addResponse(buildMultiStatusResponse(target, propspec));
                 }

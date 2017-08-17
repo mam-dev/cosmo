@@ -21,26 +21,24 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
-
 import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalCollectionSet;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
-import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipalCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
-
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -122,7 +120,7 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
      */
     protected void runQuery()
         throws CosmoDavException {
-        DavCollection collection = (DavCollection) getResource();
+        CalDavCollection collection = (CalDavCollection) getResource();
 
         if (! searchPrincipalCollections) {
             doQueryChildren(collection);
@@ -139,12 +137,12 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
             return;
         }
         for (String href : pcs.getHrefs()) {
-            DavResourceLocator locator =
-                collection.getResourceLocator().getFactory().
-                    createResourceLocatorByUri(collection.getResourceLocator().getContext(),
+            CalDavResourceLocator locator =
+                collection.getCalDavResourceLocator().getFactory().
+                    createResourceLocatorByUri(collection.getCalDavResourceLocator().getContext(),
                                                href);
-            DavUserPrincipalCollection pc = (DavUserPrincipalCollection)
-                collection.getResourceFactory().resolve(locator);
+            CalDavUserPrincipalCollection pc = (CalDavUserPrincipalCollection)
+                ((CalDavResourceFactory)collection.getFactory()).resolve(locator);
             if (pc == null) {
                 throw new CosmoDavException("Principal collection " + href + " not resolved");
             }
@@ -155,16 +153,16 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
     /**
      * Does nothing.
      */
-    protected void doQuerySelf(WebDavResource resource) {}
+    protected void doQuerySelf(CalDavResource resource) {}
 
     /**
      * Tests every principal member of the collection to see if it matches
      * the report's search specs.
      */
-    protected void doQueryChildren(DavCollection collection)
+    protected void doQueryChildren(CalDavCollection collection)
         throws CosmoDavException {
         for (DavResourceIterator i = collection.getMembers(); i.hasNext();) {
-            WebDavResource member = (WebDavResource) i.nextResource();
+            CalDavResource member = (CalDavResource) i.nextResource();
             if (member instanceof DavUserPrincipal) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Testing " + member.getResourcePath());

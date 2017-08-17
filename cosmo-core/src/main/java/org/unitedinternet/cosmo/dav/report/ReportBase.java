@@ -33,6 +33,8 @@ import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 
 import org.w3c.dom.Document;
@@ -46,9 +48,9 @@ import org.w3c.dom.Element;
 public abstract class ReportBase implements Report, ExtendedDavConstants {
     private static final Log LOG = LogFactory.getLog(ReportBase.class);
 
-    private WebDavResource resource;
+    private CalDavResource resource;
     private ReportInfo info;
-    private HashSet<WebDavResource> results;
+    private Set<CalDavResource> results;
 
     // Report methods
 
@@ -59,9 +61,9 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
     public void init(org.apache.jackrabbit.webdav.DavResource resource,
                      ReportInfo info)
             throws CosmoDavException {
-        this.resource = (WebDavResource) resource;
+        this.resource = (CalDavResource) resource;
         this.info = info;
-        this.results = new HashSet<WebDavResource>();
+        this.results = new HashSet<>();
         parseReport(info);
     }
 
@@ -116,7 +118,7 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
             throw new BadRequestException("Report may not be run with depth " +
                     info.getDepth() + " against a non-collection resource");
         }
-        DavCollection collection = (DavCollection) resource;
+        CalDavCollection collection = (CalDavCollection) resource;
 
         doQueryChildren(collection);
         if (info.getDepth() == DEPTH_1) {
@@ -135,13 +137,13 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
     /**
      * Performs the report query on the specified resource.
      */
-    protected abstract void doQuerySelf(WebDavResource resource)
+    protected abstract void doQuerySelf(CalDavResource resource)
             throws CosmoDavException;
 
     /**
      * Performs the report query on the specified collection's children.
      */
-    protected abstract void doQueryChildren(DavCollection collection)
+    protected abstract void doQueryChildren(CalDavCollection collection)
             throws CosmoDavException;
 
     /**
@@ -149,16 +151,16 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
      * Should recursively call the method against each of the children of the
      * provided collection that are themselves collections.
      */
-    protected void doQueryDescendents(DavCollection collection)
+    protected void doQueryDescendents(CalDavCollection collection)
             throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("querying descendents of " +
                     collection.getResourcePath());
         }
         for (DavResourceIterator i = collection.getCollectionMembers(); i.hasNext(); ) {
-            WebDavResource member = (WebDavResource) i.nextResource();
+            CalDavResource member = (CalDavResource) i.nextResource();
             if (member.isCollection()) {
-                DavCollection dc = (DavCollection) member;
+                CalDavCollection dc = (CalDavCollection) member;
                 doQuerySelf(dc);
                 doQueryChildren(dc);
                 doQueryDescendents(dc);
@@ -180,7 +182,7 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
         return reportInfo.toXml(document);
     }
 
-    public WebDavResource getResource() {
+    public CalDavResource getResource() {
         return resource;
     }
 
@@ -188,7 +190,7 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
         return info;
     }
 
-    public Set<WebDavResource> getResults() {
+    public Set<CalDavResource> getResults() {
         return results;
     }
 }

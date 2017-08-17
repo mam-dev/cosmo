@@ -22,6 +22,9 @@ import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavFileBase;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
@@ -32,7 +35,7 @@ import org.unitedinternet.cosmo.model.EntityFactory;
  * freebusy generation operations rather than delegating them to the
  * service layer, allowing classes using this mock to be tested in isolation.
  */
-public class MockCalendarResource extends DavCalendarResource {
+public class MockCalendarResource extends CalDavFileBase {
     private Calendar calendar;
     private boolean matchFilters;
 
@@ -45,8 +48,8 @@ public class MockCalendarResource extends DavCalendarResource {
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
     public MockCalendarResource(ContentItem item,
-                                DavResourceLocator locator,
-                                DavResourceFactory factory,
+                                CalDavResourceLocator locator,
+                                CalDavResourceFactory factory,
                                 EntityFactory entityFactory)
         throws CosmoDavException {
         super(item, locator, factory, entityFactory);
@@ -60,8 +63,8 @@ public class MockCalendarResource extends DavCalendarResource {
      * @param entityFactory The entity factory.
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
-    public MockCalendarResource(DavResourceLocator locator,
-                                DavResourceFactory factory,
+    public MockCalendarResource(CalDavResourceLocator locator,
+                                CalDavResourceFactory factory,
                                 EntityFactory entityFactory)
         throws CosmoDavException {
         this(entityFactory.createNote(), locator, factory, entityFactory);

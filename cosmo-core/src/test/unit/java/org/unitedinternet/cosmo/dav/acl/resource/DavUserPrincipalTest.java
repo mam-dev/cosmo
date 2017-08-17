@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.property.AlternateUriSet;
 import org.unitedinternet.cosmo.dav.acl.property.GroupMembership;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalUrl;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavUserPrincipal;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
 
@@ -44,7 +45,7 @@ public class DavUserPrincipalTest extends BaseDavTestCase implements AclConstant
         //initialize it on order to be able to run test
         testHelper.getSecurityManager().initiateSecurityContext("test", "test");
 
-        DavUserPrincipal p = testHelper.getPrincipal(testHelper.getUser());
+        CalDavUserPrincipal p = testHelper.getPrincipal(testHelper.getUser());
 
 
         // section 4
@@ -79,7 +80,7 @@ public class DavUserPrincipalTest extends BaseDavTestCase implements AclConstant
             p.getProperty(PRINCIPALURL);
         Assert.assertNotNull("No principal-URL property", principalUrl);
         Assert.assertEquals("principal-URL value not the same as locator href",
-                     p.getResourceLocator().getHref(false),
+                     p.getCalDavResourceLocator().getHref(false),
                      principalUrl.getHref());
 
         // 4.4

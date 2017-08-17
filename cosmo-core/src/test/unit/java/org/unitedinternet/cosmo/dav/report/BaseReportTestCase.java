@@ -22,6 +22,7 @@ import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -42,9 +43,9 @@ public abstract class BaseReportTestCase extends BaseDavTestCase {
      * @throws Exception - if something is wrong this exception is thrown.
      */
     @SuppressWarnings("unchecked")
-    protected WebDavResource makeTarget(@SuppressWarnings("rawtypes") Class clazz)
+    protected CalDavResource makeTarget(@SuppressWarnings("rawtypes") Class clazz)
         throws Exception {
-        return (WebDavResource)
+        return (CalDavResource)
             clazz.getConstructor(DavResourceLocator.class,
                                  DavResourceFactory.class,
                                  EntityFactory.class).
@@ -65,7 +66,7 @@ public abstract class BaseReportTestCase extends BaseDavTestCase {
     protected ReportBase makeReport(@SuppressWarnings("rawtypes") Class clazz,
                                     String reportXml,
                                     int depth,
-                                    WebDavResource target)
+                                    CalDavResource target)
         throws Exception {
         ReportBase report = (ReportBase) clazz.newInstance();
         report.init(target, makeReportInfo(reportXml, depth));

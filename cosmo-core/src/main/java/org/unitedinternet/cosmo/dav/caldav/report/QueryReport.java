@@ -35,6 +35,10 @@ import org.unitedinternet.cosmo.dav.caldav.SupportedCollationException;
 import org.unitedinternet.cosmo.dav.caldav.TimeZoneExtractor;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavFileBase;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.w3c.dom.Element;
 
 /**
@@ -106,10 +110,10 @@ public class QueryReport extends CaldavMultiStatusReport {
      * @throws UnprocessableEntityException if the resource is not a
      * collection and is not a calendar resource.
      */
-    protected void doQuerySelf(WebDavResource resource)
+    protected void doQuerySelf(CalDavResource resource)
         throws CosmoDavException {
-        if (resource instanceof DavCalendarResource) {
-            DavCalendarResource dcr = (DavCalendarResource) resource;
+        if (resource instanceof CalDavFileBase) {
+            CalDavFileBase dcr = (CalDavFileBase) resource;
             if (dcr.matches(queryFilter)) {
                 getResults().add(dcr);
             }
@@ -134,9 +138,9 @@ public class QueryReport extends CaldavMultiStatusReport {
     * and regular collections cannot contain calendar resources.
     * </p>
      */
-    protected void doQueryChildren(DavCollection collection) throws CosmoDavException {
-        if (collection instanceof DavCalendarCollection) {
-            DavCalendarCollection dcc = (DavCalendarCollection) collection;
+    protected void doQueryChildren(CalDavCollection collection) throws CosmoDavException {
+        if (collection instanceof CalendarCollection) {
+            CalendarCollection dcc = (CalendarCollection) collection;
             getResults().addAll(dcc.findMembers(queryFilter));
             return;
         }

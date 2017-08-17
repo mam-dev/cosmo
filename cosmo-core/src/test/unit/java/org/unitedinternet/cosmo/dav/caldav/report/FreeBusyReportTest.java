@@ -15,14 +15,13 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
-import org.junit.Assert;
-
 import org.apache.jackrabbit.webdav.DavException;
+import org.junit.Assert;
 import org.junit.Test;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavCollectionBase;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.BaseReportTestCase;
 import org.unitedinternet.cosmo.model.CollectionItem;
 
@@ -37,7 +36,7 @@ public class FreeBusyReportTest extends BaseReportTestCase {
      */
     @Test
     public void testWrongType() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("freebusy");
 
         FreeBusyReport report = new FreeBusyReport();
@@ -55,7 +54,7 @@ public class FreeBusyReportTest extends BaseReportTestCase {
     @Test
     public void testIncludedCollection() throws Exception {
         testHelper.getHomeCollection().setExcludeFreeBusyRollup(false);
-        DavHomeCollection home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         FreeBusyReport report = makeReport("freebusy1.xml", DEPTH_1, home);
 
@@ -69,7 +68,7 @@ public class FreeBusyReportTest extends BaseReportTestCase {
     @Test
     public void testExcludedCollection() throws Exception {
         testHelper.getHomeCollection().setExcludeFreeBusyRollup(true);
-        DavHomeCollection home = testHelper.initializeHomeResource();
+        CalDavCollectionBase home = testHelper.initializeHomeResource();
 
         FreeBusyReport report = makeReport("freebusy1.xml", DEPTH_1, home);
 
@@ -92,9 +91,9 @@ public class FreeBusyReportTest extends BaseReportTestCase {
             makeAndStoreDummyCollection(testHelper.getHomeCollection());
         coll.setExcludeFreeBusyRollup(false);
 
-        DavHomeCollection home = testHelper.initializeHomeResource();
-        DavCollection dc =
-            (DavCollection) testHelper.findMember(home, coll.getName());
+        CalDavCollectionBase home = testHelper.initializeHomeResource();
+        CalDavCollection dc =
+            (CalDavCollection) testHelper.findMember(home, coll.getName());
 
         FreeBusyReport report = makeReport("freebusy1.xml", DEPTH_1, dc);
 
@@ -115,7 +114,7 @@ public class FreeBusyReportTest extends BaseReportTestCase {
      * @return Free busy report.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    private FreeBusyReport makeReport(String reportXml, int depth, WebDavResource target)
+    private FreeBusyReport makeReport(String reportXml, int depth, CalDavResource target)
         throws Exception {
         return (FreeBusyReport)
             super.makeReport(FreeBusyReport.class, reportXml, depth, target);

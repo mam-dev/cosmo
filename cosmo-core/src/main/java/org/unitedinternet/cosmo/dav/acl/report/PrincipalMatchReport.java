@@ -31,6 +31,10 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
 import org.unitedinternet.cosmo.model.User;
@@ -127,13 +131,13 @@ public class PrincipalMatchReport extends MultiStatusReport
                         QN_ACL_PRINCIPAL_PROPERTY + " child of " + REPORT_TYPE_PRINCIPAL_MATCH);
             }
         }
-
-        currentUser = getResource().getResourceFactory().getSecurityManager().
+        //TODO Review this
+        currentUser = ((CalDavResourceFactory)getResource().getFactory()).getSecurityManager().
             getSecurityContext().getUser();
         if (currentUser == null) {
             throw new ForbiddenException("Authenticated principal is not a user");
         }
-        String base = getResource().getResourceLocator().getBaseHref();
+        String base = ((CalDavResourceLocator) getResource().getLocator()).getBaseHref();
         currentUserPrincipalUrl =
             TEMPLATE_USER.bindAbsolute(base, currentUser.getUsername());
         if (LOG.isDebugEnabled()) {
@@ -156,7 +160,7 @@ public class PrincipalMatchReport extends MultiStatusReport
         if (! getResource().isCollection()) {
             return;
         }
-        DavCollection collection = (DavCollection) getResource();
+        CalDavCollection collection = (CalDavCollection) getResource();
         doQueryChildren(collection);
         // don't use doQueryDescendents, because that would cause us to have
         // to iterate through the members twice. instead, we implement
@@ -165,7 +169,7 @@ public class PrincipalMatchReport extends MultiStatusReport
         // than specifying doQuerySelf etc interface methods.
     }
 
-    protected void doQuerySelf(WebDavResource resource)
+    protected void doQuerySelf(CalDavResource resource)
         throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Querying " + resource.getResourcePath());
@@ -178,12 +182,12 @@ public class PrincipalMatchReport extends MultiStatusReport
         }
     }
 
-    protected void doQueryChildren(DavCollection collection)
+    protected void doQueryChildren(CalDavCollection collection)
         throws CosmoDavException {
         for (DavResourceIterator i = collection.getMembers(); i.hasNext();) {
-            WebDavResource member = (WebDavResource) i.nextResource();
+            CalDavResource member = (CalDavResource) i.nextResource();
             if (member.isCollection()) {
-                DavCollection dc = (DavCollection) member;
+                CalDavCollection dc = (CalDavCollection) member;
                 doQuerySelf(dc);
                 doQueryChildren(dc);
             } else {
@@ -202,7 +206,7 @@ public class PrincipalMatchReport extends MultiStatusReport
         return principalProperty;
     }
 
-    private boolean matchesUserPrincipal(WebDavResource resource)
+    private boolean matchesUserPrincipal(CalDavResource resource)
         throws CosmoDavException {
         if (! (resource instanceof DavUserPrincipal)) {
             return false;
@@ -215,7 +219,7 @@ public class PrincipalMatchReport extends MultiStatusReport
         return true;
     }
 
-    private boolean matchesPrincipalProperty(WebDavResource resource) 
+    private boolean matchesPrincipalProperty(CalDavResource resource) 
         throws CosmoDavException {
         WebDavProperty prop = (WebDavProperty)
             resource.getProperty(principalProperty);

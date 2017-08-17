@@ -30,16 +30,16 @@ import org.mockito.Mockito;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.DavTestContext;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.NotModifiedException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionExtMkCalendarForbidden;
+import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
@@ -59,7 +59,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfMatchAll() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         ctx.getHttpRequest().addHeader("If-Match", "*");
@@ -77,7 +77,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfMatchOk() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         ctx.getHttpRequest().addHeader("If-Match", home.getETag());
@@ -95,7 +95,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfMatchNotOk() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         String requestEtag = "\"aeiou\"";
@@ -117,7 +117,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfNoneMatchAll() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         ctx.getHttpRequest().setMethod("GET");
@@ -143,7 +143,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfNoneMatchOk() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         String requestEtag = "\"aeiou\"";
@@ -162,7 +162,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfNoneMatchNotOk() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         ctx.getHttpRequest().setMethod("GET");
@@ -188,7 +188,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfModifiedSinceUnmodified() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         Date requestDate = since(home, 1000000);
@@ -210,7 +210,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfModifiedSinceModified() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         Date requestDate = since(home, -1000000);
@@ -229,7 +229,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfUnmodifiedSinceUnmodified() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         Date requestDate = since(home, 1000000);
@@ -249,7 +249,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      */
     @Test
     public void testIfUnmodifiedSinceModified() throws Exception {
-        WebDavResource home = testHelper.initializeHomeResource();
+        CalDavResource home = testHelper.initializeHomeResource();
 
         DavTestContext ctx = testHelper.createTestContext();
         Date requestDate = since(home, -1000000);
@@ -321,14 +321,14 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         HttpServletRequest req = ctx.getDavRequest();
         HttpServletResponse res = ctx.getDavResponse();
         
-        DavRequest mockDavRequest = Mockito.mock(DavRequest.class);
+        CalDavRequest mockDavRequest = Mockito.mock(CalDavRequest.class);
         Mockito.when(mockDavRequest.getRequestURI()).thenReturn("test/Request/Uri");
         Mockito.when(classUnderTestSpied.createDavRequest(req)).thenReturn(mockDavRequest);
         
-        DavResponse mockDavResponse = Mockito.mock(DavResponse.class);
+        CalDavResponse mockDavResponse = Mockito.mock(CalDavResponse.class);
         Mockito.when(classUnderTestSpied.createDavResponse(res)).thenReturn(mockDavResponse);                                                
 
-        Mockito.doThrow(npe).when(classUnderTestSpied).resolveTarget(Mockito.any(DavRequest.class));
+        Mockito.doThrow(npe).when(classUnderTestSpied).resolveTarget(Mockito.any(CalDavRequest.class));
         
         classUnderTestSpied.handleRequest(ctx.getDavRequest(), ctx.getDavResponse());
         
@@ -356,11 +356,11 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         
         Mockito.when(classUnderTestSpied.createDavRequest(req)).thenReturn(ctx.getDavRequest());
         
-        DavResponse mockDavResponse = Mockito.mock(DavResponse.class);
+        CalDavResponse mockDavResponse = Mockito.mock(CalDavResponse.class);
         Mockito.when(classUnderTestSpied.createDavResponse(res)).thenReturn(mockDavResponse);                                                
         
         //throw the exception here
-        Mockito.doThrow(t).when(classUnderTestSpied).resolveTarget(Mockito.any(DavRequest.class));
+        Mockito.doThrow(t).when(classUnderTestSpied).resolveTarget(Mockito.any(CalDavRequest.class));
         
         classUnderTestSpied.handleRequest(spiedReq, res);
         
@@ -378,7 +378,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
      * @param delta delta.
      * @return The date.
      */
-    private static Date since(WebDavResource resource, long delta) {
+    private static Date since(CalDavResource resource, long delta) {
         return new Date((resource.getModificationTime() / 1000 * 1000) + delta);
     }
 }

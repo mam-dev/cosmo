@@ -23,12 +23,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.ConflictException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.DavTestContext;
 import org.unitedinternet.cosmo.dav.ExistsException;
 import org.unitedinternet.cosmo.dav.UnsupportedMediaTypeException;
-import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
 import org.unitedinternet.cosmo.dav.impl.parallel.CalDavCollectionBase;
 import org.unitedinternet.cosmo.dav.impl.parallel.HomeCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
@@ -194,7 +191,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
      * @return The dav collection.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    private DavCollection createTestMember(String segment)
+    private CalDavCollectionBase createTestMember(String segment)
         throws Exception {
         return createTestMember(testHelper.getHomeLocator(), segment);
     }
@@ -211,7 +208,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
      * @return The dav collection.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    private DavCollection createTestMember(String path,
+    private CalDavCollectionBase createTestMember(String path,
                                            String segment)
         throws Exception {
         return createTestMember(testHelper.createLocator(path), segment);
@@ -222,22 +219,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
     	return new CalDavCollectionBase(testHelper.getEntityFactory().createNote(), locator, testHelper.getCalDavResourceFactory(), testHelper.getEntityFactory());
     }
 
-    /**
-     * Creates test member.
-     * @param locator The dav resource locator.
-     * @param segment The segment.
-     * @return The dav collection.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    private DavCollection createTestMember(DavResourceLocator locator,
-                                           String segment)
-        throws Exception {
-        DavResourceLocator memberLocator =
-            testHelper.createMemberLocator(locator, segment);
-        return new DavCollectionBase(memberLocator,
-                                     testHelper.getResourceFactory(),
-                                     testHelper.getEntityFactory());
-    }
+    
     
     private CalDavCollectionBase createTestMember(CalDavResourceLocator locator, String segment){
     	CalDavResourceLocator memberLocator = testHelper.createMemberLocator(locator, segment);

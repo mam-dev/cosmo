@@ -15,18 +15,18 @@
  */
 package org.unitedinternet.cosmo.dav;
 
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.dav.impl.StandardDavRequest;
 import org.unitedinternet.cosmo.dav.impl.StandardDavResponse;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavRequest;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResourceLocatorFactory;
 import org.unitedinternet.cosmo.dav.impl.parallel.DefaultCalDavResponse;
 import org.unitedinternet.cosmo.dav.parallel.CalDavRequest;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocatorFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * A helper bean that provides access to low- and high-level request
@@ -36,8 +36,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 public class DavTestContext {
     private MockHttpServletRequest httpRequest;
     private MockHttpServletResponse httpResponse;
-    private StandardDavRequest davRequest;
-    private StandardDavResponse davResponse;
+    private CalDavRequest davRequest;
+    private CalDavResponse davResponse;
     private EntityFactory entityFactory; 
     
     
@@ -49,12 +49,12 @@ public class DavTestContext {
      * Constructor.
      * @param locatorFactory Dav resource locator factory.
      */
-    public DavTestContext(DavResourceLocatorFactory locatorFactory) {
+    public DavTestContext(CalDavResourceLocatorFactory locatorFactory) {
         httpRequest = new MockHttpServletRequest();
         httpResponse = new MockHttpServletResponse();
         entityFactory = new HibEntityFactory();
-        davRequest = new StandardDavRequest(httpRequest, locatorFactory, entityFactory);
-        davResponse = new StandardDavResponse(httpResponse);
+        davRequest = new DefaultCalDavRequest(httpRequest, locatorFactory, entityFactory,false);
+        davResponse = new DefaultCalDavResponse(httpResponse);
         
         //PARALLEL
         calDavRequest = new DefaultCalDavRequest(httpRequest, new DefaultCalDavResourceLocatorFactory(), entityFactory);
@@ -81,7 +81,7 @@ public class DavTestContext {
      * Gets dav request.
      * @return The dav request.
      */
-    public DavRequest getDavRequest() {
+    public CalDavRequest getDavRequest() {
         return davRequest;
     }
 
@@ -89,7 +89,7 @@ public class DavTestContext {
      * Gets dav response.
      * @return The dav response.
      */
-    public DavResponse getDavResponse() {
+    public CalDavResponse getDavResponse() {
         return davResponse;
     }
 

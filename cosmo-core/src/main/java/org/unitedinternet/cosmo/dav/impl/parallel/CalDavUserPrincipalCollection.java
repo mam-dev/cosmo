@@ -25,6 +25,7 @@ import org.unitedinternet.cosmo.dav.acl.report.PrincipalPropertySearchReport;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalSearchPropertySetReport;
 import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
 import org.unitedinternet.cosmo.dav.parallel.CalDavContentResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.CurrentUserPrincipal;
@@ -159,7 +160,7 @@ public class CalDavUserPrincipalCollection extends CalDavCollectionBase {
 	}
 
 	@Override
-	public DavResource findMember(String href) throws DavException {
+	public CalDavResource findMember(String href) throws CosmoDavException  {
 		CalDavResourceLocator locator = calDavLocatorFactory
 				.createResourceLocatorByUri(calDavResourceLocator.getContext(), href);
 		return calDavResourceFactory.resolve(locator);
@@ -214,12 +215,14 @@ public class CalDavUserPrincipalCollection extends CalDavCollectionBase {
         properties.add(new IsCollection(isCollection()));
         properties.add(new CurrentUserPrincipal(calDavResourceLocator,getSecurityManager().getSecurityContext().getUser()));
     }
-    
-    protected void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
+
+    //XXX-Review this make it protected again
+    public void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
         throw new ProtectedPropertyModificationException(property.getName());
     }
-
-    protected void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
+    
+    //XXX-Review this make it protected again
+    public void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
         throw new ProtectedPropertyModificationException(name);
     }
 

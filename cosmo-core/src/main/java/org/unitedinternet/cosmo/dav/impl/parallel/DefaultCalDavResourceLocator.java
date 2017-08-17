@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.jackrabbit.webdav.DavLocatorFactory;
 import org.apache.jackrabbit.webdav.DavResourceLocator;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
@@ -65,7 +64,7 @@ public class DefaultCalDavResourceLocator implements CalDavResourceLocator{
 	}
 
 	@Override
-	public DavLocatorFactory getFactory() {
+	public CalDavResourceLocatorFactory getFactory() {
 		return factory;
 	}
 

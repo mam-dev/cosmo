@@ -15,15 +15,14 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
-import org.junit.Assert;
-
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
+import org.junit.Assert;
 import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavEvent;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalendarCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.EventFile;
 import org.w3c.dom.Document;
 
 /**
@@ -38,7 +37,7 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testWrongType() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
 
         MultigetReport report = new MultigetReport();
@@ -54,7 +53,7 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testNoHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
 
         MultigetReport report = new MultigetReport();
@@ -70,9 +69,9 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testResourceTooManyHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
-        DavEvent de = testHelper.initializeDavEvent(dcc, "event");
+        EventFile de = testHelper.initializeDavEvent(dcc, "event");
 
         MultigetReport report = new MultigetReport();
         try {
@@ -87,7 +86,7 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testRelativeHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
 
         MultigetReport report = new MultigetReport();
@@ -100,7 +99,7 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testAbsoluteHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
 
         MultigetReport report = new MultigetReport();
@@ -113,9 +112,9 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testResourceRelativeHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
-        DavEvent de = testHelper.initializeDavEvent(dcc, "event");
+        EventFile de = testHelper.initializeDavEvent(dcc, "event");
 
         MultigetReport report = new MultigetReport();
         report.init(de, makeReportInfo("multiget4.xml"));
@@ -127,9 +126,9 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testResourceAbsoluteHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
-        DavEvent de = testHelper.initializeDavEvent(dcc, "event");
+        EventFile de = testHelper.initializeDavEvent(dcc, "event");
 
         MultigetReport report = new MultigetReport();
         report.init(de, makeReportInfo("multiget5.xml"));
@@ -141,7 +140,7 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testIncorrectHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
 
         MultigetReport report = new MultigetReport();
@@ -157,9 +156,9 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     @Test
     public void testIncorrectResourceHrefs() throws Exception {
-        DavCalendarCollection dcc =
+        CalendarCollection dcc =
             testHelper.initializeDavCalendarCollection("multiget");
-        DavEvent de = testHelper.initializeDavEvent(dcc, "event");
+        EventFile de = testHelper.initializeDavEvent(dcc, "event");
 
         MultigetReport report = new MultigetReport();
         try {

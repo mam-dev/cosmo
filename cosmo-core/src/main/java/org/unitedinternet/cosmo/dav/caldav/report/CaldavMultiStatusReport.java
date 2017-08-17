@@ -27,6 +27,7 @@ import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.property.CalendarData;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
 import org.w3c.dom.Element;
 
@@ -72,7 +73,7 @@ public abstract class CaldavMultiStatusReport extends MultiStatusReport
      * calendar data is filtered if a filter was included in the request.
      */
     protected MultiStatusResponse
-        buildMultiStatusResponse(WebDavResource resource,
+        buildMultiStatusResponse(CalDavResource resource,
                                  DavPropertyNameSet props)
         throws CosmoDavException {
         MultiStatusResponse msr =

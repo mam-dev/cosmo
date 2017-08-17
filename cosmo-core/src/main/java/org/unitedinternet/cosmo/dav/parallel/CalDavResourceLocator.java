@@ -2,6 +2,7 @@ package org.unitedinternet.cosmo.dav.parallel;
 
 import java.net.URL;
 
+import org.apache.jackrabbit.webdav.DavLocatorFactory;
 import org.apache.jackrabbit.webdav.DavResourceLocator;
 
 /**
@@ -65,4 +66,6 @@ public interface CalDavResourceLocator extends DavResourceLocator{
 	 */
 	CalDavResourceLocator getParentLocator();
 
+	@Override
+	CalDavResourceLocatorFactory getFactory();
 }

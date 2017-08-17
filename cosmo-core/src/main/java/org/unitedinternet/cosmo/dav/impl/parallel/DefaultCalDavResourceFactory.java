@@ -72,7 +72,7 @@ public class DefaultCalDavResourceFactory implements CalDavResourceFactory, Exte
 
 
 	@Override
-	public DavResource createResource(DavResourceLocator locator, DavSession session) throws DavException {
+	public CalDavResource createResource(DavResourceLocator locator, DavSession session) throws DavException {
 		// TODO Auto-generated method stub
 		return null;
 	}

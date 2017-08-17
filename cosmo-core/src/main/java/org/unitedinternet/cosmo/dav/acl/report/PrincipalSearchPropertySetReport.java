@@ -30,6 +30,8 @@ import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 
 import org.w3c.dom.Document;
@@ -110,13 +112,13 @@ public class PrincipalSearchPropertySetReport extends ReportBase
     /**
      * Does nothing.
      */
-    protected void doQuerySelf(WebDavResource resource)
+    protected void doQuerySelf(CalDavResource resource)
         throws CosmoDavException {}
 
     /**
      * Does nothing.
      */
-    protected void doQueryChildren(DavCollection collection)
+    protected void doQueryChildren(CalDavCollection collection)
         throws CosmoDavException {}
 
     // our methods

@@ -115,8 +115,8 @@ public class CustomFile extends CalDavFileBase {
 		properties.add(new ContentType(content.getContentType(), content.getContentEncoding()));
 	}
 
-	/** */
-	protected void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
+	// XXX-Review this make it protected
+	public void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
 		super.setLiveProperty(property, create);
 
 		FileItem content = (FileItem) getItem();
@@ -142,8 +142,8 @@ public class CustomFile extends CalDavFileBase {
 		}
 	}
 
-	/** */
-	protected void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
+        // XXX-Review this make it protected
+	public void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
 		super.removeLiveProperty(name);
 
 		FileItem content = (FileItem) getItem();

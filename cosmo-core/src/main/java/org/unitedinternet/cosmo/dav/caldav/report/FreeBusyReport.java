@@ -23,13 +23,6 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.fortuna.ical4j.data.CalendarOutputter;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.validate.ValidationException;
-import net.fortuna.ical4j.model.component.VFreeBusy;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
@@ -38,19 +31,27 @@ import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.unitedinternet.cosmo.calendar.FreeBusyUtils;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
 import org.unitedinternet.cosmo.dav.impl.DavItemCollection;
+import org.unitedinternet.cosmo.dav.impl.parallel.CalDavCollectionBase;
+import org.unitedinternet.cosmo.dav.parallel.CalDavCollection;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.report.SimpleReport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * <p>
@@ -143,7 +144,7 @@ public class FreeBusyReport extends SimpleReport implements CaldavConstants {
         }
     }
 
-    protected void doQuerySelf(WebDavResource resource)
+    protected void doQuerySelf(CalDavResource resource)
             throws CosmoDavException {
         if (!resource.isCollection()) {
             if (isExcluded(resource.getParent())) {
@@ -161,7 +162,7 @@ public class FreeBusyReport extends SimpleReport implements CaldavConstants {
         // collections themselves never match - only calendar resources
     }
 
-    protected void doQueryChildren(DavCollection collection)
+    protected void doQueryChildren(CalDavCollection collection)
             throws CosmoDavException {
         if (isExcluded(collection)) {
             return;
@@ -178,7 +179,7 @@ public class FreeBusyReport extends SimpleReport implements CaldavConstants {
         // within it to match the query
     }
 
-    protected void doQueryDescendents(DavCollection collection)
+    protected void doQueryDescendents(CalDavCollection collection)
             throws CosmoDavException {
         if (isExcluded(collection)) {
             return;
@@ -232,9 +233,12 @@ public class FreeBusyReport extends SimpleReport implements CaldavConstants {
         }
     }
 
-    private static boolean isExcluded(DavCollection collection) {
-        DavItemCollection dic = (DavItemCollection) collection;
-        return dic.isExcludedFromFreeBusyRollups();
+    private static boolean isExcluded(CalDavCollection collection) {
+        //TODO Review this
+        if (collection instanceof CalDavCollectionBase) {
+            return ((CalDavCollectionBase)collection).isExcludedFromFreeBusyRollups();
+        }
+        return true;
     }
 
     private static String writeCalendar(Calendar calendar)

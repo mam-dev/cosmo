@@ -1,7 +1,6 @@
 package org.unitedinternet.cosmo.dav.parallel;
 
 import org.apache.jackrabbit.webdav.DavException;
-import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.InputContext;
@@ -23,7 +22,7 @@ public interface CalDavCollection extends CalDavContentResource{
      * Returns the member resource at the given absolute href.
      * @throws DavException 
      */
-    DavResource findMember(String href) throws CosmoDavException, DavException;
+    CalDavResource findMember(String href) throws CosmoDavException;
     
     /**
      * Returns an iterator over all internal members which are themselves collection.

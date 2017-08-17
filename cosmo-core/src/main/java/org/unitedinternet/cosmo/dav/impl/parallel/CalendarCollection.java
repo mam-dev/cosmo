@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.security.report.PrincipalMatchReport;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -27,6 +28,7 @@ import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
 import org.unitedinternet.cosmo.dav.impl.DavItemContent;
 import org.unitedinternet.cosmo.dav.parallel.CalDavFile;
+import org.unitedinternet.cosmo.dav.parallel.CalDavResource;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceFactory;
 import org.unitedinternet.cosmo.dav.parallel.CalDavResourceLocator;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -181,4 +183,21 @@ public class CalendarCollection extends CalDavCollectionBase {
 	private static boolean hasExternalContent(Item item) {
 		return item instanceof CollectionItem && UuidExternalGenerator.containsExternalUid(item.getUid());
 	}
+	
+	/**
+	     * Returns the member resources in this calendar collection matching the given filter.
+	     */
+	    public Set<CalDavResource> findMembers(CalendarFilter filter) throws CosmoDavException {
+	        Set<CalDavResource> members = new HashSet<>();
+
+	        CollectionItem collection = (CollectionItem) getItem();
+	        for (ContentItem memberItem : this.calDavResourceFactory.getCalendarQueryProcessor().filterQuery(collection, filter)) {
+	            CalDavResource resource = memberToResource(memberItem);
+	            if (resource != null) {
+	                members.add(resource);
+	            }
+	        }
+
+	        return members;
+	    }
 }
