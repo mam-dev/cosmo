@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>cosmo-multimodule</artifactId>
 		<groupId>net.oneandone.cosmo</groupId>
-		<version>1.4.1</version>
+		<version>1.6.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -29,12 +29,23 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>	
 		
-		<dependency>
-			<groupId>ch.vorburger.mariaDB4j</groupId>
-			<artifactId>mariaDB4j</artifactId>			
-		</dependency>
+		<!-- database drivers -->
+			<dependency>
+				<groupId>org.mariadb.jdbc</groupId>
+				<artifactId>mariadb-java-client</artifactId>				
+			</dependency>
+						
+			<dependency>
+				<groupId>ch.vorburger.mariaDB4j</groupId>
+				<artifactId>mariaDB4j-core</artifactId>				
+			</dependency>
+			
+			<dependency>
+				<groupId>ch.vorburger.mariaDB4j</groupId>
+				<artifactId>mariaDB4j-app</artifactId>				
+			</dependency>
 		
 	</dependencies>
 

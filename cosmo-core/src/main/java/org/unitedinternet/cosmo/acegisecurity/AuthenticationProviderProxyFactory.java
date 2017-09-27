@@ -21,53 +21,53 @@ import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.security.SuccessfulAuthenticationListener;
 import org.unitedinternet.cosmo.service.UserService;
+
 /**
  * 
  * @author corneliu dobrota
  *
  */
 public class AuthenticationProviderProxyFactory {
-    
+
     private UserService userService;
     private ContentDao contentDao;
-    
-    public AuthenticationProviderProxyFactory(UserService userService, ContentDao contentDao){
+
+    public AuthenticationProviderProxyFactory(UserService userService, ContentDao contentDao) {
         this.userService = userService;
         this.contentDao = contentDao;
     }
-    
-    public <T extends AuthenticationProvider, L extends SuccessfulAuthenticationListener> AuthenticationProvider createProxyFor(final T delegate,
-            final Collection<L> successfulAuthenticationListeners){
-        
+
+    public <T extends AuthenticationProvider, L extends SuccessfulAuthenticationListener> AuthenticationProvider createProxyFor(
+            final T delegate, final Collection<L> successfulAuthenticationListeners) {
+
         AuthenticationProvider proxy = null;
-        
-        if(delegate.supports(UsernamePasswordAuthenticationToken.class)){
+
+        if (delegate.supports(UsernamePasswordAuthenticationToken.class)) {
             proxy = new AuthenticationProviderProxyTemplate<T, L>(delegate, successfulAuthenticationListeners) {
-                
+
                 @Override
                 protected Authentication processInitialAuthenticationResult(Authentication authentication) {
                     User user = userService.getUser(authentication.getPrincipal().toString());
                     UserDetails userDetails = new CosmoUserDetails(user);
-                    
-                    UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), authentication.getAuthorities());
-                    result.setAuthenticated(authentication.isAuthenticated());
-                    
+                    UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(userDetails,
+                            authentication.getCredentials(), authentication.getAuthorities());
+
                     return result;
                 }
             };
-        } else if(delegate.supports(PreAuthenticatedAuthenticationToken.class)){
+        } else if (delegate.supports(PreAuthenticatedAuthenticationToken.class)) {
             proxy = new AuthenticationProviderProxyTemplate<T, L>(delegate, successfulAuthenticationListeners);
-        } else if(delegate.supports(TicketAuthenticationToken.class)){
-            proxy = new AuthenticationProviderProxyTemplate<T, L>(delegate, successfulAuthenticationListeners){
+        } else if (delegate.supports(TicketAuthenticationToken.class)) {
+            proxy = new AuthenticationProviderProxyTemplate<T, L>(delegate, successfulAuthenticationListeners) {
                 @Override
                 protected Authentication processInitialAuthenticationResult(Authentication authentication) {
-                    if(authentication instanceof TicketAuthenticationToken){
-                        TicketAuthenticationToken ticketAuthenticationToken = (TicketAuthenticationToken)authentication;
+                    if (authentication instanceof TicketAuthenticationToken) {
+                        TicketAuthenticationToken ticketAuthenticationToken = (TicketAuthenticationToken) authentication;
                         Ticket ticket = null;
-                        
-                        for(String key : ticketAuthenticationToken.getKeys()){
+
+                        for (String key : ticketAuthenticationToken.getKeys()) {
                             ticket = contentDao.findTicket(key);
-                            if(ticket != null){
+                            if (ticket != null) {
                                 ticketAuthenticationToken.setTicket(ticket);
                                 break;
                             }
@@ -76,10 +76,11 @@ public class AuthenticationProviderProxyFactory {
                     return authentication;
                 }
             };
-        }else{
-            throw new IllegalStateException("Unknown authentication token type for authentication provider [" + delegate.getClass().getName() + "]");
+        } else {
+            throw new IllegalStateException("Unknown authentication token type for authentication provider ["
+                    + delegate.getClass().getName() + "]");
         }
-        
+
         return proxy;
     }
 }
