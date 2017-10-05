@@ -35,8 +35,6 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.User;
 
@@ -44,21 +42,21 @@ import org.unitedinternet.cosmo.model.User;
  * Hibernate persistent User.
  */
 @Entity
-@Table(name="users",indexes={@Index(name = "idx_activationid",columnList = "activationId" )})
+@Table(name = "users", indexes = { @Index(name = "idx_activationid", columnList = "activationId") })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibUser extends HibAuditableObject implements User {
 
     /**
      */
     private static final long serialVersionUID = -5401963358519490736L;
-   
+
     /**
      */
     public static final int USERNAME_LEN_MIN = 3;
     /**
      */
     public static final int USERNAME_LEN_MAX = 64;
-   
+
     /**
      */
     public static final int FIRSTNAME_LEN_MIN = 1;
@@ -78,289 +76,228 @@ public class HibUser extends HibAuditableObject implements User {
      */
     public static final int EMAIL_LEN_MAX = 128;
 
-    @Column(name = "uid", nullable=false, unique=true, length=255)
+    @Column(name = "uid", nullable = false, unique = true, length = 255)
     @NotNull
-    @Length(min=1, max=255)
+    @Length(min = 1, max = 255)
     private String uid;
-    
-    @Column(name = "username", nullable=false)
-//    @Index(name="idx_username")
+
+    @Column(name = "username", nullable = false)
+    // @Index(name="idx_username")
     @NotNull
     @NaturalId
-    @Length(min=USERNAME_LEN_MIN, max=USERNAME_LEN_MAX)
-    //per bug 11599:
+    @Length(min = USERNAME_LEN_MIN, max = USERNAME_LEN_MAX)
+    // per bug 11599:
     // Usernames must be between 3 and 64 characters; may contain any Unicode
-    //character in the following range of unicode code points: [#x20-#xD7FF] |
-    //[#xE000-#xFFFD] EXCEPT #x7F or #x3A
+    // character in the following range of unicode code points: [#x20-#xD7FF] |
+    // [#xE000-#xFFFD] EXCEPT #x7F or #x3A
     // Oh and don't allow ';' or '/' because there are problems with encoding
     // them in urls (tomcat doesn't support it)
-    @javax.validation.constraints.Pattern(regexp="^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")
+    @javax.validation.constraints.Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")
     private String username;
-    
+
     private transient String oldUsername;
-    
+
     @Column(name = "password")
     @NotNull
     private String password;
-    
+
     @Column(name = "firstname")
-    @Length(min=FIRSTNAME_LEN_MIN, max=FIRSTNAME_LEN_MAX)
+    @Length(min = FIRSTNAME_LEN_MIN, max = FIRSTNAME_LEN_MAX)
     private String firstName;
-    
+
     @Column(name = "lastname")
-    @Length(min=LASTNAME_LEN_MIN, max=LASTNAME_LEN_MAX)
+    @Length(min = LASTNAME_LEN_MIN, max = LASTNAME_LEN_MAX)
     private String lastName;
-    
-    @Column(name = "email", nullable=true, unique=true)
-    @Length(min=EMAIL_LEN_MIN, max=EMAIL_LEN_MAX)
+
+    @Column(name = "email", nullable = true, unique = true)
+    @Length(min = EMAIL_LEN_MIN, max = EMAIL_LEN_MAX)
     @Email
     private String email;
-    
+
     private transient String oldEmail;
-    
-    @Column(name = "activationid", nullable=true, length=255)
-    @Length(min=1, max=255)
+
+    @Column(name = "activationid", nullable = true, length = 255)
+    @Length(min = 1, max = 255)
     private String activationId;
-    
+
     @Column(name = "admin")
     private Boolean admin;
-    
+
     private transient Boolean oldAdmin;
-    
+
     @Column(name = "locked")
     private Boolean locked;
-    
-    @OneToMany(targetEntity=HibPreference.class, mappedBy = "user", 
-            fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+
+    @OneToMany(targetEntity = HibPreference.class, mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Preference> preferences = new HashSet<Preference>(0);
-    
-    @OneToMany(targetEntity=HibCollectionSubscription.class, mappedBy = "owner", 
-            fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<CollectionSubscription> subscriptions = 
-        new HashSet<CollectionSubscription>(0);
 
     /**
+     * 
      */
     public HibUser() {
         admin = Boolean.FALSE;
         locked = Boolean.FALSE;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getUid()
-     */
+    @Override
     public String getUid() {
         return uid;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setUid(java.lang.String)
-     */
+    @Override
     public void setUid(String uid) {
         this.uid = uid;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getUsername()
-     */
+    @Override
     public String getUsername() {
         return username;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setUsername(java.lang.String)
-     */
+    @Override
     public void setUsername(String username) {
         oldUsername = this.username;
         this.username = username;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getOldUsername()
-     */
+    @Override
     public String getOldUsername() {
         return oldUsername != null ? oldUsername : username;
     }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isUsernameChanged()
-     */
+    
+    @Override
     public boolean isUsernameChanged() {
-        return oldUsername != null && ! oldUsername.equals(username);
+        return oldUsername != null && !oldUsername.equals(username);
     }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getPassword()
-     */
+    
+    @Override
     public String getPassword() {
         return password;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setPassword(java.lang.String)
-     */
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getFirstName()
-     */
+    @Override
     public String getFirstName() {
         return firstName;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setFirstName(java.lang.String)
-     */
+    @Override
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getLastName()
-     */
+    @Override
     public String getLastName() {
         return lastName;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setLastName(java.lang.String)
-     */
+    @Override
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getEmail()
-     */
+    @Override
     public String getEmail() {
         return email;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setEmail(java.lang.String)
-     */
+    @Override
     public void setEmail(String email) {
         oldEmail = this.email;
         this.email = email;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getOldEmail()
-     */
+    @Override
     public String getOldEmail() {
         return oldEmail;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isEmailChanged()
-     */
+    @Override
     public boolean isEmailChanged() {
-        return oldEmail != null && ! oldEmail.equals(email);
+        return oldEmail != null && !oldEmail.equals(email);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getAdmin()
-     */
+    @Override
     public Boolean getAdmin() {
         return admin;
     }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getOldAdmin()
-     */
+
+    @Override
     public Boolean getOldAdmin() {
         return oldAdmin;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isAdminChanged()
-     */
+    @Override
     public boolean isAdminChanged() {
-        return oldAdmin != null && ! oldAdmin.equals(admin);
+        return oldAdmin != null && !oldAdmin.equals(admin);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setAdmin(java.lang.Boolean)
-     */
+    @Override
     public void setAdmin(Boolean admin) {
         oldAdmin = this.admin;
         this.admin = admin;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getActivationId()
-     */
+    @Override
     public String getActivationId() {
         return activationId;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setActivationId(java.lang.String)
-     */
+    @Override
     public void setActivationId(String activationId) {
         this.activationId = activationId;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isOverlord()
-     */
+    @Override
     public boolean isOverlord() {
         return username != null && username.equals(USERNAME_OVERLORD);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isActivated()
-     */
+    @Override
     public boolean isActivated() {
         return this.activationId == null;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#activate()
-     */
-    public void activate(){
-       this.activationId = null;
+    @Override
+    public void activate() {
+        this.activationId = null;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isLocked()
-     */
+    @Override
     public Boolean isLocked() {
         return locked;
     }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#setLocked(java.lang.Boolean)
-     */
+
+    @Override
     public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
     /**
-     * Username determines equality 
+     * Username determines equality
      */
     @Override
     public boolean equals(Object obj) {
         if (obj == null || username == null) {
             return false;
         }
-        if (! (obj instanceof User)) {
+        if (!(obj instanceof User)) {
             return false;
         }
-        
+
         return username.equals(((User) obj).getUsername());
     }
 
     @Override
-        public int hashCode() {
+    public int hashCode() {
         if (username == null) {
             return super.hashCode();
-        }
-        else {
+        } else {
             return username.hashCode();
         }
     }
@@ -368,59 +305,37 @@ public class HibUser extends HibAuditableObject implements User {
     /**
      */
     public String toString() {
-        return new ToStringBuilder(this).
-            append("username", username).
-            append("password", "xxxxxx").
-            append("firstName", firstName).
-            append("lastName", lastName).
-            append("email", email).
-            append("admin", admin).
-            append("activationId", activationId).
-            append("locked", locked).
-            append("uid", uid).
-            toString();
+        return new ToStringBuilder(this).append("username", username).append("password", "xxxxxx")
+                .append("firstName", firstName).append("lastName", lastName).append("email", email)
+                .append("admin", admin).append("activationId", activationId).append("locked", locked).append("uid", uid)
+                .toString();
     }
 
-   
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#validateRawPassword()
-     */
+    @Override
     public void validateRawPassword() {
         if (password == null) {
-            throw new ModelValidationException("UserName" + this.getUsername() + " UID" + this.getUid(), 
+            throw new ModelValidationException("UserName" + this.getUsername() + " UID" + this.getUid(),
                     "Password not specified");
         }
-        if (password.length() < PASSWORD_LEN_MIN ||
-            password.length() > PASSWORD_LEN_MAX) {
-            
-            throw new ModelValidationException("UserName" + this.getUsername() + " UID" + this.getUid(), 
-                                               "Password must be " +
-                                               PASSWORD_LEN_MIN + " to " +
-                                               PASSWORD_LEN_MAX +
-                                               " characters in length");
+        if (password.length() < PASSWORD_LEN_MIN || password.length() > PASSWORD_LEN_MAX) {
+
+            throw new ModelValidationException("UserName" + this.getUsername() + " UID" + this.getUid(),
+                    "Password must be " + PASSWORD_LEN_MIN + " to " + PASSWORD_LEN_MAX + " characters in length");
         }
     }
-    
-    
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getPreferences()
-     */
+
+    @Override
     public Set<Preference> getPreferences() {
         return preferences;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#addPreference(org.unitedinternet.cosmo.model.Preference)
-     */
+    @Override
     public void addPreference(Preference preference) {
         preference.setUser(this);
         preferences.add(preference);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getPreference(java.lang.String)
-     */
+    @Override
     public Preference getPreference(String key) {
         for (Preference pref : preferences) {
             if (pref.getKey().equals(key)) {
@@ -430,105 +345,21 @@ public class HibUser extends HibAuditableObject implements User {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#removePreference(java.lang.String)
-     */
+    @Override
     public void removePreference(String key) {
         removePreference(getPreference(key));
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#removePreference(org.unitedinternet.cosmo.model.Preference)
-     */
+    @Override
     public void removePreference(Preference preference) {
         if (preference != null) {
             preferences.remove(preference);
         }
     }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getCollectionSubscriptions()
-     */
-    public Set<CollectionSubscription> getCollectionSubscriptions() {
-        return subscriptions;
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#addSubscription(org.unitedinternet.cosmo.model.CollectionSubscription)
-     */
-    public void addSubscription(CollectionSubscription subscription) {
-        subscription.setOwner(this);
-        subscriptions.add(subscription);
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getSubscription(java.lang.String)
-     */
-    public CollectionSubscription getSubscription(String displayname) {
-
-        for (CollectionSubscription sub : subscriptions) {
-            if (sub.getDisplayName().equals(displayname)) {
-                return sub;
-            }
-        }
-
-        return null;
-    }
-   
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getSubscription(java.lang.String, java.lang.String)
-     */
-    public CollectionSubscription getSubscription(String collectionUid, String ticketKey){
-        for (CollectionSubscription sub : subscriptions) {
-            if (sub.getCollectionUid().equals(collectionUid)
-                    && sub.getTicketKey().equals(ticketKey)) {
-                return sub;
-            }
-        }
-
-        return null;
-    }
-
-   
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#removeSubscription(java.lang.String, java.lang.String)
-     */
-    public void removeSubscription(String collectionUid, String ticketKey){
-        removeSubscription(getSubscription(collectionUid, ticketKey));
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#removeSubscription(java.lang.String)
-     */
-    public void removeSubscription(String displayName) {
-        removeSubscription(getSubscription(displayName));
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#removeSubscription(org.unitedinternet.cosmo.model.CollectionSubscription)
-     */
-    public void removeSubscription(CollectionSubscription sub) {
-        if (sub != null) {
-            subscriptions.remove(sub);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isSubscribedTo(org.unitedinternet.cosmo.model.CollectionItem)
-     */
-    public boolean isSubscribedTo(CollectionItem collection){
-        for (CollectionSubscription sub : subscriptions){
-            if (collection.getUid().equals(sub.getCollectionUid())) {
-                return true; 
-            }
-        }
-        return false;
-    }
 
     public String calculateEntityTag() {
         String username = getUsername() != null ? getUsername() : "-";
-        String modTime = getModifiedDate() != null ?
-            Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+        String modTime = getModifiedDate() != null ? Long.valueOf(getModifiedDate().getTime()).toString() : "-";
         String etag = username + ":" + modTime;
         return encodeEntityTag(etag.getBytes(Charset.forName("UTF-8")));
     }

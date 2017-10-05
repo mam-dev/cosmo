@@ -270,13 +270,9 @@ public class TestHelper {
             throw new IllegalArgumentException("ticket required");
         }
 
-        String serial = Integer.toString(++sseq);
-        String displayName = "dummy sub " + serial;
 
         CollectionSubscription sub = entityFactory.createCollectionSubscription();
-        sub.setDisplayName(displayName);
-        sub.setTicketKey(ticket.getKey());
-        sub.setCollectionUid(collection.getUid());
+        
         
         return sub;
     }

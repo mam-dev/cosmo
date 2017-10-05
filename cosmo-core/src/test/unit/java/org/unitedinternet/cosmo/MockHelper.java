@@ -370,7 +370,6 @@ public class MockHelper extends TestHelper {
     public CollectionSubscription makeAndStoreDummySubscription(CollectionItem collection, Ticket ticket)
                                                                  throws Exception {
         CollectionSubscription sub = makeDummySubscription(collection, ticket);
-        user.addSubscription(sub);
         userService.updateUser(user);
         return sub;
     }
@@ -404,16 +403,7 @@ public class MockHelper extends TestHelper {
      */
     public CollectionItem findCollection(String uid) {
         return (CollectionItem) contentService.findItemByUid(uid);
-    }
-
-    /**
-     * Finds subscription.
-     * @param displayName Display name parameter.
-     * @return The collection subscription.
-     */
-    public CollectionSubscription findSubscription(String displayName) {
-        return user.getSubscription(displayName);
-    }
+    }    
 
     public ICalendarClientFilterManager getClientFilterManager() {
         return clientFilterManager;

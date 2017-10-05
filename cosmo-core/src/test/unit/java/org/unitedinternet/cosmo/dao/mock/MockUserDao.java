@@ -152,13 +152,7 @@ public class MockUserDao implements UserDao {
         ((MockAuditableObject) user).setCreationDate(new Date());
         ((MockAuditableObject) user).setEntityTag(((MockAuditableObject) user)
                 .calculateEntityTag());
-        
-        for(CollectionSubscription cs: user.getCollectionSubscriptions()) {
-            ((MockAuditableObject) cs).setEntityTag(((MockAuditableObject) cs)
-                    .calculateEntityTag());
-            ((MockAuditableObject) cs).setModifiedDate(new Date());
-            ((MockAuditableObject) cs).setCreationDate(new Date());
-        }
+               
         
         for(Preference p: user.getPreferences()) {
             ((MockAuditableObject) p).setEntityTag(((MockAuditableObject) p)
@@ -199,15 +193,7 @@ public class MockUserDao implements UserDao {
         ((MockAuditableObject) user).setModifiedDate(new Date());
         ((MockAuditableObject) user).setEntityTag(((MockAuditableObject) user)
                 .calculateEntityTag());
-        
-        for(CollectionSubscription cs: user.getCollectionSubscriptions()) {
-            ((MockAuditableObject) cs).setEntityTag(((MockAuditableObject) cs)
-                    .calculateEntityTag());
-            ((MockAuditableObject) cs).setModifiedDate(new Date());
-            if (cs.getCreationDate()==null) {
-                ((MockAuditableObject) cs).setCreationDate(new Date());
-            }
-        }
+                
         
         for(Preference p: user.getPreferences()) {
             ((MockAuditableObject) p).setEntityTag(((MockAuditableObject) p)

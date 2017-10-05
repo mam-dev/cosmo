@@ -191,13 +191,18 @@ CREATE TABLE `subscription` (
   `createdate` bigint(20) DEFAULT NULL,
   `etag` varchar(255) DEFAULT NULL,
   `modifydate` bigint(20) DEFAULT NULL,
-  `collectionuid` varchar(255) NOT NULL,
-  `displayname` varchar(255) NOT NULL,
-  `ticketkey` varchar(255) NOT NULL,
+  
+  `target_collection_id` bigint(20) NOT NULL,
   `ownerid` bigint(20) NOT NULL,
+  `ticketid` bigint(20) NOT NULL,
+  `proxy_collection_id` bigint(20) DEFAULT NULL,
+  
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ownerid` (`ownerid`,`displayname`),
-  CONSTRAINT `FK1456591D6BE46F4` FOREIGN KEY (`ownerid`) REFERENCES `users` (`id`)
+  UNIQUE KEY `ownerid` (`ownerid`,`target_collection_id`),
+  CONSTRAINT `FK_TARGET_COLLECTION_ID` FOREIGN KEY (`target_collection_id`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_OWNERID` FOREIGN KEY (`ownerid`) REFERENCES `users` (`id`),
+  CONSTRAINT `FK_TICKETID` FOREIGN KEY (`ticketid`) REFERENCES `tickets` (`id`),
+  CONSTRAINT `FK_PROXY_COLLECTION_ID` FOREIGN KEY (`proxy_collection_id`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `ticket_privilege`;

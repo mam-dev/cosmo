@@ -15,157 +15,80 @@
  */
 package org.unitedinternet.cosmo.model.mock;
 
+import java.nio.charset.Charset;
+
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 
 /**
- * Represents a subscription to a shared collection.
- * A subscription belongs to a user and consists of 
- * a ticket key and a collection uid.
+ * Represents a subscription to a shared collection. A subscription belongs to a user and consists of a ticket key and a
+ * collection uid.
  */
 public class MockCollectionSubscription extends MockAuditableObject implements CollectionSubscription {
 
+    private CollectionItem targetCollection;
+
     private User owner;
-    
-    
-    private String displayName;
-    
-    private String ticketKey;
-    
-    private String collectionUid;
-    
+
+    private Ticket ticket;
+
+    private CollectionItem proxyCollection;
+
     /**
-     * Constructor.
+     * Default constructor.
      */
     public MockCollectionSubscription() {
+        super();
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#getCollectionUid()
-     */
-    /**
-     * Gets collection uid.
-     * @return collectuin uid.
-     */
-    public String getCollectionUid() {
-        return collectionUid;
+    @Override
+    public CollectionItem getTargetCollection() {
+        return this.targetCollection;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#setCollectionUid(java.lang.String)
-     */
-    /**
-     * Sets collection uid.
-     * @param collectionUid The collection uid.
-     */
-    public void setCollectionUid(String collectionUid) {
-        this.collectionUid = collectionUid;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#setCollection(org.unitedinternet.cosmo.model.copy.CollectionItem)
-     */
-    /**
-     * Sets collection.
-     * @param collection The collection.
-     */
-    public void setCollection(CollectionItem collection) {
-        this.collectionUid = collection.getUid();
+    @Override
+    public void setTargetCollection(CollectionItem targetCollection) {
+        this.targetCollection = targetCollection;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#getDisplayName()
-     */
-    /**
-     * Gets display name.
-     * @return The display name.
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#setDisplayName(java.lang.String)
-     */
-    /**
-     * Sets display name.
-     * @param displayName The display name.
-     */
-    
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#getOwner()
-     */
-    /**
-     * Gets owner.
-     * @return user.
-     */
+    @Override
     public User getOwner() {
-        return owner;
+        return this.owner;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#setOwner(org.unitedinternet.cosmo.model.copy.User)
-     */
-    /**
-     * Sets owner.
-     * @param owner The owner.
-     */
+    @Override
     public void setOwner(User owner) {
         this.owner = owner;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#getTicketKey()
-     */
-    /**
-     * Gets ticket key.
-     * @return The ticket key.
-     */
-    public String getTicketKey() {
-        return ticketKey;
+    @Override
+    public Ticket getTicket() {
+        return this.ticket;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#setTicketKey(java.lang.String)
-     */
-    /**
-     * Sets ticket key.
-     * @param ticketKey The ticket key.
-     */
-    public void setTicketKey(String ticketKey) {
-        this.ticketKey = ticketKey;
-    }  
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceCollectionSubscription#setTicket(org.unitedinternet.cosmo.model.copy.Ticket)
-     */
-    /**
-     * Sets ticket.
-     * @param ticket The ticket.
-     */
+    @Override
     public void setTicket(Ticket ticket) {
-        this.ticketKey = ticket.getKey();
+        this.ticket = ticket;
     }
 
-    /**
-     * Calculates entity tag.
-     * {@inheritDoc}
-     * @return The entity tag.
-     */
-    public String calculateEntityTag() {
-        // subscription is unique by name for its owner
-        String uid = (getOwner() != null && getOwner().getUid() != null) ?
-            getOwner().getUid() : "-";
-        String name = getDisplayName() != null ? getDisplayName() : "-";
-        String modTime = getModifiedDate() != null ?
-            Long.valueOf(getModifiedDate().getTime()).toString() : "-";
-        String etag = uid + ":" + name + ":" + modTime;
-        return encodeEntityTag(etag.getBytes());
+    @Override
+    public CollectionItem getProxyCollection() {
+        return this.proxyCollection;
     }
+
+    @Override
+    public void setProxyCollection(CollectionItem proxyCollection) {
+        this.proxyCollection = proxyCollection;
+    }
+
+    public String calculateEntityTag() {
+        String targetUid = this.targetCollection != null ? this.targetCollection.getUid() : "-";
+        String ownerUid = getOwner() != null && getOwner().getUid() != null ? getOwner().getUid() : "-";
+        String modTime = getModifiedDate() != null ? Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+        String etag = targetUid + ":" + ownerUid + ":" + ":" + modTime;
+        return encodeEntityTag(etag.getBytes(Charset.forName("UTF-8")));
+    }
+
 }
