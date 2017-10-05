@@ -16,7 +16,7 @@
 package org.unitedinternet.cosmo.model;
 
 /**
- * TODO Add comments. Represents
+ * Models a collection subscription between a sharer and a sharee.
  */
 public interface CollectionSubscription extends AuditableObject {
 
@@ -29,14 +29,30 @@ public interface CollectionSubscription extends AuditableObject {
 
     public void setTargetCollection(CollectionItem targetCollection);
 
+    /**
+     * Gets the owner of this subscription (sharee).
+     * 
+     * @return the owner of this subscription (sharee).
+     */
     public User getOwner();
 
     public void setOwner(User owner);
 
+    /**
+     * Gets the ticket set for this subscription based on which sharee privileges will be calculated.
+     * 
+     * @return the ticket set for this subscription.
+     */
     public Ticket getTicket();
 
     public void setTicket(Ticket ticket);
 
+    /**
+     * Gets the sharee collection of this subscription. The sharee collection can be <code>null</code> if sharee did not
+     * accepted the share request.
+     * 
+     * @return the sharee collection of this subscription
+     */
     public CollectionItem getProxyCollection();
 
     public void setProxyCollection(CollectionItem proxyCollection);
