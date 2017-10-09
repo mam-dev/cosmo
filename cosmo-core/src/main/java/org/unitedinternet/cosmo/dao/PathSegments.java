@@ -1,4 +1,4 @@
-package org.unitedinternet.cosmo.dao.external;
+package org.unitedinternet.cosmo.dao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @author corneliu dobrota
  *
  */
-class PathSegments {
+public class PathSegments {
 
     private static final String PATH_SEGMENT_REGEX = "[\\-a-zA-Z0-9@:%\\._\\+~#=]*";
     private static final String URI_REGEX = "/?(?<homeCollectionUid>%s)?/?(?<collectionUid>%s)?/?(?<eventUid>%s)?";

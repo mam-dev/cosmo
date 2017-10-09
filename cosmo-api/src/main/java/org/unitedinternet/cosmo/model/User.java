@@ -256,5 +256,7 @@ public interface User extends AuditableObject{
     public void removePreference(Preference preference);    
 
     public String calculateEntityTag();
+    
+    public Set<CollectionSubscription> getSubscriptions();
 
 }

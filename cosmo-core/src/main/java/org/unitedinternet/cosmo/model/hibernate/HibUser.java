@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
+import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.User;
 
@@ -82,17 +84,15 @@ public class HibUser extends HibAuditableObject implements User {
     private String uid;
 
     @Column(name = "username", nullable = false)
-    // @Index(name="idx_username")
-    @NotNull
-    @NaturalId
+    @NotNull    
     @Length(min = USERNAME_LEN_MIN, max = USERNAME_LEN_MAX)
-    // per bug 11599:
-    // Usernames must be between 3 and 64 characters; may contain any Unicode
-    // character in the following range of unicode code points: [#x20-#xD7FF] |
-    // [#xE000-#xFFFD] EXCEPT #x7F or #x3A
-    // Oh and don't allow ';' or '/' because there are problems with encoding
-    // them in urls (tomcat doesn't support it)
-    @javax.validation.constraints.Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")
+    @NaturalId
+    /*
+     * Per bug 11599: Usernames must be between 3 and 64 characters; may contain any Unicode character in the following
+     * range of unicode code points: [#x20-#xD7FF] | [#xE000-#xFFFD] EXCEPT #x7F or #x3A. Oh and don't allow ';' or '/'
+     * because there are problems with encoding them in urls (tomcat doesn't support it)
+     */
+    @javax.validation.constraints.Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")    
     private String username;
 
     private transient String oldUsername;
@@ -132,8 +132,11 @@ public class HibUser extends HibAuditableObject implements User {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Preference> preferences = new HashSet<Preference>(0);
 
+    @OneToMany(mappedBy = "owner", targetEntity = HibCollectionSubscription.class)
+    private Set<CollectionSubscription> subscriptions = new HashSet<>();
+
     /**
-     * 
+     * Default constructor,
      */
     public HibUser() {
         admin = Boolean.FALSE;
@@ -165,12 +168,12 @@ public class HibUser extends HibAuditableObject implements User {
     public String getOldUsername() {
         return oldUsername != null ? oldUsername : username;
     }
-    
+
     @Override
     public boolean isUsernameChanged() {
         return oldUsername != null && !oldUsername.equals(username);
     }
-    
+
     @Override
     public String getPassword() {
         return password;
@@ -355,6 +358,11 @@ public class HibUser extends HibAuditableObject implements User {
         if (preference != null) {
             preferences.remove(preference);
         }
+    }
+
+    @Override
+    public Set<CollectionSubscription> getSubscriptions() {
+        return Collections.unmodifiableSet(this.subscriptions);
     }
 
     public String calculateEntityTag() {

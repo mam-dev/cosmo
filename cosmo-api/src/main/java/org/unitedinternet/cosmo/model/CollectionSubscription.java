@@ -17,6 +17,8 @@ package org.unitedinternet.cosmo.model;
 
 /**
  * Models a collection subscription between a sharer and a sharee.
+ * 
+ * @author daniel grigore
  */
 public interface CollectionSubscription extends AuditableObject {
 

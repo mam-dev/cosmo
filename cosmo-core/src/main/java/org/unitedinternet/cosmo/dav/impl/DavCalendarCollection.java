@@ -474,6 +474,6 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
     }
     
     private static boolean hasExternalContent(Item item){
-        return item instanceof CollectionItem && UuidExternalGenerator.containsExternalUid(item.getUid());  
+        return item instanceof CollectionItem && UuidExternalGenerator.get().containsUuid(item.getUid());  
     }
 }

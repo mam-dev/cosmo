@@ -12,7 +12,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationContext;
 import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.dao.ContentDaoInvocationHandler;
+import org.unitedinternet.cosmo.dao.ContentDaoProxyFactory;
+import org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl;
+import org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -31,22 +36,31 @@ import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 public class ContentDaoInvocationHandlerTest {
 
     @Mock
-    private ContentDao contentDaoInternal;
+    private ContentDaoImpl contentDaoInternal;
     @Mock
-    private ContentDao contentDaoExternal;
-
+    private ContentDaoExternal contentDaoExternal;
+    @Mock
+    private ContentDaoSubscriptionImpl contentDaoSub;
+    @Mock
+    private ApplicationContext applicatioContext;
+    
     private ContentDao contentDaoProxy;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        this.contentDaoProxy = new ContentDaoProxyFactory(
-                new ContentDaoInvocationHandler(contentDaoInternal, contentDaoExternal)).getObject();
+        ContentDaoInvocationHandler invocationHandler = new ContentDaoInvocationHandler();
+        invocationHandler.setApplicationContext(this.applicatioContext);
+        when(applicatioContext.getBean(ContentDaoImpl.class)).thenReturn(this.contentDaoInternal);
+        when(applicatioContext.getBean(ContentDaoExternal.class)).thenReturn(this.contentDaoExternal);
+        when(applicatioContext.getBean(ContentDaoSubscriptionImpl.class)).thenReturn(this.contentDaoSub);
+        this.contentDaoProxy = new ContentDaoProxyFactory(invocationHandler).getObject();
+
     }
 
     @Test
     public void shouldSuccessfullyDelegateCallToInternalDaoForNonExternalizableMethod() {
-        String uuid = UuidExternalGenerator.getNext();
+        String uuid = UuidExternalGenerator.get().getNext();
         this.contentDaoProxy.findItemParentByPath(uuid);
         verify(contentDaoInternal, times(1)).findItemParentByPath(uuid);
     }
@@ -63,7 +77,7 @@ public class ContentDaoInvocationHandlerTest {
     @Test
     public void shouldSuccessfullyDelegateMethodToExternalDao()
             throws NoSuchMethodException, SecurityException, Throwable {
-        String uuid = UuidExternalGenerator.getNext();
+        String uuid = UuidExternalGenerator.get().getNext();
         this.contentDaoProxy.findItemByPath(uuid);
         verify(contentDaoInternal, times(0)).findItemByPath(uuid);
         verify(contentDaoExternal, times(1)).findItemByPath(uuid);
@@ -80,7 +94,7 @@ public class ContentDaoInvocationHandlerTest {
     public void shouldSuccessfullyDelegateToExternalDaoWhenCallingFindItems() {
         NoteItemFilter filter = new NoteItemFilter();
         CollectionItem parent = new HibCollectionItem();
-        parent.setUid(UuidExternalGenerator.getNext());
+        parent.setUid(UuidExternalGenerator.get().getNext());
         filter.setParent(parent);
         this.contentDaoProxy.findItems(filter);
         verify(contentDaoExternal, times(1)).findItems(filter);
@@ -89,17 +103,17 @@ public class ContentDaoInvocationHandlerTest {
     @Test(expected = CaldavExceptionForbidden.class)
     public void shouldThrowExceptionWhenCreatingEventInExternalCalendar() {
         HibCollectionItem delegate = new HibCollectionItem();
-        delegate.setUid(UuidExternalGenerator.getNext());
+        delegate.setUid(UuidExternalGenerator.get().getNext());
         NoteItem child = new HibNoteItem();
         CollectionItem item = new ExternalCollectionItem(delegate, new HashSet<Item>());
         when(contentDaoExternal.createContent(item, child)).thenThrow(new CaldavExceptionForbidden(""));
         this.contentDaoProxy.createContent(item, child);
     }
-    
+
     @Test(expected = CaldavExceptionForbidden.class)
     public void shouldThrowExceptionWhenUpdatingExternalCalendar() {
         HibCollectionItem delegate = new HibCollectionItem();
-        delegate.setUid(UuidExternalGenerator.getNext());
+        delegate.setUid(UuidExternalGenerator.get().getNext());
         NoteItem child = new HibNoteItem();
         Set<ContentItem> children = new HashSet<>();
         children.add(child);

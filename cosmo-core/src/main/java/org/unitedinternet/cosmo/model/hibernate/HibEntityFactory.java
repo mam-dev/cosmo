@@ -81,7 +81,7 @@ public class HibEntityFactory implements EntityFactory {
         if (!isExternalCalendar) {
             return this.generateUid();
         }
-        return UuidExternalGenerator.getNext();
+        return  UuidExternalGenerator.get().getNext();
     }
 
     public NoteItem createNote() {

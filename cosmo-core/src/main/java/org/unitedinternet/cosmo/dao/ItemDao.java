@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.dao;
 
 import java.util.Set;
 
-import org.unitedinternet.cosmo.dao.external.ExternalizableContent;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;

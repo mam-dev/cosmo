@@ -22,7 +22,7 @@ import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.Tombstone;
 import org.unitedinternet.cosmo.model.User;
 
-class ExternalCollectionItem implements CollectionItem {
+public class ExternalCollectionItem implements CollectionItem {
 
     private CollectionItem delegate;
     private Set<? extends Item> children;

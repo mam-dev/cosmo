@@ -28,6 +28,7 @@ import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.mock.MockCollectionItem;
@@ -256,6 +257,38 @@ public class SecurityHelperTest {
         
         tickets.add(rwItemTicket);
         Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+    }
+    
+    @Test
+    public void shouldFindReadAccessForSubscription() {
+        User sharer = testHelper.makeDummyUser("sharer", "passwd1");
+        this.userDao.createUser(sharer);
+        User sharee = testHelper.makeDummyUser("sharee", "passwd2");
+        this.userDao.createUser(sharee);
+        
+        MockCollectionItem collectionItem = new MockCollectionItem();
+        collectionItem.setOwner(sharer);
+        collectionItem.setUid("col1");
+        MockNoteItem note = new MockNoteItem();
+        note.setUid("note1");
+        note.setOwner(sharer);
+        note.addParent(collectionItem);
+        collectionItem.addChild(note);
+        
+        Ticket ticket  =  testHelper.makeDummyTicket(sharer);
+        ticket.getPrivileges().add(Ticket.PRIVILEGE_READ);
+        ticket.setItem(collectionItem);
+        collectionItem.addTicket(ticket);
+        
+        CollectionSubscription subscription =testHelper.makeDummySubscription(collectionItem, ticket);
+        subscription.setOwner(sharee);
+        subscription.setTargetCollection(collectionItem);
+        subscription.setTicket(ticket);
+        sharee.getSubscriptions().add(subscription);
+        
+        CosmoSecurityContext context = this.getSecurityContext(sharee);
+        Assert.assertTrue(this.securityHelper.hasReadAccess(context, collectionItem));
+        
     }
     
     /**

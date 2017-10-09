@@ -1,10 +1,8 @@
-package org.unitedinternet.cosmo.dao.external;
+package org.unitedinternet.cosmo.dao;
 
 import java.lang.reflect.Proxy;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.unitedinternet.cosmo.dao.ContentDao;
-import org.unitedinternet.cosmo.dao.ItemDao;
 
 /**
  * {@link FactoryBean} for creating a <code>ItemDao</code> implementation that delegates all the method invocations to

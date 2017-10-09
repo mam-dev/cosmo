@@ -186,8 +186,7 @@ public interface Item extends AuditableObject{
     public CollectionItemDetails getParentDetails(CollectionItem parent);
 
     /**
-     * Return a single parent.
-     * @deprecated
+     * Gets the parent of this item. Note that usually there is only one parent.
      */
     public CollectionItem getParent();
 

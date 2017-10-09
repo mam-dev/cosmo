@@ -85,6 +85,8 @@ public class MockUser extends MockAuditableObject implements User {
     private Boolean locked;
 
     private Set<Preference> preferences = new HashSet<Preference>(0);
+    
+    private Set<CollectionSubscription> subscriptions = new HashSet<>();
 
     /**
      * Constructor.
@@ -718,6 +720,11 @@ public class MockUser extends MockAuditableObject implements User {
         if (preference != null) {
             preferences.remove(preference);
         }
+    }
+    
+    @Override
+    public Set<CollectionSubscription> getSubscriptions() {
+        return this.subscriptions;
     }
 
     /**

@@ -80,6 +80,7 @@ import org.unitedinternet.cosmo.model.User;
         discriminatorType=DiscriminatorType.STRING,
         length=16)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@SuppressWarnings("serial")
 public abstract class HibItem extends HibAuditableObject implements Item {
 
     @Column(name = "uid", nullable = false, length=255)
@@ -151,16 +152,12 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     private User owner;
 
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getStamps()
-     */
+    @Override
     public Set<Stamp> getStamps() {
         return Collections.unmodifiableSet(stamps);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getStampMap()
-     */
+    @Override
     public Map<String, Stamp> getStampMap() {
         if(stampMap==null) {
             stampMap = new HashMap<String, Stamp>();
@@ -172,9 +169,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return stampMap;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#addStamp(org.unitedinternet.cosmo.model.Stamp)
-     */
+    @Override
     public void addStamp(Stamp stamp) {
         if (stamp == null) {
             throw new IllegalArgumentException("stamp cannot be null");
@@ -192,9 +187,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         stamps.add(stamp);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#removeStamp(org.unitedinternet.cosmo.model.Stamp)
-     */
+    @Override
     public void removeStamp(Stamp stamp) {
         // only remove stamps that belong to item
         if(!stamps.contains(stamp)) {
@@ -207,9 +200,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         tombstones.add(new HibStampTombstone(this, stamp));
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getStamp(java.lang.String)
-     */
+    @Override
     public Stamp getStamp(String type) {
         for(Stamp stamp : stamps) {
             // only return stamp if it matches class and is active
@@ -221,9 +212,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getStamp(java.lang.Class)
-     */
+    @Override
     public Stamp getStamp(Class<?> clazz) {
         for(Stamp stamp : stamps) {
             // only return stamp if it is an instance of the specified class
@@ -235,31 +224,23 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getAttributes()
-     */
+    @Override
     public Map<QName, Attribute> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#addTicket(org.unitedinternet.cosmo.model.Ticket)
-     */
+    @Override
     public void addTicket(Ticket ticket) {
         ticket.setItem(this);
         tickets.add(ticket);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#removeTicket(org.unitedinternet.cosmo.model.Ticket)
-     */
+    @Override
     public void removeTicket(Ticket ticket) {
         tickets.remove(ticket);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#addAttribute(org.unitedinternet.cosmo.model.Attribute)
-     */
+    @Override
     public void addAttribute(Attribute attribute) {
         if (attribute == null) {
             throw new IllegalArgumentException("attribute cannot be null");
@@ -279,16 +260,12 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         attributes.put(attribute.getQName(), attribute);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#removeAttribute(java.lang.String)
-     */
+    @Override
     public void removeAttribute(String name) {
         removeAttribute(new HibQName(name));
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#removeAttribute(org.unitedinternet.cosmo.model.QName)
-     */
+    @Override
     public void removeAttribute(QName qname) {
         if(attributes.containsKey(qname)) {
             attributes.remove(qname);
@@ -296,9 +273,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#removeAttributes(java.lang.String)
-     */
+    @Override
     public void removeAttributes(String namespace) {
         ArrayList<QName> toRemove = new ArrayList<QName>();
         for (QName qname: attributes.keySet()) {
@@ -312,30 +287,22 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getAttribute(java.lang.String)
-     */
+    @Override
     public Attribute getAttribute(String name) {
         return getAttribute(new HibQName(name));
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getAttribute(org.unitedinternet.cosmo.model.QName)
-     */
+    @Override
     public Attribute getAttribute(QName qname) {
         return attributes.get(qname);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getAttributeValue(java.lang.String)
-     */
+    @Override
     public Object getAttributeValue(String name) {
         return getAttributeValue(new HibQName(name));
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getAttributeValue(org.unitedinternet.cosmo.model.QName)
-     */
+    @Override
     public Object getAttributeValue(QName qname) {
         Attribute attr = attributes.get(qname);
         if (attr == null) {
@@ -344,16 +311,12 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return attr.getValue();
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setAttribute(java.lang.String, java.lang.Object)
-     */
+    @Override
     public void setAttribute(String name, Object value) {
         setAttribute(new HibQName(name),value);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setAttribute(org.unitedinternet.cosmo.model.QName, java.lang.Object)
-     */
+    @Override
     public void setAttribute(QName key, Object value) {
         HibAttribute attr = (HibAttribute) attributes.get(key);
 
@@ -366,9 +329,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getAttributes(java.lang.String)
-     */
+    @Override
     public Map<String, Attribute> getAttributes(String namespace) {
         HashMap<String, Attribute> attrs = new HashMap<String, Attribute>();
         for(Entry<QName, Attribute> e: attributes.entrySet()) {
@@ -381,93 +342,67 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     }
 
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getClientCreationDate()
-     */
+    @Override
     public Date getClientCreationDate() {
         return clientCreationDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setClientCreationDate(java.util.Date)
-     */
+    @Override
     public void setClientCreationDate(Date clientCreationDate) {
         this.clientCreationDate = clientCreationDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getClientModifiedDate()
-     */
+    @Override
     public Date getClientModifiedDate() {
         return clientModifiedDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setClientModifiedDate(java.util.Date)
-     */
+    @Override
     public void setClientModifiedDate(Date clientModifiedDate) {
         this.clientModifiedDate = clientModifiedDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getName()
-     */
+    @Override
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setName(java.lang.String)
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getDisplayName()
-     */
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setDisplayName(java.lang.String)
-     */
+    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getOwner()
-     */
+    @Override
     public User getOwner() {
         return owner;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setOwner(org.unitedinternet.cosmo.model.User)
-     */
+    @Override
     public void setOwner(User owner) {
         this.owner = owner;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getUid()
-     */
+    @Override
     public String getUid() {
         return uid;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setUid(java.lang.String)
-     */
+    @Override
     public void setUid(String uid) {
         this.uid = uid;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getVersion()
-     */
+    
     public Integer getVersion() {
         return version;
     }
@@ -491,9 +426,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getParents()
-     */
+    @Override
     public Set<CollectionItem> getParents() {
         if(parents!=null) {
             return parents;
@@ -509,9 +442,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return parents;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getParent()
-     */
+    @Override
     public CollectionItem getParent() {
         if(getParents().size()==0) {
             return null;
@@ -520,9 +451,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return getParents().iterator().next();
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getParentDetails(org.unitedinternet.cosmo.model.CollectionItem)
-     */
+    @Override
     public CollectionItemDetails getParentDetails(CollectionItem parent) {
         for(CollectionItemDetails cid: parentDetails) {
             if(cid.getCollection().equals(parent)) {
@@ -533,37 +462,26 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getIsActive()
-     */
+    @Override
     public Boolean getIsActive() {
         return isActive;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#setIsActive(java.lang.Boolean)
-     */
+    @Override
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getTickets()
-     */
+    @Override
     public Set<Ticket> getTickets() {
         return Collections.unmodifiableSet(tickets);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#getTombstones()
-     */
+    @Override
     public Set<Tombstone> getTombstones() {
         return Collections.unmodifiableSet(tombstones);
     }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Item#addTombstone(org.unitedinternet.cosmo.model.Tombstone)
-     */
+    
     public void addTombstone(Tombstone tombstone) {
         tombstone.setItem(this);
         tombstones.add(tombstone);

@@ -20,8 +20,8 @@ import java.util.Set;
 /**
  * Item that represents a collection of items.
  */
-public interface CollectionItem extends Item{
-
+public interface CollectionItem extends Item {
+    
     /**
      * Return active children items (those with isActive=true).
      * @return active children items

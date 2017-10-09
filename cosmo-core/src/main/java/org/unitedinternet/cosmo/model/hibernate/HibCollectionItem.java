@@ -15,6 +15,9 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import static org.unitedinternet.cosmo.model.hibernate.CollectionItemConstants.ATTR_EXCLUDE_FREE_BUSY_ROLLUP;
+import static org.unitedinternet.cosmo.model.hibernate.CollectionItemConstants.ATTR_HUE;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +32,6 @@ import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionItemDetails;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.ItemTombstone;
-import org.unitedinternet.cosmo.model.QName;
 
 /**
  * Hibernate persistent CollectionItem.
@@ -42,13 +44,7 @@ public class HibCollectionItem extends HibItem implements CollectionItem {
      * 
      */
     private static final long serialVersionUID = 2873258323314048223L;
-
-    // CollectionItem specific attributes
-    public static final QName ATTR_EXCLUDE_FREE_BUSY_ROLLUP =
-            new HibQName(CollectionItem.class, "excludeFreeBusyRollup");
-
-    public static final QName ATTR_HUE =
-            new HibQName(CollectionItem.class, "hue");
+  
 
     @OneToMany(targetEntity=HibCollectionItemDetails.class, mappedBy="primaryKey.collection", fetch=FetchType.LAZY)
     @Cascade( {CascadeType.DELETE }) 

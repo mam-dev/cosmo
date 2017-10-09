@@ -35,11 +35,9 @@ import org.unitedinternet.cosmo.security.CosmoSecurityContext;
  */
 public class SecurityHelper {
     
-    private ContentDao contentDao;
     private UserDao userDao;
     
     public SecurityHelper(ContentDao contentDao, UserDao userDao) {
-        this.contentDao = contentDao;
         this.userDao = userDao;
     }
     
@@ -142,49 +140,49 @@ public class SecurityHelper {
     }
     
     private boolean hasReadAccess(User user, Item item, Set<Ticket> tickets) {
-        // admin always has access
-        if(user.getAdmin()!=null && user.getAdmin().booleanValue()) {
+        // Admin always has access
+        if (user.getAdmin() != null && user.getAdmin().booleanValue()) {
             return true;
         }
-        
+
         // Case 1. User owns item
-        if(item.getOwner().equals(user)) {
+        if (item.getOwner().equals(user)) {
             return true;
         }
-        
+
         // Case 2: User owns collection that item is in
-        for(CollectionItem parent: item.getParents()) {
-            if(parent.getOwner().equals(user)) {
+        for (CollectionItem parent : item.getParents()) {
+            if (parent.getOwner().equals(user)) {
                 return true;
             }
         }
-        
+
         // Case 3: ticket for item present
-        if(tickets!=null) {
-            for(Ticket ticket: tickets) {
-                if(hasReadAccess(ticket, item)) {
+        if (tickets != null) {
+            for (Ticket ticket : tickets) {
+                if (hasReadAccess(ticket, item)) {
                     return true;
                 }
             }
         }
-        
-        // Case 4: check subscriptions
-        // refresh user to prevent lazy init exceptions
-        user = userDao.getUser(user.getUsername());
-        if(user!=null) {
-//            for(CollectionSubscription cs: user.getCollectionSubscriptions()) {
-//                Ticket ticket = contentDao.findTicket(cs.getTicketKey());
-//                if(ticket==null) {
-//                    continue;
-//                }
-//                if(hasReadAccess(ticket,item)) {
-//                    return true;
-//                }
-//            }
-            // TODO Update this to know about subscription.
+
+        /*
+         * Case 4: check subscriptions. Refresh user to prevent lazy init exceptions
+         */
+        user = this.userDao.getUser(user.getUsername());
+        if (user != null) {
+             for(CollectionSubscription cs: user.getSubscriptions()) {
+                 Ticket ticket = cs.getTicket();
+                 if(ticket == null) {
+                     continue;
+                 }
+                 if(hasReadAccess(ticket, item)) {
+                     return true;
+                 }
+             }
         }
-        
-        // otherwise no access
+
+        // Otherwise no access
         return false;
     }
     

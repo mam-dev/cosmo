@@ -1,4 +1,4 @@
-package org.unitedinternet.cosmo.dao.external;
+package org.unitedinternet.cosmo.dao;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

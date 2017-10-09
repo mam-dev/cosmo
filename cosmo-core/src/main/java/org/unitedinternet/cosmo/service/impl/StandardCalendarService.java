@@ -54,7 +54,7 @@ public class StandardCalendarService implements CalendarService {
     public Set<Item> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timeZoneId,
             boolean expandRecurringEvents) {
         Set<Item> resultSet = new HashSet<>();
-        if (UuidExternalGenerator.containsExternalUid(collection.getUid())) {
+        if (UuidExternalGenerator.get().containsUuid(collection.getUid())) {
             NoteItemFilter filter = new NoteItemFilter();
             filter.setParent(collection);
             EventStampFilter eventFilter = new EventStampFilter();

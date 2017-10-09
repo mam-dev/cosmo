@@ -90,15 +90,15 @@
 		<constructor-arg ref="contentSourceFactory"/>
 		<constructor-arg ref="itemFilterProcessor" />
 	</bean>
+	
+	<bean id="contentDaoSub" class="org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl">
+		<constructor-arg ref="contentDaoInternal"/>
+	</bean>
 
 	<bean id="contentDao"
-		class="org.unitedinternet.cosmo.dao.external.ContentDaoProxyFactory">
+		class="org.unitedinternet.cosmo.dao.ContentDaoProxyFactory">
 		<constructor-arg>
-			<bean
-				class="org.unitedinternet.cosmo.dao.external.ContentDaoInvocationHandler">
-				<constructor-arg ref="contentDaoInternal" />
-				<constructor-arg ref="contentDaoExternal" />
-			</bean>
+			<bean class="org.unitedinternet.cosmo.dao.ContentDaoInvocationHandler"/>
 		</constructor-arg>
 	</bean>
 

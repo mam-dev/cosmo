@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.unitedinternet.cosmo.dao.PathSegments;
 
 /**
  * 

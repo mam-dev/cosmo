@@ -52,7 +52,7 @@ public class HibCollectionSubscription extends HibAuditableObject implements Col
     @JoinColumn(name = "ticketid")
     private Ticket ticket;
     
-    @OneToOne(targetEntity = HibSubscriptionCollectionItem.class)
+    @OneToOne(targetEntity = HibCollectionSubscriptionItem.class)
     @JoinColumn(name = "proxy_collection_id")
     private CollectionItem proxyCollection;
 
