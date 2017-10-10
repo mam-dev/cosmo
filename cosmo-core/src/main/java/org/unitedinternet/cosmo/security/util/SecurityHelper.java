@@ -216,7 +216,7 @@ public class SecurityHelper {
     }
     
     private boolean hasWriteAccess(User user, Item item, Set<Ticket> tickets) {
-        // admin always has access
+        // Admin always has access
         if(user.getAdmin()!=null && user.getAdmin().booleanValue()) {
             return true;
         }
@@ -234,7 +234,7 @@ public class SecurityHelper {
         }
         
         // Case 3: ticket for item present
-        if(tickets!=null) {
+        if (tickets != null) {
             for(Ticket ticket: tickets) {
                 if(hasWriteAccess(ticket, item)) {
                     return true;
@@ -242,20 +242,18 @@ public class SecurityHelper {
             }
         }
         
-        // Case 4: check subscriptions
-        // refresh user to prevent lazy init exceptions
+        // Case 4: check subscriptions refresh user to prevent lazy init exceptions
         user = userDao.getUser(user.getUsername());
-        if(user!=null) {
-//            for(CollectionSubscription cs: user.getCollectionSubscriptions()) {
-//                Ticket ticket = contentDao.findTicket(cs.getTicketKey());
-//                if(ticket==null) {
-//                    continue;
-//                }
-//                if(hasWriteAccess(ticket,item)) {
-//                    return true;
-//                }
-//            }
-            // TODO Update this to know about subscription.
+        if (user != null) {
+            for (CollectionSubscription cs : user.getSubscriptions()) {
+                Ticket ticket = cs.getTicket();
+                if (ticket == null) {
+                    continue;
+                }
+                if (hasWriteAccess(ticket, item)) {
+                    return true;
+                }
+            }
         }
         
         // otherwise no access

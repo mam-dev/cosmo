@@ -287,9 +287,41 @@ public class SecurityHelperTest {
         sharee.getSubscriptions().add(subscription);
         
         CosmoSecurityContext context = this.getSecurityContext(sharee);
-        Assert.assertTrue(this.securityHelper.hasReadAccess(context, collectionItem));
+        Assert.assertTrue(this.securityHelper.hasReadAccess(context, collectionItem));        
+    }
+    
+    @Test
+    public void shouldFindWriteAccessForSubscription() {
+        User sharer = testHelper.makeDummyUser("sharer", "passwd1");
+        this.userDao.createUser(sharer);
+        User sharee = testHelper.makeDummyUser("sharee", "passwd2");
+        this.userDao.createUser(sharee);
+        
+        MockCollectionItem collectionItem = new MockCollectionItem();
+        collectionItem.setOwner(sharer);
+        collectionItem.setUid("col1");
+        MockNoteItem note = new MockNoteItem();
+        note.setUid("note1");
+        note.setOwner(sharer);
+        note.addParent(collectionItem);
+        collectionItem.addChild(note);
+        
+        Ticket ticket  =  testHelper.makeDummyTicket(sharer);
+        ticket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        ticket.setItem(collectionItem);
+        collectionItem.addTicket(ticket);
+        
+        CollectionSubscription subscription =testHelper.makeDummySubscription(collectionItem, ticket);
+        subscription.setOwner(sharee);
+        subscription.setTargetCollection(collectionItem);
+        subscription.setTicket(ticket);
+        sharee.getSubscriptions().add(subscription);
+        
+        CosmoSecurityContext context = this.getSecurityContext(sharee);
+        Assert.assertTrue(this.securityHelper.hasWriteAccess(context, collectionItem));
         
     }
+    
     
     /**
      * Gets security context.
