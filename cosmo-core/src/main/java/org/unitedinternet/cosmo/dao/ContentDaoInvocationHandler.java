@@ -17,6 +17,7 @@ import org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl;
 import org.unitedinternet.cosmo.dao.subscription.UidSubscriptionGenerator;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
 
 /**
  * <code>InvocationHandler</code> that delegates the method calls to appropriate DAO implementation.
@@ -69,6 +70,9 @@ public class ContentDaoInvocationHandler implements InvocationHandler, Applicati
                     if (external.getDelegate() != null) {
                         path = external.getDelegate().getUid();
                     }
+                } else if (arg instanceof HibCollectionSubscriptionItem) {
+                    HibCollectionSubscriptionItem subscription = (HibCollectionSubscriptionItem) arg;
+                    path = subscription.getUid();
                 }
             }
         }

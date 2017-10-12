@@ -28,7 +28,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final ContentDao contentDaoInternal;
 
-    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal) {        
+    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal) {
         this.contentDaoInternal = contentDaoInternal;
     }
 
@@ -204,7 +204,11 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
-        throw new UnsupportedOperationException();
+        if (!(parent instanceof HibCollectionSubscriptionItem)) {
+            throw new IllegalArgumentException("invalid subscription type " + parent.getClass());
+        }
+        HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) parent;
+        return this.contentDaoInternal.createContent(subscriptionItem.getTargetCollection(), content);
     }
 
     @Override

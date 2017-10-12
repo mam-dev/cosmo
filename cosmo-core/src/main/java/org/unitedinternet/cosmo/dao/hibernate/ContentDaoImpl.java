@@ -191,12 +191,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#createContent(org.unitedinternet.cosmo.model.CollectionItem,
-     *      org.unitedinternet.cosmo.model.ContentItem)
-     */
+    @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
 
         try {
