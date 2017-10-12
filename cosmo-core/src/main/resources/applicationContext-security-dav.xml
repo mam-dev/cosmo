@@ -109,17 +109,10 @@
 		privileges to execute api. Aspect bean is annotated with aspecj annotations. -->
 	<bean id="securityAspect" init-method="init"
 		class="org.unitedinternet.cosmo.security.aop.SecurityAdvice">
-		<property name="securityManager">
-			<ref bean="securityManager" />
-		</property>
-		<property name="contentDao">
-			<ref bean="contentDao" />
-		</property>
-		<property name="userDao">
-			<ref bean="userDao" />
-		</property>
-		<property name="order" value="5" />
-		<property name="enabled" value="true" />
+		<property name="securityManager" ref="securityManager"/>
+		<property name="contentDao" ref="contentDao"/>					
+		<property name="userDao" ref="userDao"/>					
+		<property name="order" value="5" />		
 	</bean>
 
 

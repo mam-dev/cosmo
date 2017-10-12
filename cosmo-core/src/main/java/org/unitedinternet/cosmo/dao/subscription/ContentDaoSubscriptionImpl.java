@@ -207,8 +207,11 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         if (!(parent instanceof HibCollectionSubscriptionItem)) {
             throw new IllegalArgumentException("invalid subscription type " + parent.getClass());
         }
+        // Create collection in sharer's calendar.
         HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) parent;
-        return this.contentDaoInternal.createContent(subscriptionItem.getTargetCollection(), content);
+        CollectionItem parentCollection = subscriptionItem.getTargetCollection();
+        content.setOwner(parentCollection.getOwner());
+        return this.contentDaoInternal.createContent(parentCollection, content);
     }
 
     @Override

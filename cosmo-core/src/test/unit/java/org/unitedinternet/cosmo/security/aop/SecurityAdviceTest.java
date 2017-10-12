@@ -22,8 +22,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.unitedinternet.cosmo.TestHelper;
-import org.unitedinternet.cosmo.dao.mock.MockCalendarDao;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
@@ -42,10 +45,6 @@ import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.impl.StandardContentService;
 import org.unitedinternet.cosmo.service.impl.StandardTriageStatusQueryProcessor;
 import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
-import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Test Case for <code>SecurityAdvice/code>
@@ -58,7 +57,6 @@ public class SecurityAdviceTest {
 
     
     private StandardContentService service;
-    private MockCalendarDao calendarDao;
     private MockContentDao contentDao;
     private MockUserDao userDao;
     private MockDaoStorage storage;
@@ -77,8 +75,7 @@ public class SecurityAdviceTest {
     public void setUp() throws Exception {
         testHelper = new TestHelper();
         securityManager = new MockSecurityManager();
-        storage = new MockDaoStorage();
-        calendarDao = new MockCalendarDao(storage);
+        storage = new MockDaoStorage();        
         contentDao = new MockContentDao(storage);
         userDao = new MockUserDao(storage);
         service = new StandardContentService();
@@ -90,8 +87,7 @@ public class SecurityAdviceTest {
         
         // create a factory that can generate a proxy for the given target object
         AspectJProxyFactory factory = new AspectJProxyFactory(service); 
-
-        sa.setEnabled(true);
+        
         sa.setSecurityManager(securityManager);
         sa.setContentDao(contentDao);
         sa.setUserDao(userDao);
