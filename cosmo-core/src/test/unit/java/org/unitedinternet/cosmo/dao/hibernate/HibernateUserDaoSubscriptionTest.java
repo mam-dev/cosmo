@@ -54,60 +54,7 @@ public class HibernateUserDaoSubscriptionTest extends AbstractHibernateDaoTestCa
      */
     @Test
     public void testSubscribe() throws Exception {
-        User user = getUser(userDao, "subuser1");
-        CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
-        CollectionItem collection = getCollection(root, "subcoll1");
-        Ticket ticket = generateTicket(collection, user);
-
-        CollectionSubscription sub1 = new HibCollectionSubscription();
-        sub1.setDisplayName("sub1");
-        sub1.setCollection(collection);
-        sub1.setTicket(ticket);
-        user.addSubscription(sub1);
-        userDao.updateUser(user);
-
-        clearSession();
-        
-        user = getUser(userDao, "subuser1");
-        
-        Assert.assertFalse("no subscriptions saved",
-                    user.getCollectionSubscriptions().isEmpty());
-
-        CollectionSubscription querySub = user
-                .getSubscription("sub1");
-        Assert.assertNotNull("sub1 not found", querySub);
-        Assert.assertEquals("sub1 not same subscriber", user.getUid(), querySub
-                .getOwner().getUid());
-        Assert.assertEquals("sub1 not same collection", collection.getUid(), querySub
-                .getCollectionUid());
-        Assert.assertEquals("sub1 not same ticket", ticket.getKey(), querySub
-                .getTicketKey());
-
-        querySub.setDisplayName("sub2");
-        userDao.updateUser(user);
-        
-        clearSession();
-        
-        user = getUser(userDao, "subuser1");
-        
-        querySub = user.getSubscription("sub1");
-        Assert.assertNull("sub1 mistakenly found", querySub);
-
-        querySub = user.getSubscription("sub2");
-        Assert.assertNotNull("sub2 not found", querySub);
-
-        user.removeSubscription(querySub);
-        userDao.updateUser(user);
-
-        clearSession();
-        
-        user = getUser(userDao, "subuser1");
-        
-        querySub = user.getSubscription("sub1");
-        Assert.assertNull("sub1 mistakenly found", querySub);
-
-        querySub = user.getSubscription("sub2");
-        Assert.assertNull("sub2 mistakenly found", querySub);
+      //TODO Update subscription test.
     }
 
     /**

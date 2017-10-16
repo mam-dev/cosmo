@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -134,12 +135,7 @@ public class HibUser extends HibAuditableObject implements User {
             fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Preference> preferences = new HashSet<Preference>(0);
-    
-    @OneToMany(targetEntity=HibCollectionSubscription.class, mappedBy = "owner", 
-            fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<CollectionSubscription> subscriptions = 
-        new HashSet<CollectionSubscription>(0);
+        
 
     /**
      */
@@ -446,46 +442,25 @@ public class HibUser extends HibAuditableObject implements User {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getCollectionSubscriptions()
-     */
+    @Override
     public Set<CollectionSubscription> getCollectionSubscriptions() {
-        return subscriptions;
+        return Collections.emptySet();
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#addSubscription(org.unitedinternet.cosmo.model.CollectionSubscription)
-     */
+    @Override
     public void addSubscription(CollectionSubscription subscription) {
-        subscription.setOwner(this);
-        subscriptions.add(subscription);
+        //XXX - subscriptions are not actually used.
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getSubscription(java.lang.String)
-     */
+    @Override
     public CollectionSubscription getSubscription(String displayname) {
-
-        for (CollectionSubscription sub : subscriptions) {
-            if (sub.getDisplayName().equals(displayname)) {
-                return sub;
-            }
-        }
-
+        //XXX - subscriptions are not actually used.
         return null;
     }
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#getSubscription(java.lang.String, java.lang.String)
-     */
+    @Override
     public CollectionSubscription getSubscription(String collectionUid, String ticketKey){
-        for (CollectionSubscription sub : subscriptions) {
-            if (sub.getCollectionUid().equals(collectionUid)
-                    && sub.getTicketKey().equals(ticketKey)) {
-                return sub;
-            }
-        }
-
+        //XXX - subscriptions are not actually used.
         return null;
     }
 
@@ -504,24 +479,13 @@ public class HibUser extends HibAuditableObject implements User {
         removeSubscription(getSubscription(displayName));
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#removeSubscription(org.unitedinternet.cosmo.model.CollectionSubscription)
-     */
+    @Override
     public void removeSubscription(CollectionSubscription sub) {
-        if (sub != null) {
-            subscriptions.remove(sub);
-        }
+        // XXX-Subscription are not really used.
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.User#isSubscribedTo(org.unitedinternet.cosmo.model.CollectionItem)
-     */
-    public boolean isSubscribedTo(CollectionItem collection){
-        for (CollectionSubscription sub : subscriptions){
-            if (collection.getUid().equals(sub.getCollectionUid())) {
-                return true; 
-            }
-        }
+    @Override
+    public boolean isSubscribedTo(CollectionItem collection){        
         return false;
     }
 
