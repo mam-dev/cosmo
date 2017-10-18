@@ -21,12 +21,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.component.VFreeBusy;
-import net.fortuna.ical4j.model.component.VTimeZone;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.io.InputContext;
@@ -35,6 +29,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
+import org.unitedinternet.cosmo.dao.subscription.UuidSubscriptionGenerator;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
@@ -68,6 +63,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
+import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.DataSizeException;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -76,9 +72,15 @@ import org.unitedinternet.cosmo.model.IcalUidInUseException;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.StampUtils;
+import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
 
-import com.google.common.collect.Sets;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+import net.fortuna.ical4j.model.component.VTimeZone;
 
 /**
  * Extends <code>DavCollection</code> to adapt the Cosmo <code>CalendarCollectionItem</code> to the DAV resource model.
@@ -453,27 +455,45 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
 
     @Override
     protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        if(hasExternalContent(getItem())){
-            return Sets.newHashSet(DavPrivilege.READ);
+        if (!isGeneratedUid(getItem())) {
+            return super.getCurrentPrincipalPrivileges();
         }
-        return super.getCurrentPrincipalPrivileges();
+        Set<DavPrivilege> privileges = new HashSet<>();
+        privileges.add(DavPrivilege.READ);
+        Item item = this.getItem();
+        if (item instanceof HibCollectionSubscriptionItem) {
+            HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) item;
+            CollectionSubscription subscription = subscriptionItem.getSubscription();
+            if (subscription != null) {
+                Ticket ticket = subscription.getTicket();
+                if (ticket != null && ticket.isReadWrite()) {
+                    privileges.add(DavPrivilege.WRITE);
+                }
+            }
+        }
+
+        return privileges;
     }
-    
+
     @Override
     protected DavAcl getAcl() {
-        if(!hasExternalContent(getItem())){
+        if (!isGeneratedUid(getItem())) {
             return super.getAcl();
         }
         DavAcl result = new DavAcl();
         DavAce owner = new DavAce.PropertyAce(OWNER);
-        owner.getPrivileges().add(DavPrivilege.READ);
+        owner.getPrivileges().addAll(this.getCurrentPrincipalPrivileges());
         owner.setProtected(true);
         result.getAces().add(owner);
 
         return result;
     }
-    
-    private static boolean hasExternalContent(Item item){
-        return item instanceof CollectionItem && UuidExternalGenerator.get().containsUuid(item.getUid());  
+
+    private static boolean isGeneratedUid(Item item) {
+        if (!(item instanceof CollectionItem)) {
+            return false;
+        }
+        String uid = item.getUid();
+        return UuidExternalGenerator.get().containsUuid(uid) || UuidSubscriptionGenerator.get().containsUuid(uid);
     }
 }

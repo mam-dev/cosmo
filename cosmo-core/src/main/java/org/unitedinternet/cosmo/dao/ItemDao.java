@@ -213,6 +213,7 @@ public interface ItemDao extends Dao {
      * @param item the item
      * @param collection the collection to remove from
      */
+    @ExternalizableContent
     public void removeItemFromCollection(Item item, CollectionItem collection);
     
     /**

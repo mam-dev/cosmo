@@ -14,7 +14,7 @@ import org.unitedinternet.cosmo.dao.external.ExternalCollectionItem;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl;
 import org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl;
-import org.unitedinternet.cosmo.dao.subscription.UidSubscriptionGenerator;
+import org.unitedinternet.cosmo.dao.subscription.UuidSubscriptionGenerator;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
@@ -98,7 +98,7 @@ public class ContentDaoInvocationHandler implements InvocationHandler, Applicati
             if (path != null) {
                 if (UuidExternalGenerator.get().containsUuid(path)) {
                     return this.applicationContext.getBean(ContentDaoExternal.class);
-                } else if (UidSubscriptionGenerator.get().containsUuid(path)) {
+                } else if (UuidSubscriptionGenerator.get().containsUuid(path)) {
                     return this.applicationContext.getBean(ContentDaoSubscriptionImpl.class);
                 }
             }

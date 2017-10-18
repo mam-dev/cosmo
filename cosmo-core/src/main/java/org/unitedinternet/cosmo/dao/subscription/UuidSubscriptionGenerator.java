@@ -8,18 +8,18 @@ import org.unitedinternet.cosmo.dao.UuidGenerator;
  * @author daniel grigore
  *
  */
-public class UidSubscriptionGenerator extends UuidGenerator {
+public class UuidSubscriptionGenerator extends UuidGenerator {
 
     private static final String EXPRESSION_PREFIX = "SUB-";
     private static final String EXPRESSION_SUFFIX = "-SUB";
 
-    private static final UidSubscriptionGenerator INSTANCE = new UidSubscriptionGenerator();
+    private static final UuidSubscriptionGenerator INSTANCE = new UuidSubscriptionGenerator();
 
-    private UidSubscriptionGenerator() {
+    private UuidSubscriptionGenerator() {
         super(EXPRESSION_PREFIX, EXPRESSION_SUFFIX);
     }
 
-    public static UidSubscriptionGenerator get() {
+    public static UuidSubscriptionGenerator get() {
         return INSTANCE;
     }
 }

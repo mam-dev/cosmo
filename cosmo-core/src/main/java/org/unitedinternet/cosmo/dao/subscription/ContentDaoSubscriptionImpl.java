@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
+import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -140,7 +141,8 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     @Override
     public void removeItemFromCollection(Item item, CollectionItem collection) {
-        throw new UnsupportedOperationException();
+        HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(collection);
+        this.contentDaoInternal.removeItemFromCollection(item, subscriptionItem.getTargetCollection());
     }
 
     @Override
@@ -204,14 +206,22 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
-        if (!(parent instanceof HibCollectionSubscriptionItem)) {
-            throw new IllegalArgumentException("invalid subscription type " + parent.getClass());
-        }
-        // Create collection in sharer's calendar.
-        HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) parent;
+        HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
+        // Create collection in sharer's calendar.         
         CollectionItem parentCollection = subscriptionItem.getTargetCollection();
         content.setOwner(parentCollection.getOwner());
         return this.contentDaoInternal.createContent(parentCollection, content);
+    }
+    
+    private HibCollectionSubscriptionItem checkAndGetSubscriptionItem(CollectionItem parent) {
+        if (!(parent instanceof HibCollectionSubscriptionItem)) {
+            throw new CaldavExceptionForbidden("invalid subscription type " + parent.getClass());
+        }
+        HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) parent;
+        if (subscriptionItem.getTargetCollection() == null) {
+            throw new CaldavExceptionForbidden("invalid subscription collection with uid " + subscriptionItem.getUid());
+        }
+        return subscriptionItem;
     }
 
     @Override
