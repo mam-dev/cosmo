@@ -55,50 +55,51 @@
 		class="org.unitedinternet.cosmo.model.hibernate.EntityConverter">
 		<constructor-arg ref="cosmoEntityFactory" />
 	</bean>
-	
+
 	<bean id="contentConverter" class="org.unitedinternet.cosmo.ext.ContentConverter">
 		<constructor-arg ref="entityConverter" />
 	</bean>
-	
-	<bean id="proxyFactory" class="org.unitedinternet.cosmo.ext.ProxyFactoryBean" >
-				<constructor-arg ref="externalComponentInstanceProvider"/>
-	</bean>
-	
-	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.SimpleUrlContentReader">
-		<constructor-arg ref="contentConverter" />
-		<constructor-arg ref="proxyFactory"/>		
-		<constructor-arg>
-		  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-		</constructor-arg>
-		<constructor-arg value="${external.content.size}"/>		
+
+	<bean id="proxyFactory" class="org.unitedinternet.cosmo.ext.ProxyFactoryBean">
 		<constructor-arg ref="externalComponentInstanceProvider" />
 	</bean>
-	
-	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
-		<constructor-arg ref="urlContentReader" />		
-		<constructor-arg value="${external.content.connection.timeout}"/>        
+
+	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.SimpleUrlContentReader">
+		<constructor-arg ref="contentConverter" />
+		<constructor-arg ref="proxyFactory" />
+		<constructor-arg>
+			<bean id="validator"
+				class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+		</constructor-arg>
+		<constructor-arg value="${external.content.size}" />
+		<constructor-arg ref="externalComponentInstanceProvider" />
 	</bean>
-	
+
+	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
+		<constructor-arg ref="urlContentReader" />
+		<constructor-arg value="${external.content.connection.timeout}" />
+	</bean>
+
 	<bean id="contentSourceFactory" class="org.unitedinternet.cosmo.ext.ContentSourceFactoryBean">
-		<constructor-arg ref="urlContentSource"/>
+		<constructor-arg ref="urlContentSource" />
 		<constructor-arg ref="externalComponentInstanceProvider" />
 	</bean>
 
 	<bean id="contentDaoExternal"
-		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">		
+		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">
 		<constructor-arg ref="contentDaoInternal" />
-		<constructor-arg ref="contentSourceFactory"/>
+		<constructor-arg ref="contentSourceFactory" />
 		<constructor-arg ref="itemFilterProcessor" />
 	</bean>
-	
-	<bean id="contentDaoSub" class="org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl">
-		<constructor-arg ref="contentDaoInternal"/>
+
+	<bean id="contentDaoSub"
+		class="org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl">
+		<constructor-arg ref="contentDaoInternal" />
 	</bean>
 
-	<bean id="contentDao"
-		class="org.unitedinternet.cosmo.dao.ContentDaoProxyFactory">
+	<bean id="contentDao" class="org.unitedinternet.cosmo.dao.ContentDaoProxyFactory">
 		<constructor-arg>
-			<bean class="org.unitedinternet.cosmo.dao.ContentDaoInvocationHandler"/>
+			<bean class="org.unitedinternet.cosmo.dao.ContentDaoInvocationHandler" />
 		</constructor-arg>
 	</bean>
 
@@ -110,7 +111,7 @@
 
 	<bean id="eventLogDao" parent="abstractDao"
 		class="org.unitedinternet.cosmo.dao.hibernate.EventLogDaoImpl"
-		init-method="init" destroy-method="destroy" />	
+		init-method="init" destroy-method="destroy" />
 
 	<bean id="userDao" parent="abstractDao"
 		class="org.unitedinternet.cosmo.dao.hibernate.UserDaoImpl"
@@ -128,6 +129,12 @@
 		</property>
 		<property name="entityFactory" ref="cosmoEntityFactory" />
 	</bean>
+
+	<bean id="subscriptionDao" parent="abstractDao"
+		class="org.unitedinternet.cosmo.dao.hibernate.CollectionSubscriptionDaoImpl"
+		init-method="init">	
+	</bean>
+
 	<!-- Transaction Definitions -->
 
 </beans>

@@ -19,7 +19,7 @@ import org.hibernate.StatelessSession;
 /**
  * Abstract Dao implementation. It is used for general purpose operations.
  *
- * @author ccoman
+ * @author cristina coman
  */
 public abstract class AbstractDaoImpl {
 
