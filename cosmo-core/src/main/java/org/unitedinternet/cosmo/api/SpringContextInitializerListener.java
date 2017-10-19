@@ -36,18 +36,19 @@ public class SpringContextInitializerListener implements ServletContextListener{
     
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        try{
-	    	AbstractRefreshableWebApplicationContext wac = (AbstractRefreshableWebApplicationContext)WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-	        if(wac == null){
-	            contextLoader = new ContextLoader();
-	            createSpringApplicationContext(sce.getServletContext());
-	        }else{
-	            WebApplicationContextHolder.set(wac);
-	            enhanceExistingSpringWebApplicationContext(sce, wac);
-	        }
-        }catch(Throwable t){
-        	LOGGER.error("Exception occured", t);
-        }        
+        try {
+            AbstractRefreshableWebApplicationContext wac = (AbstractRefreshableWebApplicationContext) WebApplicationContextUtils
+                    .getWebApplicationContext(sce.getServletContext());
+            if (wac == null) {
+                contextLoader = new ContextLoader();
+                createSpringApplicationContext(sce.getServletContext());
+            } else {
+                WebApplicationContextHolder.set(wac);
+                enhanceExistingSpringWebApplicationContext(sce, wac);
+            }
+        } catch (Exception t) {
+            LOGGER.error("Exception occured", t);
+        }
     }
 
     private ApplicationContext createSpringApplicationContext(ServletContext servletContext){

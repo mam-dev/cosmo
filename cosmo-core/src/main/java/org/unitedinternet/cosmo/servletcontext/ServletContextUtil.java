@@ -17,31 +17,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServletContextUtil {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ServletContextUtil.class);
-	
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServletContextUtil.class);
+
     public static final String PROPERTIES_LOCATION = "propertiesLocation";
-    
+
     public static Properties extractApplicationProperties(ServletContext servletContext) {
+
+        Properties properties = new Properties();
         String propertiesLocation = servletContext.getInitParameter(PROPERTIES_LOCATION);
-
-        Properties props = new Properties();
-        InputStream is = ServletContextUtil.class.getResourceAsStream(propertiesLocation); 
-        
-        if (propertiesLocation == null || is == null) {
-            return props;
+        if (propertiesLocation == null) {
+            return properties;
         }
-
-        try {
-            props.load(is);
+        
+        try (InputStream is = ServletContextUtil.class.getResourceAsStream(propertiesLocation)) {
+            properties.load(is);
         } catch (IOException e) {
             LOGGER.warn("Unable to load properties from location [{}]", propertiesLocation);
-        }finally{
-        	try {
-				is.close();
-			} catch (IOException e) {
-				LOGGER.error("Colud not close input stream");
-			}
         }
-        return props;
+        return properties;
     }
 }
