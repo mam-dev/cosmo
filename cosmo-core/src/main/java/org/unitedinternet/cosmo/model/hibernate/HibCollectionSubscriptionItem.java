@@ -72,6 +72,10 @@ public class HibCollectionSubscriptionItem extends HibItem implements Collection
     public CollectionSubscription getSubscription() {
         return subscription;
     }
+    
+    public void setSubscription(CollectionSubscription subscription) {       
+        this.subscription = subscription;
+    }
 
     @Override
     public boolean isExcludeFreeBusyRollup() {

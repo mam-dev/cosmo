@@ -15,60 +15,95 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Set;
 
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
+import org.unitedinternet.cosmo.dao.subscription.UuidSubscriptionGenerator;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
+import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.property.SupportedCollationSet;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.CollectionSubscription;
+import org.unitedinternet.cosmo.model.Ticket;
+import org.unitedinternet.cosmo.model.TicketType;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscription;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
+import org.unitedinternet.cosmo.model.hibernate.HibTicket;
 
 /**
- * Test case for <code>DavCalendarCollection</code>.
+ * 
+ * @author daniel grigore
+ *
  */
-public class DavCalendarCollectionTest extends BaseDavTestCase
-    implements ExtendedDavConstants,CaldavConstants  {
-    
-    /**
-     * Tests supported collation set property.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    @Test
-    public void testSupportedCollationSetProperty() throws Exception {
-        CollectionItem col = testHelper.makeAndStoreDummyCalendarCollection();
-        
-        DavHomeCollection home = testHelper.initializeHomeResource();
+public class DavCalendarCollectionTest extends BaseDavTestCase implements ExtendedDavConstants, CaldavConstants {
 
-        DavCollection dcc =
-            (DavCalendarCollection) testHelper.findMember(home, col.getName());
-        
-        SupportedCollationSet prop = 
-            (SupportedCollationSet) dcc.getProperty(SUPPORTEDCOLLATIONSET);
-        
-        Assert.assertNotNull(prop);
-        Assert.assertTrue(prop.isProtected());
-        Set<String> collations = prop.getCollations();
-        Assert.assertNotNull(collations);
-        Assert.assertTrue(collations.size()==2);
-        for (String c: collations) {
-            Assert.assertTrue(CalendarUtils.isSupportedCollation(c));
-        }
-    }
+    private DavCalendarCollection instance;
 
-    /**
-     * SetUp
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        this.testHelper.logIn();
+        CollectionItem col = this.testHelper.makeAndStoreDummyCalendarCollection();
+        DavHomeCollection home = this.testHelper.initializeHomeResource();
+        this.instance = (DavCalendarCollection) this.testHelper.findMember(home, col.getName());
+        assertNotNull(this.instance);
+    }
 
-        testHelper.logIn();
+    @Test
+    public void shouldSupportDefaultCollationSet() throws Exception {
+        SupportedCollationSet prop = (SupportedCollationSet) this.instance.getProperty(SUPPORTEDCOLLATIONSET);
+        assertNotNull(prop);
+        assertTrue(prop.isProtected());
+        Set<String> collations = prop.getCollations();
+        assertNotNull(collations);
+        assertTrue(collations.size() == 2);
+        for (String c : collations) {
+            assertTrue(CalendarUtils.isSupportedCollation(c));
+        }
+    }
+
+    @Test
+    public void shouldHaveOnlyReadPrivilegesForExternalItem() throws Exception {
+        this.instance.getItem().setUid(UuidExternalGenerator.get().getNext());
+        
+        Set<DavPrivilege> privileges = this.instance.getCurrentPrincipalPrivileges();
+        assertFalse(privileges.isEmpty());
+        assertTrue(privileges.contains(DavPrivilege.READ));
+        assertFalse(privileges.contains(DavPrivilege.WRITE));
+    }
+    
+    @Test
+    public void shouldHavePrivilegesFromTicketForSubscriptionItem() throws Exception {
+        
+        HibCollectionSubscriptionItem item = new HibCollectionSubscriptionItem();
+        item.setUid(UuidSubscriptionGenerator.get().getNext());
+        CollectionSubscription subscription = new HibCollectionSubscription();
+        subscription.setTargetCollection(new HibCollectionItem());
+        item.setSubscription(subscription);
+        Ticket ticket = new HibTicket(TicketType.READ_ONLY);        
+        subscription.setTicket(ticket);
+        
+        this.instance.setItem(item);                
+        
+        Set<DavPrivilege> privileges = this.instance.getCurrentPrincipalPrivileges();
+        assertFalse(privileges.isEmpty());
+        assertTrue(privileges.contains(DavPrivilege.READ));
+        assertFalse(privileges.contains(DavPrivilege.WRITE));
+        
+        subscription.setTicket(new HibTicket(TicketType.READ_WRITE));
+        privileges = this.instance.getCurrentPrincipalPrivileges();
+        assertFalse(privileges.isEmpty());
+        assertTrue(privileges.contains(DavPrivilege.READ));
+        assertTrue(privileges.contains(DavPrivilege.WRITE));
     }
 }
