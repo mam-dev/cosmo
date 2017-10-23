@@ -36,11 +36,23 @@ public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements Co
                         CollectionSubscription.class)
                 .setParameter("uid", uid).getResultList();
     }
-    
+
     @Override
     public void addOrUpdate(CollectionSubscription collectionSubscription) {
         this.getSession().saveOrUpdate(collectionSubscription);
         this.getSession().flush();
+    }
+
+    @Override
+    public CollectionSubscription findByTicket(String ticketKey) {        
+        List<CollectionSubscription> subscriptions = this.getSession()
+                .createQuery("SELECT s FROM HibCollectionSubscription s WHERE s.ticket.key = :ticketKey",
+                        CollectionSubscription.class)
+                .setParameter("ticketKey", ticketKey).getResultList();
+        if (!subscriptions.isEmpty()) {
+            return subscriptions.get(0);
+        }
+        return null;
     }
 
 }

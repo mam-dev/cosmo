@@ -14,4 +14,6 @@ public interface CollectionSubscriptionDao extends Dao {
     List<CollectionSubscription> findByTargetCollectionUid(String uid);
     
     public void addOrUpdate(CollectionSubscription collectionSubscription);
+    
+    CollectionSubscription findByTicket(String ticketKey);
 }
