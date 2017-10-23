@@ -201,8 +201,8 @@ CREATE TABLE `subscription` (
   UNIQUE KEY `ownerid` (`ownerid`,`target_collection_id`),
   CONSTRAINT `FK_TARGET_COLLECTION_ID` FOREIGN KEY (`target_collection_id`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_OWNERID` FOREIGN KEY (`ownerid`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `FK_TICKETID` FOREIGN KEY (`ticketid`) REFERENCES `tickets` (`id`),
-  CONSTRAINT `FK_PROXY_COLLECTION_ID` FOREIGN KEY (`proxy_collection_id`) REFERENCES `item` (`id`)
+  CONSTRAINT `FK_TICKETID` FOREIGN KEY (`ticketid`) REFERENCES `tickets` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `FK_PROXY_COLLECTION_ID` FOREIGN KEY (`proxy_collection_id`) REFERENCES `item` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `ticket_privilege`;
