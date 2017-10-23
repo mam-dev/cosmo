@@ -61,7 +61,7 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
             Field field = desc.getField();
             try {
                 field.setAccessible(true);
-                Object toBeInjected = applicationContext.getBean(field.getType());
+                Object toBeInjected = this.getBean(field.getType(), field.getAnnotation(Provided.class));
                 field.set(managedComponent, unwrapIfNecessary(toBeInjected, field.getAnnotation(Provided.class)));
                 LOGGER.info("Set field [{}] of [{}].", field.getName(), field.getDeclaringClass().getName());
             } catch (BeansException | IllegalArgumentException | IllegalAccessException e) {
@@ -85,14 +85,22 @@ public class ExternalComponentDecorator implements ApplicationListener<ContextSt
             
             try {
                 setter.setAccessible(true);
-                Object toBeSet = applicationContext.getBean(setter.getParameterTypes()[0]);
-                setter.invoke(managedComponent, unwrapIfNecessary(toBeSet, setter.getAnnotation(Provided.class)));
+                Provided provided = setter.getAnnotation(Provided.class);                
+                Object toBeSet = this.getBean(setter.getParameterTypes()[0], provided);
+                setter.invoke(managedComponent, unwrapIfNecessary(toBeSet, provided));
                 LOGGER.info("Invoked setter [{}] of [{}].", setter.getName(), setter.getDeclaringClass().getName());
             } catch (BeansException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             	LOGGER.error("Exception occured", e);
                 throw new RuntimeException(e);
             }
         }
+    }
+    
+    private Object getBean(Class<?> clazz, Provided annotation) {
+        if (!annotation.beanName().isEmpty()) {
+            return this.applicationContext.getBean(annotation.beanName(), clazz);
+        }
+        return this.applicationContext.getBean(clazz);
     }
     
     private static Object unwrapIfNecessary(Object obj, Provided annotation){

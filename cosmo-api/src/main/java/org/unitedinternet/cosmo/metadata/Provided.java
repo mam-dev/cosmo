@@ -17,8 +17,10 @@ import java.lang.annotation.Target;
  * @author corneliu dobrota
  *
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Provided {
-	boolean unwrapIfProxied() default false;
+    boolean unwrapIfProxied() default false;
+
+    String beanName() default "";
 }
