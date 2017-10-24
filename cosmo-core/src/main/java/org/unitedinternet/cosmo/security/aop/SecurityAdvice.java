@@ -144,7 +144,7 @@ public class SecurityAdvice extends OrderedAdvice {
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), collection)) {
             throwItemSecurityException(collection, Permission.WRITE);
         }
-        this.checkAccessToTargetCollection(collection);
+        this.checkWriteAccessToTargetCollection(collection);
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), item)) {
             throwItemSecurityException(item, Permission.WRITE);
         }
@@ -175,7 +175,7 @@ public class SecurityAdvice extends OrderedAdvice {
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), collection)) {
             throwItemSecurityException(collection, Permission.WRITE);
         }
-        this.checkAccessToTargetCollection(collection);
+        this.checkWriteAccessToTargetCollection(collection);
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), item)) {
             throwItemSecurityException(item, Permission.WRITE);
         }
@@ -294,7 +294,7 @@ public class SecurityAdvice extends OrderedAdvice {
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), targetParent)) {
             throwItemSecurityException(targetParent, Permission.WRITE);
         }
-        this.checkAccessToTargetCollection(targetParent);
+        this.checkWriteAccessToTargetCollection(targetParent);
         return pjp.proceed();
     }
 
@@ -316,7 +316,7 @@ public class SecurityAdvice extends OrderedAdvice {
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), newParent)) {
             throwItemSecurityException(newParent, Permission.WRITE);
         }
-        this.checkAccessToTargetCollection(newParent);
+        this.checkWriteAccessToTargetCollection(newParent);
         return pjp.proceed();
     }
 
@@ -331,7 +331,7 @@ public class SecurityAdvice extends OrderedAdvice {
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), parent)) {
             throwItemSecurityException(parent, Permission.WRITE);
         }
-        this.checkAccessToTargetCollection(parent);
+        this.checkWriteAccessToTargetCollection(parent);
         return pjp.proceed();
     }
 
@@ -346,7 +346,7 @@ public class SecurityAdvice extends OrderedAdvice {
         if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), parent)) {
             throwItemSecurityException(parent, Permission.WRITE);
         }
-        this.checkAccessToTargetCollection(parent);
+        this.checkWriteAccessToTargetCollection(parent);
         return pjp.proceed();
     }
 
@@ -358,10 +358,10 @@ public class SecurityAdvice extends OrderedAdvice {
      * @throws ItemSecurityException
      *             in case user does not have access to target collection.
      */
-    private void checkAccessToTargetCollection(CollectionItem collection) {
+    private void checkWriteAccessToTargetCollection(CollectionItem collection) {
         if (collection instanceof HibCollectionSubscriptionItem) {
             HibCollectionSubscriptionItem subscription = (HibCollectionSubscriptionItem) collection;
-            if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(),
+            if (subscription.getTargetCollection() == null || !securityHelper.hasWriteAccess(securityManager.getSecurityContext(),
                     subscription.getTargetCollection())) {
                 throwItemSecurityException(subscription, Permission.WRITE);
             }

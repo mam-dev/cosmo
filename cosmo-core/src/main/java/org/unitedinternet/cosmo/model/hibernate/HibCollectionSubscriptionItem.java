@@ -3,6 +3,7 @@ package org.unitedinternet.cosmo.model.hibernate;
 import static org.unitedinternet.cosmo.model.hibernate.CollectionItemConstants.ATTR_EXCLUDE_FREE_BUSY_ROLLUP;
 import static org.unitedinternet.cosmo.model.hibernate.CollectionItemConstants.ATTR_HUE;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
@@ -26,7 +27,7 @@ import org.unitedinternet.cosmo.model.Item;
 @DiscriminatorValue("subscription")
 public class HibCollectionSubscriptionItem extends HibItem implements CollectionItem {
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "proxyCollection",targetEntity = HibCollectionSubscription.class)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "proxyCollection", targetEntity = HibCollectionSubscription.class)
     private CollectionSubscription subscription;
 
     /**
@@ -43,36 +44,54 @@ public class HibCollectionSubscriptionItem extends HibItem implements Collection
 
     @Override
     public Set<Item> getChildren() {
+        if (this.getTargetCollection() == null) {
+            return Collections.emptySet();
+        }
         return this.getTargetCollection().getChildren();
     }
 
     @Override
     public CollectionItemDetails getChildDetails(Item item) {
+        if (this.getTargetCollection() == null) {
+            return null;
+        }
         return this.getTargetCollection().getChildDetails(item);
     }
 
     @Override
     public Item getChild(String uid) {
+        if (this.getTargetCollection() == null) {
+            return null;
+        }
         return this.getTargetCollection().getChild(uid);
     }
 
     @Override
     public Item getChildByName(String name) {
+        if (this.getTargetCollection() == null) {
+            return null;
+        }
         return this.getTargetCollection().getChildByName(name);
     }
 
+    /**
+     * Gets the target collection associated with this CollectionSubscriptionItem or <code>null</code>. Note that if the
+     * sharer deletes the collection then the associated target collection becomes <code>null</code>
+     * 
+     * @return the target collection associated with this CollectionSubscription or <code>null</code>.
+     */
     public CollectionItem getTargetCollection() {
         if (this.subscription == null) {
-            throw new IllegalArgumentException("subscription is null");
+            return null;
         }
         return this.subscription.getTargetCollection();
     }
-    
+
     public CollectionSubscription getSubscription() {
         return subscription;
     }
-    
-    public void setSubscription(CollectionSubscription subscription) {       
+
+    public void setSubscription(CollectionSubscription subscription) {
         this.subscription = subscription;
     }
 
@@ -108,7 +127,7 @@ public class HibCollectionSubscriptionItem extends HibItem implements Collection
     @Override
     public String getEntityTag() {
         String ownEtag = super.getEntityTag();
-        String targetEtag = this.subscription.getTargetCollection().getEntityTag();
+        String targetEtag = this.getTargetCollection() != null ? this.getTargetCollection().getEntityTag() : "";
         return encodeEntityTag(new String(ownEtag + "-" + targetEtag).getBytes());
     }
 }

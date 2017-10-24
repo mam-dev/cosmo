@@ -1,5 +1,6 @@
 package org.unitedinternet.cosmo.dao.subscription;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -55,8 +56,8 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         if (itemId == null || itemId.trim().isEmpty()) {
             return subscriptionItem;
         }
-        CollectionItem target = subscriptionItem.getTargetCollection();
-        return target.getChildByName(itemId);
+        CollectionItem target = subscriptionItem.getTargetCollection();        
+        return target != null ? target.getChildByName(itemId) : null;
     }
 
     @Override
@@ -142,7 +143,9 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public void removeItemFromCollection(Item item, CollectionItem collection) {
         HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(collection);
-        this.contentDaoInternal.removeItemFromCollection(item, subscriptionItem.getTargetCollection());
+        if (subscriptionItem.getTargetCollection() != null) {
+            this.contentDaoInternal.removeItemFromCollection(item, subscriptionItem.getTargetCollection());
+        }
     }
 
     @Override
@@ -164,6 +167,9 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     public Set<Item> findItems(ItemFilter filter) {
         if (filter.getParent() instanceof HibCollectionSubscriptionItem) {
             HibCollectionSubscriptionItem parent = (HibCollectionSubscriptionItem) filter.getParent();
+            if (parent.getTargetCollection() == null) {
+                return Collections.emptySet();
+            }
             filter.setParent(parent.getTargetCollection());
         }
         return this.contentDaoInternal.findItems(filter);
@@ -209,6 +215,9 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
         // Create collection in sharer's calendar.         
         CollectionItem parentCollection = subscriptionItem.getTargetCollection();
+        if (parentCollection == null) {
+            throw new CaldavExceptionForbidden("invalid subscription");
+        }
         content.setOwner(parentCollection.getOwner());
         return this.contentDaoInternal.createContent(parentCollection, content);
     }
@@ -217,11 +226,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         if (!(parent instanceof HibCollectionSubscriptionItem)) {
             throw new CaldavExceptionForbidden("invalid subscription type " + parent.getClass());
         }
-        HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) parent;
-        if (subscriptionItem.getTargetCollection() == null) {
-            throw new CaldavExceptionForbidden("invalid subscription collection with uid " + subscriptionItem.getUid());
-        }
-        return subscriptionItem;
+        return (HibCollectionSubscriptionItem) parent;        
     }
 
     @Override
