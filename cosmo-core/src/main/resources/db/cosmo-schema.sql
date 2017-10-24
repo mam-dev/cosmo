@@ -198,7 +198,8 @@ CREATE TABLE `subscription` (
   `proxy_collection_id` bigint(20) DEFAULT NULL,
   
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ownerid` (`ownerid`,`target_collection_id`),
+  UNIQUE KEY `ownerid_target_collection` (`ownerid`,`target_collection_id`),
+  UNIQUE KEY `ownerid_proxy_collection` (`ownerid`,`proxy_collection_id`),
   CONSTRAINT `FK_TARGET_COLLECTION_ID` FOREIGN KEY (`target_collection_id`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_OWNERID` FOREIGN KEY (`ownerid`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_TICKETID` FOREIGN KEY (`ticketid`) REFERENCES `tickets` (`id`) ON DELETE CASCADE,
