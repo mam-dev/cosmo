@@ -5,7 +5,6 @@ import static org.unitedinternet.cosmo.model.hibernate.CollectionItemConstants.A
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +26,7 @@ import org.unitedinternet.cosmo.model.Item;
 @DiscriminatorValue("subscription")
 public class HibCollectionSubscriptionItem extends HibItem implements CollectionItem {
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "proxyCollection",targetEntity = HibCollectionSubscription.class)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "proxyCollection",targetEntity = HibCollectionSubscription.class)
     private CollectionSubscription subscription;
 
     /**
