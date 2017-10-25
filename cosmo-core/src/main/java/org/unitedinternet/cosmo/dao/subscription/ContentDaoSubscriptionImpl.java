@@ -56,8 +56,11 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         if (itemId == null || itemId.trim().isEmpty()) {
             return subscriptionItem;
         }
-        CollectionItem target = subscriptionItem.getTargetCollection();        
-        return target != null ? target.getChildByName(itemId) : null;
+        if (subscriptionItem != null) {
+            CollectionItem target = subscriptionItem.getTargetCollection();        
+            return target != null ? target.getChildByName(itemId) : null;
+        }
+        return null;
     }
 
     @Override
