@@ -282,7 +282,44 @@ public class SecurityAdvice extends OrderedAdvice {
 
         return pjp.proceed();
     }
+    
+    //Batch operations start
+    
+    @Around("execution(* org.unitedinternet.cosmo.service.ContentService.createBatchContentItems(..)) &&"
+            + "args(parent, contentItems)")
+    public Object checkCreateBatchContentItems(ProceedingJoinPoint pjp, CollectionItem parent,
+            Set<ContentItem> contentItems) throws Throwable {        
+        if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), parent)) {
+            throwItemSecurityException(parent, Permission.WRITE);
+        }
+        this.checkWriteAccessToTargetCollection(parent);        
+        return pjp.proceed();
+    }
+    
+    @Around("execution(* org.unitedinternet.cosmo.service.ContentService.updateBatchContentItems(..)) &&"
+            + "args(parent, contentItems)")
+    public Object checkUpdateBatchContentItems(ProceedingJoinPoint pjp, CollectionItem parent,
+            Set<ContentItem> contentItems) throws Throwable {        
+        if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), parent)) {
+            throwItemSecurityException(parent, Permission.WRITE);
+        }
+        this.checkWriteAccessToTargetCollection(parent);        
+        return pjp.proceed();
+    }
+    
+    @Around("execution(* org.unitedinternet.cosmo.service.ContentService.removeBatchContentItems(..)) &&"
+            + "args(parent, contentItems)")
+    public Object checkRemoveBatchContentItems(ProceedingJoinPoint pjp, CollectionItem parent,
+            Set<ContentItem> contentItems) throws Throwable {        
+        if (!securityHelper.hasWriteAccess(securityManager.getSecurityContext(), parent)) {
+            throwItemSecurityException(parent, Permission.WRITE);
+        }
+        this.checkWriteAccessToTargetCollection(parent);        
+        return pjp.proceed();
+    }
 
+    // Batch operations end
+    
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.copyItem(..)) &&"
             + "args(item, targetParent, path, deepCopy)")
     public Object checkCopyItem(ProceedingJoinPoint pjp, Item item, CollectionItem targetParent, String path,

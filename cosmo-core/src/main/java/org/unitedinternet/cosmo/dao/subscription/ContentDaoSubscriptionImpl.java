@@ -216,7 +216,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
         HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
-        // Create collection in sharer's calendar.         
+        // Create content in sharer's calendar.         
         CollectionItem parentCollection = subscriptionItem.getTargetCollection();
         if (parentCollection == null) {
             throw new CaldavExceptionForbidden("invalid subscription");
@@ -234,7 +234,16 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     @Override
     public void createBatchContent(CollectionItem parent, Set<ContentItem> contents) {
-        throw new UnsupportedOperationException();
+        HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
+        // Create contents in sharer's calendar.         
+        CollectionItem parentCollection = subscriptionItem.getTargetCollection();
+        if (parentCollection == null) {
+            throw new CaldavExceptionForbidden("invalid subscription");
+        }
+        for (ContentItem content : contents) {
+            content.setOwner(parentCollection.getOwner());
+        }        
+        this.contentDaoInternal.createBatchContent(parentCollection, contents);
     }
 
     @Override
@@ -244,7 +253,13 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     @Override
     public void removeBatchContent(CollectionItem parent, Set<ContentItem> contents) {
-        throw new UnsupportedOperationException();
+        HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
+        // Create contents in sharer's calendar.         
+        CollectionItem parentCollection = subscriptionItem.getTargetCollection();
+        if (parentCollection == null) {
+            throw new CaldavExceptionForbidden("invalid subscription");
+        }        
+        this.contentDaoInternal.removeBatchContent(parentCollection, contents);
     }
 
     @Override
