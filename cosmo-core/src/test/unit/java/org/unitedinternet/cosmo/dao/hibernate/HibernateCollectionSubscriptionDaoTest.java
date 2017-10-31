@@ -133,5 +133,9 @@ public class HibernateCollectionSubscriptionDaoTest extends AbstractHibernateDao
         CollectionSubscription sub = this.subscriptionDao.findByTicket(ticket.getKey());
         assertNotNull(sub);
         assertEquals(shareeOne, sub.getOwner());
+        
+        this.subscriptionDao.delete(sub);
+        sub = this.subscriptionDao.findByTicket(ticket.getKey());
+        assertNull(sub);
     }
 }

@@ -16,4 +16,6 @@ public interface CollectionSubscriptionDao extends Dao {
     public void addOrUpdate(CollectionSubscription collectionSubscription);
     
     CollectionSubscription findByTicket(String ticketKey);
+    
+    void delete(CollectionSubscription subscription);
 }

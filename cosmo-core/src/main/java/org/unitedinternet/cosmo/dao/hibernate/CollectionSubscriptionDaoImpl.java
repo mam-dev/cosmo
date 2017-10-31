@@ -54,5 +54,11 @@ public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements Co
         }
         return null;
     }
+    
+    @Override
+    public void delete(CollectionSubscription subscription) {
+        this.getSession().delete(subscription);
+        this.getSession().flush();
+    }
 
 }
