@@ -111,14 +111,28 @@ public class SecurityHelper {
     
    
     public boolean hasWriteTicketAccess(CosmoSecurityContext context, Item item) {
-        if(context.getUser()==null) {
+        if (context.getUser() == null) {
             return false;
         }
-        
-        if(item.getOwner().equals(context.getUser())) {
+
+        if (item.getOwner().equals(context.getUser())) {
             return true;
         }
-       
+        
+        // Case 4: check subscriptions refresh user to prevent lazy init exceptions
+        User user = userDao.getUser(context.getUser().getUsername());
+        if (user != null) {
+            for (CollectionSubscription cs : user.getSubscriptions()) {
+                Ticket ticket = cs.getTicket();
+                if (ticket == null) {
+                    continue;
+                }
+                if (hasWriteAccess(ticket, item)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
     
