@@ -15,9 +15,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+import org.unitedinternet.cosmo.TestHelper;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.unitedinternet.cosmo.dao.mock.MockCalendarDao;
+import org.unitedinternet.cosmo.dao.mock.MockContentDao;
+import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
+import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.hibernate.HibEventStamp;
+import org.unitedinternet.cosmo.model.hibernate.HibTaskStamp;
+import org.unitedinternet.cosmo.service.ContentService;
+import org.unitedinternet.cosmo.service.impl.StandardContentService;
+import org.unitedinternet.cosmo.service.impl.StandardTriageStatusQueryProcessor;
+import org.unitedinternet.cosmo.service.interceptors.EventAddHandler;
+import org.unitedinternet.cosmo.service.interceptors.EventRemoveHandler;
+import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
+import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
+
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.validate.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
@@ -28,41 +51,17 @@ import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Transp;
 import net.fortuna.ical4j.model.property.Version;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.unitedinternet.cosmo.TestHelper;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
-import org.unitedinternet.cosmo.dao.mock.MockCalendarDao;
-import org.unitedinternet.cosmo.dao.mock.MockContentDao;
-import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
-import org.unitedinternet.cosmo.service.interceptors.EventAddHandler;
-import org.unitedinternet.cosmo.service.interceptors.EventRemoveHandler;
-import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.hibernate.HibEventStamp;
-import org.unitedinternet.cosmo.model.hibernate.HibTaskStamp;
-import org.unitedinternet.cosmo.service.ContentService;
-import org.unitedinternet.cosmo.service.impl.StandardContentService;
-import org.unitedinternet.cosmo.service.impl.StandardTriageStatusQueryProcessor;
-import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
-import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Tests for ContextServiceExtensionsAdvice.
- * @author izidaru
+ * @author iulia zidaru
  *
  */
 public class ContextServiceExtensionsAdviceTest {
 
     private ContextServiceExtensionsAdvice eventOperationExtensionsAdvice;
-    
-    private MockCalendarDao calendarDao;
+        
     private MockContentDao contentDao;
     private MockDaoStorage storage;
     
@@ -84,14 +83,14 @@ public class ContextServiceExtensionsAdviceTest {
     private class NoCallExpected implements EventAddHandler, EventUpdateHandler, EventRemoveHandler{
         
         @Override
-        public void beforeUpdate(Set<CollectionItem> parents,
+        public void beforeUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
             Assert.fail("Unexpected call of update handler!");          
             
         }
 
         @Override
-        public void afterUpdate(Set<CollectionItem> parents,
+        public void afterUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
             Assert.fail("Unexpected call of update handler!");          
             
@@ -166,22 +165,22 @@ public class ContextServiceExtensionsAdviceTest {
             return null;
         }
         @Override
-        public void beforeUpdate(Set<CollectionItem> parents,
+        public void beforeUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-            checkMethoodParameters(parents, contentItems);
+            checkMethoodParameters(parent, contentItems);
             
         }
 
-        private void checkMethoodParameters(Set<CollectionItem> parents,
+        private void checkMethoodParameters(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-            Assert.assertTrue("parent collection was sent", parents.contains(rootCollection));
+            Assert.assertEquals("parent collection was sent", rootCollection, parent);
             Assert.assertTrue("contentItems sent to handler", contentItems.equals(this.contentItems));
         }
 
         @Override
-        public void afterUpdate(Set<CollectionItem> parents,
+        public void afterUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-            checkMethoodParameters(parents, contentItems);
+            checkMethoodParameters(parent, contentItems);
             
         }
 
@@ -249,7 +248,7 @@ public class ContextServiceExtensionsAdviceTest {
             return addresses;
         }
         @Override
-        public void beforeUpdate(Set<CollectionItem> parents,
+        public void beforeUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
             //not used
             
@@ -258,7 +257,7 @@ public class ContextServiceExtensionsAdviceTest {
         
 
         @Override
-        public void afterUpdate(Set<CollectionItem> parents,
+        public void afterUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
             //not used
             
@@ -296,8 +295,7 @@ public class ContextServiceExtensionsAdviceTest {
     public void setUp() throws Exception {
         
         testHelper = new TestHelper();
-        storage = new MockDaoStorage();
-        calendarDao = new MockCalendarDao(storage);
+        storage = new MockDaoStorage();        
         contentDao = new MockContentDao(storage);
         service = new StandardContentService();
         lockManager = new SingleVMLockManager();

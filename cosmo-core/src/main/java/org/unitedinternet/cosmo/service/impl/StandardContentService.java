@@ -786,27 +786,29 @@ public class StandardContentService implements ContentService {
      * removes item from system, not just from the parent collections.
      * ContentItem creation adds the item to the specified parent collections.
      * 
-     * @param parents
+     * @param parent
      *            parents that new content items will be added to.
      * @param contentItems to update
      * @throws org.unitedinternet.cosmo.model.CollectionLockedException
      *         if parent CollectionItem is locked
      */
-    public void updateContentItems(Set<CollectionItem> parents, Set<ContentItem> contentItems) {
+    public void updateContentItems(CollectionItem parent, Set<ContentItem> contentItems) {
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("updating content items");
         }
         checkDatesForEvents(contentItems);
-        // Obtain locks to all collections involved.  A collection is involved
-        // if it is the parent of one of updated items.
+        /*
+         * Obtain locks to all collections involved. A collection is involved if it is the parent of one of updated
+         * items.
+         */
         Set<CollectionItem> locks = acquireLocks(contentItems);
         
         try {
             
            for(ContentItem content: contentItems) {
                if(content.getCreationDate()==null) {
-                   contentDao.createContent(parents, content);
+                   contentDao.createContent(parent, content);
                }
                else if(Boolean.FALSE.equals(content.getIsActive())) {
                    contentDao.removeContent(content);
@@ -817,8 +819,8 @@ public class StandardContentService implements ContentService {
            }
            
            // update collections
-           for(CollectionItem parent : locks) {
-               contentDao.updateCollectionTimestamp(parent);
+           for(CollectionItem collectionItem : locks) {
+               contentDao.updateCollectionTimestamp(collectionItem);
            }
         } finally {
             releaseLocks(locks);

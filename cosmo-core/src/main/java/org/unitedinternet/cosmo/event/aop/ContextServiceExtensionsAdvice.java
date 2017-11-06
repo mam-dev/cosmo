@@ -213,15 +213,15 @@ public class ContextServiceExtensionsAdvice {
      * Method called when an event is updated.
      */
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.updateContentItems(..)) &&"
-            + "args(parents, contentItems)")
-    public Object updateContentItems(ProceedingJoinPoint pjp, Set<CollectionItem> parents,
+            + "args(parent, contentItems)")
+    public Object updateContentItems(ProceedingJoinPoint pjp, CollectionItem parent,
             Set<ContentItem> contentItems) throws Throwable {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("in updateContentItems(parents, contentItems)");
         }
 
-        return updateContentItemsIternal(pjp, parents, contentItems);
+        return updateContentItemsIternal(pjp, parent, contentItems);
     }
 
     /**
@@ -234,16 +234,14 @@ public class ContextServiceExtensionsAdvice {
         if (LOG.isDebugEnabled()) {
             LOG.debug("in updateContentItems(parents, contentItems)");
         }
-
-        Set<CollectionItem> parents = new HashSet<CollectionItem>();
-        parents.add(parent);
-        return updateContentItemsIternal(pjp, parents, contentItems);
+        
+        return updateContentItemsIternal(pjp, parent, contentItems);
     }
 
     /**
      * @param pjp
      *            ProceedingJoinPoint
-     * @param parents
+     * @param parent
      *            Set<CollectionItem>
      * @param contentItems
      *            Set<ContentItem>
@@ -251,7 +249,7 @@ public class ContextServiceExtensionsAdvice {
      * @throws Throwable
      *             Exception
      */
-    private Object updateContentItemsIternal(ProceedingJoinPoint pjp, Set<CollectionItem> parents,
+    private Object updateContentItemsIternal(ProceedingJoinPoint pjp, CollectionItem parent,
             Set<ContentItem> contentItems) throws Throwable {
         Object returnVal = null;
         // nothing to do
@@ -260,13 +258,13 @@ public class ContextServiceExtensionsAdvice {
         }
 
         for (EventUpdateHandler eventUpdate : updateHandlers) {
-            eventUpdate.beforeUpdate(parents, contentItems);
+            eventUpdate.beforeUpdate(parent, contentItems);
         }
 
         returnVal = pjp.proceed();
 
         for (EventUpdateHandler eventUpdate : updateHandlers) {
-            eventUpdate.afterUpdate(parents, contentItems);
+            eventUpdate.afterUpdate(parent, contentItems);
         }
         return returnVal;
     }

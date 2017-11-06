@@ -273,7 +273,7 @@ public class StandardContentServiceTest {
         
         masterEvent.addModification(overridenComponent);
         
-        service.updateContentItems(Collections.singleton(createParent()), Collections.<ContentItem>singleton(masterEvent));
+        service.updateContentItems(createParent(), Collections.<ContentItem>singleton(masterEvent));
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -483,7 +483,7 @@ public class StandardContentServiceTest {
         EntityConverter converter = new EntityConverter(testHelper.getEntityFactory());
         Set<ContentItem> toUpdate = new HashSet<ContentItem>();
         toUpdate.addAll(converter.convertEventCalendar(masterNote, calendar));
-        service.updateContentItems(masterNote.getParents(), toUpdate);
+        service.updateContentItems(masterNote.getParents().iterator().next(), toUpdate);
         
         Calendar masterCal = eventStamp.getEventCalendar();
         VEvent masterEvent = eventStamp.getMasterEvent();
@@ -516,7 +516,7 @@ public class StandardContentServiceTest {
         // now update
         calendar = getCalendar("event_with_exceptions2.ics"); 
         toUpdate.addAll(converter.convertEventCalendar(masterNote, calendar));
-        service.updateContentItems(masterNote.getParents(), toUpdate);
+        service.updateContentItems(masterNote.getParents().iterator().next(), toUpdate);
         
         fullCal = converter.convertNote(masterNote);
         

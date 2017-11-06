@@ -397,7 +397,7 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
             }
 
             try {
-                getContentService().updateContentItems(content.getParents(), toUpdate);
+                getContentService().updateContentItems(content.getParents().iterator().next(), toUpdate);
             } catch (IcalUidInUseException e) {
                 throw new UidConflictException(e);
             } catch (CollectionLockedException e) {

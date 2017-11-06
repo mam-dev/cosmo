@@ -307,13 +307,13 @@ public interface ContentService extends Service {
      * removes item from system, not just from the parent collections.
      * ContentItem creation adds the item to the specified parent collections.
      * 
-     * @param parents
-     *            parents that new content items will be added to.
+     * @param parent
+     *            parent that new content items will be added to.
      * @param contentItems to update
      * @throws org.osaf.cosmo.model.CollectionLockedException
      *         if parent CollectionItem is locked
      */
-    public void updateContentItems(Set<CollectionItem> parents, Set<ContentItem> contentItems);
+    public void updateContentItems(CollectionItem parent, Set<ContentItem> contentItems);
     
     /**
      * Update an existing content item.
