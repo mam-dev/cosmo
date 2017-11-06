@@ -140,7 +140,10 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     @Override
     public void addItemToCollection(Item item, CollectionItem collection) {
-        throw new UnsupportedOperationException();
+        HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(collection);
+        if (subscriptionItem.getTargetCollection() != null) {
+            this.contentDaoInternal.addItemToCollection(item, subscriptionItem.getTargetCollection());
+        }
     }
 
     @Override

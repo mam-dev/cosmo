@@ -205,6 +205,7 @@ public interface ItemDao extends Dao {
      * @param item the item
      * @param collection the collection to add to
      */
+    @ExternalizableContent
     public void addItemToCollection(Item item, CollectionItem collection);
 
     /**
