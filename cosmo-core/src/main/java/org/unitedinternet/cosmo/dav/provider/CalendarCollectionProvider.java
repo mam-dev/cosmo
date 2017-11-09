@@ -15,17 +15,10 @@
  */
 package org.unitedinternet.cosmo.dav.provider;
 
-import static net.fortuna.ical4j.model.Property.DTEND;
-import static net.fortuna.ical4j.model.Property.DTSTART;
-import static net.fortuna.ical4j.model.Property.EXDATE;
-import static net.fortuna.ical4j.model.Property.RECURRENCE_ID;
-import static net.fortuna.ical4j.model.Property.RRULE;
-import static net.fortuna.ical4j.model.Property.UID;
+import static org.unitedinternet.cosmo.icalendar.ICalendarConstants.ICALENDAR_MEDIA_TYPE;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -53,20 +46,12 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
+import org.unitedinternet.cosmo.util.FreeBusyUtil;
 
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.component.CalendarComponent;
-import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.model.property.XProperty;
-
-import static org.unitedinternet.cosmo.icalendar.ICalendarConstants.ICALENDAR_MEDIA_TYPE;
 
 /**
  * <p>
@@ -81,13 +66,6 @@ public class CalendarCollectionProvider extends CollectionProvider {
     private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
 
     private static final String CHARSET_UTF8 = "UTF-8";
-
-    private static final String FREE_BUSY_TEXT = "Busy";
-
-    private static final String FREE_BUSY_X_PROPERTY = Property.EXPERIMENTAL_PREFIX + "FREE-BUSY";
-
-    private static final List<String> FREE_BUSY_PROPERTIES = Arrays
-            .asList(new String[] { UID, DTSTART, DTEND, RRULE, RECURRENCE_ID, EXDATE });
 
     private static final String PRODUCT_ID_KEY = "calendar.server.productId";
 
@@ -166,7 +144,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         Set<Ticket> collectionTickets = collectionItem.getTickets();
         if (contextTicket != null && collectionTickets != null) {
             if (collectionTickets.contains(contextTicket) && contextTicket.isFreeBusy()) {
-                result = getFreeBusyCalendar(result);
+                result = FreeBusyUtil.getFreeBusyCalendar(result, this.productId);
             }
         }
         response.setHeader("ETag", "\""+ resource.getETag() +"\"");
@@ -176,41 +154,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         response.flushBuffer();
     }
 
-    /**
-     * @param original
-     * @return
-     */
-    private Calendar getFreeBusyCalendar(Calendar original) {
-        // Make a copy of the original calendar
-        Calendar copy = new Calendar();
-        copy.getProperties().add(new ProdId(productId));
-        copy.getProperties().add(Version.VERSION_2_0);
-        copy.getProperties().add(CalScale.GREGORIAN);
-        copy.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
-
-        ComponentList<CalendarComponent> events = original.getComponents(Component.VEVENT);
-        for (Component event : events) {
-            copy.getComponents().add(this.getFreeBusyEvent((VEvent) event));
-        }
-        return copy;
-    }
-
-    private VEvent getFreeBusyEvent(VEvent vEvent) {
-
-        try {
-            VEvent freeBusyEvent = new VEvent();
-            freeBusyEvent.getProperties().add(new Summary(FREE_BUSY_TEXT));
-            for (String propertyName : FREE_BUSY_PROPERTIES) {
-                Property property = vEvent.getProperty(propertyName);
-                if (property != null) {
-                    freeBusyEvent.getProperties().add(property);
-                }
-            }
-            return freeBusyEvent;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    
 
     /**
      * @param collectionItem

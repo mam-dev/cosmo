@@ -419,11 +419,11 @@ public class SecurityAdvice extends OrderedAdvice {
     }
 
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.updateContentItems(..)) &&"
-            + "args(parents, contentItems)")
-    public Object checkUpdateContentItems(ProceedingJoinPoint pjp, Set<CollectionItem> parents,
+            + "args(parent, contentItems)")
+    public Object checkUpdateContentItems(ProceedingJoinPoint pjp, CollectionItem parent,
             Set<ContentItem> contentItems) throws Throwable {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("in checkUpdateContentItems(parents, contentItems)");
+            LOG.debug("in checkUpdateContentItems(parent, contentItems)");
         }
 
         CosmoSecurityContext context = securityManager.getSecurityContext();
@@ -449,11 +449,9 @@ public class SecurityAdvice extends OrderedAdvice {
                         throwItemSecurityException(master, Permission.WRITE);
                     }
                 } else {
-                    // item is new so check access to ALL parents
-                    for (CollectionItem collection : parents) {
-                        if (!securityHelper.hasWriteAccess(context, collection)) {
-                            throwItemSecurityException(collection, Permission.WRITE);
-                        }
+                    // item is new so check access to parent
+                    if (!securityHelper.hasWriteAccess(context, parent)) {
+                        throwItemSecurityException(parent, Permission.WRITE);
                     }
                 }
             }

@@ -14,6 +14,7 @@ import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.Ticket;
+import org.unitedinternet.cosmo.model.TicketType;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
@@ -30,8 +31,12 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final ContentDao contentDaoInternal;
 
-    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal) {
+    private final FreeBusyObfuscater freeBusyObfuscater;
+
+    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater) {
+        super();
         this.contentDaoInternal = contentDaoInternal;
+        this.freeBusyObfuscater = freeBusyObfuscater;
     }
 
     @Override
@@ -54,11 +59,11 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         HibCollectionSubscriptionItem subscriptionItem = (HibCollectionSubscriptionItem) this.contentDaoInternal
                 .findItemByPath(homeCollectionId + "/" + collectionId);
         if (itemId == null || itemId.trim().isEmpty()) {
-            return subscriptionItem;
+            return obfuscate(subscriptionItem);
         }
         if (subscriptionItem != null) {
-            CollectionItem target = subscriptionItem.getTargetCollection();        
-            return target != null ? target.getChildByName(itemId) : null;
+            CollectionItem target = subscriptionItem.getTargetCollection();
+            return target != null ? obfuscate(subscriptionItem, target.getChildByName(itemId)) : null;
         }
         return null;
     }
@@ -177,6 +182,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
                 return Collections.emptySet();
             }
             filter.setParent(parent.getTargetCollection());
+            return obfuscate(parent, this.contentDaoInternal.findItems(filter));
         }
         return this.contentDaoInternal.findItems(filter);
     }
@@ -219,7 +225,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
         HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
-        // Create content in sharer's calendar.         
+        // Create content in sharer's calendar.
         CollectionItem parentCollection = subscriptionItem.getTargetCollection();
         if (parentCollection == null) {
             throw new CaldavExceptionForbidden("invalid subscription");
@@ -227,25 +233,25 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         content.setOwner(parentCollection.getOwner());
         return this.contentDaoInternal.createContent(parentCollection, content);
     }
-    
+
     private HibCollectionSubscriptionItem checkAndGetSubscriptionItem(CollectionItem parent) {
         if (!(parent instanceof HibCollectionSubscriptionItem)) {
             throw new CaldavExceptionForbidden("invalid subscription type " + parent.getClass());
         }
-        return (HibCollectionSubscriptionItem) parent;        
+        return (HibCollectionSubscriptionItem) parent;
     }
 
     @Override
     public void createBatchContent(CollectionItem parent, Set<ContentItem> contents) {
         HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
-        // Create contents in sharer's calendar.         
+        // Create contents in sharer's calendar.
         CollectionItem parentCollection = subscriptionItem.getTargetCollection();
         if (parentCollection == null) {
             throw new CaldavExceptionForbidden("invalid subscription");
         }
         for (ContentItem content : contents) {
             content.setOwner(parentCollection.getOwner());
-        }        
+        }
         this.contentDaoInternal.createBatchContent(parentCollection, contents);
     }
 
@@ -257,11 +263,11 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public void removeBatchContent(CollectionItem parent, Set<ContentItem> contents) {
         HibCollectionSubscriptionItem subscriptionItem = this.checkAndGetSubscriptionItem(parent);
-        // Create contents in sharer's calendar.         
+        // Create contents in sharer's calendar.
         CollectionItem parentCollection = subscriptionItem.getTargetCollection();
         if (parentCollection == null) {
             throw new CaldavExceptionForbidden("invalid subscription");
-        }        
+        }
         this.contentDaoInternal.removeBatchContent(parentCollection, contents);
     }
 
@@ -303,6 +309,43 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public void removeItemsFromCollection(CollectionItem collection) {
         throw new UnsupportedOperationException();
+    }
+    
+    private HibCollectionSubscriptionItem obfuscate(HibCollectionSubscriptionItem parent) {
+        this.obfuscate(parent, parent.getChildren());
+        return parent; 
+    }
+    
+    private Set<Item> obfuscate(HibCollectionSubscriptionItem parent, Set<Item> items) {
+        if (isFreeBusy(parent)) {
+            for (Item item : items) {
+                if (item instanceof ContentItem) {
+                    this.freeBusyObfuscater.apply((ContentItem) item);
+                }
+            }
+        }
+        return items;
+    }
+
+    private Item obfuscate(HibCollectionSubscriptionItem parent, Item item) {
+        if (isFreeBusy(parent) && item instanceof ContentItem) {
+            this.freeBusyObfuscater.apply((ContentItem) item);
+        }
+        return item;
+    }
+
+    private static boolean isFreeBusy(HibCollectionSubscriptionItem subscriptionItem) {
+        if (subscriptionItem == null) {
+            return false;
+        }
+        if (subscriptionItem.getSubscription() == null) {
+            return false;
+        }
+        Ticket ticket = subscriptionItem.getSubscription().getTicket();
+        if (ticket == null) {
+            return false;
+        }
+        return TicketType.FREE_BUSY.equals(ticket.getType());
     }
 
 }

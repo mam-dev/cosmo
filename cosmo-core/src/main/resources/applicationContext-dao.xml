@@ -91,10 +91,15 @@
 		<constructor-arg ref="contentSourceFactory" />
 		<constructor-arg ref="itemFilterProcessor" />
 	</bean>
-
+	
+	<bean id="freeBusyObfuscater" class="org.unitedinternet.cosmo.dao.subscription.FreeBusyObfuscaterFactoryBean">
+		<constructor-arg ref="externalComponentInstanceProvider"/>
+	</bean>
+	
 	<bean id="contentDaoSub"
 		class="org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl">
 		<constructor-arg ref="contentDaoInternal" />
+		<constructor-arg ref="freeBusyObfuscater"/>
 	</bean>
 
 	<bean id="contentDao" class="org.unitedinternet.cosmo.dao.ContentDaoProxyFactory">
