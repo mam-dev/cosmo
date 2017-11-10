@@ -1,6 +1,7 @@
 package org.unitedinternet.cosmo.dao.subscription;
 
 import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.User;
 
 /**
  * Component that hides the details of an item by replacing text fields with specific text. Used by
@@ -11,6 +12,6 @@ import org.unitedinternet.cosmo.model.ContentItem;
  */
 public interface FreeBusyObfuscater {
 
-    public void apply(ContentItem contentItem);
+    public void apply(User owner, ContentItem contentItem);
 
 }

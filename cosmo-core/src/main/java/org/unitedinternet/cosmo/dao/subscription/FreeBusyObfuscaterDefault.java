@@ -3,6 +3,7 @@ package org.unitedinternet.cosmo.dao.subscription;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
+import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.util.FreeBusyUtil;
 
 import net.fortuna.ical4j.model.Calendar;
@@ -22,7 +23,7 @@ public class FreeBusyObfuscaterDefault implements FreeBusyObfuscater {
     }
 
     @Override
-    public void apply(ContentItem contentItem) {
+    public void apply(User owner, ContentItem contentItem) {
         contentItem.setDisplayName(FREE_BUSY_TEXT);
         contentItem.setName(FREE_BUSY_TEXT);        
         EventStamp stamp = (EventStamp) contentItem.getStamp(EventStamp.class);

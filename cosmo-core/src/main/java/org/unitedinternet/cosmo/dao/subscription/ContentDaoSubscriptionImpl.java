@@ -317,10 +317,10 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
     
     private Set<Item> obfuscate(HibCollectionSubscriptionItem parent, Set<Item> items) {
-        if (isFreeBusy(parent)) {
+        if (isFreeBusy(parent)) {            
             for (Item item : items) {
                 if (item instanceof ContentItem) {
-                    this.freeBusyObfuscater.apply((ContentItem) item);
+                    this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
                 }
             }
         }
@@ -329,7 +329,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Item obfuscate(HibCollectionSubscriptionItem parent, Item item) {
         if (isFreeBusy(parent) && item instanceof ContentItem) {
-            this.freeBusyObfuscater.apply((ContentItem) item);
+            this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
         }
         return item;
     }

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.unitedinternet.cosmo.dao.CalendarDao;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
+import org.unitedinternet.cosmo.dao.subscription.UuidSubscriptionGenerator;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.ICalendarItem;
@@ -54,7 +55,8 @@ public class StandardCalendarService implements CalendarService {
     public Set<Item> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timeZoneId,
             boolean expandRecurringEvents) {
         Set<Item> resultSet = new HashSet<>();
-        if (UuidExternalGenerator.get().containsUuid(collection.getUid())) {
+        String uid = collection.getUid();
+        if (UuidExternalGenerator.get().containsUuid(uid) || UuidSubscriptionGenerator.get().containsUuid(uid)) {
             NoteItemFilter filter = new NoteItemFilter();
             filter.setParent(collection);
             EventStampFilter eventFilter = new EventStampFilter();
