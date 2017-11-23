@@ -193,7 +193,7 @@ CREATE TABLE `subscription` (
   `modifydate` bigint(20) DEFAULT NULL,
   
   `target_collection_id` bigint(20) NOT NULL,
-  `ownerid` bigint(20) NOT NULL,
+  `ownerid` bigint(20) ,
   `ticketid` bigint(20) NOT NULL,
   `proxy_collection_id` bigint(20) DEFAULT NULL,
   
