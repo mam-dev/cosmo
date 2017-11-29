@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
@@ -33,10 +35,14 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final FreeBusyObfuscater freeBusyObfuscater;
 
-    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater) {
+    private final SessionFactory sessionFactory;
+
+    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater,
+            SessionFactory sessionFactory) {
         super();
         this.contentDaoInternal = contentDaoInternal;
         this.freeBusyObfuscater = freeBusyObfuscater;
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
@@ -310,17 +316,19 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     public void removeItemsFromCollection(CollectionItem collection) {
         throw new UnsupportedOperationException();
     }
-    
+
     private HibCollectionSubscriptionItem obfuscate(HibCollectionSubscriptionItem parent) {
         this.obfuscate(parent, parent.getChildren());
-        return parent; 
+        return parent;
     }
-    
+
     private Set<Item> obfuscate(HibCollectionSubscriptionItem parent, Set<Item> items) {
-        if (isFreeBusy(parent)) {            
+        if (isFreeBusy(parent)) {
+            // Make it read-only to avoid saving back free-busy text
+            this.getSession().setDefaultReadOnly(true);
             for (Item item : items) {
-                if (item instanceof ContentItem) {
-                    this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
+                if (item instanceof ContentItem) {                    
+                    this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);                    
                 }
             }
         }
@@ -329,9 +337,15 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Item obfuscate(HibCollectionSubscriptionItem parent, Item item) {
         if (isFreeBusy(parent) && item instanceof ContentItem) {
+            // Make it read-only to avoid saving back free-busy text
+            this.getSession().setDefaultReadOnly(true);
             this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
         }
         return item;
+    }
+
+    private Session getSession() {
+        return this.sessionFactory.getCurrentSession();
     }
 
     private static boolean isFreeBusy(HibCollectionSubscriptionItem subscriptionItem) {
