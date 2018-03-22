@@ -443,7 +443,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
             return;
         }
 
-        StringBuffer sb = new StringBuffer(
+        StringBuilder sb = new StringBuilder(
                 "\n------------------------ Dump of propFind request -------------------\n");
         try {
             if (root == null){
