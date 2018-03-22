@@ -25,7 +25,7 @@ public class URLQuery {
     }
     
     public String toString(Map<String, String[]> overrideMap){
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append("?");
         for (Entry<String, String[]> entry: parameterMap.entrySet()){
             
