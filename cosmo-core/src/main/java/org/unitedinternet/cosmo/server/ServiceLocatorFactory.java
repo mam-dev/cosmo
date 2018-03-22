@@ -150,7 +150,7 @@ public class ServiceLocatorFactory {
     }
 
     private String calculateAppMountUrl(HttpServletRequest request, Boolean absoluteUrls) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         if (absoluteUrls){
             buf.append(request.getScheme()).

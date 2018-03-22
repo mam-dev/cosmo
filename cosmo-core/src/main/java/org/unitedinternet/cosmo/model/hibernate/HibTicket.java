@@ -284,7 +284,7 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
     /**
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer(key);
+        StringBuilder buf = new StringBuilder(key);
         TicketType type = getType();
         if (type != null) {
             buf.append(" (").append(type).append(")");

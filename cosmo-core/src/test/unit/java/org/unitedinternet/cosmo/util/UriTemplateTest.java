@@ -59,7 +59,7 @@ public class UriTemplateTest {
     private String getPlaceHolder(int length, final String delims) {
         if (length <= 0)
             length = 1;
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         while (result.length() < length) {
             char ch = (char) (rnd.nextInt(MAX_CHARCODE - MIN_CHARCODE) + MIN_CHARCODE);
             if (delims.indexOf(ch) < 0 && Character.isJavaIdentifierPart(ch))

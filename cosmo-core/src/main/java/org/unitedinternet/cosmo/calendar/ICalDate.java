@@ -245,7 +245,7 @@ public class ICalDate implements ICalendarConstants {
      * @return The string.
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer(";");
+        StringBuilder buf = new StringBuilder(";");
         buf.append(value.toString());
         if (tzid != null) {
             buf.append(";").append("TZID=").append(tzid.getValue()); 

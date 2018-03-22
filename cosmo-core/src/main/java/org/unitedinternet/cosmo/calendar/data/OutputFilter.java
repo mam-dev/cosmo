@@ -87,9 +87,9 @@ public class OutputFilter {
     /**
      * Filter.
      * @param calendar The calendar.
-     * @param buffer The string buffer.
+     * @param builder The string buffer.
      */
-    public void filter(Calendar calendar, final StringBuffer buffer) {
+    public void filter(Calendar calendar, final StringBuilder builder) {
         // If expansion of recurrence is required what we have to do
         // is create a whole new calendar object with the new expanded
         // components in it and then write that one out.
@@ -105,15 +105,15 @@ public class OutputFilter {
             calendar = createLimitedRecurrence(calendar);
         }
 
-        buffer.append(Calendar.BEGIN).
+        builder.append(Calendar.BEGIN).
             append(':').
             append(Calendar.VCALENDAR).
             append("\n");
 
-        filterProperties(calendar.getProperties(), buffer);
-        filterSubComponents(calendar.getComponents(), buffer);
+        filterProperties(calendar.getProperties(), builder);
+        filterSubComponents(calendar.getComponents(), builder);
 
-        buffer.append(Calendar.END).
+        builder.append(Calendar.END).
             append(':').
             append(Calendar.VCALENDAR).
             append("\n");
@@ -338,7 +338,7 @@ public class OutputFilter {
     }
 
     private void filterProperties(PropertyList<Property> properties,
-                                  StringBuffer buffer) {
+                                  StringBuilder buffer) {
         if (isAllProperties()) {
             buffer.append(properties.toString());
             return;
@@ -366,7 +366,7 @@ public class OutputFilter {
      * @param property The property.
      * @param buffer The string buffer.
      */
-    private void chompPropertyValue(Property property, StringBuffer buffer) {
+    private void chompPropertyValue(Property property, StringBuilder buffer) {
         buffer.append(property.getName()).
             append(property.getParameters()).
             append(':').
@@ -379,7 +379,7 @@ public class OutputFilter {
      * @param buffer The string buffer.
      */ 
     private void filterSubComponents(ComponentList<?> subComponents,
-                                     StringBuffer buffer) {
+                                     StringBuilder buffer) {
         if (isAllSubComponents() && getLimit() != null) {
             buffer.append(subComponents.toString());
             return;
@@ -467,9 +467,9 @@ public class OutputFilter {
     /**
      * Filter sub component.
      * @param subComponent The component list.
-     * @param buffer The stringbuffer.
+     * @param buffer The StringBuilder.
      */
-    private void filterSubComponent(Component subComponent, StringBuffer buffer) {
+    private void filterSubComponent(Component subComponent, StringBuilder buffer) {
         buffer.append(Component.BEGIN).
             append(':').
             append(subComponent.getName()).

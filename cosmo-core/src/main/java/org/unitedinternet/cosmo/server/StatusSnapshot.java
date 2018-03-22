@@ -41,7 +41,7 @@ public class StatusSnapshot {
     /**
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         buf.append("jvm.memory.max=").append(maxMemory).append("\n");
         buf.append("jvm.memory.total=").append(totalMemory).append("\n");

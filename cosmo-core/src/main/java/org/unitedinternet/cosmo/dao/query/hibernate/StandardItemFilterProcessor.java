@@ -98,9 +98,9 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
      * @return hibernate query built using HQL
      */
     private Query<Item> buildQueryInternal(Session session, ItemFilter filter) {
-        StringBuffer selectBuf = new StringBuffer();
-        StringBuffer whereBuf = new StringBuffer();
-        StringBuffer orderBuf = new StringBuffer();
+        StringBuilder selectBuf = new StringBuilder();
+        StringBuilder whereBuf = new StringBuilder();
+        StringBuilder orderBuf = new StringBuilder();
 
         HashMap<String, Object> params = new HashMap<String, Object>();
 
@@ -154,7 +154,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         return (QueryImpl<Item>) this.buildQueryInternal(session, filter);
     }
 
-    private void handleItemFilter(StringBuffer selectBuf, StringBuffer whereBuf, HashMap<String, Object> params,
+    private void handleItemFilter(StringBuilder selectBuf, StringBuilder whereBuf, HashMap<String, Object> params,
             ItemFilter filter) {
 
         if ("".equals(selectBuf.toString())) {
@@ -182,7 +182,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
 
     }
 
-    private void handleAttributeFilters(StringBuffer selectBuf, StringBuffer whereBuf, HashMap<String, Object> params,
+    private void handleAttributeFilters(StringBuilder selectBuf, StringBuilder whereBuf, HashMap<String, Object> params,
             ItemFilter filter) {
         for (AttributeFilter attrFilter : filter.getAttributeFilters()) {
             if (attrFilter instanceof TextAttributeFilter) {
@@ -195,7 +195,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         }
     }
 
-    private void handleTextAttributeFilter(StringBuffer selectBuf, StringBuffer whereBuf,
+    private void handleTextAttributeFilter(StringBuilder selectBuf, StringBuilder whereBuf,
             HashMap<String, Object> params, TextAttributeFilter filter) {
 
         String alias = "ta" + params.size();
@@ -205,7 +205,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         formatExpression(whereBuf, params, alias + ".value", filter.getValue());
     }
 
-    private void handleStringAttributeFilter(StringBuffer selectBuf, StringBuffer whereBuf,
+    private void handleStringAttributeFilter(StringBuilder selectBuf, StringBuilder whereBuf,
             HashMap<String, Object> params, StringAttributeFilter filter) {
 
         String alias = "ta" + params.size();
@@ -215,7 +215,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         formatExpression(whereBuf, params, alias + ".value", filter.getValue());
     }
 
-    private void handleStampFilters(StringBuffer selectBuf, StringBuffer whereBuf, ItemFilter filter) {
+    private void handleStampFilters(StringBuilder selectBuf, StringBuilder whereBuf, ItemFilter filter) {
         for (StampFilter stampFilter : filter.getStampFilters()) {
             if (stampFilter instanceof EventStampFilter) {
                 handleEventStampFilter(selectBuf, whereBuf, (EventStampFilter) stampFilter);
@@ -225,7 +225,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         }
     }
 
-    private void handleStampFilter(StringBuffer whereBuf, StampFilter filter) {
+    private void handleStampFilter(StringBuilder whereBuf, StampFilter filter) {
 
         String toAppend = "";
         if (filter.isMissing()) {
@@ -236,7 +236,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         appendWhere(whereBuf, toAppend);
     }
 
-    private void handleAttributeFilter(StringBuffer whereBuf, HashMap<String, Object> params, AttributeFilter filter) {
+    private void handleAttributeFilter(StringBuilder whereBuf, HashMap<String, Object> params, AttributeFilter filter) {
 
         String param = "param" + params.size();
         String toAppend = "";
@@ -249,7 +249,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         params.put(param, filter.getQname());
     }
 
-    private void handleEventStampFilter(StringBuffer selectBuf, StringBuffer whereBuf, EventStampFilter filter) {
+    private void handleEventStampFilter(StringBuilder selectBuf, StringBuilder whereBuf, EventStampFilter filter) {
 
         selectBuf.append(", HibBaseEventStamp es");
         appendWhere(whereBuf, "es.item=i");
@@ -283,7 +283,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         }
     }
 
-    private void handleNoteItemFilter(StringBuffer selectBuf, StringBuffer whereBuf, HashMap<String, Object> params,
+    private void handleNoteItemFilter(StringBuilder selectBuf, StringBuilder whereBuf, HashMap<String, Object> params,
             NoteItemFilter filter) {
         selectBuf.append("select i from HibNoteItem i");
         handleItemFilter(selectBuf, whereBuf, params, filter);
@@ -340,7 +340,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         }
     }
 
-    private void handleContentItemFilter(StringBuffer selectBuf, StringBuffer whereBuf, HashMap<String, Object> params,
+    private void handleContentItemFilter(StringBuilder selectBuf, StringBuilder whereBuf, HashMap<String, Object> params,
             ContentItemFilter filter) {
 
         if ("".equals(selectBuf.toString())) {
@@ -354,7 +354,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         }
     }
 
-    private void appendWhere(StringBuffer whereBuf, String toAppend) {
+    private void appendWhere(StringBuilder whereBuf, String toAppend) {
         if ("".equals(whereBuf.toString())) {
             whereBuf.append(" where " + toAppend);
         } else {
@@ -474,10 +474,10 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
         return results;
     }
 
-    private void formatExpression(StringBuffer whereBuf, HashMap<String, Object> params, String propName,
+    private void formatExpression(StringBuilder whereBuf, HashMap<String, Object> params, String propName,
             FilterCriteria fc) {
 
-        StringBuffer expBuf = new StringBuffer();
+        StringBuilder expBuf = new StringBuilder();
 
         FilterExpression exp = (FilterExpression) fc;
 

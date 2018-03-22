@@ -735,8 +735,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             note.getModifies().addModification(note);
 
             if (!note.getModifies().getParents().equals(parents)) {
-                StringBuffer modParents = new StringBuffer();
-                StringBuffer masterParents = new StringBuffer();
+                StringBuilder modParents = new StringBuilder();
+                StringBuilder masterParents = new StringBuilder();
                 for (CollectionItem p : parents) {
                     modParents.append(p.getUid() + ",");
                 }

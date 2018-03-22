@@ -171,7 +171,7 @@ public class StandardRequestHandler
             return;
         }
 
-        StringBuffer sb = new StringBuffer("\n------------------------ Dump of request -------------------\n");
+        StringBuilder sb = new StringBuilder("\n------------------------ Dump of request -------------------\n");
         try {
             Enumeration<String> names = req.getHeaderNames();
 

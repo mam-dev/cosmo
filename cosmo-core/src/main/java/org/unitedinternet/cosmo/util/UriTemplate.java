@@ -137,7 +137,7 @@ public class UriTemplate {
         if (base == null) {
             throw new IllegalArgumentException("Base cannot be null");
         }
-        StringBuffer buf = new StringBuffer(base);
+        StringBuilder buf = new StringBuilder(base);
         buf.append("/");
 
         List<String> variables = Arrays.asList(values);

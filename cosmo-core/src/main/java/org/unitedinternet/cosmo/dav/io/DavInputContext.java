@@ -137,7 +137,7 @@ public class DavInputContext extends InputContextImpl
         }
 
         if (LOG.isTraceEnabled()) {
-            StringBuffer sb = new StringBuffer("\n------------ Begin Calendar from request ------------\n");
+            StringBuilder sb = new StringBuilder("\n------------ Begin Calendar from request ------------\n");
             sb.append(calendar);
             sb.append("\n------------ End Calendar from request ------------");
             LOG.trace(sb);

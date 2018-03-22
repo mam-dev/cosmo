@@ -368,7 +368,7 @@ public class MockDaoStorage {
      */
     @SuppressWarnings("deprecation")
     public String getItemPath(Item item) {
-        StringBuffer path = new StringBuffer();
+        StringBuilder path = new StringBuilder();
         LinkedList<String> hierarchy = new LinkedList<String>();
         hierarchy.addFirst(item.getName());
 

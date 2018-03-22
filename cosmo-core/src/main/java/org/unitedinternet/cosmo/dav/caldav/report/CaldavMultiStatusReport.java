@@ -123,13 +123,13 @@ public abstract class CaldavMultiStatusReport extends MultiStatusReport
         if (! resource.exists()) {
             return null;
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         if (outputFilter != null) {
-            outputFilter.filter(resource.getCalendar(), buffer);
+            outputFilter.filter(resource.getCalendar(), builder);
         }
         else {
-            buffer.append(resource.getCalendar().toString());
+            builder.append(resource.getCalendar().toString());
         }
-        return buffer.toString();
+        return builder.toString();
     }
 }

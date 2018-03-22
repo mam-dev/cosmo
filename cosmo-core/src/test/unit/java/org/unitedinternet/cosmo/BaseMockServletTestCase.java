@@ -110,7 +110,7 @@ public abstract class BaseMockServletTestCase {
      */
     protected String toAbsoluteUrl(MockHttpServletRequest request,
                                    String path) {
-        StringBuffer url = new StringBuffer(request.getScheme());
+        StringBuilder url = new StringBuilder(request.getScheme());
         url.append("://").append(request.getServerName());
         if ((request.isSecure() && request.getServerPort() != 443) ||
             (request.getServerPort() != 80)) {

@@ -118,7 +118,7 @@ public class HibQName implements QName,Serializable {
 
     /** */
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("{").
             append(namespace).
             append("}").

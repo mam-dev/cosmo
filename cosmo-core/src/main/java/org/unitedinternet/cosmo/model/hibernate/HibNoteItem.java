@@ -195,7 +195,7 @@ public class HibNoteItem extends HibICalendarItem implements NoteItem {
         String modTime = getModifiedDate() != null ?
             Long.valueOf(getModifiedDate().getTime()).toString() : "-";
          
-        StringBuffer etag = new StringBuffer(uid + ":" + modTime);
+        StringBuilder etag = new StringBuilder(uid + ":" + modTime);
         
         // etag is constructed from self plus modifications
         if(modifies==null) {

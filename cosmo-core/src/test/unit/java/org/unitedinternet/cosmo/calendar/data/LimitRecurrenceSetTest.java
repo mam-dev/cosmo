@@ -62,7 +62,7 @@ public class LimitRecurrenceSetTest {
         filter.setAllSubComponents();
         filter.setAllProperties();
         
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         filter.filter(calendar, buffer);
         StringReader sr = new StringReader(buffer.toString());
         
@@ -105,7 +105,7 @@ public class LimitRecurrenceSetTest {
         filter.setAllSubComponents();
         filter.setAllProperties();
         
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         filter.filter(calendar, buffer);
         StringReader sr = new StringReader(buffer.toString());
         
@@ -144,7 +144,7 @@ public class LimitRecurrenceSetTest {
         filter.setAllSubComponents();
         filter.setAllProperties();
         
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         filter.filter(calendar, buffer);
         StringReader sr = new StringReader(buffer.toString());
         

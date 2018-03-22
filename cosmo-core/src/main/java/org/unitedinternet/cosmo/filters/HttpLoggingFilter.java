@@ -167,7 +167,7 @@ public class HttpLoggingFilter implements Filter {
 
     private String formatRequest(HttpServletRequest request, String format) {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char[] formatArray = format.toCharArray();
         for (int i = 0; i < formatArray.length; i++) {
             if (formatArray[i] != '%') {
