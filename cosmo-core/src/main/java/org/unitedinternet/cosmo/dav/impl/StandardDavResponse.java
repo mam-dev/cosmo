@@ -231,7 +231,7 @@ public class StandardDavResponse extends WebdavResponseImpl
     public void sendXmlResponse(XmlSerializable serializable, int status) throws IOException {
         super.sendXmlResponse(serializable, status);
         if (serializable != null && LOG.isTraceEnabled()) {
-            StringBuffer sb = new StringBuffer("\n------------------------ Dump of response -------------------\n");
+            StringBuilder sb = new StringBuilder("\n------------------------ Dump of response -------------------\n");
             sb.append("Status: ").append(status).append("\n");
             sb.append(XmlSerializer.serialize(serializable));
             sb.append("\n------------------------ End dump of response -------------------");
