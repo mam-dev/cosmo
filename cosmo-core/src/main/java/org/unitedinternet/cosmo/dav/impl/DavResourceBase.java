@@ -47,7 +47,6 @@ import org.apache.jackrabbit.webdav.version.report.Report;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
@@ -56,27 +55,27 @@ import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.StandardResourceFactory;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.property.Acl;
 import org.unitedinternet.cosmo.dav.acl.property.CurrentUserPrivilegeSet;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.property.SupportedReportSet;
+import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 
 /**
  * <p>
- * Base class for implementations of <code>WebDavResource</code>
- * which provides behavior common to all resources.
+ * Base class for implementations of <code>WebDavResource</code> which provides behavior common to all resources.
  * </p>
  * <p>
  * This class declares the following live properties:
  * </p>
  * <ul>
- * <li> DAV:supported-report-set </li>
- * <li> DAV:acl </li>
- * <li> DAV:current-user-privilege-set </li>
+ * <li>DAV:supported-report-set</li>
+ * <li>DAV:acl</li>
+ * <li>DAV:current-user-privilege-set</li>
  * </ul>
  * <p>
  * This class does not declare any reports.
@@ -84,15 +83,11 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
  * 
  * @see WebDavResource
  */
-public abstract class DavResourceBase
-    implements ExtendedDavConstants, AclConstants, DeltaVResource{
-	@SuppressWarnings("unused")
-    private static final Log LOG =
-        LogFactory.getLog(DavResourceBase.class);
-    private static final HashSet<DavPropertyName> LIVE_PROPERTIES =
-        new HashSet<DavPropertyName>();
-    private static final Set<ReportType> REPORT_TYPES =
-        new HashSet<ReportType>(0);
+public abstract class DavResourceBase implements ExtendedDavConstants, AclConstants, DeltaVResource {
+    @SuppressWarnings("unused")
+    private static final Log LOG = LogFactory.getLog(DavResourceBase.class);
+    private static final HashSet<DavPropertyName> LIVE_PROPERTIES = new HashSet<DavPropertyName>();
+    private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>(0);
 
     static {
         registerLiveProperty(SUPPORTEDREPORTSET);
@@ -105,9 +100,7 @@ public abstract class DavResourceBase
     private DavPropertySet properties;
     private boolean initialized;
 
-    public DavResourceBase(DavResourceLocator locator,
-                           DavResourceFactory factory)
-        throws CosmoDavException {
+    public DavResourceBase(DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
         this.locator = locator;
         this.factory = factory;
         this.properties = new DavPropertySet();
@@ -119,14 +112,13 @@ public abstract class DavResourceBase
     public boolean isSchedulingEnabled() {
         return ((StandardResourceFactory) factory).isSchedulingEnabled();
     }
-    
+
     public String getComplianceClass() {
-        
+
         // For now scheduling is an option
-        if(isSchedulingEnabled()) {
+        if (isSchedulingEnabled()) {
             return WebDavResource.COMPLIANCE_CLASS_SCHEDULING;
-        }
-        else {
+        } else {
             return WebDavResource.COMPLIANCE_CLASS;
         }
     }
@@ -143,8 +135,7 @@ public abstract class DavResourceBase
         return locator.getHref(isCollection());
     }
 
-    public void spool(OutputContext outputContext)
-        throws IOException {
+    public void spool(OutputContext outputContext) throws IOException {
         throw new UnsupportedOperationException();
     }
 
@@ -153,8 +144,7 @@ public abstract class DavResourceBase
         return properties.getPropertyNames();
     }
 
-    public org.apache.jackrabbit.webdav.property.DavProperty<?>
-        getProperty(DavPropertyName name) {
+    public org.apache.jackrabbit.webdav.property.DavProperty<?> getProperty(DavPropertyName name) {
         loadProperties();
         return properties.get(name);
     }
@@ -164,44 +154,40 @@ public abstract class DavResourceBase
         return properties;
     }
 
-    public void setProperty(org.apache.jackrabbit.webdav.property.DavProperty<?> property)
-        throws DavException {
-        if (! exists()) {
+    public void setProperty(org.apache.jackrabbit.webdav.property.DavProperty<?> property) throws DavException {
+        if (!exists()) {
             throw new NotFoundException();
         }
-        if(!(property instanceof WebDavProperty)){
-            throw new IllegalArgumentException("Expected type for 'property' is :[" + WebDavProperty.class.getName() + "]");
+        if (!(property instanceof WebDavProperty)) {
+            throw new IllegalArgumentException(
+                    "Expected type for 'property' is :[" + WebDavProperty.class.getName() + "]");
         }
-        setResourceProperty((WebDavProperty)property, false);
+        setResourceProperty((WebDavProperty) property, false);
     }
 
-    public void removeProperty(DavPropertyName propertyName)
-        throws DavException {
-        if (! exists()) {
+    public void removeProperty(DavPropertyName propertyName) throws DavException {
+        if (!exists()) {
             throw new NotFoundException();
         }
         removeResourceProperty(propertyName);
 
     }
 
-    public MultiStatusResponse alterProperties(List<? extends PropEntry> changeList) throws DavException{
+    public MultiStatusResponse alterProperties(List<? extends PropEntry> changeList) throws DavException {
         throw new UnsupportedOperationException();
     }
 
-    public boolean isLockable(Type type,
-                              Scope scope) {
+    public boolean isLockable(Type type, Scope scope) {
         // nothing is lockable at the moment
         return false;
     }
 
-    public boolean hasLock(Type type,
-                           Scope scope) {
+    public boolean hasLock(Type type, Scope scope) {
         // nothing is lockable at the moment
         throw new UnsupportedOperationException();
     }
 
-    public ActiveLock getLock(Type type,
-                              Scope scope) {
+    public ActiveLock getLock(Type type, Scope scope) {
         // nothing is lockable at the moment
         throw new UnsupportedOperationException();
     }
@@ -211,21 +197,17 @@ public abstract class DavResourceBase
         throw new UnsupportedOperationException();
     }
 
-    public ActiveLock lock(LockInfo reqLockInfo)
-        throws DavException {
+    public ActiveLock lock(LockInfo reqLockInfo) throws DavException {
         // nothing is lockable at the moment
         throw new PreconditionFailedException("Resource not lockable");
     }
 
-    public ActiveLock refreshLock(LockInfo reqLockInfo,
-                                  String lockToken)
-        throws DavException {
+    public ActiveLock refreshLock(LockInfo reqLockInfo, String lockToken) throws DavException {
         // nothing is lockable at the moment
         throw new PreconditionFailedException("Resource not lockable");
     }
 
-    public void unlock(String lockToken)
-        throws DavException {
+    public void unlock(String lockToken) throws DavException {
         // nothing is lockable at the moment
         throw new PreconditionFailedException("Resource not lockable");
     }
@@ -245,11 +227,9 @@ public abstract class DavResourceBase
 
     // WebDavResource methods
 
-    public MultiStatusResponse
-        updateProperties(DavPropertySet setProperties,
-                         DavPropertyNameSet removePropertyNames)
-        throws CosmoDavException {
-        if (! exists()) {
+    public MultiStatusResponse updateProperties(DavPropertySet setProperties, DavPropertyNameSet removePropertyNames)
+            throws CosmoDavException {
+        if (!exists()) {
             throw new NotFoundException();
         }
 
@@ -260,10 +240,10 @@ public abstract class DavResourceBase
         DavPropertyName failed = null;
 
         org.apache.jackrabbit.webdav.property.DavProperty<?> property = null;
-        for (DavPropertyIterator i=setProperties.iterator(); i.hasNext();) {
+        for (DavPropertyIterator i = setProperties.iterator(); i.hasNext();) {
             try {
                 property = i.nextProperty();
-                setResourceProperty((WebDavProperty)property, false);
+                setResourceProperty((WebDavProperty) property, false);
                 df.add(property.getName());
                 msr.add(property.getName(), 200);
             } catch (CosmoDavException e) {
@@ -281,8 +261,7 @@ public abstract class DavResourceBase
         }
 
         DavPropertyName name = null;
-        for (DavPropertyNameIterator i=removePropertyNames.iterator();
-             i.hasNext();) {
+        for (DavPropertyNameIterator i = removePropertyNames.iterator(); i.hasNext();) {
             try {
                 name = (DavPropertyName) i.next();
                 removeResourceProperty(name);
@@ -316,19 +295,18 @@ public abstract class DavResourceBase
         return msr;
     }
 
-    public Report getReport(ReportInfo reportInfo)
-        throws CosmoDavException {
-        if (! exists()) {
+    public Report getReport(ReportInfo reportInfo) throws CosmoDavException {
+        if (!exists()) {
             throw new NotFoundException();
         }
 
-        if (! isSupportedReport(reportInfo)) {
+        if (!isSupportedReport(reportInfo)) {
             throw new UnprocessableEntityException("Unknown report " + reportInfo.getReportName());
         }
 
         try {
-        	return ReportType.getType(reportInfo).createReport(this, reportInfo);
-        } catch (DavException e){
+            return ReportType.getType(reportInfo).createReport(this, reportInfo);
+        } catch (DavException e) {
             if (e instanceof CosmoDavException) {
                 throw (CosmoDavException) e;
             }
@@ -351,11 +329,10 @@ public abstract class DavResourceBase
     }
 
     /**
-     * Determines whether or not the report indicated by the given
-     * report info is supported by this collection.
+     * Determines whether or not the report indicated by the given report info is supported by this collection.
      */
     protected boolean isSupportedReport(ReportInfo info) {
-        for (Iterator<ReportType> i=getReportTypes().iterator(); i.hasNext();) {
+        for (Iterator<ReportType> i = getReportTypes().iterator(); i.hasNext();) {
             if (i.next().isRequestedReportType(info)) {
                 return true;
             }
@@ -364,7 +341,7 @@ public abstract class DavResourceBase
     }
 
     protected Set<ReportType> getReportTypes() {
-     return REPORT_TYPES;
+        return REPORT_TYPES;
     }
 
     /**
@@ -374,29 +351,12 @@ public abstract class DavResourceBase
 
     /**
      * <p>
-     * Returns the set of privileges granted on the resource to the current
-     * principal.
-     * </p>
-     * <p>
-     * If the request is unauthenticated, returns an empty set. If the
-     * current principal is an admin user, returns {@link DavPrivilege#ALL}.
+     * Returns the set of privileges granted on the resource to the current principal. By default no privileges are
+     * returned. Sub classes will overwrite with proper privileges.
      * </p>
      */
     protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        HashSet<DavPrivilege> privileges = new HashSet<DavPrivilege>();
-
-        // anonymous access has no privileges
-        if (getSecurityManager().getSecurityContext().isAnonymous()) {
-            return privileges;
-        }
-
-        // all privileges are implied for admin users
-        if (getSecurityManager().getSecurityContext().isAdmin()) {
-            privileges.add(DavPrivilege.ALL);
-            return privileges;
-        }
-
-        return privileges;
+        return new HashSet<>();
     }
 
     /**
@@ -404,8 +364,7 @@ public abstract class DavResourceBase
      * Registers the name of a live property.
      * </p>
      * <p>
-     * Typically used in subclass static initializers to add to the set
-     * of live properties for the resource.
+     * Typically used in subclass static initializers to add to the set of live properties for the resource.
      * </p>
      */
     protected static void registerLiveProperty(DavPropertyName name) {
@@ -418,17 +377,13 @@ public abstract class DavResourceBase
     protected abstract Set<QName> getResourceTypes();
 
     /**
-     * Determines whether or not the given property name identifies a
-     * live property.
+     * Determines whether or not the given property name identifies a live property.
      * 
-     * If the server understands the semantic meaning of a property
-     * (probably because the property is defined in a DAV-related
-     * specification somewhere), then the property is defined as
-     * "live". Live properties are typically explicitly represented in the
-     * object model.
+     * If the server understands the semantic meaning of a property (probably because the property is defined in a
+     * DAV-related specification somewhere), then the property is defined as "live". Live properties are typically
+     * explicitly represented in the object model.
      *
-     * If the server does not know anything specific about the
-     * property (usually because it was defined by a particular
+     * If the server does not know anything specific about the property (usually because it was defined by a particular
      * client), then it is known as a "dead" property.
      */
     protected boolean isLiveProperty(DavPropertyName name) {
@@ -436,30 +391,27 @@ public abstract class DavResourceBase
     }
 
     /**
-     * Calls {@link #loadLiveProperties()} and {@link #loadDeadProperties()}
-     * to load the resource's properties from its backing state.
+     * Calls {@link #loadLiveProperties()} and {@link #loadDeadProperties()} to load the resource's properties from its
+     * backing state.
      */
     protected void loadProperties() {
         if (initialized) {
             return;
         }
-
         properties.add(new SupportedReportSet(getReportTypes()));
+
         properties.add(new Acl(getAcl()));
         properties.add(new CurrentUserPrivilegeSet(getCurrentPrincipalPrivileges()));
 
         loadLiveProperties(properties);
         loadDeadProperties(properties);
-
         initialized = true;
-    }    
+    }
 
     /**
-     * Calls {@link #setLiveProperty(WebDavProperty)} or
-     * {@link setDeadProperty(WebDavProperty)}.
+     * Calls {@link #setLiveProperty(WebDavProperty)} or {@link setDeadProperty(WebDavProperty)}.
      */
-    protected void setResourceProperty(WebDavProperty property, boolean create)
-        throws CosmoDavException {
+    protected void setResourceProperty(WebDavProperty property, boolean create) throws CosmoDavException {
         DavPropertyName name = property.getName();
         if (name.equals(SUPPORTEDREPORTSET)) {
             throw new ProtectedPropertyModificationException(name);
@@ -467,31 +419,27 @@ public abstract class DavResourceBase
 
         if (isLiveProperty(property.getName())) {
             setLiveProperty(property, create);
-        }
-        else { 
+        } else {
             setDeadProperty(property);
         }
-        
+
         properties.add(property);
     }
 
     /**
-     * Calls {@link #removeLiveProperty(DavPropertyName)} or
-     * {@link removeDeadProperty(DavPropertyName)}.
+     * Calls {@link #removeLiveProperty(DavPropertyName)} or {@link removeDeadProperty(DavPropertyName)}.
      */
-    protected void removeResourceProperty(DavPropertyName name)
-        throws CosmoDavException {
+    protected void removeResourceProperty(DavPropertyName name) throws CosmoDavException {
         if (name.equals(SUPPORTEDREPORTSET)) {
             throw new ProtectedPropertyModificationException(name);
         }
 
         if (isLiveProperty(name)) {
             removeLiveProperty(name);
-        }
-        else {         
+        } else {
             removeDeadProperty(name);
         }
-        
+
         properties.remove(name);
     }
 
@@ -503,36 +451,39 @@ public abstract class DavResourceBase
     /**
      * Sets a live DAV property on the resource.
      *
-     * @param property the property to set
+     * @param property
+     *            the property to set
      *
-     * @throws CosmoDavException if the property is protected
-     * or if a null value is specified for a property that does not
-     * accept them or if an invalid value is specified
+     * @throws CosmoDavException
+     *             if the property is protected or if a null value is specified for a property that does not accept them
+     *             or if an invalid value is specified
      */
- /*   protected abstract void setLiveProperty(WebDavProperty property)
-        throws CosmoDavException;*/
-    
+    /*
+     * protected abstract void setLiveProperty(WebDavProperty property) throws CosmoDavException;
+     */
+
     /**
      * Sets a live DAV property on the resource on resource initialization.
      *
-     * @param property the property to set
+     * @param property
+     *            the property to set
      *
-     * @throws CosmoDavException if the property is protected
-     * or if a null value is specified for a property that does not
-     * accept them or if an invalid value is specified
+     * @throws CosmoDavException
+     *             if the property is protected or if a null value is specified for a property that does not accept them
+     *             or if an invalid value is specified
      */
-    protected abstract void setLiveProperty(WebDavProperty property, boolean create)
-        throws CosmoDavException;
+    protected abstract void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException;
 
     /**
      * Removes a live DAV property from the resource.
      *
-     * @param name the name of the property to remove
+     * @param name
+     *            the name of the property to remove
      *
-     * @throws CosmoDavException if the property is protected
+     * @throws CosmoDavException
+     *             if the property is protected
      */
-    protected abstract void removeLiveProperty(DavPropertyName name)
-        throws CosmoDavException;
+    protected abstract void removeLiveProperty(DavPropertyName name) throws CosmoDavException;
 
     /**
      */
@@ -541,33 +492,34 @@ public abstract class DavResourceBase
     /**
      * Sets a dead DAV property on the resource.
      *
-     * @param property the property to set
+     * @param property
+     *            the property to set
      *
-     * @throws CosmoDavException if a null value is specified for a property that
-     * does not accept them or if an invalid value is specified
+     * @throws CosmoDavException
+     *             if a null value is specified for a property that does not accept them or if an invalid value is
+     *             specified
      */
-    protected abstract void setDeadProperty(WebDavProperty property)
-        throws CosmoDavException;
+    protected abstract void setDeadProperty(WebDavProperty property) throws CosmoDavException;
 
     /**
      * Removes a dead DAV property from the resource.
      *
-     * @param name the name of the property to remove
+     * @param name
+     *            the name of the property to remove
      */
-    protected abstract void removeDeadProperty(DavPropertyName name)
-        throws CosmoDavException;
-    
-    public OptionsResponse getOptionResponse(OptionsInfo optionsInfo){
-    	return null;
+    protected abstract void removeDeadProperty(DavPropertyName name) throws CosmoDavException;
+
+    public OptionsResponse getOptionResponse(OptionsInfo optionsInfo) {
+        return null;
     }
 
     @Override
     public void addWorkspace(org.apache.jackrabbit.webdav.DavResource workspace) {
-    	
+
     }
-    
+
     @Override
     public WebDavResource[] getReferenceResources(DavPropertyName hrefPropertyName) {
-    	return new WebDavResource[]{};
+        return new WebDavResource[] {};
     }
 }

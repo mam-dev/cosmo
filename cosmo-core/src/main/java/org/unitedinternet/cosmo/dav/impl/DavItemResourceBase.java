@@ -67,7 +67,6 @@ import org.unitedinternet.cosmo.dav.property.ResourceType;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.property.Uuid;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
-import org.unitedinternet.cosmo.dav.ticket.property.TicketDiscovery;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -123,7 +122,6 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         registerLiveProperty(OWNER);
         registerLiveProperty(PRINCIPALCOLLECTIONSET);
         registerLiveProperty(UUID);
-        registerLiveProperty(TICKETDISCOVERY);
     }
 
     public DavItemResourceBase(Item item, DavResourceLocator locator,
@@ -597,7 +595,6 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         properties.add(new IsCollection(isCollection()));
         properties.add(new Owner(getResourceLocator(), item.getOwner()));
         properties.add(new PrincipalCollectionSet(getResourceLocator()));
-        properties.add(new TicketDiscovery(getResourceLocator(), getTickets()));
         properties.add(new Uuid(item.getUid()));
     }
 
@@ -619,7 +616,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
                 || name.equals(DavPropertyName.RESOURCETYPE)
                 || name.equals(DavPropertyName.ISCOLLECTION)
                 || name.equals(OWNER) || name.equals(PRINCIPALCOLLECTIONSET)
-                || name.equals(TICKETDISCOVERY) || name.equals(UUID)) {
+                || name.equals(UUID)) {
             throw new ProtectedPropertyModificationException(name);
         }
 
@@ -641,7 +638,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
                 || name.equals(DavPropertyName.RESOURCETYPE)
                 || name.equals(DavPropertyName.ISCOLLECTION)
                 || name.equals(OWNER) || name.equals(PRINCIPALCOLLECTIONSET)
-                || name.equals(TICKETDISCOVERY) || name.equals(UUID)) {
+                || name.equals(UUID)) {
             throw new ProtectedPropertyModificationException(name);
         }
 

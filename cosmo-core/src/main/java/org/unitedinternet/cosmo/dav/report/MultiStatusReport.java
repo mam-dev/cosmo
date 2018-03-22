@@ -15,8 +15,6 @@
  */
 package org.unitedinternet.cosmo.dav.report;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavServletResponse;
 import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -30,8 +28,6 @@ import org.w3c.dom.Element;
  * Base class for WebDAV reports that return multistatus responses.
  */
 public abstract class MultiStatusReport extends ReportBase {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(MultiStatusReport.class);
 
     private MultiStatus multistatus = new MultiStatus();
     private int propfindType = PROPFIND_ALL_PROP;
@@ -45,12 +41,10 @@ public abstract class MultiStatusReport extends ReportBase {
 
     // our methods
 
-
     /**
      * Generates and writes the multistatus response.
      */
-    protected void output(DavServletResponse response)
-            throws CosmoDavException {
+    protected void output(DavServletResponse response) throws CosmoDavException {
         try {
             buildMultistatus();
             response.sendXmlResponse(multistatus, 207);
@@ -61,12 +55,10 @@ public abstract class MultiStatusReport extends ReportBase {
 
     public final void buildMultistatus() throws CosmoDavException {
 
-        DavPropertyNameSet resultProps = createResultPropSpec();
-
-        for (WebDavResource result : getResults()) {
-            MultiStatusResponse msr =
-                    buildMultiStatusResponse(result, resultProps);
-            multistatus.addResponse(msr);
+        DavPropertyNameSet resultProps = this.createResultPropSpec();
+        for (WebDavResource resource : this.getResults()) {
+            MultiStatusResponse response = this.buildMultiStatusResponse(resource, resultProps);
+            multistatus.addResponse(response);
         }
     }
 
@@ -75,19 +67,15 @@ public abstract class MultiStatusReport extends ReportBase {
     }
 
     /**
-     * Returns a <code>MultiStatusResponse</code> describing the
-     * specified resource including the specified properties.
+     * Returns a <code>MultiStatusResponse</code> describing the specified resource including the specified properties.
      */
-    protected MultiStatusResponse
-    buildMultiStatusResponse(WebDavResource resource,
-                             DavPropertyNameSet props)
+    protected MultiStatusResponse buildMultiStatusResponse(WebDavResource resource, DavPropertyNameSet props)
             throws CosmoDavException {
         if (props.isEmpty()) {
-            String href = resource.getResourceLocator().
-                    getHref(resource.isCollection());
+            String href = resource.getResourceLocator().getHref(resource.isCollection());
             return new MultiStatusResponse(href, 200);
         }
-        return new MultiStatusResponse(resource, props, propfindType);
+	return new MultiStatusResponse(resource, props, this.propfindType);
     }
 
     protected MultiStatus getMultiStatus() {

@@ -20,12 +20,16 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.VEvent;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -33,9 +37,8 @@ import org.unitedinternet.cosmo.model.StampUtils;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 
 /**
- * Extends <code>DavCalendarResource</code> to adapt the Cosmo
- * <code>ContentItem</code> with an <code>EventStamp</code> to 
- * the DAV resource model.
+ * Extends <code>DavCalendarResource</code> to adapt the Cosmo <code>ContentItem</code> with an <code>EventStamp</code>
+ * to the DAV resource model.
  *
  * This class does not define any live properties.
  *
@@ -43,22 +46,16 @@ import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
  */
 public class DavEvent extends DavCalendarResource {
 
-
     /** */
-    public DavEvent(DavResourceLocator locator,
-                    DavResourceFactory factory,
-                    EntityFactory entityFactory)
-        throws CosmoDavException {
+    public DavEvent(DavResourceLocator locator, DavResourceFactory factory, EntityFactory entityFactory)
+            throws CosmoDavException {
         this(entityFactory.createNote(), locator, factory, entityFactory);
         getItem().addStamp(entityFactory.createEventStamp((NoteItem) getItem()));
     }
-    
+
     /** */
-    public DavEvent(NoteItem item,
-                    DavResourceLocator locator,
-                    DavResourceFactory factory,
-                    EntityFactory entityFactory)
-        throws CosmoDavException {
+    public DavEvent(NoteItem item, DavResourceLocator locator, DavResourceFactory factory, EntityFactory entityFactory)
+            throws CosmoDavException {
         super(item, locator, factory, entityFactory);
     }
 
@@ -68,20 +65,19 @@ public class DavEvent extends DavCalendarResource {
      * Returns the calendar object associated with this resource.
      */
     public Calendar getCalendar() {
-        Calendar calendar = new EntityConverter(null).convertNote((NoteItem)getItem());
+        Calendar calendar = new EntityConverter(null).convertNote((NoteItem) getItem());
         // run through client filter because unfortunatley
         // all clients don't adhere to the spec
         getClientFilterManager().filterCalendar(calendar);
         return calendar;
     }
-    
+
     public EventStamp getEventStamp() {
         return StampUtils.getEventStamp(getItem());
     }
 
-    protected void setCalendar(Calendar calendar)
-        throws CosmoDavException {
-        
+    protected void setCalendar(Calendar calendar) throws CosmoDavException {
+
         ComponentList<VEvent> vevents = calendar.getComponents(Component.VEVENT);
         if (vevents.isEmpty()) {
             throw new UnprocessableEntityException("VCALENDAR does not contain any VEVENTs");
@@ -93,8 +89,8 @@ public class DavEvent extends DavCalendarResource {
     @Override
     public boolean isCollection() {
         return false;
-    }   
-    
+    }
+
     /**
      * this method is added as an extension to cosmo, to allow updating an event based on ticket auth.
      * 
@@ -103,13 +99,19 @@ public class DavEvent extends DavCalendarResource {
      * @throws CosmoDavException
      */
     public void updateContent(DavContent content, InputContext context) throws CosmoDavException {
-        if(!(content instanceof DavContentBase)){
-            throw new IllegalArgumentException("Expected type for 'content' member :[" + DavContentBase.class.getName()+"]");
+        if (!(content instanceof DavContentBase)) {
+            throw new IllegalArgumentException(
+                    "Expected type for 'content' member :[" + DavContentBase.class.getName() + "]");
         }
-        
+
         DavContentBase base = (DavContentBase) content;
         base.populateItem(context);
         updateItem();
     }
-    
+
+    @Override
+    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
+        // Do not handle privileges at event level but at collection level.
+        return Collections.emptySet();
+    }
 }
