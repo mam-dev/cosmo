@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.query.Query;
 import org.hibernate.query.internal.QueryImpl;
+import org.springframework.transaction.annotation.Transactional;
 import org.hibernate.Session;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.calendar.Instance;

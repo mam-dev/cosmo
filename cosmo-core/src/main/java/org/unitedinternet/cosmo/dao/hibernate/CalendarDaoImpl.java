@@ -58,7 +58,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
     private EntityConverter entityConverter = new EntityConverter(null);
 
     /*
-     * TODO Note that this method is used for CalDav REPORT and it needs to be properly implemented
+     * Note that this method is used for CalDav REPORT and it needs to be properly implemented
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -67,10 +67,24 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
             CalendarFilterConverter filterConverter = new CalendarFilterConverter();
             try {
                 if (collection instanceof HibCollectionItem) {
-                    // Translate CalendarFilter to ItemFilter and execute filter. This does not make sense for external collections which are
+                    /*
+                     * Translate CalendarFilter to ItemFilter and execute filter. This does not make sense for external
+                     * collections which are
+                     */
                     ItemFilter itemFilter = filterConverter.translateToItemFilter(collection, filter);
                     Set results = itemFilterProcessor.processFilter(itemFilter);
-                    return (Set<ICalendarItem>) results;
+                    Set<ICalendarItem> toReturn = (Set<ICalendarItem>) results;
+
+                    /*
+                     * Trigger the loading of lazy members and then clear the session so that Hibernate objects become
+                     * GC eligible.
+                     */
+                    collection.getChildren();
+                    for (ICalendarItem item : toReturn) {
+                        item.getParents();
+                    }
+                    this.getSession().clear();
+                    return toReturn;
                 }
             } catch (Exception e) {
                 /* Set this log message to debug because all iPad requests trigger it and log files get polluted. */
@@ -78,21 +92,10 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
             }
             /*
              * Use brute-force method if CalendarFilter can't be translated to an ItemFilter (slower but at least gets
-             * the job done).
+             * the job done). // TODO Check to see if this branch is really used in CalDAV clients.
              */
             Set<ICalendarItem> results = new HashSet<ICalendarItem>();
             Set<Item> itemsToProcess = collection.getChildren();
-
-            /*
-             * Optimization: Do a first pass query if possible to reduce the number of items that needs to be examined.
-             * Otherwise we have to examine all items.
-             */
-            /* TODO Left only for historical reasons.
-             * ItemFilter firstPassItemFilter = filterConverter.getFirstPassFilter(collection, filter); if
-             * (firstPassItemFilter != null) { itemsToProcess = itemFilterProcessor.processFilter(firstPassItemFilter);
-             * } else { itemsToProcess = collection.getChildren(); }
-             */
-            
             CalendarFilterEvaluater evaluater = new CalendarFilterEvaluater();
 
             // Evaluate filter against all calendar items
@@ -116,13 +119,8 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.CalendarDao#findEvents(org.unitedinternet.cosmo.model.CollectionItem,
-     * net.fortuna.ical4j.model.DateTime, net.fortuna.ical4j.model.DateTime, boolean)
-     */
+
+    @Override
     public Set<Item> findEvents(CollectionItem collection, Date rangeStart, Date rangeEnd, String timezoneId,
             boolean expandRecurringEvents) {
 
@@ -143,25 +141,21 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         itemFilter.getStampFilters().add(eventFilter);
 
         try {
-            return  itemFilterProcessor.processFilter(itemFilter);            
+            return itemFilterProcessor.processFilter(itemFilter);
         } catch (HibernateException e) {
             getSession().clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.CalendarDao#findEventByIcalUid(java.lang.String,
-     * org.unitedinternet.cosmo.model.CollectionItem)
-     */
+    @Override
     public ContentItem findEventByIcalUid(String uid, CollectionItem calendar) {
-        try {            
-            Query<ContentItem> query = this.getSession().createNamedQuery("event.by.calendar.icaluid", ContentItem.class);
+        try {
+            Query<ContentItem> query = this.getSession().createNamedQuery("event.by.calendar.icaluid",
+                    ContentItem.class);
             query.setParameter("calendar", calendar);
             query.setParameter("uid", uid);
-            List<ContentItem> resultList  = query.getResultList();
+            List<ContentItem> resultList = query.getResultList();
             if (!resultList.isEmpty()) {
                 return resultList.get(0);
             }
@@ -184,7 +178,6 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
      * Initializes the DAO, sanity checking required properties and defaulting optional properties.
      */
     public void init() {
-
         if (itemFilterProcessor == null) {
             throw new IllegalStateException("itemFilterProcessor is required");
         }
