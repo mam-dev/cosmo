@@ -55,10 +55,9 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
      * (non-Javadoc)
      * 
      * @see org.unitedinternet.cosmo.dao.ContentDao#createCollection(org.unitedinternet.cosmo.model.CollectionItem,
-     *      org.unitedinternet.cosmo.model.CollectionItem)
+     * org.unitedinternet.cosmo.model.CollectionItem)
      */
-    public CollectionItem createCollection(CollectionItem parent,
-                                           CollectionItem collection) {
+    public CollectionItem createCollection(CollectionItem parent, CollectionItem collection) {
 
         if (parent == null) {
             throw new IllegalArgumentException("parent cannot be null");
@@ -75,7 +74,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         if (getBaseModelObject(collection).getId() != -1) {
             throw new IllegalArgumentException("invalid collection id (expected -1)");
         }
-
 
         try {
             // verify uid not in use
@@ -96,10 +94,12 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw cve;
         }
     }
-    
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ContentDao#updateCollection(org.unitedinternet.cosmo.model.CollectionItem, java.util.Set, java.util.Map)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.unitedinternet.cosmo.dao.ContentDao#updateCollection(org.unitedinternet.cosmo.model.CollectionItem,
+     * java.util.Set, java.util.Map)
      */
 
     /**
@@ -108,7 +108,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     public CollectionItem updateCollection(CollectionItem collection, Set<ContentItem> children) {
 
         // Keep track of duplicate icalUids because we don't flush
-        // the db until the end so we need to handle the case of 
+        // the db until the end so we need to handle the case of
         // duplicate icalUids in the same request.
         HashMap<String, NoteItem> icalUidMap = new HashMap<String, NoteItem>();
 
@@ -120,17 +120,14 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
                 // Because we batch all the db operations, we must check
                 // for duplicate icalUid within the same request
-                if (item instanceof NoteItem
-                        && ((NoteItem) item).getIcalUid() != null) {
+                if (item instanceof NoteItem && ((NoteItem) item).getIcalUid() != null) {
                     NoteItem note = (NoteItem) item;
                     if (item.getIsActive() == true) {
                         NoteItem dup = icalUidMap.get(note.getIcalUid());
                         if (dup != null && !dup.getUid().equals(item.getUid())) {
-                            throw new IcalUidInUseException("iCal uid"
-                                    + note.getIcalUid()
-                                    + " already in use for collection "
-                                    + collection.getUid(), item.getUid(), dup
-                                    .getUid());
+                            throw new IcalUidInUseException("iCal uid" + note.getIcalUid()
+                                    + " already in use for collection " + collection.getUid(), item.getUid(),
+                                    dup.getUid());
                         }
                     }
 
@@ -144,7 +141,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
                 // delete item
                 else if (item.getIsActive() == false) {
                     // If item is a note modification, only remove the item
-                    // if its parent is not also being removed.  This is because
+                    // if its parent is not also being removed. This is because
                     // when a master item is removed, all its modifications are
                     // removed.
                     if (item instanceof NoteItem) {
@@ -190,7 +187,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         }
     }
 
-
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
 
@@ -211,12 +207,12 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
      * (non-Javadoc)
      * 
      * @see org.unitedinternet.cosmo.dao.ContentDao#createBatchContent(org.unitedinternet.cosmo.model.CollectionItem,
-     *      java.util.Set)
+     * java.util.Set)
      */
     public void createBatchContent(CollectionItem parent, Set<ContentItem> contents) {
-        
+
         try {
-            for(ContentItem content : contents) {
+            for (ContentItem content : contents) {
                 createContentInternal(parent, content);
             }
             getSession().flush();
@@ -229,7 +225,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw cve;
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -237,7 +233,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
      */
     public void updateBatchContent(Set<ContentItem> contents) {
         try {
-            for(ContentItem content : contents) {
+            for (ContentItem content : contents) {
                 updateContentInternal(content);
             }
             getSession().flush();
@@ -254,11 +250,11 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
      * (non-Javadoc)
      * 
      * @see org.unitedinternet.cosmo.dao.ContentDao#removeBatchContent(org.unitedinternet.cosmo.model.CollectionItem,
-     *      java.util.Set)
+     * java.util.Set)
      */
     public void removeBatchContent(CollectionItem parent, Set<ContentItem> contents) {
         try {
-            for(ContentItem content : contents) {
+            for (ContentItem content : contents) {
                 removeItemFromCollectionInternal(content, parent);
             }
             getSession().flush();
@@ -270,11 +266,12 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw cve;
         }
     }
-    
-    
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ContentDao#createContent(java.util.Set, org.unitedinternet.cosmo.model.ContentItem)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.unitedinternet.cosmo.dao.ContentDao#createContent(java.util.Set,
+     * org.unitedinternet.cosmo.model.ContentItem)
      */
     public ContentItem createContent(Set<CollectionItem> parents, ContentItem content) {
 
@@ -290,16 +287,19 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw cve;
         }
     }
-    
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ContentDao#updateCollectionTimestamp(org.unitedinternet.cosmo.model.CollectionItem)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.unitedinternet.cosmo.dao.ContentDao#updateCollectionTimestamp(org.unitedinternet.cosmo.model.CollectionItem)
      */
 
     /**
      * Updates collection timestamp.
      *
-     * @param collection The timestamp of this collection needs to be updated.
+     * @param collection
+     *            The timestamp of this collection needs to be updated.
      * @return The new collection item updated.
      */
     public CollectionItem updateCollectionTimestamp(CollectionItem collection) {
@@ -315,8 +315,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -326,7 +325,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     /**
      * Updates collection.
      *
-     * @param collection The updated collection.
+     * @param collection
+     *            The updated collection.
      */
     public CollectionItem updateCollection(CollectionItem collection) {
         try {
@@ -353,7 +353,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     /**
      * Updates content item.
      *
-     * @param content The content that needs to be updated.
+     * @param content
+     *            The content that needs to be updated.
      * @return The updated content.
      */
     public ContentItem updateContent(ContentItem content) {
@@ -379,7 +380,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     /**
      * Removes the collection given.
      *
-     * @param collection The collection that needs to be removed.
+     * @param collection
+     *            The collection that needs to be removed.
      */
     public void removeCollection(CollectionItem collection) {
 
@@ -406,7 +408,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     /**
      * Removes the content given.
      *
-     * @param content The content item that need to be removed.
+     * @param content
+     *            The content item that need to be removed.
      */
     public void removeContent(ContentItem content) {
 
@@ -423,16 +426,18 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.dao.ContentDao#removeUserContent(org.unitedinternet.cosmo.model.User)
      */
 
     /**
      * Removes user content.
      *
-     * @param user The content of the user needs to be removed.
+     * @param user
+     *            The content of the user needs to be removed.
      */
     public void removeUserContent(User user) {
         try {
@@ -449,9 +454,11 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         }
     }
 
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ContentDao#loadChildren(org.unitedinternet.cosmo.model.CollectionItem, java.util.Date)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.unitedinternet.cosmo.dao.ContentDao#loadChildren(org.unitedinternet.cosmo.model.CollectionItem,
+     * java.util.Date)
      */
     public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
         try {
@@ -460,16 +467,15 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
             // use custom HQL query that will eager fetch all associations
             if (timestamp == null) {
-                query = getSession().createNamedQuery("contentItem.by.parent", ContentItem.class)
-                        .setParameter("parent", collection);
+                query = getSession().createNamedQuery("contentItem.by.parent", ContentItem.class).setParameter("parent",
+                        collection);
             } else {
                 query = getSession().createNamedQuery("contentItem.by.parent.timestamp", ContentItem.class)
-                        .setParameter("parent", collection).setParameter(
-                                "timestamp", timestamp);
+                        .setParameter("parent", collection).setParameter("timestamp", timestamp);
             }
             query.setFlushMode(FlushMode.MANUAL);
             List<ContentItem> results = query.getResultList();
-            for (ContentItem content : results) {                 
+            for (ContentItem content : results) {
                 initializeItem(content);
                 children.add(content);
             }
@@ -479,7 +485,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-
 
     @Override
     public void initializeItem(Item item) {
@@ -512,7 +517,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         }
     }
 
-
     @Override
     public void removeItemByPath(String path) {
         Item item = this.findItemByPath(path);
@@ -536,7 +540,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             super.removeItem(item);
         }
     }
-
 
     private void removeContentRecursive(ContentItem content) {
         removeContentCommon(content);
@@ -571,7 +574,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
     private void removeCollectionRecursive(CollectionItem collection) {
         // Removing a collection does not automatically remove
-        // its children.  Instead, the association to all the
+        // its children. Instead, the association to all the
         // children is removed, and any children who have no
         // parent collection are then removed.
         removeItemsFromCollection(collection);
@@ -582,13 +585,14 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     @Override
     public void removeItemsFromCollection(CollectionItem collection) {
         // faster way to delete all calendar items but requires cascade delete on FK at DB
-/*        Long collectionId = ((HibCollectionItem)collection).getId();
-        String deleteAllQuery = "delete from HibContentItem item where item.id in " +
-        		" (select collItem.primaryKey.item.id from HibCollectionItemDetails collItem "+
-                 " where collItem.primaryKey.collection.id=:collectionId)";
-        getSession().createQuery(deleteAllQuery).setLong("collectionId", collectionId).executeUpdate();
-*/
-       for (Item item : collection.getChildren()) {
+        /*
+         * Long collectionId = ((HibCollectionItem)collection).getId(); String deleteAllQuery =
+         * "delete from HibContentItem item where item.id in " +
+         * " (select collItem.primaryKey.item.id from HibCollectionItemDetails collItem "+
+         * " where collItem.primaryKey.collection.id=:collectionId)";
+         * getSession().createQuery(deleteAllQuery).setLong("collectionId", collectionId).executeUpdate();
+         */
+        for (Item item : collection.getChildren()) {
             if (item instanceof CollectionItem) {
                 removeCollectionRecursive((CollectionItem) item);
             } else if (item instanceof ContentItem) {
@@ -626,7 +630,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
     }
 
-
     protected void createContentInternal(CollectionItem parent, ContentItem content) {
 
         if (parent == null) {
@@ -655,7 +658,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
         setBaseItemProps(content);
 
-
         // When a note modification is added, it must be added to all
         // collections that the parent note is in, because a note modification's
         // parents are tied to the parent note.
@@ -667,9 +669,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             note.getModifies().addModification(note);
 
             if (!note.getModifies().getParents().contains(parent)) {
-                throw new ModelValidationException(note, "cannot create modification "
-                        + note.getUid() + " in collection " + parent.getUid()
-                        + ", master must be created or added first");
+                throw new ModelValidationException(note, "cannot create modification " + note.getUid()
+                        + " in collection " + parent.getUid() + ", master must be created or added first");
             }
 
             // Add modification to all parents of master
@@ -688,7 +689,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
                 getSession().update(parent);
             }
         }
-
 
         getSession().save(content);
     }
@@ -725,7 +725,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
         setBaseItemProps(content);
 
-        // Ensure NoteItem modifications have the same parents as the 
+        // Ensure NoteItem modifications have the same parents as the
         // master note.
         if (isNoteModification(content)) {
             NoteItem note = (NoteItem) content;
@@ -744,10 +744,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
                     masterParents.append(p.getUid() + ",");
                 }
                 throw new ModelValidationException(note,
-                        "cannot create modification " + note.getUid()
-                                + " in collections " + modParents.toString()
-                                + " because master's parents are different: "
-                                + masterParents.toString());
+                        "cannot create modification " + note.getUid() + " in collections " + modParents.toString()
+                                + " because master's parents are different: " + masterParents.toString());
             }
         }
 
@@ -757,7 +755,6 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
                 getSession().update(parent);
             }
         }
-
 
         getSession().save(content);
     }
@@ -801,19 +798,17 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     }
 
     /**
-     * Override so we can handle NoteItems. Adding a note to a collection
-     * requires verifying that the icaluid is unique within the collection.
+     * Override so we can handle NoteItems. Adding a note to a collection requires verifying that the icaluid is unique
+     * within the collection.
      */
     @Override
-    protected void addItemToCollectionInternal(Item item,
-                                               CollectionItem collection) {
+    protected void addItemToCollectionInternal(Item item, CollectionItem collection) {
 
         // Don't allow note modifications to be added to a collection
         // When a master is added, all the modifications are added
         if (isNoteModification(item)) {
-            throw new ModelValidationException(item, "cannot add modification "
-                    + item.getUid() + " to collection " + collection.getUid()
-                    + ", only master");
+            throw new ModelValidationException(item, "cannot add modification " + item.getUid() + " to collection "
+                    + collection.getUid() + ", only master");
         }
 
         if (item instanceof ICalendarItem) {
@@ -836,8 +831,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         if (item instanceof NoteItem) {
             // When a note modification is removed, it is really removed from
             // all collections because a modification can't live in one collection
-            // and not another.  It is tied to the collections that the master
-            // note is in.  Therefore you can't just remove a modification from
+            // and not another. It is tied to the collections that the master
+            // note is in. Therefore you can't just remove a modification from
             // a single collection when the master note is in multiple collections.
             NoteItem note = (NoteItem) item;
             if (note.getModifies() != null) {
@@ -866,16 +861,16 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         // Lookup item by parent/icaluid
         Query<Long> query = null;
         if (item instanceof NoteItem) {
-            query = getSession().createNamedQuery(
-                    "noteItemId.by.parent.icaluid", Long.class).setParameter("parentid",
-                    getBaseModelObject(parent).getId()).setParameter("icaluid", item.getIcalUid());
+            query = getSession().createNamedQuery("noteItemId.by.parent.icaluid", Long.class)
+                    .setParameter("parentid", getBaseModelObject(parent).getId())
+                    .setParameter("icaluid", item.getIcalUid());
         } else {
-            query = getSession().createNamedQuery(
-                    "icalendarItem.by.parent.icaluid", Long.class).setParameter("parentid",
-                    getBaseModelObject(parent).getId()).setParameter("icaluid", item.getIcalUid());
+            query = getSession().createNamedQuery("icalendarItem.by.parent.icaluid", Long.class)
+                    .setParameter("parentid", getBaseModelObject(parent).getId())
+                    .setParameter("icaluid", item.getIcalUid());
         }
         query.setFlushMode(FlushMode.MANUAL);
-        
+
         Long itemId = null;
         List<Long> idList = query.getResultList();
         if (!idList.isEmpty()) {
@@ -887,23 +882,22 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             // If the note is new, then its a duplicate icaluid
             if (getBaseModelObject(item).getId() == -1) {
                 Item dup = (Item) getSession().load(HibItem.class, itemId);
-                throw new IcalUidInUseException("iCal uid" + item.getIcalUid()
-                        + " already in use for collection " + parent.getUid(),
+                throw new IcalUidInUseException(
+                        "iCal uid" + item.getIcalUid() + " already in use for collection " + parent.getUid(),
                         item.getUid(), dup.getUid());
             }
             // If the note exists and there is another note with the same
             // icaluid, then its a duplicate icaluid
             if (getBaseModelObject(item).getId().equals(itemId)) {
                 Item dup = (Item) getSession().load(HibItem.class, itemId);
-                throw new IcalUidInUseException("iCal uid" + item.getIcalUid()
-                        + " already in use for collection " + parent.getUid(),
+                throw new IcalUidInUseException(
+                        "iCal uid" + item.getIcalUid() + " already in use for collection " + parent.getUid(),
                         item.getUid(), dup.getUid());
             }
         }
     }
 
-    protected void checkForDuplicateICalUid(ICalendarItem item,
-                                            Set<CollectionItem> parents) {
+    protected void checkForDuplicateICalUid(ICalendarItem item, Set<CollectionItem> parents) {
 
         if (item.getIcalUid() == null) {
             return;
@@ -927,10 +921,25 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         return ((NoteItem) item).getModifies() != null;
     }
 
-
     @Override
     public void destroy() {
 
+    }
+
+    @Override
+    public long countItems(long ownerId, long fromTimestamp) {
+        return this.getSession()
+                .createQuery("SELECT count(i) from HibNoteItem i "
+                        + "WHERE i.owner.id=:ownerId AND i.creationDate >:fromTimestamp", Long.class)
+                .setParameter("ownerId", ownerId).setParameter("fromTimestamp", new Date(fromTimestamp))
+                .getSingleResult();
+    }
+
+    @Override
+    public long countItems(long ownerId) {
+        return this.getSession()
+                .createQuery("SELECT count(i) from HibNoteItem i " + "WHERE i.owner.id=:ownerId", Long.class)
+                .setParameter("ownerId", ownerId).getSingleResult();
     }
 
 }

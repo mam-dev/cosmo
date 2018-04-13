@@ -465,5 +465,14 @@ public class ContentDaoExternal implements ContentDao {
     public void removeItemsFromCollection(CollectionItem collection) {
         throw new UnsupportedOperationException();
     }
-
+    
+    @Override
+    public long countItems(long ownerId) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public long countItems(long ownerId, long fromTimestamp) {
+        throw new UnsupportedOperationException();
+    }
 }
