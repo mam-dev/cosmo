@@ -18,7 +18,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>2.1.2-SNAPSHOT</version>
+	<version>2.1.2</version>
 
 	<packaging>pom</packaging>
 
@@ -609,7 +609,7 @@
 		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 		<url>https://github.com/1and1/</url>
-		<tag>cosmo-multimodule-1.5.3</tag>
+		<tag>cosmo-multimodule-2.1.2</tag>
 	</scm>
 	
 	<repositories>
