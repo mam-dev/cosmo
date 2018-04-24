@@ -40,8 +40,6 @@ import com.google.common.base.Strings;
 
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.DtEnd;
-import net.fortuna.ical4j.model.property.DtStart;
 
 /**
  * <code>ContentDao</code> that fetches calendar content from external providers.
@@ -248,8 +246,8 @@ public class ContentDaoExternal implements ContentDao {
             }
 
             EventStampFilter eventFilter = (EventStampFilter) stampFilter;
-            Date dtStart = new DtStart(vEvent.getStartDate().getValue(), eventFilter.getTimezone()).getDate();
-            Date dtEnd = new DtEnd(vEvent.getEndDate().getValue(), eventFilter.getTimezone()).getDate();
+            Date dtStart = vEvent.getStartDate().getDate();
+            Date dtEnd = vEvent.getEndDate().getDate();
             Date filterStartDate = new DateTime(eventFilter.getUTCStart());
             Date filterEndDate = new DateTime(eventFilter.getUTCEnd());
             if (dtStart.after(filterEndDate) || dtStart.equals(filterEndDate) || dtEnd.before(filterStartDate)
