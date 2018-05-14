@@ -40,6 +40,7 @@ import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
+import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
@@ -82,6 +83,11 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
                     collection.getChildren();
                     for (ICalendarItem item : toReturn) {
                         item.getParents();
+                        item.getStamps().size();
+                        if (item instanceof HibNoteItem)  {
+                            HibNoteItem note = (HibNoteItem) item;
+                            note.getModifications().size();
+                        }
                     }
                     this.getSession().clear();
                     return toReturn;
