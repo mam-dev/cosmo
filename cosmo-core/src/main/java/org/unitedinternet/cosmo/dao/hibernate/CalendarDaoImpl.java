@@ -34,6 +34,7 @@ import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.filter.EventStampFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -84,9 +85,13 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
                     for (ICalendarItem item : toReturn) {
                         item.getParents();
                         item.getStamps().size();
-                        if (item instanceof HibNoteItem)  {
+                        if (item instanceof HibNoteItem) {
                             HibNoteItem note = (HibNoteItem) item;
-                            note.getModifications().size();
+                            if (note.getModifications().size() > 0) {
+                                for (NoteItem modif: note.getModifications()) {
+                                    modif.getStamps().size();
+                                }
+                            }
                         }
                     }
                     this.getSession().clear();
