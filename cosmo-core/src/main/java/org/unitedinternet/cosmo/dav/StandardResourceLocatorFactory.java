@@ -22,7 +22,7 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.model.User;
 
 /**
@@ -31,6 +31,7 @@ import org.unitedinternet.cosmo.model.User;
  *
  * @see DavResourceLocatorFactory
  */
+@Component
 public class StandardResourceLocatorFactory implements DavResourceLocatorFactory, ExtendedDavConstants {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(StandardResourceLocatorFactory.class);

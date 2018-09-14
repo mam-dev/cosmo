@@ -17,6 +17,7 @@ package org.unitedinternet.cosmo.dav;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
@@ -54,6 +55,7 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  * @see WebDavResource
  * @see Item
  */
+@Component
 public class StandardResourceFactory
     implements DavResourceFactory, ExtendedDavConstants{
     private static final Log LOG =  LogFactory.getLog(StandardResourceFactory.class);

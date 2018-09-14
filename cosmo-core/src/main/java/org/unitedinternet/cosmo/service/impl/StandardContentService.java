@@ -63,6 +63,7 @@ import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
  * @see ContentService
  * @see ContentDao
  */
+@org.springframework.stereotype.Component
 public class StandardContentService implements ContentService {
     private static final Log LOG =
         LogFactory.getLog(StandardContentService.class);

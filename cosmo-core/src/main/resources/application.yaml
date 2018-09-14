@@ -1,0 +1,13 @@
+server:
+  port: 8080
+  context-path: /cosmo
+spring:
+  application:
+    name: cosmo-webapp
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/cosmo?autoReconnect=true
+    username: cosmo
+    password: '*'
+    driver-class-name: org.mariadb.jdbc.Driver

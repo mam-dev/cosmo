@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BinaryAttribute;
@@ -53,6 +54,7 @@ import org.w3c.dom.Element;
 /**
  * EntityFactory implementation that uses Hibernate persistent objects.
  */
+@Component
 public class HibEntityFactory implements EntityFactory {
 
     private VersionFourGenerator idGenerator = new VersionFourGenerator();

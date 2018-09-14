@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
@@ -41,6 +42,7 @@ import org.unitedinternet.cosmo.service.UserService;
 /**
  * Standard implementation of {@link UserService}.
  */
+@Component
 public class StandardUserService extends BaseService implements UserService {
     private static final Log LOG = LogFactory.getLog(StandardUserService.class);
 

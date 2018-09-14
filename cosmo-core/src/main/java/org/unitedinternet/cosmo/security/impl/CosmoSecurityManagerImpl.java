@@ -38,12 +38,14 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.stereotype.Component;
 
 /**
  * The default implementation of the {@link CosmoSecurityManager}
  * interface that provides a {@link CosmoSecurityContext} from
  * security information contained in JAAS or Acegi Security.
  */
+@Component
 public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
     private static final Log LOG =
         LogFactory.getLog(CosmoSecurityManagerImpl.class);
