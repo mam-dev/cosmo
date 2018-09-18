@@ -17,6 +17,27 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>	
 
+
+	<properties>
+		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
+		<maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
+		<maven-clean-plugin.version>2.1.1</maven-clean-plugin.version>
+		<maven-war-plugin.version>2.2</maven-war-plugin.version>
+		<maven-assembly-plugin.version>2.2.2</maven-assembly-plugin.version>
+		<findbugs.suppressions.config.file>findbugs-suppressions.xml</findbugs.suppressions.config.file>
+		<maven-pmd-plugin.failOnViolation>false</maven-pmd-plugin.failOnViolation>
+
+		<jacoco.check.complexityRatio>0.34</jacoco.check.complexityRatio>
+		<jacoco.check.branchRatio>0.35</jacoco.check.branchRatio>
+		<jacoco.check.methodRatio>0.48</jacoco.check.methodRatio>
+		<jacoco.check.lineRatio>0.43</jacoco.check.lineRatio>
+		<jacoco.check.instructionRatio>0.42</jacoco.check.instructionRatio>
+		<jacoco.check.classRatio>0.66</jacoco.check.classRatio>
+
+
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
