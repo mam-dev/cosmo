@@ -32,8 +32,7 @@
 	</bean>
 
 	<bean id="abstractDao" class="org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl"
-		abstract="true">
-		<property name="sessionFactory" ref="sessionFactory" />
+		abstract="true">		
 	</bean>
 
 	<bean id="contentDaoInternal" parent="abstractDao"
@@ -60,47 +59,34 @@
 		<constructor-arg ref="entityConverter" />
 	</bean>
 
-	<bean id="proxyFactory" class="org.unitedinternet.cosmo.ext.ProxyFactoryBean">
-		<constructor-arg ref="externalComponentInstanceProvider" />
-	</bean>
-
 	<bean id="urlContentReader" class="org.unitedinternet.cosmo.ext.SimpleUrlContentReader">
-		<constructor-arg ref="contentConverter" />
-		<constructor-arg ref="proxyFactory" />
+		<constructor-arg ref="contentConverter" />		
 		<constructor-arg>
 			<bean id="validator"
 				class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 		</constructor-arg>
-		<constructor-arg value="${external.content.size}" />
-		<constructor-arg ref="externalComponentInstanceProvider" />
+		<constructor-arg value="${external.content.size}" />			
 	</bean>
 
 	<bean id="urlContentSource" class="org.unitedinternet.cosmo.ext.UrlContentSource">
 		<constructor-arg ref="urlContentReader" />
 		<constructor-arg value="${external.content.connection.timeout}" />
 	</bean>
-
-	<bean id="contentSourceFactory" class="org.unitedinternet.cosmo.ext.ContentSourceFactoryBean">
-		<constructor-arg ref="urlContentSource" />
-		<constructor-arg ref="externalComponentInstanceProvider" />
-	</bean>
-
+	
 	<bean id="contentDaoExternal"
 		class="org.unitedinternet.cosmo.dao.external.ContentDaoExternal">
-		<constructor-arg ref="contentDaoInternal" />
-		<constructor-arg ref="contentSourceFactory" />
+		<constructor-arg ref="urlContentSource" />
+		<constructor-arg ref="contentDaoInternal" />		
 		<constructor-arg ref="itemFilterProcessor" />
 	</bean>
 	
-	<bean id="freeBusyObfuscater" class="org.unitedinternet.cosmo.dao.subscription.FreeBusyObfuscaterFactoryBean">
-		<constructor-arg ref="externalComponentInstanceProvider"/>
-	</bean>
+	<bean id="freeBusyObfuscater" class="org.unitedinternet.cosmo.dao.subscription.FreeBusyObfuscaterDefault"/>
+		
 	
 	<bean id="contentDaoSub"
 		class="org.unitedinternet.cosmo.dao.subscription.ContentDaoSubscriptionImpl">
 		<constructor-arg ref="contentDaoInternal" />
-		<constructor-arg ref="freeBusyObfuscater"/>
-		<constructor-arg ref="sessionFactory"/>
+		<constructor-arg ref="freeBusyObfuscater"/>		
 	</bean>
 
 	<bean id="contentDao" class="org.unitedinternet.cosmo.dao.ContentDaoProxyFactory">

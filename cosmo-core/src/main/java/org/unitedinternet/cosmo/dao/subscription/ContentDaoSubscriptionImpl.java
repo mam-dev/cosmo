@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
@@ -35,14 +37,13 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final FreeBusyObfuscater freeBusyObfuscater;
 
-    private final SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager em;
 
-    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater,
-            SessionFactory sessionFactory) {
+    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater) {
         super();
         this.contentDaoInternal = contentDaoInternal;
-        this.freeBusyObfuscater = freeBusyObfuscater;
-        this.sessionFactory = sessionFactory;
+        this.freeBusyObfuscater = freeBusyObfuscater;        
     }
 
     @Override
@@ -355,7 +356,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     private Session getSession() {
-        return this.sessionFactory.getCurrentSession();
+        return (Session) this.em;
     }
 
     private static boolean isFreeBusy(HibCollectionSubscriptionItem subscriptionItem) {

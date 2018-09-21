@@ -78,7 +78,6 @@ import org.springframework.web.HttpRequestHandler;
  * method based on the request method.
  * </p>
  */
-@Component
 public class StandardRequestHandler
     implements HttpRequestHandler, ServerConstants {
     private static final Log LOG =

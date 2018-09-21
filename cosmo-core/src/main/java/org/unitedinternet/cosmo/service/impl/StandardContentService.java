@@ -23,13 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.DtEnd;
-import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.model.property.RecurrenceId;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
@@ -57,13 +50,19 @@ import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
 import org.unitedinternet.cosmo.service.triage.TriageStatusQueryProcessor;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
 
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.RecurrenceId;
+
 /**
  * Standard implementation of <code>ContentService</code>.
  *
  * @see ContentService
  * @see ContentDao
  */
-@org.springframework.stereotype.Component
 public class StandardContentService implements ContentService {
     private static final Log LOG =
         LogFactory.getLog(StandardContentService.class);

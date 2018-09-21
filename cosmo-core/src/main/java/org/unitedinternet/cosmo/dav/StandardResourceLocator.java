@@ -30,7 +30,6 @@ import org.unitedinternet.cosmo.util.PathUtil;
  *
  * @see DavResourceLocator
  */
-@Component
 public class StandardResourceLocator implements DavResourceLocator {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(StandardResourceLocator.class);

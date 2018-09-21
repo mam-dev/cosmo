@@ -55,7 +55,6 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  * @see WebDavResource
  * @see Item
  */
-@Component
 public class StandardResourceFactory
     implements DavResourceFactory, ExtendedDavConstants{
     private static final Log LOG =  LogFactory.getLog(StandardResourceFactory.class);

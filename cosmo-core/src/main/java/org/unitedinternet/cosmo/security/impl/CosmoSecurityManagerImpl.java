@@ -45,7 +45,6 @@ import org.springframework.stereotype.Component;
  * interface that provides a {@link CosmoSecurityContext} from
  * security information contained in JAAS or Acegi Security.
  */
-@Component
 public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
     private static final Log LOG =
         LogFactory.getLog(CosmoSecurityManagerImpl.class);

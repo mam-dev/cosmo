@@ -54,12 +54,12 @@ public class SimpleUrlContentReaderTest {
         EntityConverter entityConverter = new EntityConverter(entityFactory);
         this.converter = new ContentConverter(entityConverter);
 
-        instanceUnderTest = new SimpleUrlContentReader(converter, null, validator, 700, instanceProvider);
+        instanceUnderTest = new SimpleUrlContentReader(converter, validator, 700);
     }
 
     @Test
     public void shouldReadRomanianHolidays() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, null, validator, 1024 * 1024, instanceProvider);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/ro.romanian%23holiday%40group.v.calendar.google.com/public/basic.ics",
                 TIMEOUT);
@@ -81,7 +81,7 @@ public class SimpleUrlContentReaderTest {
 
     @Test
     public void shouldReadExternalCalendar() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, null, validator, 1024 * 1024, instanceProvider);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, validator, 1024 * 1024);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
                 TIMEOUT);

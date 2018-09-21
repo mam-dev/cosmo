@@ -65,7 +65,6 @@ import net.fortuna.ical4j.model.property.Uid;
 /**
  * CalendarQueryProcessor implementation that uses CalendarDao.
  */
-@org.springframework.stereotype.Component
 public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
 
     private static final Log LOG = LogFactory.getLog(StandardCalendarQueryProcessor.class);

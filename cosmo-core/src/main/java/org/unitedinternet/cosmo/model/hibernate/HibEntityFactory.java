@@ -54,7 +54,6 @@ import org.w3c.dom.Element;
 /**
  * EntityFactory implementation that uses Hibernate persistent objects.
  */
-@Component
 public class HibEntityFactory implements EntityFactory {
 
     private VersionFourGenerator idGenerator = new VersionFourGenerator();

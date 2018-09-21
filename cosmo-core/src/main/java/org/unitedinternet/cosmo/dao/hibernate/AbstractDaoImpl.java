@@ -7,13 +7,14 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 
 /**
@@ -24,17 +25,23 @@ import org.hibernate.StatelessSession;
 public abstract class AbstractDaoImpl {
 
     private static final Log LOG = LogFactory.getLog(AbstractDaoImpl.class);
-    private SessionFactory sessionFactory;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    
+    
+    public AbstractDaoImpl() {
+        
     }
+
+    
 
     /**
      * @return Returns the current Hibernate session.
      */
     protected Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return (Session) this.entityManager;
     }
 
     /**
@@ -44,7 +51,7 @@ public abstract class AbstractDaoImpl {
      * @return a <b>new</b> Hibernate state less session which needs to be closed after usage.
      */
     protected StatelessSession openStatelessSession() {
-        return sessionFactory.openStatelessSession();
+        return (StatelessSession) this.entityManager;
     }
 
     /**

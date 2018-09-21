@@ -31,7 +31,6 @@ import org.unitedinternet.cosmo.model.User;
  *
  * @see DavResourceLocatorFactory
  */
-@Component
 public class StandardResourceLocatorFactory implements DavResourceLocatorFactory, ExtendedDavConstants {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(StandardResourceLocatorFactory.class);

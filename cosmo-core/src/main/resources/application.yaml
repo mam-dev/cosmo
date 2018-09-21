@@ -11,3 +11,23 @@ spring:
     username: cosmo
     password: '*'
     driver-class-name: org.mariadb.jdbc.Driver
+    
+
+# Moved from etc/application.properties
+cosmo:
+  tikets: 
+    serverSecret: cosmossecret
+    serverInteger: 1235
+
+# connection timeout for reaching external content when validation is performed (in millis) 
+external:
+  content:
+    connection:
+      timeout: 10000
+    size: 1048576
+    non:
+      proxyed:
+        hosts:  
+calendar: 
+  server:
+   productId: COSMO

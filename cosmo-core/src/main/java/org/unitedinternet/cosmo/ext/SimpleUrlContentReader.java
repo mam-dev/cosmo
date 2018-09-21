@@ -23,8 +23,7 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
-import org.unitedinternet.cosmo.metadata.Callback;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
@@ -52,23 +51,20 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private final ContentConverter converter;
 
-    private final ProxyFactory proxyFactory;
-
     private final Validator validator;
 
     private final int allowedContentSizeInBytes;
 
-    Set<? extends ContentSourceProcessor> contentSourceProcessors;
+    @Autowired
+    private ContentSourceProcessor processor;
 
-    public SimpleUrlContentReader(ContentConverter converter, ProxyFactory proxyFactory, Validator validator,
-            int allowedContentSizeInBytes, ExternalComponentInstanceProvider instanceProvider) {
+    @Autowired
+    private ProxyFactory proxyFactory;
+
+    public SimpleUrlContentReader(ContentConverter converter, Validator validator, int allowedContentSizeInBytes) {
         this.converter = converter;
-        this.proxyFactory = proxyFactory;
         this.validator = validator;
         this.allowedContentSizeInBytes = allowedContentSizeInBytes;
-        this.contentSourceProcessors = instanceProvider.getImplInstancesAnnotatedWith(Callback.class,
-                ContentSourceProcessor.class);
-
     }
 
     @Override
@@ -156,9 +152,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private void postProcess(Calendar calendar) {
 
-        for (ContentSourceProcessor processor : contentSourceProcessors) {
-            processor.postProcess(calendar);
-        }
+       this.processor.postProcess(calendar);
     }
 
     private static URL build(String url, RequestOptions options) throws IOException {
