@@ -29,14 +29,13 @@
 		
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
-		<org.springframework.security.version>4.2.8.RELEASE</org.springframework.security.version>
-		<org.springframework.version>4.3.18.RELEASE</org.springframework.version>
+		<org.springframework.security.version>4.2.8.RELEASE</org.springframework.security.version>		
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<hibernate.version>5.3.6.Final</hibernate.version>
-		<hibernate.jpa.version>1.0.2.Final</hibernate.jpa.version>
+		
+		
 		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
-		<validation-api.version>1.1.0.Final</validation-api.version>
+				
 		<javax.el.version>2.2.4</javax.el.version>
 		<jackrabbit.version>2.13.2</jackrabbit.version>
 		<ical4j.version>2.0.4</ical4j.version>
@@ -64,6 +63,8 @@
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<additionalparam>-Xdoclint:none</additionalparam>
+		
+		<spring.boot.version>2.0.1.RELEASE</spring.boot.version>
 	</properties>
 
 	<modules>
@@ -71,9 +72,20 @@
 		<module>cosmo-core</module>
 	</modules>
 
+
+
 	<dependencyManagement>
 		<dependencies>
 			
+			<dependency>
+				<!-- Import dependency management from Spring Boot -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+						
 
 			<!-- XML & co. -->
 			<dependency>
@@ -154,16 +166,7 @@
 				<artifactId>hibernate-validator</artifactId>
 				<version>${hibernate-validator.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-core</artifactId>
-				<version>${hibernate.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate.javax.persistence</groupId>
-				<artifactId>hibernate-jpa-2.1-api</artifactId>
-				<version>${hibernate.jpa.version}</version>
-			</dependency>
+			
 			<dependency>
 				<groupId>javax.el</groupId>
 				<artifactId>javax.el-api</artifactId>
@@ -182,132 +185,7 @@
 				</exclusions>
 			</dependency>
 
-			<!-- Spring -->
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${org.springframework.version}</version>				
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${org.springframework.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-expression</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-beans</artifactId>
-				<version>${org.springframework.version}</version>			
-			</dependency>			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-jdbc</artifactId>
-				<version>${org.springframework.version}</version>			
-			</dependency>
-			<dependency>
-			<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>			
-				<scope>test</scope>
-				<version>${org.springframework.version}</version>
-			</dependency>
 			
-
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-				<version>${org.springframework.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>aopalliance</groupId>
-						<artifactId>aopalliance</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-orm</artifactId>
-				<version>${org.springframework.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>aopalliance</groupId>
-						<artifactId>aopalliance</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-tx</artifactId>
-				<version>${org.springframework.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>aopalliance</groupId>
-						<artifactId>aopalliance</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${org.springframework.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>aopalliance</groupId>
-						<artifactId>aopalliance</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-expression</artifactId>
-				<version>${org.springframework.version}</version>
-				<scope>runtime</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-core</artifactId>
-				<version>${org.springframework.security.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-expression</artifactId>
-					</exclusion>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-					<exclusion>
-						<groupId>aopalliance</groupId>
-						<artifactId>aopalliance</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-web</artifactId>
-				<version>${org.springframework.security.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-expression</artifactId>
-					</exclusion>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-					<exclusion>
-						<groupId>aopalliance</groupId>
-						<artifactId>aopalliance</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>

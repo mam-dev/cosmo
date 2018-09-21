@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,6 +33,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.springframework.web.util.UriUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -41,7 +41,6 @@ import org.unitedinternet.cosmo.dav.DavContent;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
-import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -229,7 +228,7 @@ public class MultigetReport extends CaldavMultiStatusReport {
             String collectionPathDecoded = UriUtils.decode(collection.getPath(), "UTF-8");
 
             return testPathDecoded.startsWith(collectionPathDecoded);
-        } catch (UnsupportedEncodingException e) {
+        } catch (IllegalArgumentException e) {
             return test.getPath().startsWith(collection.getPath());
         }
     }

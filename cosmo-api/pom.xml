@@ -44,17 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<exclusions>
-			 <exclusion>
-			     <groupId>org.springframework</groupId>
-			     <artifactId>spring-core</artifactId>
-			  </exclusion>
-			  <exclusion>
-			     <groupId>org.springframework</groupId>
-			     <artifactId>spring-beans</artifactId>
-			  </exclusion>
-			</exclusions>
+			<artifactId>spring-security-core</artifactId>			
 		</dependency>
 	</dependencies>
 	
