@@ -21,12 +21,14 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author corneliu dobrota
  *
  */
+@Component
 public class TypesFinder {
     private static final Logger LOGGER = LoggerFactory.getLogger(TypesFinder.class);
     

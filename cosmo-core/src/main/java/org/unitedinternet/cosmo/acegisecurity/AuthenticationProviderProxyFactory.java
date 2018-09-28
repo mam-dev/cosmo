@@ -9,11 +9,13 @@ package org.unitedinternet.cosmo.acegisecurity;
 
 import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticationToken;
 import org.unitedinternet.cosmo.acegisecurity.userdetails.CosmoUserDetails;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -27,11 +29,13 @@ import org.unitedinternet.cosmo.service.UserService;
  * @author corneliu dobrota
  *
  */
+@Component
 public class AuthenticationProviderProxyFactory {
 
     private UserService userService;
     private ContentDao contentDao;
 
+    @Autowired
     public AuthenticationProviderProxyFactory(UserService userService, ContentDao contentDao) {
         this.userService = userService;
         this.contentDao = contentDao;

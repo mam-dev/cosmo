@@ -2,6 +2,7 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.CollectionSubscriptionDao;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
 
@@ -10,6 +11,7 @@ import org.unitedinternet.cosmo.model.CollectionSubscription;
  * @author daniel grigore
  *
  */
+@Component
 public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements CollectionSubscriptionDao {
 
     /**

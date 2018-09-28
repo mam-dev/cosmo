@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
@@ -47,6 +48,8 @@ import net.fortuna.ical4j.model.component.VEvent;
  * @author daniel grigore
  *
  */
+//TODO - is this still used?
+//@Component
 public class ContentDaoExternal implements ContentDao {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoExternal.class);

@@ -20,11 +20,13 @@ import java.util.Date;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
+import org.springframework.stereotype.Component;
 
 /**
  * Hibernate Interceptor that updates creationDate, modifiedDate,
  * and etag each time an AuditableObject is saved/updated.
  */
+@Component
 public class AuditableObjectInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 2206186604411196082L;

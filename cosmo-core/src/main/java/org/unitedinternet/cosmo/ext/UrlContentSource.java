@@ -2,6 +2,8 @@ package org.unitedinternet.cosmo.ext;
 
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.model.NoteItem;
 
 /**
@@ -11,16 +13,17 @@ import org.unitedinternet.cosmo.model.NoteItem;
  * @author corneliu dobrota
  *
  */
+@Component
 public class UrlContentSource implements ContentSource {
 
     private final UrlContentReader contentReader;
 
-    private final int timeoutInMillis;
+    @Value("${external.content.connection.timeout}")
+    private int timeoutInMillis;
 
-    public UrlContentSource(UrlContentReader contentReader, int timeoutInMillis) {
+    public UrlContentSource(UrlContentReader contentReader) {
         super();
         this.contentReader = contentReader;
-        this.timeoutInMillis = timeoutInMillis;
     }
 
     @Override

@@ -26,10 +26,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.hibernate.query.internal.QueryImpl;
-import org.springframework.transaction.annotation.Transactional;
-import org.hibernate.Session;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.calendar.Instance;
 import org.unitedinternet.cosmo.calendar.InstanceList;
@@ -64,6 +64,7 @@ import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
  * Standard Implementation of <code>ItemFilterProcessor</code>. Translates filter into HQL Query, executes query and
  * processes the results.
  */
+@Component
 public class StandardItemFilterProcessor extends AbstractDaoImpl implements ItemFilterProcessor {
 
     private static final Log LOG = LogFactory.getLog(StandardItemFilterProcessor.class);

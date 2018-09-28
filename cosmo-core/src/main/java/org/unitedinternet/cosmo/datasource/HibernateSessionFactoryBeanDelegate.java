@@ -14,10 +14,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.hibernate.Interceptor;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.TypeFilter;
@@ -29,7 +26,8 @@ import org.unitedinternet.cosmo.db.DataSourceType;
 import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
 
-public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionFactory>, InitializingBean{
+//TODO - not used
+public class HibernateSessionFactoryBeanDelegate {
 
     private static final String COSMO_MYSQL_DIALECT = "org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect";
     
@@ -148,18 +146,6 @@ public class HibernateSessionFactoryBeanDelegate implements FactoryBean<SessionF
     }
     public final Configuration getConfiguration() {
         return delegate.getConfiguration();
-    }
-
-    public SessionFactory getObject() {
-        return delegate.getObject();
-    }
-
-    public Class<?> getObjectType() {
-        return delegate.getObjectType();
-    }
-
-    public boolean isSingleton() {
-        return delegate.isSingleton();
     }
 
     public void destroy() {

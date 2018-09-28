@@ -18,6 +18,7 @@ public class AuthenticationProviderDelegator implements AuthenticationProvider{
 	public AuthenticationProviderDelegator(Collection<? extends AuthenticationProvider> delegates){
 		this.delegates = delegates;
 	}
+	
 	@Override	
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		Authentication result = null;

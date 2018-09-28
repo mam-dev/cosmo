@@ -33,6 +33,8 @@ import net.fortuna.ical4j.model.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.Instance;
 import org.unitedinternet.cosmo.calendar.InstanceList;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
@@ -61,10 +63,12 @@ import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
  * uses NoteItemFilters and custom logic to process a 
  * TriageStatus query.
  */
+@Component
 public class StandardTriageStatusQueryProcessor implements
         TriageStatusQueryProcessor {
 
-    private ContentDao contentDao = null;
+	@Autowired
+    private ContentDao contentDao;
     
     private static final Log LOG = LogFactory.getLog(StandardTriageStatusQueryProcessor.class);
     private static final Comparator<NoteItem> COMPARE_ASC = new NoteItemTriageStatusComparator(false);

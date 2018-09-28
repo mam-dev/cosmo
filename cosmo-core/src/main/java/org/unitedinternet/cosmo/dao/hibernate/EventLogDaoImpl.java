@@ -24,6 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.EventLogDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -39,12 +41,12 @@ import org.unitedinternet.cosmo.model.hibernate.HibEventLogEntry;
 import org.unitedinternet.cosmo.model.hibernate.HibItem;
 import org.unitedinternet.cosmo.model.hibernate.HibTicket;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 
 /**
  * Implementation of EventLogDao using Hibernate persistence objects.
  */
+@Component
 public class EventLogDaoImpl extends AbstractDaoImpl implements EventLogDao {
 
     @SuppressWarnings("unused")

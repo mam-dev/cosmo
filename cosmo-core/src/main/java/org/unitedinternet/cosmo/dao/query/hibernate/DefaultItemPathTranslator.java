@@ -19,8 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl;
 import org.unitedinternet.cosmo.dao.query.ItemPathTranslator;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -30,6 +31,7 @@ import org.unitedinternet.cosmo.model.Item;
  * Default implementation for ItempPathTranslator. This implementation expects
  * paths to be of the format: /username/parent1/parent2/itemname
  */
+@Component
 public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPathTranslator {
 
     

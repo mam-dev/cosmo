@@ -65,7 +65,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Match", "*");
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
             Assert.fail("If-Match all failed");
         }
@@ -83,7 +83,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Match", home.getETag());
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+        	new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
             Assert.fail("If-Match specific etag failed");
         }
@@ -102,7 +102,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Match", requestEtag);
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+        	new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
             Assert.fail("If-Match bogus etag succeeded");
         } catch (PreconditionFailedException e) {}
 
@@ -124,7 +124,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-None-Match", "*");
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+        	new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
             Assert.fail("If-None-Match all succeeded");
         } catch (NotModifiedException e) {
             // expected
@@ -150,7 +150,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-None-Match", requestEtag);
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
             Assert.fail("If-None-Match bogus etag failed");
         }
@@ -169,7 +169,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-None-Match", home.getETag());
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
             Assert.fail("If-None-Match specific etag succeeded");
         } catch (NotModifiedException e) {
             // expected
@@ -195,7 +195,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Modified-Since", requestDate);
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
             Assert.fail("If-Modified-Since succeeded for unmodified resource");
         } catch (NotModifiedException e) {
             // expected
@@ -217,7 +217,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Modified-Since", requestDate);
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
             Assert.fail("If-Modified-Since failed for mmodified resource");
         }
@@ -236,7 +236,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Unmodified-Since", requestDate);
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {    
             Assert.fail("If-Unmodified-Since failed for unmodified resource");
         }
@@ -256,7 +256,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ctx.getHttpRequest().addHeader("If-Unmodified-Since", requestDate);
 
         try {
-            new StandardRequestHandler().preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
+            new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
             Assert.fail("If-Unmodified-Since succeeded for modified resource");
         } catch (PreconditionFailedException e) {}
     }
@@ -313,7 +313,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
     public void shouldUseCosmoDavExceptionForUnspecificExceptionsAndSetItAsReqAtt() throws Exception{
         NullPointerException npe = new NullPointerException();
         
-        StandardRequestHandler classUnderTest = new StandardRequestHandler();
+        StandardRequestHandler classUnderTest = new StandardRequestHandler(null, null, null);
         
         StandardRequestHandler classUnderTestSpied = Mockito.spy(classUnderTest);
         
@@ -343,7 +343,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
     }
     
     private CosmoDavException captureExceptionForErrorResponseCausedBy(Throwable t) throws Exception{
-        StandardRequestHandler classUnderTest = new StandardRequestHandler();
+        StandardRequestHandler classUnderTest = new StandardRequestHandler(null, null, null);
         
         StandardRequestHandler classUnderTestSpied = Mockito.spy(classUnderTest);
         

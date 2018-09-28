@@ -30,6 +30,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -46,6 +47,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibItemTombstone;
 /**
  * Implementation of ContentDao using hibernate persistence objects
  */
+@Component
 public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
     @SuppressWarnings("unused")

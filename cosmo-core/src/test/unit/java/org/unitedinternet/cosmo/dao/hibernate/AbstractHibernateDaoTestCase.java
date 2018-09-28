@@ -15,6 +15,11 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
+import java.util.concurrent.TimeUnit;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +37,12 @@ public abstract class AbstractHibernateDaoTestCase extends AbstractSpringDaoTest
 
     protected HibernateTestHelper helper;
     protected Session session;
-    @Autowired(required=true)
-    protected SessionFactory sessionFactory ;
+    
+//    @Autowired(required=true)
+//    protected SessionFactory sessionFactory ;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
     
     /**
      * Constructor.
@@ -43,20 +52,23 @@ public abstract class AbstractHibernateDaoTestCase extends AbstractSpringDaoTest
         helper = new HibernateTestHelper();
     }
     
+    protected Session getSession() {
+        return (Session) this.entityManager.getDelegate();
+    }
+    
     /**
      * Override onteadDownAfterTransaction.
      * @throws Exception - if something is wrong this exception is thrown.
      */
     @AfterTransaction
     public void onTearDownAfterTransaction() throws Exception {
-        
         // Get a reference to the Session and bind it to the TransactionManager
-        SessionHolder holder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-        Session s = holder.getSession(); 
-        TransactionSynchronizationManager.unbindResource(sessionFactory);
+//        SessionHolder holder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
+//        Session s = holder.getSession(); 
+//        TransactionSynchronizationManager.unbindResource(sessionFactory);
       //  s.clear();
      //   clearSession();
-        SessionFactoryUtils.closeSession(s);
+//        SessionFactoryUtils.closeSession(s);
     }
 
     /**
@@ -64,7 +76,9 @@ public abstract class AbstractHibernateDaoTestCase extends AbstractSpringDaoTest
      */
     public void clearSession() {
         //session.flush();
-        session.clear();
+        if (session != null) {
+        	session.clear();
+        }
     }
 
     /**
@@ -74,7 +88,7 @@ public abstract class AbstractHibernateDaoTestCase extends AbstractSpringDaoTest
     @BeforeTransaction
     public void onSetUpBeforeTransaction() throws Exception {
         // Unbind session from TransactionManager
-        session = sessionFactory.openSession();
-        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+//        session = sessionFactory.openSession();
+//        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
     }
 }

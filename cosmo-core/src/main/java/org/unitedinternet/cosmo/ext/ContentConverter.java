@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
@@ -17,6 +18,7 @@ import net.fortuna.ical4j.model.Calendar;
  * @author daniel grigore
  *
  */
+@Component
 public class ContentConverter {
 
     private final EntityConverter entityConverter;

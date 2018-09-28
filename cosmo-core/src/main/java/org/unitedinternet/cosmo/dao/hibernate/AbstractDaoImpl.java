@@ -9,6 +9,7 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -16,6 +17,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Abstract Dao implementation. It is used for general purpose operations.
@@ -30,18 +33,17 @@ public abstract class AbstractDaoImpl {
     private EntityManager entityManager;
 
     
-    
     public AbstractDaoImpl() {
         
     }
 
     
-
     /**
+     * use getJdbcTemplate instead
      * @return Returns the current Hibernate session.
      */
     protected Session getSession() {
-        return (Session) this.entityManager;
+        return (Session) this.entityManager.getDelegate();
     }
 
     /**

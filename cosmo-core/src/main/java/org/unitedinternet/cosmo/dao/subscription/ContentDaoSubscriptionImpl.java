@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
@@ -31,6 +32,8 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
  * @see HibCollectionSubscriptionItem
  * @see CollectionSubscription
  */
+//TODO - is this still used?
+//@Component
 public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final ContentDao contentDaoInternal;

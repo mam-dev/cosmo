@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.unitedinternet.cosmo.dao.CalendarDao;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
@@ -43,12 +45,15 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
  * @author izein
  *
  */
+@Service
 public class StandardCalendarService implements CalendarService {
 
     private static final TimeZoneRegistry TIMEZONE_REGISTRY = TimeZoneRegistryFactory.getInstance().createRegistry();
 
+    @Autowired
     private CalendarDao calendarDao;
 
+    @Autowired
     private ContentDao contentDao;
 
     @Override

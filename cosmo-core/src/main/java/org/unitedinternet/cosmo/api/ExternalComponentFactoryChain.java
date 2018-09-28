@@ -10,6 +10,8 @@ package org.unitedinternet.cosmo.api;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 /**
  * 
  * @author corneliu dobrota

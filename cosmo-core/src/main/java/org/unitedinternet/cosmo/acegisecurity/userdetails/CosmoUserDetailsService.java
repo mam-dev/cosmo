@@ -15,12 +15,14 @@
  */
 package org.unitedinternet.cosmo.acegisecurity.userdetails;
 
-import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+import org.unitedinternet.cosmo.dao.UserDao;
+import org.unitedinternet.cosmo.model.User;
 
 /**
  * Implements Acegi Security's <code>UserDetailsService</code>
@@ -29,8 +31,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @see UserDetailsService
  * @see UserDao
  */
+@Component
 public class CosmoUserDetailsService implements UserDetailsService {
 
+	@Autowired
     private UserDao userDao;
 
     /**

@@ -37,6 +37,7 @@ import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserIdentity;
 import org.unitedinternet.cosmo.model.UserIdentitySupplier;
+import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.security.mock.MockSecurityManager;
@@ -105,7 +106,7 @@ public class MockHelper extends TestHelper {
 
         clientFilterManager = new ICalendarClientFilterManager();
         
-        calendarQueryProcessor = new StandardCalendarQueryProcessor();
+        calendarQueryProcessor = new StandardCalendarQueryProcessor(new EntityConverter(entityFactory), contentDao, calendarDao);
         calendarQueryProcessor.setCalendarDao(calendarDao);
         
         userService = new StandardUserService();

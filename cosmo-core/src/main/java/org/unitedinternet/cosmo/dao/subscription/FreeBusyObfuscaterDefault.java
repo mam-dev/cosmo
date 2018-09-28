@@ -11,11 +11,14 @@ import net.fortuna.ical4j.model.property.ProdId;
 
 import static org.unitedinternet.cosmo.util.FreeBusyUtil.*;
 
+import org.springframework.stereotype.Component;
+
 /**
  * 
  * @author daniel grigore
  *
  */
+@Component
 public class FreeBusyObfuscaterDefault implements FreeBusyObfuscater {
 
     public FreeBusyObfuscaterDefault() {

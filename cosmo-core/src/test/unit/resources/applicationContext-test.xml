@@ -27,13 +27,13 @@
 	</bean>
 
 
-	<bean id="auditableObjectInterceptor"
-		class="org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor" />
+	<!-- bean id="auditableObjectInterceptor"
+		class="org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor" / -->
 
-	<bean id="eventStampInterceptor"
-		class="org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor" />
+	<!-- bean id="eventStampInterceptor"
+		class="org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor" / -->
 
-	<bean id="cosmoHibernateInterceptor"
+	<!-- bean id="cosmoHibernateInterceptor"
 		class="org.unitedinternet.cosmo.hibernate.CompoundInterceptor">
 		<property name="interceptors">
 			<list>
@@ -41,10 +41,10 @@
 				<ref bean="eventStampInterceptor" />
 			</list>
 		</property>
-	</bean>
+	</bean -->
 
 
-	<bean id="sessionFactory"
+	<!-- bean id="sessionFactory"
 		class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
 		<constructor-arg
 			ref="externalComponentInstanceProvider" />
@@ -57,7 +57,7 @@
 			<props>
 				<prop key="hibernate.cache.use_query_cache">false</prop>
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
-				<!-- hibernate debugging config switches -->
+				
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.use_sql_comments">false</prop>
@@ -71,18 +71,18 @@
 		<property name="dataSource">
 			<ref bean="jdbcDataSource" />
 		</property>
-	</bean>
+	</bean -->
 
-	<bean id="mariaDbService"
+	<!-- bean id="mariaDbService"
 		class="ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService"
 		init-method="start" destroy-method="stop">
 		<property name="defaultBaseDir" value="target/maridb/base" />
 		<property name="defaultDataDir" value="target/maridb/data" />
 		<property name="defaultPort" value="33060" />
-	</bean>
+	</bean  -->
 
 
-	<bean id="jdbcDataSource"
+	<!-- bean id="jdbcDataSource"
 		class="org.apache.tomcat.jdbc.pool.DataSource" lazy-init="true"
 		destroy-method="close" depends-on="mariaDbService">
 		<property name="driverClassName"
@@ -96,14 +96,14 @@
 		<property name="maxWait" value="10000" />
 		<property name="testOnBorrow" value="true" />
 		<property name="validationQuery" value="SELECT 1;" />
-	</bean>
+	</bean -->
 
-	<alias alias="hibernatePackagesToScan"
-		name="${cosmo.hibernate.hibernatePackagesToScan}" />
+	<!-- alias alias="hibernatePackagesToScan"
+		name="${cosmo.hibernate.hibernatePackagesToScan}" / -->
 
-	<util:list id="hibernatePackagesToScanDefault">
+	<!-- util:list id="hibernatePackagesToScanDefault">
 		<value>org.unitedinternet.cosmo.model.hibernate</value>
-	</util:list>
+	</util:list -->
 
 	<!-- Transaction manager for a single Hibernate SessionFactory (alternative 
 		to JTA) -->

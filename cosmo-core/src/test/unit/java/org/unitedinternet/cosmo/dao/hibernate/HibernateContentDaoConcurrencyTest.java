@@ -82,7 +82,8 @@ public class HibernateContentDaoConcurrencyTest extends AbstractHibernateDaoTest
     @Test
     public void testConcurrentContentDaoUpdateContent() throws Exception {
         
-        TransactionThread txThread1 = new TransactionThread(transactionManager,sessionFactory);
+        SessionFactory sessionFactory = null; //TODO
+		TransactionThread txThread1 = new TransactionThread(transactionManager,sessionFactory );
         TransactionThread txThread2 = new TransactionThread(transactionManager,sessionFactory);
         TransactionThread txThread3 = new TransactionThread(transactionManager,sessionFactory);
         
@@ -186,6 +187,7 @@ public class HibernateContentDaoConcurrencyTest extends AbstractHibernateDaoTest
     @Test
     public void testConcurrentContentDaoDeleteContent() throws Exception {
         
+    	SessionFactory sessionFactory = null; //TODO
         TransactionThread txThread1 = new TransactionThread(transactionManager,sessionFactory);
         TransactionThread txThread2 = new TransactionThread(transactionManager,sessionFactory);
         TransactionThread txThread3 = new TransactionThread(transactionManager,sessionFactory);

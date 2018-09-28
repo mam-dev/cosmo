@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.CosmoInterruptedException;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -42,6 +43,7 @@ import org.unitedinternet.cosmo.model.CollectionItem;
  *
  * @see LockManager
  */
+@Component
 public class SingleVMLockManager implements LockManager {
     private static final Log LOG =
         LogFactory.getLog(SingleVMLockManager.class);

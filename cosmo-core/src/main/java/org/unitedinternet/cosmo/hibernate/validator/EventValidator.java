@@ -17,19 +17,14 @@ package org.unitedinternet.cosmo.hibernate.validator;
 
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
 import net.fortuna.ical4j.data.ParserException;
@@ -40,23 +35,25 @@ import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.validate.ValidationException;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.RRule;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Check if a Calendar object contains a valid VEvent
  * @author randy
  *
  */
+@org.springframework.stereotype.Component
 public class EventValidator implements ConstraintValidator<Event, Calendar> {
     
     private static final Log LOG = LogFactory.getLog(EventValidator.class);
     
-    private static volatile ValidationConfig validationConfig;
+    @Autowired
+    private ValidationConfig validationConfig;
     
     
     
@@ -114,89 +111,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
    
     }
     
-    public static final class ValidationConfig implements EnvironmentAware{
-        
-        private static final String ALLOWED_RECURRENCES_FREQUENCIES_KEY = "cosmo.event.validation.allowed.recurrence.frequencies";
-        private static final String FREQUENCIES_SEPARATOR = ",";
-        
-        private static final String SUMMARY_MIN_LENGTH_KEY = "cosmo.event.validation.summary.min.length";
-        private static final String SUMMARY_MAX_LENGTH_KEY = "cosmo.event.validation.summary.max.length";
-        
-        private static final String LOCATION_MIN_LENGTH_KEY = "cosmo.event.validation.location.min.length";
-        private static final String LOCATION_MAX_LENGTH_KEY = "cosmo.event.validation.location.max.length";
-        
-        private static final String DESCRIPTION_MIN_LENGTH_KEY = "cosmo.event.validation.description.min.length";
-        private static final String DESCRIPTION_MAX_LENGTH_KEY = "cosmo.event.validation.description.max.length";
-        
-        private static final String ATTENDEES_MAX_LENGTH_KEY = "cosmo.event.validation.attendees.max.length";
-        
-        private static final String PROPERTIES_FILE = "/etc/application.properties";
-        
-        private Set<String> allowedRecurrenceFrequencies = new HashSet<>(5);
-        
-        private int summaryMinLength;
-        private int summaryMaxLength;
-        
-        private int locationMinLength;
-        private int locationMaxLength;
-        
-        private int descriptionMinLength;
-        private int descriptionMaxLength;
-        
-        private int attendeesMaxSize;
-        
-        
-        
-        private static int getIntFromPropsFor(Environment environment, String key, Properties defaultProps){
-        	String value = environment.getProperty(key);
-            return Integer.parseInt( value == null ? defaultProps.getProperty(key) : value); 
-        }
-
-
-        public void setEnvironment(Environment environment) {
-			InputStream is = null;
-            
-            Properties properties = new Properties();
-            try {
-                is = EventValidator.class.getResourceAsStream(PROPERTIES_FILE);
-                
-                properties.load(is);
-
-				summaryMinLength = getIntFromPropsFor(environment, SUMMARY_MIN_LENGTH_KEY, properties);
-	            summaryMaxLength = getIntFromPropsFor(environment, SUMMARY_MAX_LENGTH_KEY, properties);
-	            
-	            locationMinLength = getIntFromPropsFor(environment, LOCATION_MIN_LENGTH_KEY, properties);
-	            locationMaxLength = getIntFromPropsFor(environment, LOCATION_MAX_LENGTH_KEY, properties);
-	            
-	            descriptionMinLength = getIntFromPropsFor(environment, DESCRIPTION_MIN_LENGTH_KEY, properties);
-	            descriptionMaxLength = getIntFromPropsFor(environment, DESCRIPTION_MAX_LENGTH_KEY, properties);
-	            
-	            attendeesMaxSize = getIntFromPropsFor(environment, ATTENDEES_MAX_LENGTH_KEY, properties);
-	            
-	            
-	            String permittedFrequencies = environment.getProperty(ALLOWED_RECURRENCES_FREQUENCIES_KEY);
-	            String permittedFrequenciesToUse = permittedFrequencies == null ? properties.getProperty(ALLOWED_RECURRENCES_FREQUENCIES_KEY) : permittedFrequencies;
-	            
-	            String[] frequencies = permittedFrequenciesToUse.split(FREQUENCIES_SEPARATOR);
-	            
-	            for(String s : frequencies){
-	                allowedRecurrenceFrequencies.add(s.trim());
-	            }
-            
-            } catch (Exception e) {
-                LOG.warn("Failed to initialize validation config", e);
-            }finally{
-                if(is != null){
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        LOG.warn("Exception occured while closing the input stream", e);
-                    }
-                }
-            }
-		}
-
-    }
+    
     private static enum PropertyValidator{
         SUMMARY(Property.SUMMARY){
 
@@ -298,7 +213,10 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
             return true;
         }
         private static boolean isEventValid(VEvent event, ValidationConfig config){
-            
+        	if (null == config) {
+        		LOG.error("ValidationConfig cannot be null");
+        		return false; //TODO - validation config should not be null
+        	}
             DtStart startDate = event.getStartDate();
             DtEnd endDate = event.getEndDate(true);
             if(startDate == null || 
@@ -336,7 +254,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
         }
     }
     
-    public static void setValidationConfig(ValidationConfig validationConfig){
-    	EventValidator.validationConfig = validationConfig;
+    public void setValidationConfig(ValidationConfig validationConfig){
+    	this.validationConfig = validationConfig;
     }
 }

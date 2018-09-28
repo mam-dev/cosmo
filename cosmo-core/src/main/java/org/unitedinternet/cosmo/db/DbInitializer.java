@@ -47,7 +47,7 @@ public class DbInitializer {
 
     private static final String PATH_SCHEMA = "/db/cosmo-schema.sql";
 
-    private HibernateSessionFactoryBeanDelegate localSessionFactory;
+//    private HibernateSessionFactoryBeanDelegate localSessionFactory;
 
     private DataSource datasource;
 
@@ -68,7 +68,7 @@ public class DbInitializer {
             }
         }
         // More thorough schema validation
-        validateSchema();
+//        validateSchema();
     }
 
     public void executeStatements(String resource) {
@@ -104,7 +104,8 @@ public class DbInitializer {
     }
 
     public void setLocalSessionFactory(HibernateSessionFactoryBeanDelegate hibernateLocalSessionFactoryDelegate) {
-        this.localSessionFactory = hibernateLocalSessionFactoryDelegate;
+        //TODO
+    	//this.localSessionFactory = hibernateLocalSessionFactoryDelegate;
     }
 
     public void setCallbacks(Collection<? extends DatabaseInitializationCallback> callbacks) {
@@ -157,18 +158,19 @@ public class DbInitializer {
     /**
      * Schema validation
      */
-    private void validateSchema() {
-        try {
-            StandardServiceRegistry registry = localSessionFactory.getConfiguration()
-                    .getStandardServiceRegistryBuilder().build();
-            MetadataSources sources = new MetadataSources(registry);
-            sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
-            Metadata metadata = sources.buildMetadata(registry);
-            new SchemaValidator().validate(metadata);
-            LOG.info("schema validation passed");
-        } catch (HibernateException e) {
-            LOG.error("error validating schema", e);
-            throw e;
-        }
-    }
+    //TODO
+//    private void validateSchema() {
+//        try {
+//            StandardServiceRegistry registry = localSessionFactory.getConfiguration()
+//                    .getStandardServiceRegistryBuilder().build();
+//            MetadataSources sources = new MetadataSources(registry);
+//            sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
+//            Metadata metadata = sources.buildMetadata(registry);
+//            new SchemaValidator().validate(metadata);
+//            LOG.info("schema validation passed");
+//        } catch (HibernateException e) {
+//            LOG.error("error validating schema", e);
+//            throw e;
+//        }
+//    }
 }

@@ -21,17 +21,17 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="protocolAuthenticationEntryPoint"
-		class="org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint" />
+	<!-- bean id="protocolAuthenticationEntryPoint"
+		class="org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint" / -->
 
-	<bean id="protocolBasicProcessingFilter"
+	<!-- bean id="protocolBasicProcessingFilter"
 		class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
 		<constructor-arg ref="authenticationManager" />
 		<constructor-arg ref="protocolAuthenticationEntryPoint" />
-	</bean>
+	</bean -->
 
-	<bean id="protocolTicketProcessingFilter"
-		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter" />
+	<!-- bean id="protocolTicketProcessingFilter"
+		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter" / -->
 
 	<bean id="protocolExtraTicketProcessingFilter"
 		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.ExtraTicketProcessingFilter">
@@ -118,7 +118,7 @@
 
 	<!-- authentication manager definition and dependencies -->
 
-	<bean id="daoAuthenticationProvider"
+	<!-- bean id="daoAuthenticationProvider"
 		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 		<property name="userDetailsService">
 			<ref bean="userDetailsService" />
@@ -126,43 +126,43 @@
 		<property name="passwordEncoder">
 			<ref bean="passwordEncoder" />
 		</property>
-	</bean>
-	<bean id="passwordEncoder"
-		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	</bean  -->
+	<!-- bean id="passwordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" / -->
 
-	<bean id="anonymousAuthenticationProvider"
+	<!-- bean id="anonymousAuthenticationProvider"
 		class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
 		<constructor-arg value="badgerbadgerbadger" />
-	</bean>
+	</bean -->
 
-	<bean id="ticketAuthenticationProvider"
+	<!-- bean id="ticketAuthenticationProvider"
 		class="org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticationProvider">
 		<property name="contentDao" ref="contentDao" />
-	</bean>
+	</bean -->
 
-    <bean id="authenticationProviderProxyFactory" class="org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderProxyFactory">
+    <!-- bean id="authenticationProviderProxyFactory" class="org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderProxyFactory">
         <constructor-arg index="0" name="userService" ref="userService"/>
         <constructor-arg index="1" name="contentDao" ref="contentDao"/>    
-    </bean>
-	<bean id="authenticationProviderDelegator" class="org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderDelegatorFactoryBean">
+    </bean -->
+	<!-- bean id="authenticationProviderDelegator" class="org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderDelegatorFactoryBean">
 	   <constructor-arg index="0" name="authenticationProviderProxyFactory" ref="authenticationProviderProxyFactory"/>
 	   <constructor-arg index="1" name="externalComponentInstanceProvider" ref="externalComponentInstanceProvider"/>
-	</bean>
+	</bean -->
 	
-	<bean id="authenticationManager"
+	<!-- bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
 		<constructor-arg ref="authenticationProviders"/>		
-	</bean>
+	</bean -->
 	
-	<util:list id="authenticationProviders">
+	<!-- util:list id="authenticationProviders">
 		<ref bean="daoAuthenticationProvider" />
 		<ref bean="anonymousAuthenticationProvider" />
 		<ref bean="ticketAuthenticationProvider" />
 		<ref bean="authenticationProviderDelegator" />
-	</util:list>
+	</util:list -->
 	<!-- security facade resources -->
 
-	<bean id="securityManager"
+	<!-- bean id="securityManager"
 		class="org.unitedinternet.cosmo.security.impl.CosmoSecurityManagerImpl">
 		<property name="authenticationManager">
 			<ref bean="authenticationManager" />
@@ -170,5 +170,5 @@
 		<property name="userService">
 			<ref bean="userService" />
 		</property>
-	</bean>
+	</bean  -->
 </beans>

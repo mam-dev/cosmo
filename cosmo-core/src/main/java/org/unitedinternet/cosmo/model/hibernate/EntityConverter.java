@@ -27,6 +27,28 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.unitedinternet.cosmo.dao.ModelValidationException;
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
+import org.unitedinternet.cosmo.model.AvailabilityItem;
+import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
+import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.EventExceptionStamp;
+import org.unitedinternet.cosmo.model.EventStamp;
+import org.unitedinternet.cosmo.model.FreeBusyItem;
+import org.unitedinternet.cosmo.model.ICalendarItem;
+import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.model.NoteOccurrence;
+import org.unitedinternet.cosmo.model.StampUtils;
+import org.unitedinternet.cosmo.model.TaskStamp;
+import org.unitedinternet.cosmo.model.TriageStatus;
+import org.unitedinternet.cosmo.model.TriageStatusUtil;
+
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
@@ -59,28 +81,6 @@ import net.fortuna.ical4j.model.property.Trigger;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 
-import org.apache.commons.lang.StringUtils;
-import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
-import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
-import org.unitedinternet.cosmo.model.AvailabilityItem;
-import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.EventExceptionStamp;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.FreeBusyItem;
-import org.unitedinternet.cosmo.model.ICalendarItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.NoteOccurrence;
-import org.unitedinternet.cosmo.model.StampUtils;
-import org.unitedinternet.cosmo.model.TaskStamp;
-import org.unitedinternet.cosmo.model.TriageStatus;
-import org.unitedinternet.cosmo.model.TriageStatusUtil;
-
 /**
  * A component that converts iCalendar objects to entities and vice versa.
  * Often this is not a straight one-to-one mapping, because recurring
@@ -89,6 +89,7 @@ import org.unitedinternet.cosmo.model.TriageStatusUtil;
  * {@link NoteItem} with zero or more {@link NoteItem} modifications and
  * potentially also {@link NoteOccurrence}s.
  */
+@org.springframework.stereotype.Component
 public class EntityConverter { 
     private static final TimeZoneRegistry TIMEZONE_REGISTRY =
         TimeZoneRegistryFactory.getInstance().createRegistry();

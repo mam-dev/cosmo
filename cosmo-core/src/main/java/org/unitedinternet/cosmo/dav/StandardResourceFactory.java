@@ -15,6 +15,13 @@
  */
 package org.unitedinternet.cosmo.dav;
 
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_COLLECTION;
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_ITEM;
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER;
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USERS;
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_INBOX;
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_OUTBOX;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -55,8 +62,9 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  * @see WebDavResource
  * @see Item
  */
+//@Component
 public class StandardResourceFactory
-    implements DavResourceFactory, ExtendedDavConstants{
+    implements DavResourceFactory {
     private static final Log LOG =  LogFactory.getLog(StandardResourceFactory.class);
 
     private ContentService contentService;

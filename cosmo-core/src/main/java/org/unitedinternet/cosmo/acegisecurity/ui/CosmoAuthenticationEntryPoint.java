@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketException;
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketedItemNotFoundException;
@@ -33,6 +34,7 @@ import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketedItemNotFo
  * Implements an <code>AuthenticationEntryPoint</code> that is
  * cognizant of Cosmo's various authentication providers
  */
+@Component
 public class CosmoAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(CosmoAuthenticationEntryPoint.class);

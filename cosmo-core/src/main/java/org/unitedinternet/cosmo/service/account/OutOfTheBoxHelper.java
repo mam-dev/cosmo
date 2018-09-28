@@ -20,15 +20,10 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.model.parameter.Value;
-import net.fortuna.ical4j.util.Dates;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -43,17 +38,28 @@ import org.unitedinternet.cosmo.model.TriageStatusUtil;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.util.DateUtil;
 
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Dur;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.util.Dates;
+
 /**
  * A helper class that creates out of the box collections and items
  * for a new user account.
  */
+@Component
 public class OutOfTheBoxHelper {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(OutOfTheBoxHelper.class);
     private static final TimeZoneRegistry TIMEZONE_REGISTRY =
         TimeZoneRegistryFactory.getInstance().createRegistry();
 
+    @Autowired
     private ContentDao contentDao;
+    
+    @Autowired
     private EntityFactory entityFactory;
 
     /**

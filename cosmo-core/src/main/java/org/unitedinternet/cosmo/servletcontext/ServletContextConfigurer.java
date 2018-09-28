@@ -17,6 +17,7 @@ package org.unitedinternet.cosmo.servletcontext;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.service.UserService;

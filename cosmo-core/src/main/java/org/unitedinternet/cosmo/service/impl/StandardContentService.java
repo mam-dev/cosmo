@@ -25,6 +25,7 @@ import java.util.SortedSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
@@ -63,12 +64,18 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
  * @see ContentService
  * @see ContentDao
  */
+@org.springframework.stereotype.Component
 public class StandardContentService implements ContentService {
     private static final Log LOG =
         LogFactory.getLog(StandardContentService.class);
 
+    @Autowired
     private ContentDao contentDao;
+    
+    @Autowired
     private LockManager lockManager;
+    
+    @Autowired
     private TriageStatusQueryProcessor triageStatusQueryProcessor;
   
     private long lockTimeout = 100;

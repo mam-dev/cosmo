@@ -7,9 +7,9 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://localhost:3306/cosmo?autoReconnect=true
-    username: cosmo
-    password: '*'
+    url: jdbc:mysql://localhost:33060/test?autoReconnect=true
+    username: root
+    password: ''
     driver-class-name: org.mariadb.jdbc.Driver
     
 
@@ -17,7 +17,11 @@ spring:
 cosmo:
   tikets: 
     serverSecret: cosmossecret
-    serverInteger: 1235
+    serverInteger: 1235    
+  hibernate:
+     hibernatePackagesToScan: org.unitedinternet.cosmo.model.hibernate  
+  caldav:   
+     schedulingEnabled: true
 
 # connection timeout for reaching external content when validation is performed (in millis) 
 external:
@@ -31,3 +35,4 @@ external:
 calendar: 
   server:
    productId: COSMO
+   

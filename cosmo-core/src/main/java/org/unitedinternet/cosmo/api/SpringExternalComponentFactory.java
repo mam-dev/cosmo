@@ -21,6 +21,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -28,6 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
  * @author corneliu dobrota
  *
  */
+@Component
 public class SpringExternalComponentFactory  implements  ExternalComponentFactory{
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringExternalComponentFactory.class);

@@ -24,6 +24,8 @@ import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
@@ -38,6 +40,7 @@ import net.fortuna.ical4j.model.Calendar;
  * @author daniel grigore
  *
  */
+@Component
 public class SimpleUrlContentReader implements UrlContentReader {
 
     private static final Log LOG = LogFactory.getLog(SimpleUrlContentReader.class);
@@ -53,18 +56,18 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private final Validator validator;
 
-    private final int allowedContentSizeInBytes;
+    @Value("${external.content.size}")
+    private int allowedContentSizeInBytes;
 
     @Autowired
     private ContentSourceProcessor processor;
 
     @Autowired
     private ProxyFactory proxyFactory;
-
-    public SimpleUrlContentReader(ContentConverter converter, Validator validator, int allowedContentSizeInBytes) {
+    
+    public SimpleUrlContentReader(ContentConverter converter, Validator validator) {
         this.converter = converter;
         this.validator = validator;
-        this.allowedContentSizeInBytes = allowedContentSizeInBytes;
     }
 
     @Override

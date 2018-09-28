@@ -23,7 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilterEvaluater;
 import org.unitedinternet.cosmo.dao.CalendarDao;
@@ -51,13 +53,19 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 /**
  * Implementation of CalendarDao using Hibernate persistence objects.
  */
+@Component
 public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
 
     private static final Log LOG = LogFactory.getLog(CalendarDaoImpl.class);
 
+    @Autowired
     private EntityFactory entityFactory;
+    
+    @Autowired
     private ItemFilterProcessor itemFilterProcessor = null;
-    private EntityConverter entityConverter = new EntityConverter(null);
+    
+    @Autowired
+    private EntityConverter entityConverter; //new EntityConverter(null);
 
     /*
      * Note that this method is used for CalDav REPORT and it needs to be properly implemented

@@ -65,6 +65,7 @@ import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.server.ServerConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
@@ -78,15 +79,24 @@ import org.springframework.web.HttpRequestHandler;
  * method based on the request method.
  * </p>
  */
+@Component
 public class StandardRequestHandler
     implements HttpRequestHandler, ServerConstants {
     private static final Log LOG =
         LogFactory.getLog(StandardRequestHandler.class);
 
     private DavResourceLocatorFactory locatorFactory;
+    
     private DavResourceFactory resourceFactory;
+    
     private EntityFactory entityFactory;
     // RequestHandler methods
+    
+    public StandardRequestHandler(DavResourceLocatorFactory locatorFactory, DavResourceFactory resourceFactory, EntityFactory entityFactory) {
+    	this.locatorFactory = locatorFactory;
+    	this.resourceFactory = resourceFactory;
+    	this.entityFactory = entityFactory;
+    }
                
     /**
      * <p>

@@ -40,6 +40,7 @@ import net.fortuna.ical4j.model.property.ExDate;
  * and removing redundant VALUE=DATE-TIME params
  * from date properties.
  */
+@org.springframework.stereotype.Component
 public class ICal3ClientFilter implements ICalendarClientFilter{
 
     public void filterCalendar(Calendar calendar) {

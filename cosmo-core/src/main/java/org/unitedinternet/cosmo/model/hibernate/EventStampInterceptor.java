@@ -23,6 +23,7 @@ import net.fortuna.ical4j.model.Dur;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.calendar.util.Dates;
 import org.unitedinternet.cosmo.model.EventStamp;
@@ -30,6 +31,7 @@ import org.unitedinternet.cosmo.model.EventStamp;
 /**
  * Hibernate Interceptor that updates BaseEventStamp timeRangeIndexes.
  */
+@Component
 public class EventStampInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 5339230223113722458L;

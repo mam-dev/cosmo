@@ -6,7 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.metadata.Delegate;
 import org.unitedinternet.cosmo.servlet.ServletContextListenerDelegate;
@@ -18,14 +20,17 @@ import org.unitedinternet.cosmo.servlet.ServletContextListenerDelegate;
  * @author corneliu dobrota
  *
  */
-public class ServletContextListenerDelegatesFactoryBean implements FactoryBean<List<? extends ServletContextListenerDelegate>>{
+@Configuration
+public class ServletContextListenerDelegatesFactoryBean {
 	
 	private final ExternalComponentInstanceProvider instanceProvider;
 	
+	@Autowired
 	public ServletContextListenerDelegatesFactoryBean(ExternalComponentInstanceProvider instanceProvider){
 		this.instanceProvider = instanceProvider;
 	}
-	@Override
+	
+	@Bean
 	public List<? extends ServletContextListenerDelegate> getObject() throws Exception {
 		Set<? extends ServletContextListenerDelegate> delegates = 
 							instanceProvider.getImplInstancesAnnotatedWith(Delegate.class, 
@@ -44,15 +49,5 @@ public class ServletContextListenerDelegatesFactoryBean implements FactoryBean<L
 			}});
 		
 		return delegatesList;
-	}
-
-	@Override
-	public Class<?> getObjectType() {
-		return List.class;
-	}
-
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+	}	
 }

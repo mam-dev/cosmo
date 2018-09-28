@@ -32,12 +32,14 @@ import org.unitedinternet.cosmo.server.ServerUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 /**
  * Servlet filter that populates the
  * {@link org.springframework.security.ContextHolder} with a
  * {@link TicketAuthenticationToken} if needed.
  */
+@Component
 public class TicketProcessingFilter implements Filter {
     private static final Log LOG = LogFactory.getLog(TicketProcessingFilter.class);
 

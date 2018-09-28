@@ -21,11 +21,12 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-   <bean id="jdbcDataSource" class="org.unitedinternet.cosmo.datasource.DataSourceFactoryBean">
+   <!-- bean id="jdbcDataSource" class="org.unitedinternet.cosmo.datasource.DataSourceFactoryBean">
         <constructor-arg ref="externalComponentInstanceProvider"/>
-    </bean>
+    </bean -->
+    
     <!-- Sesssion factory -->
-    <bean id="sessionFactory"
+    <!-- bean id="sessionFactory"
         class="org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate">
         <constructor-arg ref="externalComponentInstanceProvider"/>
        <property name="packagesToScan" ref="hibernatePackagesToScan"/>
@@ -36,35 +37,33 @@
                 <prop key="current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                 <prop key="hibernate.jdbc.batch_size">25</prop>
-                <!-- configure in cosmo.propeties -->
                 <prop key="hibernate.connection.release_mode">after_transaction</prop>
-                <!--  hibernate debugging config switches -->
                 <prop key="hibernate.generate_statistics">true</prop>
 				<prop key="hibernate.id.new_generator_mappings">false</prop>
             </props>
         </property>
         <property name="entityInterceptor" ref="cosmoHibernateInterceptor" />
         <property name="dataSource" ref="jdbcDataSource" />
-    </bean>
+    </bean -->
 
-    <alias alias="hibernatePackagesToScan" name="${cosmo.hibernate.hibernatePackagesToScan}"/>
+    <!-- alias alias="hibernatePackagesToScan" name="${cosmo.hibernate.hibernatePackagesToScan}"/ -->
     
-    <util:list id="hibernatePackagesToScanDefault">
+    <!-- util:list id="hibernatePackagesToScanDefault">
         <value>org.unitedinternet.cosmo.model.hibernate</value>
-    </util:list>
+    </util:list -->
 
-    <bean id="auditableObjectInterceptor"
-        class="org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor" />
+    <!-- bean id="auditableObjectInterceptor"
+        class="org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor" / -->
 
-    <bean id="eventStampInterceptor" class="org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor" />
-    <bean id="cosmoHibernateInterceptor" class="org.unitedinternet.cosmo.hibernate.CompoundInterceptor">
+    <!-- bean id="eventStampInterceptor" class="org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor" / -->
+    <!-- bean id="cosmoHibernateInterceptor" class="org.unitedinternet.cosmo.hibernate.CompoundInterceptor">
         <property name="interceptors">
             <list>
                 <ref bean="auditableObjectInterceptor" />
                 <ref bean="eventStampInterceptor" />
             </list>
         </property>
-    </bean>
+    </bean -->
 
     <!--  Transaction Definitions -->
 
@@ -109,9 +108,9 @@
         a helper for setting up the database schema and loading seed data
     -->
 
-	<bean id="dbInitializer" class="org.unitedinternet.cosmo.db.DbInitializerFactoryBean">
+	<!-- bean id="dbInitializer" class="org.unitedinternet.cosmo.db.DbInitializerFactoryBean">
 		<constructor-arg ref="&amp;sessionFactory"/>
 		<constructor-arg ref="jdbcDataSource" />
 		<constructor-arg ref="externalComponentInstanceProvider"/>
-	</bean>
+	</bean -->
 </beans>

@@ -2,7 +2,10 @@ package org.unitedinternet.cosmo.dav;
 
 import java.util.Set;
 
-import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
@@ -17,7 +20,8 @@ import org.unitedinternet.cosmo.service.UserService;
 
 import com.google.common.collect.Sets;
 
-public class StandardResourceFactoryFactoryBean implements FactoryBean<StandardResourceFactory>{
+@Configuration
+public class StandardResourceFactoryFactoryBean {
 	
 	private static final UserIdentitySupplier DEFAULT_USER_IDENTITY_SUPPLIER = new UserIdentitySupplier() {
 		
@@ -28,22 +32,24 @@ public class StandardResourceFactoryFactoryBean implements FactoryBean<StandardR
 	};
 	
 	private ContentService contentService;
-    private UserService userService;
-    private CosmoSecurityManager securityManager;
-    private EntityFactory entityFactory;
-    private CalendarQueryProcessor calendarQueryProcessor;
-    private ICalendarClientFilterManager clientFilterManager;
-    private ExternalComponentInstanceProvider componentProvider;
-    private boolean schedulingEnabled;
+	private UserService userService;
+	private CosmoSecurityManager securityManager;
+	private EntityFactory entityFactory;
+	private CalendarQueryProcessor calendarQueryProcessor;
+	private ICalendarClientFilterManager clientFilterManager;
+	private ExternalComponentInstanceProvider componentProvider;
     
+	@Value("${cosmo.caldav.schedulingEnabled}")
+	private boolean schedulingEnabled;
+    
+	@Autowired
 	public StandardResourceFactoryFactoryBean(ContentService contentService,
 									UserService userService,
 									CosmoSecurityManager securityManager,
 									EntityFactory entityFactory,
 									CalendarQueryProcessor calendarQueryProcessor,
 									ICalendarClientFilterManager clientFilterManager,
-									ExternalComponentInstanceProvider componentProvider,
-									boolean schedulingEnabled){
+									ExternalComponentInstanceProvider componentProvider){
 		
 		this.contentService = contentService;
         this.userService = userService;
@@ -52,11 +58,11 @@ public class StandardResourceFactoryFactoryBean implements FactoryBean<StandardR
         this.calendarQueryProcessor = calendarQueryProcessor;
         this.clientFilterManager = clientFilterManager;
         this.componentProvider = componentProvider;
-        this.schedulingEnabled = schedulingEnabled;
 		
 	}
-	@Override
-	public StandardResourceFactory getObject() throws Exception {
+	
+	@Bean
+	public DavResourceFactory getStandardResourceFactory() throws Exception {
 		Set<? extends UserIdentitySupplier> identitySuppliers = componentProvider.getImplInstancesAnnotatedWith(Supplier.class, UserIdentitySupplier.class);
 		UserIdentitySupplier identitySupplier = identitySuppliers.isEmpty() ? DEFAULT_USER_IDENTITY_SUPPLIER : identitySuppliers.iterator().next();
 		
@@ -69,14 +75,5 @@ public class StandardResourceFactoryFactoryBean implements FactoryBean<StandardR
 									       identitySupplier, 
 									       schedulingEnabled);
 	}
-
-	@Override
-	public Class<StandardResourceFactory> getObjectType() {
-		return StandardResourceFactory.class;
-	}
-
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+	
 }

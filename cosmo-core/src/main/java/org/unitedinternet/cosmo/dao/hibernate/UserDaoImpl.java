@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.logging.Log;
@@ -28,7 +29,9 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
@@ -41,11 +44,13 @@ import org.unitedinternet.cosmo.util.VersionFourGenerator;
 /**
  * Implemtation of UserDao using Hibernate persistence objects.
  */
+@Component
 public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
 
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(UserDaoImpl.class);
 
+    @Autowired
     private VersionFourGenerator idGenerator;
 
     public User createUser(User user) {
@@ -246,6 +251,7 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
 
     }
 
+    @PostConstruct
     public void init() {
         if (idGenerator == null) {
             throw new IllegalStateException("idGenerator is required");

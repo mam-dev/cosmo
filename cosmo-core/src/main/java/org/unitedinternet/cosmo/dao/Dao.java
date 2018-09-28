@@ -15,6 +15,9 @@
  */
 package org.unitedinternet.cosmo.dao;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 /**
  * Data Access Object (DAO) interface.
  */
@@ -24,11 +27,15 @@ public interface Dao {
      * Initializes the DAO, sanity checking required properties
      * and defaulting optional properties.
      */
+	//TODO @PostConstruct is not inheritable
+	@PostConstruct
     public void init();
 
     /**
      * Readies the DAO for garbage collection, shutting down any
      * resources used.
      */
+	@PreDestroy
+	//TODO @PreDestroy is not inheritable
     public void destroy();
 }

@@ -29,9 +29,10 @@
 		requesting the data. -->
 
 	<!-- filter for iCal clients -->
-	<bean id="ical3ClientFilter" class="org.unitedinternet.cosmo.icalendar.ICal3ClientFilter" />
+	<!-- bean id="ical3ClientFilter" class="org.unitedinternet.cosmo.icalendar.ICal3ClientFilter" / -->
 
-	<bean id="iCalendarClientFilterManager"
+	<!-- see ICalendarClientFilterManagerConfiguration -->
+	<!-- bean id="iCalendarClientFilterManager"
 		class="org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager">
 		<property name="clientFilters">
 			<map>
@@ -39,7 +40,7 @@
 				<entry key="ical3" value-ref="ical3ClientFilter" />
 			</map>
 		</property>
-	</bean>
+	</bean -->
 
 
 
@@ -69,7 +70,7 @@
 		<property name="enabled" value="false" />
 	</bean>
 
-	<bean id="ootbHelper"
+	<!-- bean id="ootbHelper"
 		class="org.unitedinternet.cosmo.service.account.OutOfTheBoxHelper">
 		<property name="contentDao">
 			<ref bean="contentDao" />
@@ -77,59 +78,60 @@
 		<property name="entityFactory">
 			<ref bean="cosmoEntityFactory" />
 		</property>
-	</bean>
+	</bean  -->
 
-	<bean id="triageStatusQueryProcessor"
+	<!-- bean id="triageStatusQueryProcessor"
 		class="org.unitedinternet.cosmo.service.impl.StandardTriageStatusQueryProcessor">
 		<property name="contentDao">
 			<ref bean="contentDao" />
 		</property>
-	</bean>
+	</bean  -->
 
 
-	<bean id="userService"
+	<!-- bean id="userService"
 		class="org.unitedinternet.cosmo.service.impl.StandardUserService"
 		init-method="init" destroy-method="destroy">
 		<property name="contentDao" ref="contentDao" />
 		<property name="userDao" ref="userDao" />
 		<property name="passwordGenerator" ref="tokenGenerator" />
-	</bean>
+	</bean -->
 
-	<bean id="contentLockManager"
-		class="org.unitedinternet.cosmo.service.lock.SingleVMLockManager" />
+	<!-- bean id="contentLockManager"
+		class="org.unitedinternet.cosmo.service.lock.SingleVMLockManager" / -->
 
-	<bean id="contentService"
+	<!-- bean id="contentService"
 		class="org.unitedinternet.cosmo.service.impl.StandardContentService"
 		init-method="init" destroy-method="destroy">
 		<property name="contentDao" ref="contentDao" />
 		<property name="lockManager" ref="contentLockManager" />
 		<property name="triageStatusQueryProcessor" ref="triageStatusQueryProcessor" />
-	</bean>
+	</bean  -->
 
-	<bean id="calendarService"
+	<!-- bean id="calendarService"
 		class="org.unitedinternet.cosmo.service.impl.StandardCalendarService"
 		init-method="init" destroy-method="destroy">
 		<property name="calendarDao" ref="calendarDao" />
 		<property name="contentDao" ref="contentDao"/>
-	</bean>
+	</bean  -->
 
-	<bean id="calendarQueryProcessor"
+	<!-- bean id="calendarQueryProcessor"
 		class="org.unitedinternet.cosmo.calendar.query.impl.StandardCalendarQueryProcessor">
 		<property name="calendarDao" ref="calendarDao" />
 		<property name="contentDao" ref="contentDao" />
-	</bean>
+	</bean -->
 
 	<!-- general protocol/interface resources -->
 
-	<bean id="serviceLocatorFactory" class="org.unitedinternet.cosmo.server.ServiceLocatorFactory">
+	<!-- See ServiceLocatorFactoryConfiguration -->
+	<!-- bean id="serviceLocatorFactory" class="org.unitedinternet.cosmo.server.ServiceLocatorFactory">
 		<property name="cmpPrefix" value="/cmp" />
 		<property name="davPrefix" value="/dav" />
 		<property name="securityManager" ref="securityManager" />
-	</bean>
+	</bean -->
 
 	<!-- dav protocol resources -->
 
-	<bean id="davResourceFactory" class="org.unitedinternet.cosmo.dav.StandardResourceFactoryFactoryBean">
+	<!-- bean id="davResourceFactory" class="org.unitedinternet.cosmo.dav.StandardResourceFactoryFactoryBean">
 		<constructor-arg ref="contentService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="securityManager" />
@@ -138,17 +140,17 @@
 		<constructor-arg ref="iCalendarClientFilterManager" />
         <constructor-arg ref="externalComponentInstanceProvider"/>
 		<constructor-arg value="${cosmo.caldav.schedulingEnabled}" />
-	</bean>
+	</bean -->
 
-	<bean id="davResourceLocatorFactory"
-		class="org.unitedinternet.cosmo.dav.StandardResourceLocatorFactory" />
+	<!-- bean id="davResourceLocatorFactory"
+		class="org.unitedinternet.cosmo.dav.StandardResourceLocatorFactory" / -->
 
-	<bean id="dav"
+	<!-- bean id="dav"
 		class="org.unitedinternet.cosmo.dav.servlet.StandardRequestHandler">
 		<property name="resourceLocatorFactory" ref="davResourceLocatorFactory" />
 		<property name="resourceFactory" ref="davResourceFactory" />
 		<property name="entityFactory" ref="cosmoEntityFactory" />
-	</bean>
+	</bean -->
 
 
 	<!-- the servlet context configurer, which is used instead of spring's servlet 
@@ -161,10 +163,10 @@
 
 	<!-- authentication resources -->
 
-	<bean id="userDetailsService"
+	<!-- bean id="userDetailsService"
 		class="org.unitedinternet.cosmo.acegisecurity.userdetails.CosmoUserDetailsService">
 		<property name="userDao" ref="userDao" />
-	</bean>
+	</bean -->
 
 
 	<!-- Logging resources -->
@@ -175,32 +177,32 @@
 
 	
 	<!-- API implementation -->	
-	<bean id="typesFinder" class="org.unitedinternet.cosmo.api.TypesFinder"/>
+	<!-- bean id="typesFinder" class="org.unitedinternet.cosmo.api.TypesFinder"/ -->
     
-    <bean id="springExternalComponentFactory" class="org.unitedinternet.cosmo.api.SpringExternalComponentFactory"/>
+    <!-- bean id="springExternalComponentFactory" class="org.unitedinternet.cosmo.api.SpringExternalComponentFactory"/ -->
     
-    <bean id="externalComponentFactoryChain" class="org.unitedinternet.cosmo.api.ExternalComponentFactoryChain">
+    <!-- bean id="externalComponentFactoryChain" class="org.unitedinternet.cosmo.api.ExternalComponentFactoryChain">
        <constructor-arg>
           <array>
               <ref bean="springExternalComponentFactory"/>  
               <bean class="org.unitedinternet.cosmo.api.DefaultExternalComponentFactory"/>
           </array>
        </constructor-arg>
-    </bean>
+    </bean  -->
                             
-    <bean id="externalComponentInstanceProvider" class="org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider">
+    <!-- bean id="externalComponentInstanceProvider" class="org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider">
        <constructor-arg ref="typesFinder"/>
        <constructor-arg ref="externalComponentFactoryChain"/>
-    </bean>
+    </bean -->
     
-    <bean id="externalComponentDecorator" class="org.unitedinternet.cosmo.api.ExternalComponentDecorator">
+    <!-- bean id="externalComponentDecorator" class="org.unitedinternet.cosmo.api.ExternalComponentDecorator">
        <constructor-arg ref="externalComponentInstanceProvider"/>
        <constructor-arg ref="typesFinder"/>
-    </bean>
+    </bean -->
     
-    <bean id="servletContextListenersDelegate" class="org.unitedinternet.cosmo.servletcontext.ServletContextListenerDelegatesFactoryBean">
+    <!-- bean id="servletContextListenersDelegate" class="org.unitedinternet.cosmo.servletcontext.ServletContextListenerDelegatesFactoryBean">
 		<constructor-arg ref="externalComponentInstanceProvider"/>
-    </bean>
+    </bean -->
     
     <bean id="eventValidatorConfig" class="org.unitedinternet.cosmo.hibernate.validator.EventValidator.ValidationConfig"/>
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

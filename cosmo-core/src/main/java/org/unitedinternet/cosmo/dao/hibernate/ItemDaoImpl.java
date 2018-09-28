@@ -34,6 +34,7 @@ import org.hibernate.StatelessSession;
 import org.hibernate.UnresolvableObjectException;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.security.core.token.TokenService;
 import org.unitedinternet.cosmo.CosmoException;
@@ -69,9 +70,15 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
 
     private static final Log LOG = LogFactory.getLog(ItemDaoImpl.class);
 
+    @Autowired
     private VersionFourGenerator idGenerator = null;
+    
+    @Autowired
     private TokenService ticketKeyGenerator = null;
+    
+    @Autowired
     private ItemPathTranslator itemPathTranslator = null;
+    @Autowired
     private ItemFilterProcessor itemFilterProcessor = null;
 
     /*

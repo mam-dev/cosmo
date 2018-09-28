@@ -8,26 +8,27 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate;
 import org.unitedinternet.cosmo.metadata.Callback;
 
-public class DbInitializerFactoryBean implements FactoryBean<DbInitializer> {
+@Configuration
+public class DbInitializerFactoryBean {
 
-    private HibernateSessionFactoryBeanDelegate localSessionFactory;
+//    private HibernateSessionFactoryBeanDelegate localSessionFactory;
     private DataSource datasource;
     private ExternalComponentInstanceProvider externalComponentInstanceProvider;
 
-    public DbInitializerFactoryBean(HibernateSessionFactoryBeanDelegate localSessionFactory, DataSource datasource,
+    public DbInitializerFactoryBean(DataSource datasource,
             ExternalComponentInstanceProvider externalComponentInstanceProvider) {
-        this.localSessionFactory = localSessionFactory;
         this.datasource = datasource;
         this.externalComponentInstanceProvider = externalComponentInstanceProvider;
     }
 
-    @Override
-    public DbInitializer getObject() throws Exception {
+    @Bean
+    public DbInitializer getDbInitializer() throws Exception {
 
         Set<? extends DatabaseInitializationCallback> callbacks = externalComponentInstanceProvider
                 .getImplInstancesAnnotatedWith(Callback.class, DatabaseInitializationCallback.class);
@@ -43,19 +44,9 @@ public class DbInitializerFactoryBean implements FactoryBean<DbInitializer> {
 
         DbInitializer dbInitializer = new DbInitializer();
         dbInitializer.setDataSource(datasource);
-        dbInitializer.setLocalSessionFactory(localSessionFactory);
+//        dbInitializer.setLocalSessionFactory(localSessionFactory);
         dbInitializer.setCallbacks(callbacksList);
         return dbInitializer;
-    }
-
-    @Override
-    public Class<?> getObjectType() {
-        return DbInitializer.class;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
 }

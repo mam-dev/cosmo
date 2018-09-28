@@ -13,23 +13,27 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author corneliu dobrota
  *
  */
+@Component
 public class ExternalComponentInstanceProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalComponentInstanceProvider.class);
     
     private TypesFinder typesFinder; 
-    private ExternalComponentFactory externalComponentFactory;
+    private ExternalComponentFactoryChain externalComponentFactoryChain;
     
+    @Autowired
     public ExternalComponentInstanceProvider(TypesFinder typesFinder,
-                            ExternalComponentFactory externalComponentFactory){
+    		ExternalComponentFactoryChain externalComponentFactoryChain){
         
         this.typesFinder = typesFinder; 
-        this.externalComponentFactory = externalComponentFactory;
+        this.externalComponentFactoryChain = externalComponentFactoryChain;
     }
     
     public <T> Set<? extends T> getImplInstancesAnnotatedWith(Class<? extends Annotation> metadata, Class<T> superType){
@@ -43,7 +47,7 @@ public class ExternalComponentInstanceProvider {
         
         for(ExternalComponentDescriptor<? extends T> description : descriptions){
             
-            T instance = externalComponentFactory.instanceForDescriptor(description);
+            T instance = externalComponentFactoryChain.instanceForDescriptor(description);
             
             result.add(instance);
         }
@@ -51,6 +55,6 @@ public class ExternalComponentInstanceProvider {
     }
     
     public <T> T instanceForClass(Class<T> clazz){
-    	return externalComponentFactory.instanceForDescriptor(new ExternalComponentDescriptor<T>(clazz));
+    	return externalComponentFactoryChain.instanceForDescriptor(new ExternalComponentDescriptor<T>(clazz));
     }
 }

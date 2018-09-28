@@ -3,6 +3,7 @@ package org.unitedinternet.cosmo.dao;
 import java.lang.reflect.Proxy;
 
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link FactoryBean} for creating a <code>ItemDao</code> implementation that delegates all the method invocations to
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.FactoryBean;
  * @see ContentDao
  * @see ContentDaoInvocationHandler
  */
+// TODO - Is this still used?
+//@Component
 public class ContentDaoProxyFactory implements FactoryBean<ContentDao> {
 
     private final ContentDaoInvocationHandler invocationHandler;

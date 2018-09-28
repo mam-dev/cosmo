@@ -31,6 +31,7 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.FreeBusyItem;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
 
 import net.fortuna.ical4j.model.Calendar;
@@ -83,8 +84,8 @@ public class StandardCalendarQueryProcessorTest {
         factory = new MockEntityFactory();
         storage = new MockDaoStorage();
         contentDao = new MockContentDao(storage);
-        queryProcessor = new StandardCalendarQueryProcessor();
         calendarDao = new MockCalendarDao(storage);
+        queryProcessor = new StandardCalendarQueryProcessor(new EntityConverter(factory), contentDao, calendarDao);
         queryProcessor.setCalendarDao(calendarDao);
      
         User user = testHelper.makeDummyUser();

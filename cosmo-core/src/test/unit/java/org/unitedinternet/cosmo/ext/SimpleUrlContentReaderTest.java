@@ -16,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.hibernate.validator.EventValidator;
+import org.unitedinternet.cosmo.hibernate.validator.ValidationConfig;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
@@ -43,9 +44,9 @@ public class SimpleUrlContentReaderTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        EventValidator.ValidationConfig validationConfig = new EventValidator.ValidationConfig();
+        ValidationConfig validationConfig = new ValidationConfig();
         validationConfig.setEnvironment(Mockito.mock(Environment.class));
-        EventValidator.setValidationConfig(validationConfig);
+//        EventValidator.setValidationConfig(validationConfig);
 
         this.validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
@@ -54,12 +55,12 @@ public class SimpleUrlContentReaderTest {
         EntityConverter entityConverter = new EntityConverter(entityFactory);
         this.converter = new ContentConverter(entityConverter);
 
-        instanceUnderTest = new SimpleUrlContentReader(converter, validator, 700);
+        instanceUnderTest = new SimpleUrlContentReader(converter, validator);
     }
 
     @Test
     public void shouldReadRomanianHolidays() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, validator, 1024 * 1024);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, validator);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/ro.romanian%23holiday%40group.v.calendar.google.com/public/basic.ics",
                 TIMEOUT);
@@ -81,7 +82,7 @@ public class SimpleUrlContentReaderTest {
 
     @Test
     public void shouldReadExternalCalendar() {
-        this.instanceUnderTest = new SimpleUrlContentReader(converter, validator, 1024 * 1024);
+        this.instanceUnderTest = new SimpleUrlContentReader(converter, validator);
         Set<NoteItem> items = this.instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
                 TIMEOUT);

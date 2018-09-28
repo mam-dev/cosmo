@@ -29,7 +29,7 @@
 		
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
-		<org.springframework.security.version>4.2.8.RELEASE</org.springframework.security.version>		
+		<org.springframework.security.version>5.0.4.RELEASE</org.springframework.security.version>		
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
