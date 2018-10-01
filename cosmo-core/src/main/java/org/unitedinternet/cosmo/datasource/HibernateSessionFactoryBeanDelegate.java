@@ -27,6 +27,7 @@ import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
 
 //TODO - not used
+@Deprecated
 public class HibernateSessionFactoryBeanDelegate {
 
     private static final String COSMO_MYSQL_DIALECT = "org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect";
