@@ -32,15 +32,8 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  * Abstract Spring Dao test case.
  *
  */
-// @RunWith(SpringJUnit4ClassRunner.class)
-// @ContextConfiguration(locations={ //TODO - remove this
-// "classpath:applicationContext-test.xml",
-// "classpath:applicationContext-services.xml",
-// "classpath:applicationContext-security-dav.xml",
-// "classpath:applicationContext-dao.xml"})
 @Rollback
 @Transactional
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarApplication.class)
 public abstract class AbstractSpringDaoTestCase {
@@ -54,16 +47,16 @@ public abstract class AbstractSpringDaoTestCase {
         if (mariaDB.isRunning()) {
             return;
         }
-        
-        LOG.info("\n\n [DB] starting \n\n");
+
+        LOG.info("\n\n[DB] Embedded MariaDB test instance about to start... \n\n");
         mariaDB.setDefaultBaseDir("target/maridb/base");
         mariaDB.setDefaultDataDir("target/maridb/data");
         mariaDB.setDefaultPort(33060);
         mariaDB.start();
 
-        LOG.info("[DB] - Started MariaDB test instance.");
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        LOG.info("\n\n[DB] - Started MariaDB test instance.\n\n");
 
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
                 LOG.info("[DB] - About to shutdown MariaDB test instance.");

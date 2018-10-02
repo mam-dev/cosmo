@@ -12,15 +12,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
 import org.unitedinternet.cosmo.hibernate.CompoundInterceptor;
 
 //https://www.baeldung.com/the-persistence-layer-with-spring-and-jpa
+//TODO Move this to yml files.
 @Configuration
 public class HibernateSessionFactoryBeanDelegateConfiguration {
-
-    @Autowired
-    private ExternalComponentInstanceProvider externalComponentInstanceProvider;
 
     @Autowired
     private CompoundInterceptor cosmoHibernateInterceptor;
@@ -40,13 +37,13 @@ public class HibernateSessionFactoryBeanDelegateConfiguration {
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         Map<String, Object> jpaPropertyMap = additionalProperties();
-        jpaPropertyMap.put("hibernate.ejb.interceptor", this.cosmoHibernateInterceptor);
+        jpaPropertyMap.put("hibernate.session_factory.interceptor", this.cosmoHibernateInterceptor);
         em.setJpaPropertyMap(jpaPropertyMap);
 
         return em;
     }
 
-    // TODO - not here. Use yaml file for defining string properties and HibernatePropertiesCustomizer for interceptors.
+    // TODO - not here. Use yml file for defining string properties and HibernatePropertiesCustomizer for interceptors.
     private Map<String, Object> additionalProperties() {
         Map<String, Object> hibernateProperties = new HashMap<>();
         hibernateProperties.put("hibernate.cache.use_query_cache", "false");
