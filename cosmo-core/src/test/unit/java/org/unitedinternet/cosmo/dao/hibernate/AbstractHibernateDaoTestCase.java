@@ -15,42 +15,35 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
-import org.springframework.orm.hibernate5.SessionHolder;
+import org.junit.Before;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Abstract Hibernate Dao Test Case. 
  *
  */
+@Transactional
 public abstract class AbstractHibernateDaoTestCase extends AbstractSpringDaoTestCase {
 
-    protected HibernateTestHelper helper;
-    protected Session session;
-    
-//    @Autowired(required=true)
-//    protected SessionFactory sessionFactory ;
-    
     @PersistenceContext
     private EntityManager entityManager;
     
-    /**
-     * Constructor.
-     */
-    public AbstractHibernateDaoTestCase() {
-        super();
-        helper = new HibernateTestHelper();
+    protected Session session;
+    
+    protected HibernateTestHelper helper;
+    
+    @Before
+    public void setUp() {
+        this.session = this.getSession();
+        this.helper = new HibernateTestHelper();
     }
+    
     
     protected Session getSession() {
         return (Session) this.entityManager.getDelegate();
@@ -62,23 +55,18 @@ public abstract class AbstractHibernateDaoTestCase extends AbstractSpringDaoTest
      */
     @AfterTransaction
     public void onTearDownAfterTransaction() throws Exception {
-        // Get a reference to the Session and bind it to the TransactionManager
-//        SessionHolder holder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-//        Session s = holder.getSession(); 
-//        TransactionSynchronizationManager.unbindResource(sessionFactory);
-      //  s.clear();
-     //   clearSession();
-//        SessionFactoryUtils.closeSession(s);
+        this.entityManager.clear();        
+        this.entityManager.close();
+        
     }
 
     /**
      * Clears session.
      */
     public void clearSession() {
-        //session.flush();
-        if (session != null) {
-        	session.clear();
-        }
+        this.entityManager.flush();
+        this.entityManager.clear();
+        this.entityManager.close();
     }
 
     /**

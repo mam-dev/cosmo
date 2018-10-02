@@ -15,15 +15,12 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.io.File;
-import java.io.IOException;
-
 import javax.transaction.Transactional;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,36 +32,44 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  * Abstract Spring Dao test case.
  *
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations={ //TODO - remove this
-//        "classpath:applicationContext-test.xml",
-//        "classpath:applicationContext-services.xml",
-//        "classpath:applicationContext-security-dav.xml",
-//        "classpath:applicationContext-dao.xml"})
+// @RunWith(SpringJUnit4ClassRunner.class)
+// @ContextConfiguration(locations={ //TODO - remove this
+// "classpath:applicationContext-test.xml",
+// "classpath:applicationContext-services.xml",
+// "classpath:applicationContext-security-dav.xml",
+// "classpath:applicationContext-dao.xml"})
 @Rollback
 @Transactional
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=CalendarApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarApplication.class)
 public abstract class AbstractSpringDaoTestCase {
 
-	
-	protected static MariaDB4jSpringService mariaDB;
-	
-	@BeforeClass
-	public static void startMariaDB() {
-		
-		mariaDB = new MariaDB4jSpringService();
-		mariaDB.setDefaultBaseDir("target/maridb/base");
-		mariaDB.setDefaultDataDir("target/maridb/data");
-		mariaDB.setDefaultPort(33060);
-		
-		mariaDB.start();
-	}
-	
-	@AfterClass
-	public static void stopMariaDB() {
-		mariaDB.stop();
-	}
+    private static Logger LOG = LoggerFactory.getLogger(AbstractSpringDaoTestCase.class);
 
+    private static volatile MariaDB4jSpringService mariaDB = new MariaDB4jSpringService();
+
+    @BeforeClass
+    public static void startMariaDB() {
+        if (mariaDB.isRunning()) {
+            return;
+        }
+        
+        LOG.info("\n\n [DB] starting \n\n");
+        mariaDB.setDefaultBaseDir("target/maridb/base");
+        mariaDB.setDefaultDataDir("target/maridb/data");
+        mariaDB.setDefaultPort(33060);
+        mariaDB.start();
+
+        LOG.info("[DB] - Started MariaDB test instance.");
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                LOG.info("[DB] - About to shutdown MariaDB test instance.");
+                mariaDB.stop();
+                LOG.info("[DB] - Shutdown MariaDB test instance.");
+            }
+        }));
+    }
 }

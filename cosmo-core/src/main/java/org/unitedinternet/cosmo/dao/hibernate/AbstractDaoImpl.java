@@ -53,11 +53,11 @@ public abstract class AbstractDaoImpl {
      * @return a <b>new</b> Hibernate state less session which needs to be closed after usage.
      */
     protected StatelessSession openStatelessSession() {
-        return (StatelessSession) this.entityManager;
+        return (StatelessSession) this.entityManager.getDelegate();
     }
 
     /**
-     * Logs constraint violeation exception
+     * Logs constraint violation exception
      *
      * @param cve
      *            - if something is wrong this exception is thrown.

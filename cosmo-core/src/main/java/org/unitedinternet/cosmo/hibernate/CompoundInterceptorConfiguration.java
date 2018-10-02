@@ -13,22 +13,22 @@ import org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor;
 @Configuration
 public class CompoundInterceptorConfiguration {
 
-	@Autowired
-	private AuditableObjectInterceptor auditableObjectInterceptor;
-	
-	@Autowired
-	private EventStampInterceptor eventStampInterceptor;
-	
-	@Bean
-	public CompoundInterceptor getCompoundInterceptor() {
-		
-		CompoundInterceptor compoundInterceptor = new CompoundInterceptor();
-		List<Interceptor> interceptors = new ArrayList<>();
-		interceptors.add(auditableObjectInterceptor);
-		interceptors.add(eventStampInterceptor);
-		compoundInterceptor.setInterceptors(interceptors);
-		
-		return compoundInterceptor;
-	}
-	
+    @Autowired
+    private AuditableObjectInterceptor auditableObjectInterceptor;
+
+    @Autowired
+    private EventStampInterceptor eventStampInterceptor;
+
+    @Bean
+    public CompoundInterceptor getCompoundInterceptor() {
+
+        CompoundInterceptor compoundInterceptor = new CompoundInterceptor();
+        List<Interceptor> interceptors = new ArrayList<>();
+        interceptors.add(auditableObjectInterceptor);
+        interceptors.add(eventStampInterceptor);
+        compoundInterceptor.setInterceptors(interceptors);
+
+        return compoundInterceptor;
+    }
+
 }

@@ -7,9 +7,9 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://localhost:3306/test?autoReconnect=true
+    url: jdbc:mysql://localhost:33060/test?autoReconnect=true
     username: root
-    password: '1234'
+    password: 
     driver-class-name: org.mariadb.jdbc.Driver
     
 
