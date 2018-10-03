@@ -2,6 +2,7 @@ package org.unitedinternet.cosmo.security.filter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,10 +19,13 @@ import org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderDelegator;
 import org.unitedinternet.cosmo.acegisecurity.AuthenticationProviderProxyFactory;
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticationProvider;
 import org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint;
-import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
-import org.unitedinternet.cosmo.metadata.CalendarSecurity;
 import org.unitedinternet.cosmo.security.SuccessfulAuthenticationListener;
 
+/**
+ * TODO - Remove this.
+ * @author daniel grigore
+ *
+ */
 @Configuration
 public class BasicAuthenticationFilterConfiguration {
 
@@ -40,10 +44,7 @@ public class BasicAuthenticationFilterConfiguration {
 	private CosmoAuthenticationEntryPoint cosmoAuthenticationEntryPoint;
 	
 	@Autowired
-	private AuthenticationProviderProxyFactory authenticationProviderProxyFactory;
-	
-	@Autowired
-	private ExternalComponentInstanceProvider externalComponentInstanceProvider;
+	private AuthenticationProviderProxyFactory authenticationProviderProxyFactory;		
 	
 	@Bean
 	public BasicAuthenticationFilter getBasicAuthenticationFilter() throws Exception {
@@ -76,7 +77,7 @@ public class BasicAuthenticationFilterConfiguration {
 	}
 	
 	private Collection<? extends AuthenticationProvider> getProviders(){
-	    Collection<? extends AuthenticationProvider> authenticationProviders = externalComponentInstanceProvider.getImplInstancesAnnotatedWith(CalendarSecurity.class, AuthenticationProvider.class);
+	    Collection<? extends AuthenticationProvider> authenticationProviders = Collections.emptyList();
 	    checkAuthenticationProviders(authenticationProviders);
 	    LOGGER.info("Found [{}] authentication provider implementations", authenticationProviders.size());
 	    
@@ -99,7 +100,7 @@ public class BasicAuthenticationFilterConfiguration {
 	    }
 	}
 	private Collection<? extends SuccessfulAuthenticationListener> getSuccessfulAuthenticationListeners() {
-	    Collection<? extends SuccessfulAuthenticationListener> successfulAuthListeners = externalComponentInstanceProvider.getImplInstancesAnnotatedWith(CalendarSecurity.class, SuccessfulAuthenticationListener.class);
+	    Collection<? extends SuccessfulAuthenticationListener> successfulAuthListeners = Collections.emptyList();
 	    return successfulAuthListeners;
 	}
 }

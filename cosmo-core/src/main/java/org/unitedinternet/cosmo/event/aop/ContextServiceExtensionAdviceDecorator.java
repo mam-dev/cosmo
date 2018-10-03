@@ -2,10 +2,9 @@ package org.unitedinternet.cosmo.event.aop;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
-import org.unitedinternet.cosmo.metadata.Interceptor;
 import org.unitedinternet.cosmo.service.interceptors.CalendarGetHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionCreateHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionDeleteHandler;
@@ -16,14 +15,15 @@ import org.unitedinternet.cosmo.service.interceptors.EventRemoveHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
 
 /**
+ * 
+ * TODO See if this is needed in anyway.
+ * 
  * Decorator for {@link ContextServiceExtensionsAdvice} that adds the defined event handlers.
  * 
  * @author daniel grigore
  *
  */
 public class ContextServiceExtensionAdviceDecorator {
-
-    private final ExternalComponentInstanceProvider provider;
 
     private final ContextServiceExtensionsAdvice advice;
 
@@ -32,12 +32,9 @@ public class ContextServiceExtensionAdviceDecorator {
      * 
      * @param provider
      */
-    public ContextServiceExtensionAdviceDecorator(ExternalComponentInstanceProvider provider,
+    public ContextServiceExtensionAdviceDecorator(
             ContextServiceExtensionsAdvice advice) {
-        if (provider == null || advice == null) {
-            throw new IllegalArgumentException("provider or advice parameters cannot be null");
-        }
-        this.provider = provider;
+        
         this.advice = advice;
         this.setInterceptors();
     }
@@ -50,7 +47,7 @@ public class ContextServiceExtensionAdviceDecorator {
      * @return
      */
     private <T> List<T> getInterceptorsList(Class<T> clazz) {
-        Collection<? extends T> handlers = this.provider.getImplInstancesAnnotatedWith(Interceptor.class, clazz);
+        Collection<? extends T> handlers = Collections.emptyList();
         List<T> list = new ArrayList<>();
         for (T handler : handlers) {
             list.add(handler);

@@ -9,13 +9,10 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
-import org.unitedinternet.cosmo.hibernate.validator.EventValidator;
 import org.unitedinternet.cosmo.hibernate.validator.ValidationConfig;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -38,15 +35,11 @@ public class SimpleUrlContentReaderTest {
 
     private UrlContentReader instanceUnderTest;
 
-    @Mock
-    private ExternalComponentInstanceProvider instanceProvider;
-
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         ValidationConfig validationConfig = new ValidationConfig();
-        validationConfig.setEnvironment(Mockito.mock(Environment.class));
-//        EventValidator.setValidationConfig(validationConfig);
+        validationConfig.setEnvironment(Mockito.mock(Environment.class));        
 
         this.validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
