@@ -1,25 +1,13 @@
-server:
-  port: 8080
-  context-path: /cosmo
+#TODO - Leave only default properties needed by the application. 
 spring:
-  application:
-    name: cosmo-webapp
   profiles:
     active: local
-  datasource:
-    url: jdbc:mysql://localhost:33060/test?autoReconnect=true
-    username: root
-    password: 
-    driver-class-name: org.mariadb.jdbc.Driver
     
-
 # Moved from etc/application.properties
 cosmo:
   tikets: 
     serverSecret: cosmossecret
     serverInteger: 1235    
-  hibernate:
-     hibernatePackagesToScan: org.unitedinternet.cosmo.model.hibernate  
   caldav:   
      schedulingEnabled: true
 

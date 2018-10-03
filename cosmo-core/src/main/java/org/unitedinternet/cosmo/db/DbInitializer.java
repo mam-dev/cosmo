@@ -26,20 +26,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.tool.hbm2ddl.SchemaValidator;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate;
 
 /**
- * A helper class that initializes the Cosmo database schema and populates the database with seed data.
+ * XXX - Run this spring context is about to start. A helper class that initializes the Cosmo database schema and populates the
+ * database with seed data.
  */
 public class DbInitializer {
 
@@ -47,7 +49,7 @@ public class DbInitializer {
 
     private static final String PATH_SCHEMA = "/db/cosmo-schema.sql";
 
-//    private HibernateSessionFactoryBeanDelegate localSessionFactory;
+    private EntityManagerFactory localSessionFactory;
 
     private DataSource datasource;
 
@@ -68,7 +70,7 @@ public class DbInitializer {
             }
         }
         // More thorough schema validation
-//        validateSchema();
+        validateSchema();
     }
 
     public void executeStatements(String resource) {
@@ -101,11 +103,6 @@ public class DbInitializer {
 
     public void setDataSource(DataSource datasource) {
         this.datasource = datasource;
-    }
-
-    public void setLocalSessionFactory(HibernateSessionFactoryBeanDelegate hibernateLocalSessionFactoryDelegate) {
-        //TODO
-    	//this.localSessionFactory = hibernateLocalSessionFactoryDelegate;
     }
 
     public void setCallbacks(Collection<? extends DatabaseInitializationCallback> callbacks) {
@@ -158,19 +155,19 @@ public class DbInitializer {
     /**
      * Schema validation
      */
-    //TODO
-//    private void validateSchema() {
-//        try {
-//            StandardServiceRegistry registry = localSessionFactory.getConfiguration()
-//                    .getStandardServiceRegistryBuilder().build();
-//            MetadataSources sources = new MetadataSources(registry);
-//            sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
-//            Metadata metadata = sources.buildMetadata(registry);
-//            new SchemaValidator().validate(metadata);
-//            LOG.info("schema validation passed");
-//        } catch (HibernateException e) {
-//            LOG.error("error validating schema", e);
-//            throw e;
-//        }
-//    }
+    // TODO
+    private void validateSchema() {
+        try {
+            SessionFactory factory = this.localSessionFactory.unwrap(SessionFactory.class);
+            StandardServiceRegistry registry = factory.getSessionFactoryOptions().getServiceRegistry();
+            MetadataSources sources = new MetadataSources(registry);
+            sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
+            Metadata metadata = sources.buildMetadata(registry);
+            new SchemaValidator().validate(metadata);
+            LOG.info("schema validation passed");
+        } catch (HibernateException e) {
+            LOG.error("error validating schema", e);
+            throw e;
+        }
+    }
 }

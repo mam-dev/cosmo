@@ -5,14 +5,18 @@ import java.net.URL;
 import org.apache.http.HttpHost;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.unitedinternet.cosmo.ext.ContentSourceProcessor;
 import org.unitedinternet.cosmo.ext.ProxyFactory;
 
 import net.fortuna.ical4j.model.Calendar;
 
+/**
+ * TODO - Move this to web app submodule or to better packages.
+ * 
+ * @author daniel grigore
+ *
+ */
 @Configuration
-@ImportResource("classpath:applicationContext-dao.xml")
 public class DaoConfig {
 
     @Bean

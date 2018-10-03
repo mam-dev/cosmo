@@ -11,9 +11,13 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.api.ExternalComponentInstanceProvider;
-import org.unitedinternet.cosmo.datasource.HibernateSessionFactoryBeanDelegate;
 import org.unitedinternet.cosmo.metadata.Callback;
 
+/**
+ * XXX - Remove this.
+ * @author daniel grigore
+ *
+ */
 @Configuration
 public class DbInitializerFactoryBean {
 

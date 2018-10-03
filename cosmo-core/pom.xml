@@ -307,6 +307,7 @@
 					<include>logback.xml</include>
 					<include>etc/cosmo.properties</include>
 					<include>applicationContext-*.xml</include>
+					<include>application-*.yaml</include>
 				</includes>
 			</testResource>
 			<testResource>

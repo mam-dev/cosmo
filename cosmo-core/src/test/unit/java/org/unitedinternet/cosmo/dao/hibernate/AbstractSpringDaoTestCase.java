@@ -23,19 +23,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.unitedinternet.cosmo.app.CalendarApplication;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
- * Abstract Spring Dao test case.
+ * Abstract Spring DAO test case.
  *
  */
 @Rollback
 @Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarApplication.class)
+@ActiveProfiles(value = { "test" })
 public abstract class AbstractSpringDaoTestCase {
 
     private static Logger LOG = LoggerFactory.getLogger(AbstractSpringDaoTestCase.class);

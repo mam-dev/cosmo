@@ -23,9 +23,7 @@ import java.text.ParseException;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
@@ -49,7 +47,6 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibEventStamp;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
