@@ -21,12 +21,10 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.unitedinternet.cosmo.TestHelper;
+import org.unitedinternet.cosmo.dao.hibernate.AbstractHibernateDaoTestCase;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
@@ -50,10 +48,8 @@ import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
  * Test Case for <code>SecurityAdvice/code>
  * This test doesn't check secured flag. See SecurityAdviceConcurrencyTest for that test.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "classpath:applicationContext-SecurityAdviceConcurrencyTest.xml"})
-public class SecurityAdviceTest {
+
+public class SecurityAdviceTest extends AbstractHibernateDaoTestCase{
 
     
     private StandardContentService service;
@@ -72,7 +68,8 @@ public class SecurityAdviceTest {
      * @throws Exception - if something is wrong this exception is thrown.
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
+        super.setUp();
         testHelper = new TestHelper();
         securityManager = new MockSecurityManager();
         storage = new MockDaoStorage();        

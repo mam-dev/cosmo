@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.aop.OrderedAdvice;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.UserDao;
@@ -47,6 +48,7 @@ import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
  * method, add a pointcut that matches the method. Any method that is not secured will be logged as insecure.
  */
 @Aspect
+@Configuration
 public class SecurityAdvice extends OrderedAdvice {
 
     private static final Log LOG = LogFactory.getLog(SecurityAdvice.class);
