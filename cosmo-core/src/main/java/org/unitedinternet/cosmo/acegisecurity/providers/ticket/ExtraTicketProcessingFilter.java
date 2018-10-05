@@ -30,122 +30,124 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 
 /**
- * Servlet filter that examines request for additional
- * ticket keys to include in the security context.
+ * Servlet filter that examines request for additional ticket keys to include in the security context.
  */
+@Component
 public class ExtraTicketProcessingFilter implements Filter {
     private static final Log LOG = LogFactory.getLog(ExtraTicketProcessingFilter.class);
 
-    public static final String TICKET_HEADER= "X-Cosmo-Ticket";
-    public static final String MORSE_CODE_TICKET_HEADER= "X-MorseCode-Ticket";
+    public static final String TICKET_HEADER = "X-Cosmo-Ticket";
+    public static final String MORSE_CODE_TICKET_HEADER = "X-MorseCode-Ticket";
     public static final String PARAM_TICKET = "ticket";
-    
+
     private ContentDao contentDao = null;
     private CosmoSecurityManager securityManager = null;
 
     /**
+     * 
+     * @param contentDao
+     * @param securityManager
+     */
+    public ExtraTicketProcessingFilter(ContentDao contentDao, CosmoSecurityManager securityManager) {
+        super();
+        this.contentDao = contentDao;
+        this.securityManager = securityManager;
+    }
+
+    /**
      * Does nothing - we use IoC lifecycle methods instead
-     * @param filterConfig The filter config.
-     * @throws ServletException - if something is wrong this exception is thrown.
+     * 
+     * @param filterConfig
+     *            The filter config.
+     * @throws ServletException
+     *             - if something is wrong this exception is thrown.
      */
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
     /**
-     * Examines HTTP servlet requests for extra ticket keys,
-     * and register them with the security manager.
-     * @param request The servlet request.
-     * @param response The servlet response.
-     * @param chain The filter chain.
-     * @throws IOException - if something is wrong this exception is thrown.
-     * @throws ServletException - if something is wrong this exception is thrown.
+     * Examines HTTP servlet requests for extra ticket keys, and register them with the security manager.
+     * 
+     * @param request
+     *            The servlet request.
+     * @param response
+     *            The servlet response.
+     * @param chain
+     *            The filter chain.
+     * @throws IOException
+     *             - if something is wrong this exception is thrown.
+     * @throws ServletException
+     *             - if something is wrong this exception is thrown.
      */
-    public void doFilter(ServletRequest request, ServletResponse response,  FilterChain chain)
-                                            throws IOException, ServletException {
-        if(! (request instanceof HttpServletRequest)){
-            throw new IllegalStateException("Received request is of type ["
-                    + request.getClass().getName() + 
-                    "]. Expected type: ["+ HttpServletRequest.class.getName()+ "].");
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        if (!(request instanceof HttpServletRequest)) {
+            throw new IllegalStateException("Received request is of type [" + request.getClass().getName()
+                    + "]. Expected type: [" + HttpServletRequest.class.getName() + "].");
         }
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("looking for tickets in request headers");
         }
-        
+
         Set<Ticket> tickets = new HashSet<Ticket>();
-        
+
         // Look for tickets in header in the format:
         // X-Cosmo-Ticket: slkdfjsdf, slkdjfsdf, sdlfkjsfsdf
         Enumeration<String> ticketKeys = httpRequest.getHeaders(TICKET_HEADER);
-        while(ticketKeys.hasMoreElements()) {
+        while (ticketKeys.hasMoreElements()) {
             String ticketKeyValue = ticketKeys.nextElement();
-            for(String ticketKey: ticketKeyValue.split(",")) {
+            for (String ticketKey : ticketKeyValue.split(",")) {
                 Ticket ticket = contentDao.findTicket(ticketKey.trim());
                 if (ticket != null) {
                     tickets.add(ticket);
                 }
             }
         }
-        
+
         // Look for tickets in header in the format:
         // X-MorseCode-Ticket: slkdfjsdf, slkdjfsdf, sdlfkjsfsdf
         ticketKeys = httpRequest.getHeaders(MORSE_CODE_TICKET_HEADER);
-        while(ticketKeys.hasMoreElements()) {
+        while (ticketKeys.hasMoreElements()) {
             String ticketKeyValue = ticketKeys.nextElement();
-            for(String ticketKey: ticketKeyValue.split(",")) {
+            for (String ticketKey : ticketKeyValue.split(",")) {
                 Ticket ticket = contentDao.findTicket(ticketKey.trim());
                 if (ticket != null) {
                     tickets.add(ticket);
                 }
             }
         }
-        
+
         // look for tickets in request parameters
         String[] paramTicketKeys = httpRequest.getParameterValues(PARAM_TICKET);
-        if(paramTicketKeys!=null) {
-            for(String ticketKey: paramTicketKeys) {
+        if (paramTicketKeys != null) {
+            for (String ticketKey : paramTicketKeys) {
                 Ticket ticket = contentDao.findTicket(ticketKey);
                 if (ticket != null) {
                     tickets.add(ticket);
                 }
             }
         }
-        
+
         try {
             // register tickets
             securityManager.registerTickets(tickets);
             chain.doFilter(request, response);
-        } finally{
+        } finally {
             // clear tickets
             securityManager.unregisterTickets();
         }
     }
 
-    /**
-     * Does nothing - we use IoC lifecycle methods instead
-     */
+    @Override
     public void destroy() {
-    }
-
-    /**
-     * Sets content dao.
-     * @param contentDao The content dao.
-     */
-    public void setContentDao(ContentDao contentDao) {
-        this.contentDao = contentDao;
-    }
-
-    /**
-     * Srts security manager.
-     * @param securityManager The securoty manager.
-     */
-    public void setSecurityManager(CosmoSecurityManager securityManager) {
-        this.securityManager = securityManager;
+        // Nothing to do
     }
 }

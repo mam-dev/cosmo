@@ -9,7 +9,6 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -17,8 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Abstract Dao implementation. It is used for general purpose operations.
@@ -28,22 +25,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public abstract class AbstractDaoImpl {
 
     private static final Log LOG = LogFactory.getLog(AbstractDaoImpl.class);
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    
     public AbstractDaoImpl() {
-        
+
     }
 
-    
     /**
      * use getJdbcTemplate instead
+     * 
      * @return Returns the current Hibernate session.
      */
     protected Session getSession() {
-        return (Session) this.entityManager.getDelegate();
+        return (Session) this.entityManager.unwrap(Session.class);
     }
 
     /**
@@ -53,7 +49,7 @@ public abstract class AbstractDaoImpl {
      * @return a <b>new</b> Hibernate state less session which needs to be closed after usage.
      */
     protected StatelessSession openStatelessSession() {
-        return (StatelessSession) this.entityManager.getDelegate();
+        return (StatelessSession) this.entityManager.unwrap(StatelessSession.class);
     }
 
     /**

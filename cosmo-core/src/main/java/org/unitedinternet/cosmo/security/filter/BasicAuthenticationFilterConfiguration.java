@@ -24,9 +24,10 @@ import org.unitedinternet.cosmo.security.SuccessfulAuthenticationListener;
 /**
  * TODO - Remove this.
  * @author daniel grigore
+ * 
+ * Obsolete----
  *
  */
-@Configuration
 public class BasicAuthenticationFilterConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationFilterConfiguration.class);

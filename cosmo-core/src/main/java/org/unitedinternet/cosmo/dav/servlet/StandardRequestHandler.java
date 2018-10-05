@@ -26,6 +26,9 @@ import javax.validation.ValidationException;
 import org.apache.abdera.util.EntityTag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.stereotype.Component;
+import org.springframework.web.HttpRequestHandler;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -65,10 +68,6 @@ import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.server.ServerConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.stereotype.Component;
-import org.springframework.web.HttpRequestHandler;
 
 /**
  * <p>
@@ -79,7 +78,7 @@ import org.springframework.web.HttpRequestHandler;
  * method based on the request method.
  * </p>
  */
-@Component
+@Component("davRequestHandler")
 public class StandardRequestHandler
     implements HttpRequestHandler, ServerConstants {
     private static final Log LOG =

@@ -42,6 +42,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -50,11 +51,17 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
  * for all other resources.
  * </p>
  */
+@Service
 public class DavAccessDecisionManager
         implements AccessDecisionManager, ExtendedDavConstants {
     private static final Log LOG = LogFactory.getLog(DavAccessDecisionManager.class);
 
-    private UserService userService;
+    private final UserService userService;
+    
+    public DavAccessDecisionManager(UserService userService) {
+        super();
+        this.userService = userService;
+    }
 
     // DavAccessDecisionManager methods
 
@@ -194,7 +201,7 @@ public class DavAccessDecisionManager
         }
 
         String username = match.get("username");
-        User user = getUserService().getUser(username);
+        User user = this.userService.getUser(username);
         if (user == null) {
             if (LOG.isDebugEnabled()) {
                 //Fix Log Forging - fortify
@@ -225,15 +232,7 @@ public class DavAccessDecisionManager
         if (LOG.isDebugEnabled()) {
             LOG.debug("Principal has privilege " + privilege + "; allowing access");
         }
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public UserService getUserService() {
-        return userService;
-    }
+    }   
 
     @SuppressWarnings("serial")
     public static class AclEvaluationException extends Exception {
