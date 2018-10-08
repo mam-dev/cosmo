@@ -26,59 +26,45 @@ import javax.servlet.ServletResponse;
 
 import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * A filter that puts Cosmo's authentication information into a request
- * attribute. This is primarily to make this information available
- * to the Tomcat AccessLogValve.
+ * A filter that puts Cosmo's authentication information into a request attribute. This is primarily to make this
+ * information available to the Tomcat AccessLogValve.
  * 
  * @author travis
  *
  */
 public class UsernameRequestIntegrationFilter implements Filter {
 
-
     private static final String USERNAME_ATTRIBUTE_KEY = "COSMO_PRINCIPAL";
-    private CosmoSecurityManager securityManager;
-    private static final String BEAN_SECURITY_MANAGER = "securityManager";
+    
 
+    private final CosmoSecurityManager securityManager;
 
-    public void destroy() {
-        // TODO Auto-generated method stub
+    public UsernameRequestIntegrationFilter(CosmoSecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         try {
             String principal = securityManager.getSecurityContext().getName();
             if (securityManager.getSecurityContext().getTicket() != null) {
                 principal = "ticket:" + principal;
             }
             request.setAttribute(USERNAME_ATTRIBUTE_KEY, principal);
-        } catch (CosmoSecurityException e){
+        } catch (CosmoSecurityException e) {
             request.setAttribute(USERNAME_ATTRIBUTE_KEY, "-");
         }
-        
+
         chain.doFilter(request, response);
     }
 
-    public void init(FilterConfig config) throws ServletException {
-        WebApplicationContext wac =
-            WebApplicationContextUtils.getRequiredWebApplicationContext(
-                    config.getServletContext()
-            );
-
-        this.securityManager = (CosmoSecurityManager)
-            wac.getBean(BEAN_SECURITY_MANAGER,
-                        CosmoSecurityManager.class);
-
-        if (this.securityManager == null){
-            throw new ServletException("Could not initialize HttpLoggingFilter: " +
-            "Could not find security manager.");
-        }
+    public void destroy() {
+        // Nothing to do
     }
 
-
+    public void init(FilterConfig config) throws ServletException {
+        // Nothing to do.
+    }
 }

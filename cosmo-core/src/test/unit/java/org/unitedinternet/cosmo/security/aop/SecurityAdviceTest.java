@@ -22,9 +22,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.TestHelper;
-import org.unitedinternet.cosmo.dao.hibernate.AbstractHibernateDaoTestCase;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
@@ -49,7 +47,7 @@ import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
  * This test doesn't check secured flag. See SecurityAdviceConcurrencyTest for that test.
  */
 
-public class SecurityAdviceTest extends AbstractHibernateDaoTestCase{
+public class SecurityAdviceTest {
 
     
     private StandardContentService service;
@@ -60,7 +58,7 @@ public class SecurityAdviceTest extends AbstractHibernateDaoTestCase{
     private TestHelper testHelper;
     private ContentService proxyService;
     private MockSecurityManager securityManager;
-    @Autowired
+    
     private SecurityAdvice sa;
 
     /**
@@ -68,13 +66,13 @@ public class SecurityAdviceTest extends AbstractHibernateDaoTestCase{
      * @throws Exception - if something is wrong this exception is thrown.
      */
     @Before
-    public void setUp()  {
-        super.setUp();
+    public void setUp()  {       
         testHelper = new TestHelper();
         securityManager = new MockSecurityManager();
         storage = new MockDaoStorage();        
         contentDao = new MockContentDao(storage);
         userDao = new MockUserDao(storage);
+        this.sa = new SecurityAdvice(securityManager, contentDao, userDao);
         service = new StandardContentService();
         lockManager = new SingleVMLockManager();
         service.setContentDao(contentDao);
@@ -85,12 +83,6 @@ public class SecurityAdviceTest extends AbstractHibernateDaoTestCase{
         // create a factory that can generate a proxy for the given target object
         AspectJProxyFactory factory = new AspectJProxyFactory(service); 
         
-        sa.setSecurityManager(securityManager);
-        sa.setContentDao(contentDao);
-        sa.setUserDao(userDao);
-        //this bean has request scope
-        //sa.setSecuredMethod(Proxy) should be called by Spring
-        sa.init();
         factory.addAspect(sa);
 
         // now get the proxy object...

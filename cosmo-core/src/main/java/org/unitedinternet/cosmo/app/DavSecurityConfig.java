@@ -18,16 +18,21 @@ import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticat
  *
  */
 @Configuration
-public class DavAuthConfig {
+public class DavSecurityConfig {
 
     @Autowired
     private TicketAuthenticationProvider ticketAuthProvider;
+
+    @Autowired
+    private AuthenticationProvider daoAuthProvider;
 
     @Bean
     public AuthenticationManager authManager() {
         List<AuthenticationProvider> providersList = new ArrayList<>();
         providersList.add(this.ticketAuthProvider);
+        providersList.add(this.daoAuthProvider);
         ProviderManager authManager = new ProviderManager(providersList);
         return authManager;
     }
+
 }

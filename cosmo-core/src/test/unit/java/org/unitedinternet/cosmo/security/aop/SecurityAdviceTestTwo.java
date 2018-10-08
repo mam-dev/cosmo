@@ -70,11 +70,7 @@ public class SecurityAdviceTestTwo {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.advice = new SecurityAdvice();
-        this.advice.setContentDao(contentDao);
-        this.advice.setUserDao(userDao);
-        this.advice.setSecurityManager(securityManager);
-        this.advice.init();
+        this.advice = new SecurityAdvice(securityManager,contentDao,userDao);        
         Authentication authentication = new PreAuthenticatedAuthenticationToken(U_SHAREE, "passwd");
         Set<Ticket> tickets = Collections.emptySet();
         CosmoSecurityContext context = new CosmoSecurityContextImpl(authentication, tickets, sharee);

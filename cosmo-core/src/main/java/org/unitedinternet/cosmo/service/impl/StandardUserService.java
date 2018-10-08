@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.token.TokenService;
@@ -51,9 +52,14 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public static final String DEFAULT_DIGEST_ALGORITHM = "MD5";
     
-    private String digestAlgorithm;
+    private String digestAlgorithm = DEFAULT_DIGEST_ALGORITHM;
+    @Autowired
     private TokenService passwordGenerator;
+    
+    @Autowired
     private ContentDao contentDao;
+    
+    @Autowired
     private UserDao userDao;
 
     // UserService methods

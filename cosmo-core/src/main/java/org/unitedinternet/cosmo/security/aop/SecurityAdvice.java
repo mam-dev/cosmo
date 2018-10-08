@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.aop.OrderedAdvice;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -53,19 +54,18 @@ public class SecurityAdvice extends OrderedAdvice {
 
     private static final Log LOG = LogFactory.getLog(SecurityAdvice.class);
 
-    private CosmoSecurityManager securityManager = null;
-    private ContentDao contentDao = null;
-    private UserDao userDao = null;
-    private SecurityHelper securityHelper = null;
-
-    public void init() {
-        if (contentDao == null) {
-            throw new IllegalStateException("contentDao must not be null");
-        }
-        if (userDao == null) {
-            throw new IllegalStateException("userDao must not be null");
-        }
-        securityHelper = new SecurityHelper(contentDao, userDao);
+    private final CosmoSecurityManager securityManager;
+    private final ContentDao contentDao;
+    private final UserDao userDao;
+    private SecurityHelper securityHelper;
+    
+    
+    public SecurityAdvice(CosmoSecurityManager securityManager, ContentDao contentDao, UserDao userDao) {
+        super();
+        this.securityManager = securityManager;
+        this.contentDao = contentDao;
+        this.userDao = userDao;
+        this.securityHelper = new SecurityHelper(contentDao, userDao);
     }
 
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.getRootItem(..)) &&" + "args(user)")
@@ -557,14 +557,6 @@ public class SecurityAdvice extends OrderedAdvice {
         return securityManager;
     }
 
-    public void setContentDao(ContentDao contentDao) {
-        this.contentDao = contentDao;
-    }
-
-    public void setSecurityManager(CosmoSecurityManager securityManager) {
-        this.securityManager = securityManager;
-    }
-
     private boolean isNoteMod(Item item) {
         if (item instanceof NoteItem) {
             NoteItem note = (NoteItem) item;
@@ -577,9 +569,4 @@ public class SecurityAdvice extends OrderedAdvice {
     private void throwItemSecurityException(Item item, int permission) {
         throw new ItemSecurityException(item, "principal does not have access to item " + item.getUid(), permission);
     }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
 }

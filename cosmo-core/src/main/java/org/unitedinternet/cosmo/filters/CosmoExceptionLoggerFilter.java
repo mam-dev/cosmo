@@ -12,19 +12,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.stereotype.Component;
 /**
  * This class avoid to throw full stack trace to client. 
  * The exception is logged in the server log.
  * @author ccoman
  * TODO should this class extend something else that ExceptionTranslationFilter? 
  */
+@Component
 public class CosmoExceptionLoggerFilter extends ExceptionTranslationFilter {
+    
+    private static final Log LOGGER = LogFactory.getLog(CosmoExceptionLoggerFilter.class);
     
     public CosmoExceptionLoggerFilter(AuthenticationEntryPoint authenticationEntryPoint) {
         super(authenticationEntryPoint);
     }
-
-    protected static final Log LOGGER = LogFactory.getLog(CosmoExceptionLoggerFilter.class);
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
