@@ -1,11 +1,9 @@
 package org.unitedinternet.cosmo.app;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import org.apache.http.HttpHost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -25,13 +23,7 @@ import org.unitedinternet.cosmo.acegisecurity.providers.ticket.ExtraTicketProces
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter;
 import org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint;
 import org.unitedinternet.cosmo.dav.acegisecurity.DavAccessDecisionManager;
-import org.unitedinternet.cosmo.ext.ContentSourceProcessor;
-import org.unitedinternet.cosmo.ext.ProxyFactory;
 import org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter;
-import org.unitedinternet.cosmo.filters.UsernameRequestIntegrationFilter;
-import org.unitedinternet.cosmo.security.CosmoSecurityManager;
-
-import net.fortuna.ical4j.model.Calendar;
 
 /**
  * TODO - Move this to web app submodule or to better packages.
@@ -41,27 +33,6 @@ import net.fortuna.ical4j.model.Calendar;
  */
 @Configuration
 public class DavConfig {
-
-    @Bean
-    public ProxyFactory proxy() {
-        return new ProxyFactory() {
-            @Override
-            public HttpHost getProxy(URL url) {
-                return null;
-            }
-        };
-    }
-
-    @Bean
-    public ContentSourceProcessor processors() {
-        return new ContentSourceProcessor() {
-
-            @Override
-            public void postProcess(Calendar calendar) {
-                // DO nothing
-            }
-        };
-    }
 
     private static final String PATH_DAV = "/dav/*";
 
@@ -79,9 +50,6 @@ public class DavConfig {
 
     @Autowired
     private DavAccessDecisionManager davDecisionManager;
-
-    @Autowired
-    private CosmoSecurityManager cosmoSecurityManager;
 
     @Autowired
     private CosmoExceptionLoggerFilter cosmoExceptionFilter;
@@ -148,16 +116,6 @@ public class DavConfig {
         filter.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(metadata));
         FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(filter);
         filterBean.addUrlPatterns(PATH_DAV);
-        // filterBean.setOrder(-1);
         return filterBean;
     }
-
-    @Bean
-    public FilterRegistrationBean<?> usernameIntegrationFilter() {
-        UsernameRequestIntegrationFilter filter = new UsernameRequestIntegrationFilter(this.cosmoSecurityManager);
-        FilterRegistrationBean<?> bean = new FilterRegistrationBean<>(filter);
-        bean.addUrlPatterns(PATH_DAV);
-        return bean;
-    }
-
 }

@@ -11,41 +11,37 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.acegisecurity.userdetails.CosmoUserDetails;
-import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
-import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.UserService;
 
 /**
- * TODO
- * 
+ * Demo <code>AuthenticationProvider</code> that allows all requests that have a username and a password and performs
+ * provisioning in case it is needed. This is for testing purposes only.
+ * TODO Move to demo web application.
  * @author daniel grigore
  *
  */
 @Primary
 @Component
 @Transactional
-public class DaoAuthProvider implements AuthenticationProvider {
+public class AllowAllAuthenticationProvider implements AuthenticationProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DaoAuthProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AllowAllAuthenticationProvider.class);
 
     private final UserService userService;
     private final EntityFactory entityFactory;
-    private final ContentService contentService;
 
-    public DaoAuthProvider(UserService userService, EntityFactory entityFactory, ContentService contentService) {
+    public AllowAllAuthenticationProvider(UserService userService, EntityFactory entityFactory) {
         super();
         this.userService = userService;
         this.entityFactory = entityFactory;
-        this.contentService = contentService;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String userName = authentication.getName();
-        LOGGER.info("===Authenticating user [{}]===", userName);
+        LOGGER.info("[AUTH] About to authenticate user: {}", userName);
         User user = this.createUserIfNotPresent(authentication);
         return new UsernamePasswordAuthenticationToken(new CosmoUserDetails(user), authentication.getCredentials(),
                 authentication.getAuthorities());
@@ -53,42 +49,19 @@ public class DaoAuthProvider implements AuthenticationProvider {
 
     private User createUserIfNotPresent(Authentication authentication) {
         String userName = authentication.getName();
-
-        User user = userService.getUser(userName);
-
+        User user = this.userService.getUser(userName);
         if (user != null) {
-            LOGGER.info("=== Found user with email [{}] ===", user.getEmail());
+            LOGGER.info("[AUTH] Found user with email address: {}", user.getEmail());
             return user;
         }
-
-        LOGGER.info("=== No user found for principal [{}]. Creating one with an empty calendar.===", userName);
-        user = entityFactory.createUser();
+        LOGGER.info("[AUTH] No user found for email address: {}. Creating one...", userName);
+        user = this.entityFactory.createUser();
         user.setUsername(userName);
         user.setEmail(userName);
         user.setFirstName(userName);
         user.setLastName(userName);
         user.setPassword("NOT_NULL");
-
-        user = userService.createUser(user);
-
-        // String defaultCalendarName = "calendar";
-        // String calendarDisplayName = "calendarDisplayName";
-        // String color = "#f0f0f0";
-        //
-        // CollectionItem collection = entityFactory.createCollection();
-        // collection.setOwner(user);
-        // collection.setName(defaultCalendarName);
-        // collection.setDisplayName(calendarDisplayName);
-        // collection.getStamp(CalendarCollectionStamp.class);
-        // CalendarCollectionStamp colorCollectionStamp = entityFactory.createCalendarCollectionStamp(collection);
-        // colorCollectionStamp.setColor(color);
-        // colorCollectionStamp.setVisibility(true);
-        // collection.addStamp(colorCollectionStamp);
-        //
-        // CollectionItem rootItem = contentService.getRootItem(user);
-        //
-        // contentService.createCollection(rootItem, collection);
-
+        user = this.userService.createUser(user);
         return user;
     }
 

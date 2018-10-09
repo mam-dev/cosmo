@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.aop.OrderedAdvice;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -54,17 +53,13 @@ public class SecurityAdvice extends OrderedAdvice {
 
     private static final Log LOG = LogFactory.getLog(SecurityAdvice.class);
 
-    private final CosmoSecurityManager securityManager;
-    private final ContentDao contentDao;
-    private final UserDao userDao;
+    private final CosmoSecurityManager securityManager;    
     private SecurityHelper securityHelper;
     
     
     public SecurityAdvice(CosmoSecurityManager securityManager, ContentDao contentDao, UserDao userDao) {
         super();
-        this.securityManager = securityManager;
-        this.contentDao = contentDao;
-        this.userDao = userDao;
+        this.securityManager = securityManager;        
         this.securityHelper = new SecurityHelper(contentDao, userDao);
     }
 

@@ -154,7 +154,6 @@ public class SimpleUrlContentReader implements UrlContentReader {
     }
 
     private void postProcess(Calendar calendar) {
-
        this.processor.postProcess(calendar);
     }
 
