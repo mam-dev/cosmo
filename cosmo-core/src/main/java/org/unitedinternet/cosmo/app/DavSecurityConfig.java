@@ -1,15 +1,15 @@
 package org.unitedinternet.cosmo.app;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticationProvider;
 
 /**
  * TODO - Move this to web app submodule or to better packages.
@@ -20,19 +20,15 @@ import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticat
 @Configuration
 public class DavSecurityConfig {
 
-    @Autowired
-    private TicketAuthenticationProvider ticketAuthProvider;
+    private static final Logger LOG = LoggerFactory.getLogger(DavSecurityConfig.class);
 
     @Autowired
-    private AuthenticationProvider daoAuthProvider;
+    private List<AuthenticationProvider> providers;
 
     @Bean
     public AuthenticationManager authManager() {
-        List<AuthenticationProvider> providersList = new ArrayList<>();
-        providersList.add(this.ticketAuthProvider);
-        providersList.add(this.daoAuthProvider);
-        ProviderManager authManager = new ProviderManager(providersList);
+        LOG.info("\n\nBuilding AuthenticationManager with providers: \n\t{}\n\n", providers);
+        ProviderManager authManager = new ProviderManager(providers);
         return authManager;
     }
-
 }
