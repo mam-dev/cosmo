@@ -12,15 +12,14 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 
 /**
- * TODO - Move this to web app submodule or to better packages.
  * 
  * @author daniel grigore
- *
+ * 
  */
 @Configuration
-public class DavSecurityConfig {
+public class AuthenticationManagerConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DavSecurityConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationManagerConfig.class);
 
     @Autowired
     private List<AuthenticationProvider> providers;

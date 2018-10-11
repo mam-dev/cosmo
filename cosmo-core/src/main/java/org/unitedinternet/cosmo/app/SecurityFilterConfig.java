@@ -1,6 +1,5 @@
 package org.unitedinternet.cosmo.app;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
@@ -11,8 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.annotation.Jsr250SecurityConfig;
+import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -23,18 +25,26 @@ import org.unitedinternet.cosmo.acegisecurity.providers.ticket.ExtraTicketProces
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter;
 import org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint;
 import org.unitedinternet.cosmo.dav.acegisecurity.DavAccessDecisionManager;
+import org.unitedinternet.cosmo.dav.servlet.StandardRequestHandler;
 import org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter;
 
 /**
- * TODO - Move this to web app submodule or to better packages.
+ * Configuration class that defines the DAV servlet as well as the list of filters.
  * 
  * @author daniel grigore
  *
  */
 @Configuration
-public class DavConfig {
+@SuppressWarnings("serial")
+public class SecurityFilterConfig {
 
     private static final String PATH_DAV = "/dav/*";
+    private static final String ROLES = "ROLES_WE_DONT_HAVE";
+
+    /**
+     * @see StandardRequestHandler component.
+     */
+    private static final String DAV_SERVLET_NAME = "davRequestHandler";
 
     @Autowired
     private ExtraTicketProcessingFilter extraTicketFilter;
@@ -55,12 +65,11 @@ public class DavConfig {
     private CosmoExceptionLoggerFilter cosmoExceptionFilter;
 
     @Bean
-    @SuppressWarnings("serial")
     public ServletRegistrationBean<?> davServlet() {
         return new ServletRegistrationBean<>(new HttpRequestHandlerServlet() {
             @Override
             public String getServletName() {
-                return "davRequestHandler";
+                return DAV_SERVLET_NAME;
             }
         }, PATH_DAV);
     }
@@ -72,49 +81,25 @@ public class DavConfig {
         return filterBean;
     }
 
-    // Security filters
+    // Security filter chain
 
     @Bean
-    public FilterRegistrationBean<?> basicAuthFilter() {
-        BasicAuthenticationFilter filter = new BasicAuthenticationFilter(this.authManager, this.authEntryPoint);
-        FilterRegistrationBean<?> bean = new FilterRegistrationBean<>(filter);
-        bean.addUrlPatterns(PATH_DAV);
-        return bean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<?> ticketFilter() {
-        FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(ticketFilter);
-        filterBean.addUrlPatterns(PATH_DAV);
-        return filterBean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<?> extraTicketFilter() {
-        FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(extraTicketFilter);
-        filterBean.addUrlPatterns(PATH_DAV);
-        return filterBean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<?> cosmoExceptionFilter() {
-        FilterRegistrationBean<?> bean = new FilterRegistrationBean<>(this.cosmoExceptionFilter);
-        bean.addUrlPatterns(PATH_DAV);
-        return bean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<?> securityFilter() {
-        FilterSecurityInterceptor filter = new FilterSecurityInterceptor();
-        filter.setAuthenticationManager(this.authManager);
-        filter.setAccessDecisionManager(this.davDecisionManager);
-
+    public FilterRegistrationBean<?> securityFilterChain() {
+        FilterSecurityInterceptor securityFilter = new FilterSecurityInterceptor();
+        securityFilter.setAuthenticationManager(this.authManager);
+        securityFilter.setAccessDecisionManager(this.davDecisionManager);
         LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> metadata = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
-        Collection<ConfigAttribute> configAttributes = new ArrayList<>();
-        configAttributes.add(Jsr250SecurityConfig.PERMIT_ALL_ATTRIBUTE);
-        metadata.put(AnyRequestMatcher.INSTANCE, configAttributes);
-        filter.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(metadata));
-        FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(filter);
+        metadata.put(AnyRequestMatcher.INSTANCE, SecurityConfig.createList(ROLES));
+        securityFilter.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(metadata));
+
+        /*
+         * Note that the order in which filters are defined is highly important.
+         */
+        SecurityFilterChain filterChain = new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE,
+                this.cosmoExceptionFilter, this.extraTicketFilter, this.ticketFilter,
+                new BasicAuthenticationFilter(authManager, this.authEntryPoint), securityFilter);
+
+        FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(new FilterChainProxy(filterChain));
         filterBean.addUrlPatterns(PATH_DAV);
         return filterBean;
     }
