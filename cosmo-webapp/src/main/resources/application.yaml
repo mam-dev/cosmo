@@ -28,9 +28,9 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://localhost:3306/cosmo?autoReconnect=true
-    username: cosmo
-    password: '*'
+    jdbcUrl: jdbc:mysql://localhost:33060/test?autoReconnect=true
+    username: root
+    password: 
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:
       maximum-pool-size: 10     
@@ -40,5 +40,5 @@ spring:
      hibernate.cache.use_query_cache: false
      hibernate.cache.use_second_level_cache: false
      hibernate.show_sql: false
-     hibernate.hbm2ddl.auto: none
+     hibernate.hbm2ddl.auto: create
      hibernate.id.new_generator_mappings: false

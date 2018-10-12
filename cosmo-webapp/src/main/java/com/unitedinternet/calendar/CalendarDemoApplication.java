@@ -28,6 +28,6 @@ public class CalendarDemoApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(CalendarDemoApplication.class, args);
-        LOG.info("[App] Calendar application started.");
+        LOG.info("[Start] Calendar Demo Application started.");
     }
 }

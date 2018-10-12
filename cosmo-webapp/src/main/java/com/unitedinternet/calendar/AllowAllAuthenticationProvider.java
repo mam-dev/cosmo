@@ -1,4 +1,4 @@
-package com.unitedinternet.calendar.auth;
+package com.unitedinternet.calendar;
 
 import javax.transaction.Transactional;
 
