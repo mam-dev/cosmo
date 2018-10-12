@@ -11,9 +11,12 @@ import javax.sql.DataSource;
 
 import org.unitedinternet.cosmo.db.DataSourceProvider;
 import org.unitedinternet.cosmo.db.DataSourceType;
-import org.unitedinternet.cosmo.metadata.CalendarRepository;
 
-@CalendarRepository
+/**
+ * 
+ * @author daniel grigore
+ *
+ */
 public class MariaDbDataSourceProvider implements DataSourceProvider {
 
     private DataSource dataSource;

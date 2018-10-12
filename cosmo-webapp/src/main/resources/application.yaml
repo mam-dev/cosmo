@@ -1,4 +1,23 @@
-## TODO - Move to cosmo-webapp submodule.
+cosmo:
+  tikets: 
+    serverSecret: cosmossecret
+    serverInteger: 1235    
+  caldav:   
+     schedulingEnabled: true
+
+# connection timeout for reaching external content when validation is performed (in millis) 
+external:
+  content:
+    connection:
+      timeout: 10000
+    size: 1048576
+    non:
+      proxyed:
+        hosts:  
+calendar: 
+  server:
+   productId: COSMO
+      
 server:
   port: 8080
   servlet:
@@ -21,6 +40,5 @@ spring:
      hibernate.cache.use_query_cache: false
      hibernate.cache.use_second_level_cache: false
      hibernate.show_sql: false
-     hibernate.hbm2ddl.auto: validate
+     hibernate.hbm2ddl.auto: none
      hibernate.id.new_generator_mappings: false
-        

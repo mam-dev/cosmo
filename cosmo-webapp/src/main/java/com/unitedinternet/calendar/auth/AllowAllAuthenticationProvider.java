@@ -1,4 +1,4 @@
-package org.unitedinternet.cosmo.app;
+package com.unitedinternet.calendar.auth;
 
 import javax.transaction.Transactional;
 
@@ -18,7 +18,7 @@ import org.unitedinternet.cosmo.service.UserService;
 /**
  * Demo <code>AuthenticationProvider</code> that allows all requests that have a username and a password and performs
  * provisioning in case it is needed. This is for testing purposes only.
- * TODO Move to demo web application.
+ * 
  * @author daniel grigore
  *
  */

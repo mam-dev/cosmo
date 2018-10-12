@@ -1,4 +1,4 @@
-package org.unitedinternet.cosmo.app;
+package org.unitedinternet.cosmo.boot;
 
 import java.util.List;
 

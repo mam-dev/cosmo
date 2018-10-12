@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.unitedinternet.cosmo.app.CalendarApplication;
+import org.unitedinternet.cosmo.boot.CalendarTestApplication;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
@@ -36,7 +36,7 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 @Rollback
 @Transactional
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarTestApplication.class)
 @ActiveProfiles(value = { "test" })
 public abstract class AbstractSpringDaoTestCase {
 
