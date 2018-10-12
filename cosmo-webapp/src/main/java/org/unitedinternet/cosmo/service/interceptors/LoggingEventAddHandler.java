@@ -4,15 +4,17 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 
 /**
- * Simple <code>EventAddHandler</code> that only logs messages when events are added.
- * TODO See if this works
+ * Simple <code>EventAddHandler</code> that only logs messages when events are added. TODO See if this works
+ * 
  * @author daniel grigore
  *
  */
+@Component
 public class LoggingEventAddHandler implements EventAddHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingEventAddHandler.class);

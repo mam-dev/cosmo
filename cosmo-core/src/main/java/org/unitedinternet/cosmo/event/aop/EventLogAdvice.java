@@ -41,6 +41,8 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 /**
  * Advice for generating event log entries for
  * updates to ContentItems.
+ * TODO Delete this if inactive
+ * 
  */
 @Aspect
 public class EventLogAdvice extends OrderedAdvice {

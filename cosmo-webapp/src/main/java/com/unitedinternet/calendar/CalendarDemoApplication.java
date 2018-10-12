@@ -1,7 +1,5 @@
 package com.unitedinternet.calendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -24,10 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EntityScan(basePackages = "org.unitedinternet.cosmo.model.hibernate")
 public class CalendarDemoApplication extends SpringBootServletInitializer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarDemoApplication.class);
-
     public static void main(String[] args) {
-        SpringApplication.run(CalendarDemoApplication.class, args);
-        LOG.info("[Start] Calendar Demo Application started.");
+        SpringApplication.run(CalendarDemoApplication.class, args);        
     }
 }

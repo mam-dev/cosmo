@@ -7,6 +7,7 @@
  */
 package org.unitedinternet.cosmo.event.aop;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,11 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.ContentItem;
+import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.service.interceptors.CalendarGetHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionCreateHandler;
 import org.unitedinternet.cosmo.service.interceptors.CollectionDeleteHandler;
@@ -26,9 +32,6 @@ import org.unitedinternet.cosmo.service.interceptors.EventAddHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventMoveHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventRemoveHandler;
 import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.Item;
 
 /**
  * 
@@ -39,22 +42,34 @@ import org.unitedinternet.cosmo.model.Item;
  * 
  */
 @Aspect
+@Configuration
 public class ContextServiceExtensionsAdvice {
     private static final Log LOG = LogFactory.getLog(ContextServiceExtensionsAdvice.class);
 
-    private List<EventAddHandler> addHandlers;
-    private List<EventRemoveHandler> removeHandlers;
-    private List<EventUpdateHandler> updateHandlers;
-    private List<EventMoveHandler> moveHandlers;
+    @Autowired(required = false)
+    private List<EventAddHandler> addHandlers = new ArrayList<>();
+
+    @Autowired(required = false)
+    private List<EventRemoveHandler> removeHandlers = new ArrayList<>();
+
+    @Autowired(required = false)
+    private List<EventUpdateHandler> updateHandlers = new ArrayList<>();
+
+    @Autowired(required = false)
+    private List<EventMoveHandler> moveHandlers = new ArrayList<>();
 
     // Feature activator.
-    private List<CollectionCreateHandler> createHandlers;
+    @Autowired(required = false)
+    private List<CollectionCreateHandler> createHandlers = new ArrayList<>();
     // Deleting default calendar prohibited.
-    private List<CollectionDeleteHandler> deleteHandlers;
+    @Autowired(required = false)
+    private List<CollectionDeleteHandler> deleteHandlers = new ArrayList<>();
 
-    private List<CollectionUpdateHandler> updateCollectionHandlers;
+    @Autowired(required = false)
+    private List<CollectionUpdateHandler> updateCollectionHandlers = new ArrayList<>();
 
-    private List<CalendarGetHandler> calendarGetHandlers;;
+    @Autowired(required = false)
+    private List<CalendarGetHandler> calendarGetHandlers = new ArrayList<>();
 
     /**
      * Default constructor
@@ -214,8 +229,8 @@ public class ContextServiceExtensionsAdvice {
      */
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.updateContentItems(..)) &&"
             + "args(parent, contentItems)")
-    public Object updateContentItems(ProceedingJoinPoint pjp, CollectionItem parent,
-            Set<ContentItem> contentItems) throws Throwable {
+    public Object updateContentItems(ProceedingJoinPoint pjp, CollectionItem parent, Set<ContentItem> contentItems)
+            throws Throwable {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("in updateContentItems(parents, contentItems)");
@@ -234,7 +249,7 @@ public class ContextServiceExtensionsAdvice {
         if (LOG.isDebugEnabled()) {
             LOG.debug("in updateContentItems(parents, contentItems)");
         }
-        
+
         return updateContentItemsIternal(pjp, parent, contentItems);
     }
 

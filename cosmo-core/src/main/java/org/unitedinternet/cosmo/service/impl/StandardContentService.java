@@ -23,6 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,7 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
  * @see ContentDao
  */
 @org.springframework.stereotype.Component
+@Transactional
 public class StandardContentService implements ContentService {
     private static final Log LOG =
         LogFactory.getLog(StandardContentService.class);
