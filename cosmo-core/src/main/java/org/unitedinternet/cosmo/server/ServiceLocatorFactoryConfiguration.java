@@ -8,17 +8,19 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 @Configuration
 public class ServiceLocatorFactoryConfiguration {
 
-	@Autowired
-	private CosmoSecurityManager cosmoSecurityManager;
-	
-	@Bean
-	public ServiceLocatorFactory getServiceLocatorFactory() {
-		ServiceLocatorFactory serviceLocatorFactory = new ServiceLocatorFactory();
-		
-		serviceLocatorFactory.setCmpPrefix("/cmp"); //TODO - add these to yaml config
-		serviceLocatorFactory.setDavPrefix("/dav");
-		serviceLocatorFactory.setSecurityManager(cosmoSecurityManager);
-		
-		return serviceLocatorFactory;
-	}
+    private static final String PREFIX_CMP = "/cmp";
+    private static final String PREFIX_DAV = "/dav";
+
+    @Autowired
+    private CosmoSecurityManager cosmoSecurityManager;
+
+    @Bean
+    public ServiceLocatorFactory getServiceLocatorFactory() {
+        ServiceLocatorFactory serviceLocatorFactory = new ServiceLocatorFactory();
+        serviceLocatorFactory.setCmpPrefix(PREFIX_CMP);
+        serviceLocatorFactory.setDavPrefix(PREFIX_DAV);
+        serviceLocatorFactory.setSecurityManager(cosmoSecurityManager);
+
+        return serviceLocatorFactory;
+    }
 }

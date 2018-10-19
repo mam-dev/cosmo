@@ -42,7 +42,7 @@ import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Check if a Calendar object contains a valid VEvent
- * 
+ * TODO Use instance methods instead of static ones.
  * @author randy
  *
  */
@@ -56,7 +56,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
      * Default constructor.
      */
     public EventValidator() {
-
+        
     }
 
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
@@ -217,9 +217,9 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
         }
 
         private static boolean isEventValid(VEvent event, ValidationConfig config) {
-            if (null == config) {
+            if (config == null) {
                 LOG.error("ValidationConfig cannot be null");
-                return false; // TODO - validation config should not be null
+                return false;
             }
             DtStart startDate = event.getStartDate();
             DtEnd endDate = event.getEndDate(true);

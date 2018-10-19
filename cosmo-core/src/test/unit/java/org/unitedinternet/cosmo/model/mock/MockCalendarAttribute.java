@@ -144,7 +144,6 @@ public class MockCalendarAttribute extends MockAttribute implements
 
     @Override
     public String calculateEntityTag() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

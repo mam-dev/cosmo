@@ -42,7 +42,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibUser;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
 
 /**
- * Implemtation of UserDao using Hibernate persistence objects.
+ * Implementation of UserDao using Hibernate persistence objects.
  */
 @Component
 public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
@@ -246,11 +246,6 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         }
     }
 
-    public void destroy() {
-        // TODO Auto-generated method stub
-
-    }
-
     @PostConstruct
     public void init() {
         if (idGenerator == null) {
@@ -275,7 +270,7 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         Query<User> query = session.createNamedQuery("user.byUsername.ignorecase", User.class).setParameter("username",
                 username);
         query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         return this.getUserFromQuery(query);
     }
 
@@ -284,7 +279,7 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         Query<User> query = session.createNamedQuery("user.byUsernameOrEmail.ignorecase.ingoreId", User.class)
                 .setParameter("username", username).setParameter("email", email).setParameter("userid", userId);
         query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         return this.getUserFromQuery(query);
     }
 
@@ -292,7 +287,7 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         Session session = getSession();
         Query<User> query = session.createNamedQuery("user.byEmail", User.class).setParameter("email", email);
         query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         return this.getUserFromQuery(query);
     }
 
@@ -301,7 +296,7 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         Query<User> query = session.createNamedQuery("user.byEmail.ignorecase", User.class).setParameter("email",
                 email);
         query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         return this.getUserFromQuery(query);
     }
 
@@ -309,28 +304,28 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         Session session = getSession();
         Query<User> query = session.createNamedQuery("user.byUid", User.class).setParameter("uid", uid);
         query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         return this.getUserFromQuery(query);
     }
-
 
     private User findUserByActivationId(String id) {
         Session session = getSession();
-        Query<User> query = session.createNamedQuery("user.byActivationId", User.class).setParameter("activationId", id);
+        Query<User> query = session.createNamedQuery("user.byActivationId", User.class).setParameter("activationId",
+                id);
         query.setCacheable(true);
         return this.getUserFromQuery(query);
     }
-    
+
     private User getUserFromQuery(Query<User> query) {
         List<User> users = query.getResultList();
         return users.size() > 0 ? users.get(0) : null;
     }
-    
+
     private void deleteAllPasswordRecoveries(User user) {
         Session session = getSession();
         session.getNamedQuery("passwordRecovery.delete.byUser").setParameter("user", user).executeUpdate();
     }
-    
+
     private BaseModelObject getBaseModelObject(Object obj) {
         return (BaseModelObject) obj;
     }

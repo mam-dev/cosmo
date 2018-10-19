@@ -22,16 +22,6 @@ public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements Co
     }
 
     @Override
-    public void init() {
-        // Nothing to do yet.
-    }
-
-    @Override
-    public void destroy() {
-        // Nothing to do
-    }
-
-    @Override
     public List<CollectionSubscription> findByTargetCollectionUid(String uid) {
         return this.getSession()
                 .createQuery("SELECT s FROM HibCollectionSubscription s WHERE s.targetCollection.uid = :uid",

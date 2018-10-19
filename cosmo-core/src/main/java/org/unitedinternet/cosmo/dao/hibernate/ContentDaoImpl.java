@@ -475,7 +475,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
                 query = getSession().createNamedQuery("contentItem.by.parent.timestamp", ContentItem.class)
                         .setParameter("parent", collection).setParameter("timestamp", timestamp);
             }
-            query.setFlushMode(FlushMode.MANUAL);
+            query.setHibernateFlushMode(FlushMode.MANUAL);
             List<ContentItem> results = query.getResultList();
             for (ContentItem content : results) {
                 initializeItem(content);
@@ -871,7 +871,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
                     .setParameter("parentid", getBaseModelObject(parent).getId())
                     .setParameter("icaluid", item.getIcalUid());
         }
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
 
         Long itemId = null;
         List<Long> idList = query.getResultList();

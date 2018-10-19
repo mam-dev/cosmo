@@ -301,7 +301,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
             Query<Ticket> query = getSession().createNamedQuery("ticket.by.key", Ticket.class)
                     .setParameter("key", key);
             query.setCacheable(true);
-            query.setFlushMode(FlushMode.MANUAL);
+            query.setHibernateFlushMode(FlushMode.MANUAL);
             List<Ticket> ticketList = query.getResultList();
             return ticketList.size() > 0 ? ticketList.get(0) : null;
         } catch (HibernateException e) {
@@ -797,7 +797,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
             query = getSession().createNamedQuery("item.by.ownerId.nullParent.name", Item.class)
                     .setParameter("ownerid", userDbId).setParameter("name", name);
         }
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         List<Item> itemList = query.getResultList();
         return itemList.size() > 0 ? itemList.get(0) : null;
     }
@@ -812,7 +812,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
             query = getSession().createNamedQuery("item.by.ownerId.nullParent.name.minusItem", Item.class)
                     .setParameter("itemid", itemId).setParameter("ownerid", userDbId).setParameter("name", name);
         }
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         List<Item> itemList = query.getResultList();
         return itemList.size() > 0 ? itemList.get(0) : null;
     }
@@ -822,7 +822,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
                 .createNamedQuery("homeCollection.by.ownerId", HomeCollectionItem.class)
                 .setParameter("ownerid", dbUserId);
         query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
+        query.setHibernateFlushMode(FlushMode.MANUAL);
         List<HomeCollectionItem> itemList = query.getResultList();
         return itemList.size() > 0 ? itemList.get(0) : null;
     }
@@ -833,7 +833,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
             // Lookup item by uid
             Query<Long> query = getSession().createNamedQuery("itemid.by.uid", Long.class).setParameter("uid",
                     item.getUid());
-            query.setFlushMode(FlushMode.MANUAL);
+            query.setHibernateFlushMode(FlushMode.MANUAL);
             List<Long> idList = query.getResultList();
             // if uid is in use throw exception
             if (idList.size() > 0) {

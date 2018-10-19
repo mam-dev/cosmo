@@ -811,7 +811,6 @@ public class InstanceListTest {
             System.out.println("InstanceListTest.testDatesCompare()" + d2.getTime());
             System.out.println("InstanceListTest.testDatesCompare()" + d1.before(d2));
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

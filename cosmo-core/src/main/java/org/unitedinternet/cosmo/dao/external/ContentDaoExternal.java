@@ -48,8 +48,7 @@ import net.fortuna.ical4j.model.component.VEvent;
  * @author daniel grigore
  *
  */
-//TODO - is this still used?
-//@Component
+@Component
 public class ContentDaoExternal implements ContentDao {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoExternal.class);
@@ -262,16 +261,6 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     /* All below methods should not be called for external providers */
-
-    @Override
-    public void init() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void destroy() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public Item findItemByUid(String uid) {

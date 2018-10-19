@@ -24,7 +24,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 /**
- * Persistent event log entry.
+ * Persistent event log entry. 
+ * TODO - Remove this unused entity.
  */
 @Entity
 @Table(name="event_log")

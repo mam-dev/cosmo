@@ -3,7 +3,10 @@ package org.unitedinternet.cosmo.dao;
 import java.lang.reflect.Proxy;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * {@link FactoryBean} for creating a <code>ItemDao</code> implementation that delegates all the method invocations to
@@ -12,11 +15,11 @@ import org.springframework.stereotype.Component;
  * @author daniel grigore
  * @see ContentDao
  * @see ContentDaoInvocationHandler
- */
-// TODO - Is this still used?
-//@Component
-public class ContentDaoProxyFactory implements FactoryBean<ContentDao> {
+ */ 
+@Configuration
+public class ContentDaoProxyFactory{
 
+    @Autowired
     private final ContentDaoInvocationHandler invocationHandler;
 
     public ContentDaoProxyFactory(ContentDaoInvocationHandler invocationHandler) {
@@ -24,19 +27,10 @@ public class ContentDaoProxyFactory implements FactoryBean<ContentDao> {
         this.invocationHandler = invocationHandler;
     }
 
-    @Override
+    @Primary
+    @Bean("contentDao")    
     public ContentDao getObject() throws Exception {
         return (ContentDao) Proxy.newProxyInstance(this.invocationHandler.getClass().getClassLoader(),
                 new Class<?>[] { ContentDao.class }, invocationHandler);
-    }
-
-    @Override
-    public Class<?> getObjectType() {
-        return ItemDao.class;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
+    }        
 }

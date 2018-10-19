@@ -32,8 +32,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
  * @see HibCollectionSubscriptionItem
  * @see CollectionSubscription
  */
-//TODO - is this still used?
-//@Component
+@Component
 public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final ContentDao contentDaoInternal;
@@ -205,17 +204,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public String generateUid() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void init() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void destroy() {
-        throw new UnsupportedOperationException();
-    }
+    }    
 
     @Override
     public CollectionItem createCollection(CollectionItem parent, CollectionItem collection) {

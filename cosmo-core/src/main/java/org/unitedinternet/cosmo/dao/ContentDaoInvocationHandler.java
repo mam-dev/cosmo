@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.external.ContentDaoExternal;
 import org.unitedinternet.cosmo.dao.external.ExternalCollectionItem;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
@@ -25,6 +26,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
  * @author daniel grigore
  *
  */
+@Component
 public class ContentDaoInvocationHandler implements InvocationHandler, ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoInvocationHandler.class);
