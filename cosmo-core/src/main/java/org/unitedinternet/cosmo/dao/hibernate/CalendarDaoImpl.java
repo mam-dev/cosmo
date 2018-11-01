@@ -19,13 +19,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilterEvaluater;
 import org.unitedinternet.cosmo.dao.CalendarDao;
@@ -51,21 +54,28 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 
 /**
- * Implementation of CalendarDao using Hibernate persistence objects.
+ *
  */
-@Component
-public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
+@Repository
+public class CalendarDaoImpl  implements CalendarDao {
 
     private static final Log LOG = LogFactory.getLog(CalendarDaoImpl.class);
 
     @Autowired
     private EntityFactory entityFactory;
-    
+
     @Autowired
     private ItemFilterProcessor itemFilterProcessor = null;
-    
+
     @Autowired
-    private EntityConverter entityConverter; //new EntityConverter(null);
+    private EntityConverter entityConverter;
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public CalendarDaoImpl() {
+        // Default
+    }
 
     /*
      * Note that this method is used for CalDav REPORT and it needs to be properly implemented
@@ -96,13 +106,13 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
                         if (item instanceof HibNoteItem) {
                             HibNoteItem note = (HibNoteItem) item;
                             if (note.getModifications().size() > 0) {
-                                for (NoteItem modif: note.getModifications()) {
+                                for (NoteItem modif : note.getModifications()) {
                                     modif.getStamps().size();
                                 }
                             }
                         }
                     }
-                    this.getSession().clear();
+                    this.em.clear();
                     return toReturn;
                 }
             } catch (Exception e) {
@@ -134,7 +144,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
 
             return results;
         } catch (HibernateException e) {
-            getSession().clear();
+            this.em.clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
@@ -162,7 +172,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
         try {
             return itemFilterProcessor.processFilter(itemFilter);
         } catch (HibernateException e) {
-            getSession().clear();
+            this.em.clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
@@ -170,8 +180,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
     @Override
     public ContentItem findEventByIcalUid(String uid, CollectionItem calendar) {
         try {
-            Query<ContentItem> query = this.getSession().createNamedQuery("event.by.calendar.icaluid",
-                    ContentItem.class);
+            TypedQuery<ContentItem> query = this.em.createNamedQuery("event.by.calendar.icaluid", ContentItem.class);
             query.setParameter("calendar", calendar);
             query.setParameter("uid", uid);
             List<ContentItem> resultList = query.getResultList();
@@ -180,7 +189,7 @@ public class CalendarDaoImpl extends AbstractDaoImpl implements CalendarDao {
             }
             return null;
         } catch (HibernateException e) {
-            getSession().clear();
+            this.em.clear();
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }

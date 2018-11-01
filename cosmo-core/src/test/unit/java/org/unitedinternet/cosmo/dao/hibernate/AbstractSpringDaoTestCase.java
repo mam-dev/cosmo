@@ -15,8 +15,10 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.boot.CalendarTestApplication;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
@@ -43,7 +46,23 @@ public abstract class AbstractSpringDaoTestCase {
     private static Logger LOG = LoggerFactory.getLogger(AbstractSpringDaoTestCase.class);
 
     private static volatile MariaDB4jSpringService mariaDB = new MariaDB4jSpringService();
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
+    protected HibernateTestHelper helper;
+
+    @Before
+    public void setUp() {
+        this.helper = new HibernateTestHelper();
+    }
+
+    public void clearSession() {
+        this.entityManager.flush();
+        this.entityManager.clear();
+        this.entityManager.close();
+    }
+    
     @BeforeClass
     public static void startMariaDB() {
         if (mariaDB.isRunning()) {
@@ -67,4 +86,7 @@ public abstract class AbstractSpringDaoTestCase {
             }
         }));
     }
+    
+
+   
 }

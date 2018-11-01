@@ -25,7 +25,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscription;
 import org.unitedinternet.cosmo.model.hibernate.HibTicket;
 
-public class HibernateCollectionSubscriptionDaoTest extends AbstractHibernateDaoTestCase {
+public class HibernateCollectionSubscriptionDaoTest extends AbstractSpringDaoTestCase {
 
     @Autowired
     private CollectionSubscriptionDao subscriptionDao;

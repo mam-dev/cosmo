@@ -2,7 +2,10 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.CollectionSubscriptionDao;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
 
@@ -11,8 +14,11 @@ import org.unitedinternet.cosmo.model.CollectionSubscription;
  * @author daniel grigore
  *
  */
-@Component
-public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements CollectionSubscriptionDao {
+@Repository
+public class CollectionSubscriptionDaoImpl implements CollectionSubscriptionDao {
+
+    @PersistenceContext
+    private EntityManager em;
 
     /**
      * Default one
@@ -23,21 +29,19 @@ public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements Co
 
     @Override
     public List<CollectionSubscription> findByTargetCollectionUid(String uid) {
-        return this.getSession()
-                .createQuery("SELECT s FROM HibCollectionSubscription s WHERE s.targetCollection.uid = :uid",
-                        CollectionSubscription.class)
-                .setParameter("uid", uid).getResultList();
+        return this.em.createQuery("SELECT s FROM HibCollectionSubscription s WHERE s.targetCollection.uid = :uid",
+                CollectionSubscription.class).setParameter("uid", uid).getResultList();
     }
 
     @Override
     public void addOrUpdate(CollectionSubscription collectionSubscription) {
-        this.getSession().saveOrUpdate(collectionSubscription);
-        this.getSession().flush();
+        this.em.persist(collectionSubscription);
+        this.em.flush();
     }
 
     @Override
-    public CollectionSubscription findByTicket(String ticketKey) {        
-        List<CollectionSubscription> subscriptions = this.getSession()
+    public CollectionSubscription findByTicket(String ticketKey) {
+        List<CollectionSubscription> subscriptions = this.em
                 .createQuery("SELECT s FROM HibCollectionSubscription s WHERE s.ticket.key = :ticketKey",
                         CollectionSubscription.class)
                 .setParameter("ticketKey", ticketKey).getResultList();
@@ -46,11 +50,10 @@ public class CollectionSubscriptionDaoImpl extends AbstractDaoImpl implements Co
         }
         return null;
     }
-    
+
     @Override
     public void delete(CollectionSubscription subscription) {
-        this.getSession().delete(subscription);
-        this.getSession().flush();
+        this.em.remove(subscription);
+        this.em.flush();
     }
-
 }

@@ -28,9 +28,7 @@ import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
-import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.hibernate.HibPasswordRecovery;
 
 /**
  * Test Case for {@link StandardUserService}.
@@ -47,7 +45,9 @@ public class StandardUserServiceTest {
 
     /**
      * Setup.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Before
     public void setUp() throws Exception {
@@ -68,7 +68,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests get users.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testGetUsers() throws Exception {
@@ -79,7 +81,6 @@ public class StandardUserServiceTest {
         User u3 = testHelper.makeDummyUser();
         userDao.createUser(u3);
 
-        
         Assert.assertNotNull("User 1 not found in users", userDao.getUser(u1.getUsername()));
         Assert.assertNotNull("User 2 not found in users", userDao.getUser(u2.getUsername()));
         Assert.assertNotNull("User 3 not found in users", userDao.getUser(u3.getUsername()));
@@ -87,7 +88,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests get user.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testGetUser() throws Exception {
@@ -101,7 +104,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests get user by email.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testGetUserByEmail() throws Exception {
@@ -115,7 +120,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests create user.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testCreateUser() throws Exception {
@@ -124,21 +131,22 @@ public class StandardUserServiceTest {
 
         User user = service.createUser(u1);
         Assert.assertNotNull("User not stored", userDao.getUser(u1.getUsername()));
-        Assert.assertFalse("Original and stored password are the same",
-                    user.getPassword().equals(password));
+        Assert.assertFalse("Original and stored password are the same", user.getPassword().equals(password));
         Assert.assertEquals(user.getCreationDate(), user.getModifiedDate());
     }
 
     /**
      * Tests update user.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testUpdateUser() throws Exception {
         User u1 = testHelper.makeDummyUser();
         u1.setPassword(service.digestPassword(u1.getPassword()));
         String digestedPassword = u1.getPassword();
-        
+
         userDao.createUser(u1);
 
         // change password
@@ -151,10 +159,9 @@ public class StandardUserServiceTest {
         } catch (DataRetrievalFailureException e) {
             Assert.fail("User not stored");
         }
-        Assert.assertFalse("Original and stored password are the same",
-                    user.getPassword().equals(digestedPassword));
+        Assert.assertFalse("Original and stored password are the same", user.getPassword().equals(digestedPassword));
         Assert.assertTrue("Created and modified dates are the same",
-                   ! user.getCreationDate().equals(user.getModifiedDate()));
+                !user.getCreationDate().equals(user.getModifiedDate()));
 
         // leave password
         Thread.sleep(1000); // let modified date change
@@ -165,26 +172,30 @@ public class StandardUserServiceTest {
             Assert.fail("User not stored");
         }
         Assert.assertTrue("Original and stored password are not the same",
-                    user2.getPassword().equals(user.getPassword()));
+                user2.getPassword().equals(user.getPassword()));
         Assert.assertTrue("Created and modified dates are the same",
-                   ! user2.getCreationDate().equals(user2.getModifiedDate()));
+                !user2.getCreationDate().equals(user2.getModifiedDate()));
     }
 
     /**
      * Tests remove user.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testRemoveUser() throws Exception {
         User u1 = testHelper.makeDummyUser();
         service.createUser(u1);
-        service.removeUser(u1);        
+        service.removeUser(u1);
         Assert.assertNull("User not removed", service.getUser(u1.getUsername()));
     }
 
     /**
      * Tests remove user by username.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testRemoveUserByUsername() throws Exception {
@@ -198,7 +209,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests generate password.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testGeneratePassword() throws Exception {
@@ -210,7 +223,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests null user dao.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testNullUserDao() throws Exception {
@@ -225,7 +240,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests null password generator.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testNullPasswordGenerator() throws Exception {
@@ -240,7 +257,9 @@ public class StandardUserServiceTest {
 
     /**
      * Tests default digest algorithm.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testDefaultDigestAlgorithm() throws Exception {
@@ -249,7 +268,9 @@ public class StandardUserServiceTest {
 
     /**
      * Test digest password.
-     * @throws Exception - if something is wrong this exception is thrown.
+     * 
+     * @throws Exception
+     *             - if something is wrong this exception is thrown.
      */
     @Test
     public void testDigestPassword() throws Exception {
@@ -262,69 +283,5 @@ public class StandardUserServiceTest {
 
         // tests hex
         Assert.assertTrue("Digest not hex encoded", digested.matches("^[0-9a-f]+$"));
-    }
-    
-    /**
-     * Tests create password recovery.
-     */
-    @Test
-    public void testCreatePasswordRecovery(){
-        User user = testHelper.makeDummyUser();
-        user = userDao.createUser(user);
-        
-        PasswordRecovery passwordRecovery = 
-            new HibPasswordRecovery(user, "pwrecovery1");
-        
-        passwordRecovery = service.createPasswordRecovery(passwordRecovery);
-
-        PasswordRecovery storedPasswordRecovery = 
-            service.getPasswordRecovery(passwordRecovery.getKey());
-
-        Assert.assertEquals(passwordRecovery, storedPasswordRecovery);
-        
-        service.deletePasswordRecovery(storedPasswordRecovery);
-        
-        storedPasswordRecovery = 
-            service.getPasswordRecovery(storedPasswordRecovery.getKey());
-        
-        Assert.assertNull(storedPasswordRecovery);
-    }
-    
-    /**
-     * Tests recover password.
-     */
-    @Test
-    public void testRecoverPassword(){
-        User user = testHelper.makeDummyUser();
-        
-        userDao.createUser(user);
-
-        PasswordRecovery passwordRecovery = new HibPasswordRecovery(user, "pwrecovery2");
-        
-        passwordRecovery = service.createPasswordRecovery(passwordRecovery);
-        
-        Assert.assertEquals(user, passwordRecovery.getUser());
-        
-        // Recover password
-        
-        PasswordRecovery storedPasswordRecovery = 
-            service.getPasswordRecovery(passwordRecovery.getKey());
-        
-        User changingUser = storedPasswordRecovery.getUser();
-        
-        String newPassword = service.generatePassword();
-
-        changingUser.setPassword(newPassword);
-        
-        changingUser = service.updateUser(changingUser);
-        
-        String changedPassword = changingUser.getPassword();
-        
-        User changedUser = service.getUser(changingUser.getUsername());
-        
-        Assert.assertEquals(changedUser, changingUser);
-        
-        Assert.assertEquals(changedPassword, changedUser.getPassword());
-       
     }
 }

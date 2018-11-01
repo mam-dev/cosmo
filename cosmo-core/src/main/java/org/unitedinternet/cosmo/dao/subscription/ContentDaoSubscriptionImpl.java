@@ -7,8 +7,8 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
@@ -60,6 +60,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Item findItemByPath(String path) {
         PathSegments pathSegments = new PathSegments(path);
         String homeCollectionId = pathSegments.getHomeCollectionUid();
@@ -184,6 +185,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<Item> findItems(ItemFilter filter) {
         if (filter.getParent() instanceof HibCollectionSubscriptionItem) {
             HibCollectionSubscriptionItem parent = (HibCollectionSubscriptionItem) filter.getParent();
@@ -327,8 +329,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Set<Item> obfuscate(HibCollectionSubscriptionItem parent, Set<Item> items) {
         if (isFreeBusy(parent)) {
-            // Make it read-only to avoid saving back free-busy text
-            this.getSession().setDefaultReadOnly(true);
+            // XXX - Check read-only flag on Transactional is enough
             for (Item item : items) {
                 if (item instanceof ContentItem) {                    
                     this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);                    
@@ -340,15 +341,10 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Item obfuscate(HibCollectionSubscriptionItem parent, Item item) {
         if (isFreeBusy(parent) && item instanceof ContentItem) {
-            // Make it read-only to avoid saving back free-busy text
-            this.getSession().setDefaultReadOnly(true);
+            // XXX - Check read-only flag on Transactional is enough
             this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
         }
         return item;
-    }
-
-    private Session getSession() {
-        return (Session) this.em;
     }
 
     private static boolean isFreeBusy(HibCollectionSubscriptionItem subscriptionItem) {

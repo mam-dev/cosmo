@@ -18,57 +18,41 @@ package org.unitedinternet.cosmo.dao.query.hibernate;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.abdera.i18n.text.UrlEncoding;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-import org.springframework.stereotype.Component;
-import org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl;
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.query.ItemPathTranslator;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 
 /**
- * Default implementation for ItempPathTranslator. This implementation expects
- * paths to be of the format: /username/parent1/parent2/itemname
+ * Default implementation for ItempPathTranslator. This implementation expects paths to be of the format:
+ * /username/parent1/parent2/itemname
  */
-@Component
-public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPathTranslator {
+@Repository
+public class DefaultItemPathTranslator implements ItemPathTranslator {
 
-    
-   
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.query.ItemPathTranslator#findItemByPath(org.hibernate.Session,
-     *      java.lang.String)
-     */
+    @PersistenceContext
+    private EntityManager em;
 
-    /**
-     * Finds item by path.
-     *
-     * @param path The given path.
-     * @return item The expected item.
-     */
-    public Item findItemByPath(final String path) {
-
-        return (Item) findItemByPath(getSession(), path);
+    public DefaultItemPathTranslator() {
 
     }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.query.ItemPathTranslator#findItemByPath(java.lang.String, org.unitedinternet.cosmo.model.CollectionItem)
-     */
 
     /**
      * Finds item by the given path.
      *
-     * @param path The given path.
-     * @param root The collection item.
+     * @param path
+     *            The given path.
+     * @param root
+     *            The collection item.
      * @return The expected item.
      */
     public Item findItemByPath(final String path, final CollectionItem root) {
-        return (Item) findItemByPath(getSession(), path, root);
+        return (Item) findItemByPathInternal(path, root);
     }
 
     /**
@@ -116,11 +100,14 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
     /**
      * Finds item by the given path.
      *
-     * @param session The current session.
-     * @param path    The given path.
+     * @param session
+     *            The current session.
+     * @param path
+     *            The given path.
      * @return The expected item.
      */
-    protected Item findItemByPath(Session session, String path) {
+    @Override
+    public Item findItemByPath(String path) {
 
         if (path == null || "".equals(path)) {
             return null;
@@ -138,8 +125,7 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
         String username = decode(segments[0]);
 
         String rootName = username;
-        Item rootItem = findRootItemByOwnerAndName(session, username,
-                rootName);
+        Item rootItem = findRootItemByOwnerAndName(username, rootName);
 
         // If parent item doesn't exist don't go any further
         if (rootItem == null) {
@@ -148,8 +134,7 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
 
         Item parentItem = rootItem;
         for (int i = 1; i < segments.length; i++) {
-            Item nextItem = findItemByParentAndName(session, parentItem,
-                    decode(segments[i]));
+            Item nextItem = findItemByParentAndName(parentItem, decode(segments[i]));
             parentItem = nextItem;
             // if any parent item doesn't exist then bail now
             if (parentItem == null) {
@@ -163,12 +148,13 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
     /**
      * Finds item by path.
      *
-     * @param session The current session.
-     * @param path    The given path.
-     * @param root    The collection root.
+     * @param path
+     *            The given path.
+     * @param root
+     *            The collection root.
      * @return The expected item.
      */
-    protected Item findItemByPath(Session session, String path, CollectionItem root) {
+    private Item findItemByPathInternal(String path, CollectionItem root) {
 
         if (path == null || "".equals(path)) {
             return null;
@@ -186,8 +172,7 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
 
         Item parentItem = root;
         for (int i = 0; i < segments.length; i++) {
-            Item nextItem = findItemByParentAndName(session, parentItem,
-                    decode(segments[i]));
+            Item nextItem = findItemByParentAndName(parentItem, decode(segments[i]));
             parentItem = nextItem;
             // if any parent item doesn't exist then bail now
             if (parentItem == null) {
@@ -198,23 +183,23 @@ public class DefaultItemPathTranslator extends AbstractDaoImpl implements ItemPa
         return parentItem;
     }
 
-    protected Item findRootItemByOwnerAndName(Session session, String username, String name) {
-        Query<Item> query = session.createNamedQuery("item.by.ownerName.name.nullParent", Item.class)
+    protected Item findRootItemByOwnerAndName(String username, String name) {
+        TypedQuery<Item> query = this.em.createNamedQuery("item.by.ownerName.name.nullParent", Item.class)
                 .setParameter("username", username).setParameter("name", name);
         List<Item> items = query.getResultList();
         return items.size() > 0 ? items.get(0) : null;
     }
 
-    protected Item findItemByParentAndName(Session session, Item parent, String name) {
-        Query<Item> query = session.createNamedQuery("item.by.parent.name", Item.class)
+    protected Item findItemByParentAndName(Item parent, String name) {
+        TypedQuery<Item> query = this.em.createNamedQuery("item.by.parent.name", Item.class)
                 .setParameter("parent", parent).setParameter("name", name);
         List<Item> items = query.getResultList();
         return items.size() > 0 ? items.get(0) : null;
     }
-    
-    private static String decode(String urlPath){
+
+    private static String decode(String urlPath) {
         try {
-            return  UrlEncoding.decode(urlPath, "UTF-8");
+            return UrlEncoding.decode(urlPath, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

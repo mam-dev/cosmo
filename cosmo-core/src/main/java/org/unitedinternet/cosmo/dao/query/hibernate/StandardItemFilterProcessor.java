@@ -24,17 +24,18 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.hibernate.query.internal.QueryImpl;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.calendar.Instance;
 import org.unitedinternet.cosmo.calendar.InstanceList;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
-import org.unitedinternet.cosmo.dao.hibernate.AbstractDaoImpl;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EventStamp;
@@ -65,25 +66,22 @@ import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
  * processes the results.
  */
 @Component
-public class StandardItemFilterProcessor extends AbstractDaoImpl implements ItemFilterProcessor {
+public class StandardItemFilterProcessor  implements ItemFilterProcessor {
 
     private static final Log LOG = LogFactory.getLog(StandardItemFilterProcessor.class);
-
+    
+    @PersistenceContext
+    private EntityManager em;
+    
     /**
      * Constructor.
      */
     public StandardItemFilterProcessor() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.query.ItemFilterProcessor#processFilter (org.hibernate.Session,
-     * org.unitedinternet.cosmo.model.filter.ItemFilter)
-     */
+    @Override
     public Set<Item> processFilter(ItemFilter filter) {
-        Query<Item> query = this.buildQueryInternal(getSession(), filter);
-        List<Item> queryResults = query.getResultList();
+        List<Item> queryResults = this.buildQueryInternal(filter).getResultList();
         return processResults(queryResults, filter);
     }
 
@@ -93,13 +91,11 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
      * filter. This is due to the fact that recurring events may have complicated recurrence rules that are extremely
      * hard to match using HQL.
      *
-     * @param session
-     *            session
      * @param filter
      *            item filter
      * @return hibernate query built using HQL
      */
-    private Query<Item> buildQueryInternal(Session session, ItemFilter filter) {
+    private TypedQuery<Item> buildQueryInternal(ItemFilter filter) {
         StringBuilder selectBuf = new StringBuilder();
         StringBuilder whereBuf = new StringBuilder();
         StringBuilder orderBuf = new StringBuilder();
@@ -136,7 +132,7 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
             LOG.debug(selectBuf.toString());
         }
 
-        Query<Item> hqlQuery = session.createQuery(selectBuf.toString(), Item.class);
+        TypedQuery<Item> hqlQuery = this.em.createQuery(selectBuf.toString(), Item.class);
 
         for (Entry<String, Object> param : params.entrySet()) {
             hqlQuery.setParameter(param.getKey(), param.getValue());
@@ -152,8 +148,8 @@ public class StandardItemFilterProcessor extends AbstractDaoImpl implements Item
     /**
      * Defined for testing reasons.
      */
-    protected QueryImpl<Item> buildQuery(Session session, ItemFilter filter) {
-        return (QueryImpl<Item>) this.buildQueryInternal(session, filter);
+    protected QueryImpl<Item> buildQuery(ItemFilter filter) {
+        return (QueryImpl<Item>) this.buildQueryInternal(filter);
     }
 
     private void handleItemFilter(StringBuilder selectBuf, StringBuilder whereBuf, HashMap<String, Object> params,

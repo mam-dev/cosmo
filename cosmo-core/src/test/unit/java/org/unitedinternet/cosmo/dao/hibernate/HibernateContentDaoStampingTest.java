@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author ccoman
  *
  */
-public class HibernateContentDaoStampingTest extends AbstractHibernateDaoTestCase {
+public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
     
     @Autowired
     private UserDaoImpl userDao;
@@ -246,7 +246,7 @@ public class HibernateContentDaoStampingTest extends AbstractHibernateDaoTestCas
             contentDao.createContent(root, item);
             clearSession();
             Assert.fail("able to create invalid event!");
-        } catch (IllegalStateException is) {}
+        } catch (Exception is) {}
     }
     
     /**

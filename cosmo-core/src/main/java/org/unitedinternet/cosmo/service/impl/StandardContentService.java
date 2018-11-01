@@ -23,11 +23,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
@@ -66,7 +66,7 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
  * @see ContentService
  * @see ContentDao
  */
-@org.springframework.stereotype.Component
+@Service
 @Transactional
 public class StandardContentService implements ContentService {
     private static final Log LOG =

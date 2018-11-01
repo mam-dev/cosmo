@@ -21,6 +21,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.Item;
@@ -43,6 +44,7 @@ import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
  */
 @Aspect
 @Configuration
+@Transactional
 public class ContextServiceExtensionsAdvice {
     private static final Log LOG = LogFactory.getLog(ContextServiceExtensionsAdvice.class);
 

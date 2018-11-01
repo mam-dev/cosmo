@@ -15,9 +15,6 @@
  */
 package org.unitedinternet.cosmo.dao;
 
-import java.util.Set;
-
-import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
 
 /**
@@ -49,14 +46,6 @@ public interface UserDao extends Dao {
     public User getUserByUid(String uid);
 
     /**
-     * Returns the user account identified by the given activation id.
-     *
-     * @param id the activation id corresponding to the account to return
-     * @return The user account identified by the given activation id.
-     */
-    public User getUserByActivationId(String id);
-
-    /**
      * Returns the user account identified by the given email address.
      *
      * @param email the email address of the account to return
@@ -64,15 +53,6 @@ public interface UserDao extends Dao {
      */
     public User getUserByEmail(String email);
     
-    /**
-     * Returns a set of users that contain a user preference that
-     * matches a specific key and value.
-     * @param key user preference key to match
-     * @param value user preference value to match
-     * @return set of users containing a user preference that matches
-     *         key and value
-     */
-    public Set<User> findUsersByPreference(String key, String value);
 
     /**
      * Creates a user account in the repository. Returns a new
@@ -109,27 +89,5 @@ public interface UserDao extends Dao {
      * @param user the user to remove
      */
     public void removeUser(User user);
-    
-    /**
-     * Creates a password recovery entity in the repository. Returns a new
-     * instance of <code>PasswordRecovery</code> after saving the original one.
-     *
-     * @param passwordRecovery the password recovery entity to save
-     */
-    public void createPasswordRecovery(PasswordRecovery passwordRecovery);
-    
-    /**
-     * Returns the password recovery entity identified by the given key.
-     * 
-     * @param key The given key.
-     * @return the passsword recovery entity identified by key
-     */
-    public PasswordRecovery getPasswordRecovery(String key);
-    
-    /**
-     * Delete <code>passwordRecovery</code> from the database.
-     * 
-     * @param passwordRecovery the password recovery entity to delete
-     */
-    public void deletePasswordRecovery(PasswordRecovery passwordRecovery);
+        
 }

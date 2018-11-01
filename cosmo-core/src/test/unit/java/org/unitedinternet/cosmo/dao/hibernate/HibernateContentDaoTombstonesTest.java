@@ -43,10 +43,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Test that HibernateContentDao correctly manages Tombstones.
  */
-public class HibernateContentDaoTombstonesTest extends AbstractHibernateDaoTestCase {
+public class HibernateContentDaoTombstonesTest extends AbstractSpringDaoTestCase {
     
     @Autowired
     private UserDaoImpl userDao;
+    
     @Autowired
     private ContentDaoImpl contentDao;
 

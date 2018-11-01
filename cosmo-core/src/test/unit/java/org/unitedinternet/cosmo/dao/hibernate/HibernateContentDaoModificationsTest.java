@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Test for hibernate content dao modifications.
  *
  */
-public class HibernateContentDaoModificationsTest extends AbstractHibernateDaoTestCase {
+public class HibernateContentDaoModificationsTest extends AbstractSpringDaoTestCase {
 
     @Autowired
     private UserDaoImpl userDao;

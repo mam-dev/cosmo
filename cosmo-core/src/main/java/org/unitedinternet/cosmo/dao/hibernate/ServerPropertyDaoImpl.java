@@ -17,56 +17,52 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ServerPropertyDao;
 import org.unitedinternet.cosmo.model.ServerProperty;
 import org.unitedinternet.cosmo.model.hibernate.HibServerProperty;
 
 /**
- * Implementation of ServerPropertyDao using Hibernate persistent objects.
+ *
  */
-public class ServerPropertyDaoImpl extends AbstractDaoImpl implements ServerPropertyDao {
+@Repository
+public class ServerPropertyDaoImpl implements ServerPropertyDao {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public ServerPropertyDaoImpl() {
+
+    }
 
     @Override
     public String getServerProperty(String property) {
-        try {
-            List<ServerProperty> propertyList = getSession()
-                    .createQuery("from HibServerProperty where name=:name", ServerProperty.class)
-                    .setParameter("name", property).getResultList();
-            return propertyList.size() > 0 ? propertyList.get(0).getValue() : null;
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        List<ServerProperty> propertyList = this.em
+                .createQuery("from HibServerProperty where name=:name", ServerProperty.class)
+                .setParameter("name", property).getResultList();
+        return propertyList.size() > 0 ? propertyList.get(0).getValue() : null;
     }
 
     @Override
     public void setServerProperty(String property, String value) {
-        try {
-            List<ServerProperty> propertyList = getSession()
-                    .createQuery("from HibServerProperty where name=:name", ServerProperty.class)
-                    .setParameter("name", property).getResultList();
-            ServerProperty prop = null;
-            if (propertyList.size() > 0) {
-                prop = propertyList.get(0);
-                prop.setValue(value);
-            } else {
-                prop = new HibServerProperty(property, value);
-            }
-            getSession().saveOrUpdate(prop);
-            getSession().flush();
 
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        List<ServerProperty> propertyList = this.em
+                .createQuery("from HibServerProperty where name=:name", ServerProperty.class)
+                .setParameter("name", property).getResultList();
+        ServerProperty prop = null;
+        if (propertyList.size() > 0) {
+            prop = propertyList.get(0);
+            prop.setValue(value);
+            this.em.merge(prop);
+        } else {
+            prop = new HibServerProperty(property, value);
+            this.em.persist(prop);
         }
-    }
+        this.em.flush();
 
-    public void destroy() {
-        // nothing
-    }
-
-    public void init() {
-        // nothing
     }
 
 }

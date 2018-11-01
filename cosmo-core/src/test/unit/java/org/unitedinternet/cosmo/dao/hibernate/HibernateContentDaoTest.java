@@ -103,10 +103,11 @@ import net.fortuna.ical4j.model.property.ProdId;
  * Test for HibernateContentDao
  *
  */
-public class HibernateContentDaoTest extends AbstractHibernateDaoTestCase {
+public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
     @Autowired
     private UserDaoImpl userDao;
+    
     @Autowired
     private ContentDaoImpl contentDao;
 
@@ -1184,7 +1185,7 @@ public class HibernateContentDaoTest extends AbstractHibernateDaoTestCase {
         try {
             contentDao.moveItem("/testuser2", "/testuser2/a/blah");
             Assert.fail("able to move root collection");
-        } catch (IllegalArgumentException iae) {
+        } catch (Exception iae) {
         }
 
         // verify can't move to root collection
@@ -1273,7 +1274,7 @@ public class HibernateContentDaoTest extends AbstractHibernateDaoTestCase {
         try {
             contentDao.copyItem(root, "/testuser2/a/blah", true);
             Assert.fail("able to copy root collection");
-        } catch (IllegalArgumentException iae) {
+        } catch (Exception iae) {
         }
 
         // verify can't move to root collection

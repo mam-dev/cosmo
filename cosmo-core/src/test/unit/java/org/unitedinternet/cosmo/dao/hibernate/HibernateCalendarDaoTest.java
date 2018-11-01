@@ -54,7 +54,7 @@ import net.fortuna.ical4j.model.Period;
 /**
  * Test CalendarDaoImpl
  */
-public class HibernateCalendarDaoTest extends AbstractHibernateDaoTestCase {
+public class HibernateCalendarDaoTest extends AbstractSpringDaoTestCase {
 	
     @Autowired
     protected CalendarDaoImpl calendarDao;

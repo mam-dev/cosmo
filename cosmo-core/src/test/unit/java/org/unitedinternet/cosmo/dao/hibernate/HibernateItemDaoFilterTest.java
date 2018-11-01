@@ -55,7 +55,7 @@ import net.fortuna.ical4j.model.Period;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class HibernateItemDaoFilterTest extends AbstractHibernateDaoTestCase {
+public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
 
     @Autowired
     protected ContentDaoImpl contentDao;

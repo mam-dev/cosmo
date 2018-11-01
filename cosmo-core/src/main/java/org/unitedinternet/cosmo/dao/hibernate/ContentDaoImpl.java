@@ -19,18 +19,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.validation.ConstraintViolationException;
+import javax.persistence.FlushModeType;
+import javax.persistence.TypedQuery;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.FlushMode;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.query.Query;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -45,20 +40,16 @@ import org.unitedinternet.cosmo.model.hibernate.HibItem;
 import org.unitedinternet.cosmo.model.hibernate.HibItemTombstone;
 
 /**
- * Implementation of ContentDao using hibernate persistence objects
+ * 
  */
-@Component
+@Repository
 public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(ContentDaoImpl.class);
+    public ContentDaoImpl() {
+        super();
+    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#createCollection(org.unitedinternet.cosmo.model.CollectionItem,
-     * org.unitedinternet.cosmo.model.CollectionItem)
-     */
+    @Override
     public CollectionItem createCollection(CollectionItem parent, CollectionItem collection) {
 
         if (parent == null) {
@@ -77,435 +68,216 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw new IllegalArgumentException("invalid collection id (expected -1)");
         }
 
-        try {
-            // verify uid not in use
-            checkForDuplicateUid(collection);
+        // Verify uid not in use
+        checkForDuplicateUid(collection);
 
-            setBaseItemProps(collection);
-            ((HibItem) collection).addParent(parent);
+        setBaseItemProps(collection);
+        ((HibItem) collection).addParent(parent);
 
-            getSession().save(collection);
-            getSession().flush();
+        this.em.persist(collection);
+        this.em.flush();
 
-            return collection;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
+        return collection;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#updateCollection(org.unitedinternet.cosmo.model.CollectionItem,
-     * java.util.Set, java.util.Map)
-     */
 
     /**
      * Updates collection.
      */
+    @Override
     public CollectionItem updateCollection(CollectionItem collection, Set<ContentItem> children) {
 
-        // Keep track of duplicate icalUids because we don't flush
-        // the db until the end so we need to handle the case of
-        // duplicate icalUids in the same request.
-        HashMap<String, NoteItem> icalUidMap = new HashMap<String, NoteItem>();
+        /*
+         * Keep track of duplicate icalUids because we don't flush the db until the end so we need to handle the case of
+         * duplicate icalUids in the same request.
+         */
+        Map<String, NoteItem> icalUidMap = new HashMap<String, NoteItem>();
 
-        try {
-            updateCollectionInternal(collection);
+        updateCollectionInternal(collection);
 
-            // Either create, update, or delete each item
-            for (ContentItem item : children) {
+        // Either create, update, or delete each item
+        for (ContentItem item : children) {
+            // Because we batch all the DB operations, we must check for duplicate icalUid within the same request
 
-                // Because we batch all the db operations, we must check
-                // for duplicate icalUid within the same request
-                if (item instanceof NoteItem && ((NoteItem) item).getIcalUid() != null) {
-                    NoteItem note = (NoteItem) item;
-                    if (item.getIsActive() == true) {
-                        NoteItem dup = icalUidMap.get(note.getIcalUid());
-                        if (dup != null && !dup.getUid().equals(item.getUid())) {
-                            throw new IcalUidInUseException("iCal uid" + note.getIcalUid()
-                                    + " already in use for collection " + collection.getUid(), item.getUid(),
-                                    dup.getUid());
-                        }
+            if (item instanceof NoteItem && ((NoteItem) item).getIcalUid() != null) {
+                NoteItem note = (NoteItem) item;
+                if (item.getIsActive() == true) {
+                    NoteItem dup = icalUidMap.get(note.getIcalUid());
+                    if (dup != null && !dup.getUid().equals(item.getUid())) {
+                        throw new IcalUidInUseException("iCal uid" + note.getIcalUid()
+                                + " already in use for collection " + collection.getUid(), item.getUid(), dup.getUid());
                     }
-
-                    icalUidMap.put(note.getIcalUid(), note);
                 }
 
-                // create item
-                if (getBaseModelObject(item).getId() == -1) {
-                    createContentInternal(collection, item);
-                }
-                // delete item
-                else if (item.getIsActive() == false) {
-                    // If item is a note modification, only remove the item
-                    // if its parent is not also being removed. This is because
-                    // when a master item is removed, all its modifications are
-                    // removed.
-                    if (item instanceof NoteItem) {
-                        NoteItem note = (NoteItem) item;
-                        if (note.getModifies() != null && note.getModifies().getIsActive() == false) {
-                            continue;
-                        }
-                    }
-                    removeItemFromCollectionInternal(item, collection);
-                }
-                // update item
-                else {
-                    if (!item.getParents().contains(collection)) {
-
-                        // If item is being added to another collection,
-                        // we need the ticket/perms to add that item.
-                        // If ticket exists, then add with ticket and ticket perms.
-                        // If ticket doesn't exist, but item uuid is present in
-                        // itemPerms map, then add with read-only access.
-
-                        addItemToCollectionInternal(item, collection);
-                    }
-
-                    updateContentInternal(item);
-                }
+                icalUidMap.put(note.getIcalUid(), note);
             }
 
-            getSession().flush();
+            // Create item
+            if (getBaseModelObject(item).getId() == -1) {
+                createContentInternal(collection, item);
+            } else if (item.getIsActive() == false) {
+                // Delete item
+                /*
+                 * If item is a note modification, only remove the item if its parent is not also being removed. This is
+                 * because when a master item is removed, all its modifications are removed.
+                 */
+                if (item instanceof NoteItem) {
+                    NoteItem note = (NoteItem) item;
+                    if (note.getModifies() != null && note.getModifies().getIsActive() == false) {
+                        continue;
+                    }
+                }
+                removeItemFromCollectionInternal(item, collection);
+            }
+            // update item
+            else {
+                if (!item.getParents().contains(collection)) {
+                    /*
+                     * If item is being added to another collection, we need the ticket/perms to add that item. If
+                     * ticket exists, then add with ticket and ticket perms. If ticket doesn't exist, but item uuid is
+                     * present in itemPerms map, then add with read-only access.
+                     */
+                    addItemToCollectionInternal(item, collection);
+                }
 
-            // clear the session to improve subsequent flushes
-            getSession().clear();
-
-            // load collection to get it back into the session
-            getSession().load(collection, getBaseModelObject(collection).getId());
-
-            return collection;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
+                updateContentInternal(item);
+            }
         }
+
+        this.em.flush();
+        // Load collection to get it back into the session
+        this.em.refresh(collection);
+        return collection;
     }
 
     @Override
     public ContentItem createContent(CollectionItem parent, ContentItem content) {
-
-        try {
-            createContentInternal(parent, content);
-            getSession().flush();
-            return content;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
+        createContentInternal(parent, content);
+        this.em.flush();
+        return content;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#createBatchContent(org.unitedinternet.cosmo.model.CollectionItem,
-     * java.util.Set)
-     */
+    @Override
     public void createBatchContent(CollectionItem parent, Set<ContentItem> contents) {
-
-        try {
-            for (ContentItem content : contents) {
-                createContentInternal(parent, content);
-            }
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            getSession().clear();
-            logConstraintViolationException(cve);
-            throw cve;
+        for (ContentItem content : contents) {
+            createContentInternal(parent, content);
         }
+        this.em.flush();
+
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#updateBatchContent(java.util.Set)
-     */
+    @Override
     public void updateBatchContent(Set<ContentItem> contents) {
-        try {
-            for (ContentItem content : contents) {
-                updateContentInternal(content);
-            }
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#removeBatchContent(org.unitedinternet.cosmo.model.CollectionItem,
-     * java.util.Set)
-     */
-    public void removeBatchContent(CollectionItem parent, Set<ContentItem> contents) {
-        try {
-            for (ContentItem content : contents) {
-                removeItemFromCollectionInternal(content, parent);
-            }
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#createContent(java.util.Set,
-     * org.unitedinternet.cosmo.model.ContentItem)
-     */
-    public ContentItem createContent(Set<CollectionItem> parents, ContentItem content) {
-
-        try {
-            createContentInternal(parents, content);
-            getSession().flush();
-            return content;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.unitedinternet.cosmo.dao.ContentDao#updateCollectionTimestamp(org.unitedinternet.cosmo.model.CollectionItem)
-     */
-
-    /**
-     * Updates collection timestamp.
-     *
-     * @param collection
-     *            The timestamp of this collection needs to be updated.
-     * @return The new collection item updated.
-     */
-    public CollectionItem updateCollectionTimestamp(CollectionItem collection) {
-        try {
-            if (!getSession().contains(collection)) {
-                collection = (CollectionItem) getSession().merge(collection);
-            }
-            collection.updateTimestamp();
-            getSession().flush();
-            return collection;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#updateCollection(org.unitedinternet.cosmo.model.CollectionItem)
-     */
-
-    /**
-     * Updates collection.
-     *
-     * @param collection
-     *            The updated collection.
-     */
-    public CollectionItem updateCollection(CollectionItem collection) {
-        try {
-
-            updateCollectionInternal(collection);
-            getSession().flush();
-
-            return collection;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#updateContent(org.unitedinternet.cosmo.model.ContentItem)
-     */
-
-    /**
-     * Updates content item.
-     *
-     * @param content
-     *            The content that needs to be updated.
-     * @return The updated content.
-     */
-    public ContentItem updateContent(ContentItem content) {
-        try {
+        for (ContentItem content : contents) {
             updateContentInternal(content);
-            getSession().flush();
-            return content;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
         }
+        this.em.flush();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#removeCollection(org.unitedinternet.cosmo.model.CollectionItem)
-     */
+    @Override
+    public void removeBatchContent(CollectionItem parent, Set<ContentItem> contents) {
+        for (ContentItem content : contents) {
+            removeItemFromCollectionInternal(content, parent);
+        }
+        this.em.flush();
+    }
 
-    /**
-     * Removes the collection given.
-     *
-     * @param collection
-     *            The collection that needs to be removed.
-     */
+    @Override
+    public ContentItem createContent(Set<CollectionItem> parents, ContentItem content) {
+        createContentInternal(parents, content);
+        this.em.flush();
+        return content;
+    }
+
+    @Override
+    public CollectionItem updateCollectionTimestamp(CollectionItem collection) {
+        if (!this.em.contains(collection)) {
+            collection = (CollectionItem) this.em.merge(collection);
+        }
+        collection.updateTimestamp();
+        this.em.flush();
+        return collection;
+    }
+
+    @Override
+    public CollectionItem updateCollection(CollectionItem collection) {
+        updateCollectionInternal(collection);
+        this.em.flush();
+        return collection;
+    }
+
+    @Override
+    public ContentItem updateContent(ContentItem content) {
+        updateContentInternal(content);
+        this.em.flush();
+        return content;
+    }
+
+    @Override
     public void removeCollection(CollectionItem collection) {
-
         if (collection == null) {
             throw new IllegalArgumentException("collection cannot be null");
         }
-
-        try {
-            getSession().refresh(collection);
-            removeCollectionRecursive(collection);
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        this.em.refresh(collection);
+        removeCollectionRecursive(collection);
+        this.em.flush();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#removeContent(org.unitedinternet.cosmo.model.ContentItem)
-     */
-
-    /**
-     * Removes the content given.
-     *
-     * @param content
-     *            The content item that need to be removed.
-     */
+    @Override
     public void removeContent(ContentItem content) {
-
         if (content == null) {
             throw new IllegalArgumentException("content cannot be null");
         }
-
-        try {
-            getSession().refresh(content);
-            removeContentRecursive(content);
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        this.em.refresh(content);
+        removeContentRecursive(content);
+        this.em.flush();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#removeUserContent(org.unitedinternet.cosmo.model.User)
-     */
-
-    /**
-     * Removes user content.
-     *
-     * @param user
-     *            The content of the user needs to be removed.
-     */
+    @Override
     public void removeUserContent(User user) {
-        try {
-            Query<ContentItem> query = getSession().createNamedQuery("contentItem.by.owner", ContentItem.class)
-                    .setParameter("owner", user);
-            List<ContentItem> results = query.getResultList();
-            for (ContentItem content : results) {
-                removeContentRecursive(content);
-            }
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        TypedQuery<ContentItem> query = this.em.createNamedQuery("contentItem.by.owner", ContentItem.class)
+                .setParameter("owner", user);
+        List<ContentItem> results = query.getResultList();
+        for (ContentItem content : results) {
+            removeContentRecursive(content);
         }
+        this.em.flush();
+
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.dao.ContentDao#loadChildren(org.unitedinternet.cosmo.model.CollectionItem,
-     * java.util.Date)
-     */
+    @Override
     public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
-        try {
-            Set<ContentItem> children = new HashSet<ContentItem>();
-            Query<ContentItem> query = null;
 
-            // use custom HQL query that will eager fetch all associations
-            if (timestamp == null) {
-                query = getSession().createNamedQuery("contentItem.by.parent", ContentItem.class).setParameter("parent",
-                        collection);
-            } else {
-                query = getSession().createNamedQuery("contentItem.by.parent.timestamp", ContentItem.class)
-                        .setParameter("parent", collection).setParameter("timestamp", timestamp);
-            }
-            query.setHibernateFlushMode(FlushMode.MANUAL);
-            List<ContentItem> results = query.getResultList();
-            for (ContentItem content : results) {
-                initializeItem(content);
-                children.add(content);
-            }
-            return children;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        Set<ContentItem> children = new HashSet<ContentItem>();
+        TypedQuery<ContentItem> query = null;
+
+        // use custom HQL query that will eager fetch all associations
+        if (timestamp == null) {
+            query = this.em.createNamedQuery("contentItem.by.parent", ContentItem.class).setParameter("parent",
+                    collection);
+        } else {
+            query = this.em.createNamedQuery("contentItem.by.parent.timestamp", ContentItem.class)
+                    .setParameter("parent", collection).setParameter("timestamp", timestamp);
         }
+        query.setFlushMode(FlushModeType.COMMIT);
+        List<ContentItem> results = query.getResultList();
+        for (ContentItem content : results) {
+            initializeItem(content);
+            children.add(content);
+        }
+        return children;
     }
 
     @Override
     public void initializeItem(Item item) {
         super.initializeItem(item);
-
-        // Initialize master NoteItem if applicable
-        try {
-            if (item instanceof NoteItem) {
-                NoteItem note = (NoteItem) item;
-                if (note.getModifies() != null) {
-                    Hibernate.initialize(note.getModifies());
-                    initializeItem(note.getModifies());
-                }
+        if (item instanceof NoteItem) {
+            NoteItem note = (NoteItem) item;
+            if (note.getModifies() != null) {
+                note.getModifies();
+                initializeItem(note.getModifies());
             }
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
-
     }
 
     @Override
@@ -545,54 +317,49 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
     private void removeContentRecursive(ContentItem content) {
         removeContentCommon(content);
-
         // Remove modifications
         if (content instanceof NoteItem) {
             NoteItem note = (NoteItem) content;
             if (note.getModifies() != null) {
-                // remove mod from master's collection
+                // Remove mod from master's collection
                 note.getModifies().removeModification(note);
                 note.getModifies().updateTimestamp();
             } else {
-                // mods will be removed by Hibernate cascading rules, but we
-                // need to add tombstones for mods
+                // Mods will be removed by Hibernate cascading rules, but we need to add tombstones for mods
                 for (NoteItem mod : note.getModifications()) {
                     removeContentCommon(mod);
                 }
             }
         }
-
-        getSession().delete(content);
+        this.em.remove(content);
     }
 
     private void removeContentCommon(ContentItem content) {
-        // Add a tombstone to each parent collection to track
-        // when the removal occurred.
+        // Add a tombstone to each parent collection to track when the removal occurred.
         for (CollectionItem parent : content.getParents()) {
             getHibItem(parent).addTombstone(new HibItemTombstone(parent, content));
-            getSession().update(parent);
+            this.em.merge(parent);
         }
     }
 
     private void removeCollectionRecursive(CollectionItem collection) {
-        // Removing a collection does not automatically remove
-        // its children. Instead, the association to all the
-        // children is removed, and any children who have no
-        // parent collection are then removed.
+        /*
+         * Removing a collection does not automatically remove its children. Instead, the association to all the
+         * children is removed, and any children who have no parent collection are then removed.
+         */
         removeItemsFromCollection(collection);
-
-        getSession().delete(collection);
+        this.em.remove(collection);
     }
 
     @Override
     public void removeItemsFromCollection(CollectionItem collection) {
-        // faster way to delete all calendar items but requires cascade delete on FK at DB
+        // Faster way to delete all calendar items but requires cascade delete on FK at DB
         /*
          * Long collectionId = ((HibCollectionItem)collection).getId(); String deleteAllQuery =
          * "delete from HibContentItem item where item.id in " +
          * " (select collItem.primaryKey.item.id from HibCollectionItemDetails collItem "+
          * " where collItem.primaryKey.collection.id=:collectionId)";
-         * getSession().createQuery(deleteAllQuery).setLong("collectionId", collectionId).executeUpdate();
+         * this.em.createQuery(deleteAllQuery).setLong("collectionId", collectionId).executeUpdate();
          */
         for (Item item : collection.getChildren()) {
             if (item instanceof CollectionItem) {
@@ -600,19 +367,19 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             } else if (item instanceof ContentItem) {
                 ((HibItem) item).removeParent(collection);
                 if (item.getParents().size() == 0) {
-                    getSession().delete(item);
+                    this.em.remove(item);
                 }
             } else {
-                getSession().delete(item);
+                this.em.remove(item);
             }
         }
     }
 
     private void removeNoteItemFromCollectionInternal(NoteItem note, CollectionItem collection) {
-        getSession().update(collection);
-        getSession().update(note);
+        this.em.merge(collection);
+        this.em.merge(note);
 
-        // do nothing if item doesn't belong to collection
+        // Do nothing if item doesn't belong to collection
         if (!note.getParents().contains(collection)) {
             return;
         }
@@ -624,8 +391,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             removeNoteItemFromCollectionInternal(mod, collection);
         }
 
-        // If the item belongs to no collection, then it should
-        // be purged.
+        // If the item belongs to no collection, then it should be purged.
         if (note.getParents().size() == 0) {
             removeItemInternal(note);
         }
@@ -660,9 +426,10 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
         setBaseItemProps(content);
 
-        // When a note modification is added, it must be added to all
-        // collections that the parent note is in, because a note modification's
-        // parents are tied to the parent note.
+        /*
+         * When a note modification is added, it must be added to all collections that the parent note is in, because a
+         * note modification's parents are tied to the parent note.
+         */
         if (isNoteModification(content)) {
             NoteItem note = (NoteItem) content;
 
@@ -678,21 +445,19 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             // Add modification to all parents of master
             for (CollectionItem col : note.getModifies().getParents()) {
                 if (((HibCollectionItem) col).removeTombstone(content) == true) {
-                    getSession().update(col);
+                    this.em.merge(col);
                 }
                 ((HibItem) note).addParent(col);
             }
         } else {
-            // add parent to new content
+            // Add parent to new content
             ((HibItem) content).addParent(parent);
-
-            // remove tombstone (if it exists) from parent
+            // Remove tombstone (if it exists) from parent
             if (((HibCollectionItem) parent).removeTombstone(content) == true) {
-                getSession().update(parent);
+                this.em.merge(parent);
             }
         }
-
-        getSession().save(content);
+        this.em.persist(content);
     }
 
     protected void createContentInternal(Set<CollectionItem> parents, ContentItem content) {
@@ -754,11 +519,11 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         for (CollectionItem parent : parents) {
             ((HibItem) content).addParent(parent);
             if (((HibCollectionItem) parent).removeTombstone(content) == true) {
-                getSession().update(parent);
+                this.em.merge(parent);
             }
         }
 
-        getSession().save(content);
+        this.em.persist(content);
     }
 
     protected void updateContentInternal(ContentItem content) {
@@ -771,7 +536,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw new IllegalArgumentException("content must be active");
         }
 
-        getSession().update(content);
+        this.em.merge(content);
 
         if (content.getOwner() == null) {
             throw new IllegalArgumentException("content must have owner");
@@ -790,9 +555,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         if (collection == null) {
             throw new IllegalArgumentException("collection cannot be null");
         }
-
-        getSession().update(collection);
-
+        this.em.merge(collection);
         if (collection.getOwner() == null) {
             throw new IllegalArgumentException("collection must have owner");
         }
@@ -806,15 +569,17 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     @Override
     protected void addItemToCollectionInternal(Item item, CollectionItem collection) {
 
-        // Don't allow note modifications to be added to a collection
-        // When a master is added, all the modifications are added
+        /*
+         * Don't allow note modifications to be added to a collection. When a master is added, all the modifications are
+         * added.
+         */
         if (isNoteModification(item)) {
             throw new ModelValidationException(item, "cannot add modification " + item.getUid() + " to collection "
                     + collection.getUid() + ", only master");
         }
 
         if (item instanceof ICalendarItem) {
-            // verify icaluid is unique within collection
+            // Verify icaluid is unique within collection
             checkForDuplicateICalUid((ICalendarItem) item, collection);
         }
 
@@ -831,11 +596,12 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     @Override
     protected void removeItemFromCollectionInternal(Item item, CollectionItem collection) {
         if (item instanceof NoteItem) {
-            // When a note modification is removed, it is really removed from
-            // all collections because a modification can't live in one collection
-            // and not another. It is tied to the collections that the master
-            // note is in. Therefore you can't just remove a modification from
-            // a single collection when the master note is in multiple collections.
+            /*
+             * When a note modification is removed, it is really removed from all collections because a modification
+             * can't live in one collection and not another. It is tied to the collections that the master note is in.
+             * Therefore you can't just remove a modification from a single collection when the master note is in
+             * multiple collections.
+             */
             NoteItem note = (NoteItem) item;
             if (note.getModifies() != null) {
                 removeContentRecursive((ContentItem) item);
@@ -861,17 +627,17 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         }
 
         // Lookup item by parent/icaluid
-        Query<Long> query = null;
+        TypedQuery<Long> query = null;
         if (item instanceof NoteItem) {
-            query = getSession().createNamedQuery("noteItemId.by.parent.icaluid", Long.class)
+            query = this.em.createNamedQuery("noteItemId.by.parent.icaluid", Long.class)
                     .setParameter("parentid", getBaseModelObject(parent).getId())
                     .setParameter("icaluid", item.getIcalUid());
         } else {
-            query = getSession().createNamedQuery("icalendarItem.by.parent.icaluid", Long.class)
+            query = this.em.createNamedQuery("icalendarItem.by.parent.icaluid", Long.class)
                     .setParameter("parentid", getBaseModelObject(parent).getId())
                     .setParameter("icaluid", item.getIcalUid());
         }
-        query.setHibernateFlushMode(FlushMode.MANUAL);
+        query.setFlushMode(FlushModeType.COMMIT);
 
         Long itemId = null;
         List<Long> idList = query.getResultList();
@@ -879,19 +645,18 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             itemId = idList.get(0);
         }
 
-        // if icaluid is in use throw exception
+        // If icaluid is in use throw exception
         if (itemId != null) {
             // If the note is new, then its a duplicate icaluid
             if (getBaseModelObject(item).getId() == -1) {
-                Item dup = (Item) getSession().load(HibItem.class, itemId);
+                Item dup = (Item) this.em.find(HibItem.class, itemId);
                 throw new IcalUidInUseException(
                         "iCal uid" + item.getIcalUid() + " already in use for collection " + parent.getUid(),
                         item.getUid(), dup.getUid());
             }
-            // If the note exists and there is another note with the same
-            // icaluid, then its a duplicate icaluid
+            // If the note exists and there is another note with the same icaluid, then its a duplicate icaluid
             if (getBaseModelObject(item).getId().equals(itemId)) {
-                Item dup = (Item) getSession().load(HibItem.class, itemId);
+                Item dup = (Item) this.em.find(HibItem.class, itemId);
                 throw new IcalUidInUseException(
                         "iCal uid" + item.getIcalUid() + " already in use for collection " + parent.getUid(),
                         item.getUid(), dup.getUid());
@@ -905,7 +670,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             return;
         }
 
-        // ignore modifications
+        // Ignore modifications
         if (item instanceof NoteItem && ((NoteItem) item).getModifies() != null) {
             return;
         }
@@ -930,7 +695,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
     @Override
     public long countItems(long ownerId, long fromTimestamp) {
-        return this.getSession()
+        return this.em
                 .createQuery("SELECT count(i) from HibNoteItem i "
                         + "WHERE i.owner.id=:ownerId AND i.creationDate >:fromTimestamp", Long.class)
                 .setParameter("ownerId", ownerId).setParameter("fromTimestamp", new Date(fromTimestamp))
@@ -939,8 +704,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
 
     @Override
     public long countItems(long ownerId) {
-        return this.getSession()
-                .createQuery("SELECT count(i) from HibNoteItem i " + "WHERE i.owner.id=:ownerId", Long.class)
+        return this.em.createQuery("SELECT count(i) from HibNoteItem i " + "WHERE i.owner.id=:ownerId", Long.class)
                 .setParameter("ownerId", ownerId).getSingleResult();
     }
 

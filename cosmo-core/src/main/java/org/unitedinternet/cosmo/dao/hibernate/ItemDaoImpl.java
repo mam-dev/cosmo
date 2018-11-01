@@ -20,23 +20,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.ConstraintViolationException;
+import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.FlushMode;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.LockMode;
-import org.hibernate.ObjectDeletedException;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.StatelessSession;
-import org.hibernate.UnresolvableObjectException;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.dao.ItemDao;
@@ -62,583 +56,371 @@ import org.unitedinternet.cosmo.model.hibernate.HibItem;
 import org.unitedinternet.cosmo.model.hibernate.HibItemTombstone;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
 
-
 /**
- * Implementation of ItemDao using Hibernate persistent objects.
+ * 
  */
-public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
+@Repository
+public abstract class ItemDaoImpl implements ItemDao {
 
     private static final Log LOG = LogFactory.getLog(ItemDaoImpl.class);
 
     @Autowired
     private VersionFourGenerator idGenerator = null;
-    
+
     @Autowired
     private TokenService ticketKeyGenerator = null;
-    
+
     @Autowired
     private ItemPathTranslator itemPathTranslator = null;
+
     @Autowired
     private ItemFilterProcessor itemFilterProcessor = null;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.unitedinternet.cosmo.dao.ItemDao#findItemByPath(java.lang.String)
-     */
+    @PersistenceContext
+    protected EntityManager em;
+
     public Item findItemByPath(String path) {
-        try {
-            Item dbItem = itemPathTranslator.findItemByPath(path);
-            return dbItem;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+
+        Item dbItem = itemPathTranslator.findItemByPath(path);
+        return dbItem;
+
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.dao.ItemDao#findItemByPath(java.lang.String, java.lang.String)
      */
     public Item findItemByPath(String path, String parentUid) {
-        try {
-            Item parent = findItemByUid(parentUid);
-            if (parent == null) {
-                return null;
-            }
-            Item item = itemPathTranslator.findItemByPath(path, (CollectionItem) parent);
-            return item;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+
+        Item parent = findItemByUid(parentUid);
+        if (parent == null) {
+            return null;
         }
+        Item item = itemPathTranslator.findItemByPath(path, (CollectionItem) parent);
+        return item;
+
     }
-
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#findItemParentByPath(java.lang.String)
-     */
-    public Item findItemParentByPath(String path) {
-        try {
-            Item dbItem = itemPathTranslator.findItemParent(path);
-            return dbItem;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.unitedinternet.cosmo.dao.ItemDao#findEventStampFromDbByUid(java.lang.String)
+     * 
+     * @see org.unitedinternet.cosmo.dao.ItemDao#findItemParentByPath(java.lang.String)
      */
+    public Item findItemParentByPath(String path) {
+
+        Item dbItem = itemPathTranslator.findItemParent(path);
+        return dbItem;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid,
             Class<STAMP_TYPE> clazz) {
-        try (StatelessSession session = this.openStatelessSession()){
 
-            List<Stamp> stamps = (List<Stamp>) session.createNamedQuery("item.stamps.by.uid")
-                    .setParameter("uid", internalItemUid)
-                    .setHint(AvailableSettings.JPA_SHARED_CACHE_STORE_MODE, null)
-                    .setHint(AvailableSettings.JPA_SHARED_CACHE_RETRIEVE_MODE, null)
-                    .getResultList();
-            for (Stamp stamp : stamps) {
-                if (clazz.isInstance(stamp)) {
-                    return clazz.cast(stamp);
-                }
+        List<Stamp> stamps = (List<Stamp>) em.createNamedQuery("item.stamps.by.uid")
+                .setParameter("uid", internalItemUid).setHint(AvailableSettings.JPA_SHARED_CACHE_STORE_MODE, null)
+                .setHint(AvailableSettings.JPA_SHARED_CACHE_RETRIEVE_MODE, null).getResultList();
+        for (Stamp stamp : stamps) {
+            if (clazz.isInstance(stamp)) {
+                return clazz.cast(stamp);
             }
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Item findItemByUid(String uid) {
+
+        // prevent auto flushing when looking up item by uid
+        List<HibItem> results = this.em.createQuery("FROM HibItem h WHERE h.uid= :uid", HibItem.class)
+                .setParameter("uid", uid).getResultList();
+        if (!results.isEmpty()) {
+            return results.get(0);
         }
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.unitedinternet.cosmo.dao.ItemDao#findItemByUid(java.lang.String)
-     */
-    public Item findItemByUid(String uid) {
-        try {
-            // prevent auto flushing when looking up item by uid
-            getSession().setHibernateFlushMode(FlushMode.MANUAL);
-            return (Item) getSession().byNaturalId(HibItem.class).using("uid", uid).load();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.unitedinternet.cosmo.dao.ItemDao#removeItem(org.unitedinternet.cosmo.model.Item)
-     */
+    @Override
     public void removeItem(Item item) {
-        try {
 
-            if (item == null) {
-                throw new IllegalArgumentException("item cannot be null");
-            }
-
-            if (item instanceof HomeCollectionItem) {
-                throw new IllegalArgumentException("cannot remove root item");
-            }
-
-            removeItemInternal(item);
-            getSession().flush();
-
-        } catch (ObjectNotFoundException onfe) {
-            throw new ItemNotFoundException("item not found");
-        } catch (ObjectDeletedException ode) {
-            throw new ItemNotFoundException("item not found");
-        } catch (UnresolvableObjectException uoe) {
-            throw new ItemNotFoundException("item not found");
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
-        if(forceReload){
-            getSession().clear();
-        }
-        return getRootItem(user);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.unitedinternet.cosmo.dao.ItemDao#getRootItem(org.unitedinternet.cosmo.model.User)
-     */
-    public HomeCollectionItem getRootItem(User user) {
-        try {
-            return findRootItem(getBaseModelObject(user).getId());
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#createRootItem(org.unitedinternet.cosmo.model.User)
-     */
-    public HomeCollectionItem createRootItem(User user) {
-        try {
-
-            if (user == null) {
-                throw new IllegalArgumentException("invalid user");
-            }
-
-            if (findRootItem(getBaseModelObject(user).getId()) != null) {
-                throw new CosmoException("user already has root item", new CosmoException());
-            }
-
-            HomeCollectionItem newItem = new HibHomeCollectionItem();
-
-            newItem.setOwner(user);
-            newItem.setName(user.getUsername());
-            //do not set this, it might be sensitive or different than name
-            //newItem.setDisplayName(newItem.getName()); 
-            setBaseItemProps(newItem);
-            getSession().save(newItem);
-            getSession().flush();
-            return newItem;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
-        }
-    }
-
-    public void addItemToCollection(Item item, CollectionItem collection) {
-        try {
-            addItemToCollectionInternal(item, collection);
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    public void removeItemFromCollection(Item item, CollectionItem collection) {
-        try {
-            removeItemFromCollectionInternal(item, collection);
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    public Set<Ticket> getTickets(Item item) {
         if (item == null) {
             throw new IllegalArgumentException("item cannot be null");
         }
 
-        try {
-            getSession().refresh(item);
-            return item.getTickets();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        if (item instanceof HomeCollectionItem) {
+            throw new IllegalArgumentException("cannot remove root item");
         }
+
+        removeItemInternal(item);
+        this.em.flush();
+
     }
 
+    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
+        if (forceReload) {
+            this.em.clear();
+        }
+        return getRootItem(user);
+    }
+
+    @Override
+    public HomeCollectionItem getRootItem(User user) {
+        return findRootItem(getBaseModelObject(user).getId());
+    }
+
+    @Override
+    public HomeCollectionItem createRootItem(User user) {
+
+        if (user == null) {
+            throw new IllegalArgumentException("invalid user");
+        }
+
+        if (findRootItem(getBaseModelObject(user).getId()) != null) {
+            throw new CosmoException("user already has root item", new CosmoException());
+        }
+
+        HomeCollectionItem newItem = new HibHomeCollectionItem();
+
+        newItem.setOwner(user);
+        newItem.setName(user.getUsername());
+        // do not set this, it might be sensitive or different than name
+        // newItem.setDisplayName(newItem.getName());
+        setBaseItemProps(newItem);
+        this.em.persist(newItem);
+        this.em.flush();
+        return newItem;
+
+    }
+
+    @Override
+    public void addItemToCollection(Item item, CollectionItem collection) {
+        addItemToCollectionInternal(item, collection);
+        this.em.flush();
+    }
+
+    @Override
+    public void removeItemFromCollection(Item item, CollectionItem collection) {
+        removeItemFromCollectionInternal(item, collection);
+        this.em.flush();
+    }
+
+    @Override
+    public Set<Ticket> getTickets(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("item cannot be null");
+        }
+        this.em.refresh(item);
+        return item.getTickets();
+    }
+
+    @Override
     public Ticket findTicket(String key) {
         if (key == null) {
             throw new IllegalArgumentException("key cannot be null");
         }
 
-        try {
-            // prevent auto flushing when looking up ticket
-            getSession().setHibernateFlushMode(FlushMode.MANUAL);
-            Query<Ticket> query = getSession().createNamedQuery("ticket.by.key", Ticket.class)
-                    .setParameter("key", key);
-            query.setCacheable(true);
-            query.setHibernateFlushMode(FlushMode.MANUAL);
-            List<Ticket> ticketList = query.getResultList();
-            return ticketList.size() > 0 ? ticketList.get(0) : null;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        // prevent auto flushing when looking up ticket
+        this.em.setFlushMode(FlushModeType.COMMIT);
+        TypedQuery<Ticket> query = this.em.createNamedQuery("ticket.by.key", Ticket.class).setParameter("key", key);
+        query.setFlushMode(FlushModeType.COMMIT);
+        List<Ticket> ticketList = query.getResultList();
+        return ticketList.size() > 0 ? ticketList.get(0) : null;
+
     }
 
+    @Override
     public void createTicket(Item item, Ticket ticket) {
-        try {
-            if (ticket == null) {
-                throw new IllegalArgumentException("ticket cannot be null");
-            }
 
-            if (item == null) {
-                throw new IllegalArgumentException("item cannot be null");
-            }
-
-            User owner = ticket.getOwner();
-            if (owner == null) {
-                throw new IllegalArgumentException("ticket must have owner");
-            }
-
-            if (ticket.getKey() == null) {
-                ticket.setKey(ticketKeyGenerator.allocateToken("").getKey());
-            }
-
-            ticket.setCreated(new Date());
-            getSession().update(item);
-            item.addTicket(ticket);
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
+        if (ticket == null) {
+            throw new IllegalArgumentException("ticket cannot be null");
         }
+
+        if (item == null) {
+            throw new IllegalArgumentException("item cannot be null");
+        }
+
+        User owner = ticket.getOwner();
+        if (owner == null) {
+            throw new IllegalArgumentException("ticket must have owner");
+        }
+
+        if (ticket.getKey() == null) {
+            ticket.setKey(ticketKeyGenerator.allocateToken("").getKey());
+        }
+
+        ticket.setCreated(new Date());
+        this.em.merge(item);
+        item.addTicket(ticket);
+        this.em.flush();
     }
 
+    @Override
     public Ticket getTicket(Item item, String key) {
-        try {
-            getSession().refresh(item);
-            return getTicketRecursive(item, key);
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+
+        this.em.refresh(item);
+        return getTicketRecursive(item, key);
     }
 
+    @Override
     public void removeTicket(Item item, Ticket ticket) {
-        try {
-            getSession().update(item);
-            item.removeTicket(ticket);
-            getSession().flush();
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+
+        this.em.merge(item);
+        item.removeTicket(ticket);
+        this.em.flush();
 
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#removeItemByPath(java.lang.String)
-     */
+    @Override
     public void removeItemByPath(String path) {
-        try {
-            Item item = itemPathTranslator.findItemByPath(path);
-            if (item == null) {
-                throw new ItemNotFoundException("item at " + path
-                        + " not found");
-            }
-            removeItem(item);
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
 
+        Item item = itemPathTranslator.findItemByPath(path);
+        if (item == null) {
+            throw new ItemNotFoundException("item at " + path + " not found");
+        }
+        this.removeItem(item);
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#removeItemByUid(java.lang.String)
-     */
+    @Override
     public void removeItemByUid(String uid) {
-        try {
-            Item item = findItemByUid(uid);
-            if (item == null) {
-                throw new ItemNotFoundException("item with uid " + uid
-                        + " not found");
-            }
-            removeItem(item);
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+
+        Item item = findItemByUid(uid);
+        if (item == null) {
+            throw new ItemNotFoundException("item with uid " + uid + " not found");
         }
+        this.removeItem(item);
+
     }
 
-
+    @Override
     public void copyItem(Item item, String destPath, boolean deepCopy) {
-        try {
-            String copyName = itemPathTranslator.getItemName(destPath);
 
-            if (copyName == null || "".equals(copyName)) {
-                throw new IllegalArgumentException("path must include name");
-            }
+        String copyName = itemPathTranslator.getItemName(destPath);
 
-            if (item instanceof HomeCollectionItem) {
-                throw new IllegalArgumentException("cannot copy root collection");
-            }
-
-            CollectionItem newParent = (CollectionItem) itemPathTranslator.findItemParent(destPath);
-
-            if (newParent == null) {
-                throw new ItemNotFoundException("parent collection not found");
-            }
-
-            verifyNotInLoop(item, newParent);
-
-            Item newItem = copyItemInternal(item, newParent, deepCopy);
-            newItem.setName(copyName);
-            getSession().flush();
-
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
+        if (copyName == null || "".equals(copyName)) {
+            throw new IllegalArgumentException("path must include name");
         }
+
+        if (item instanceof HomeCollectionItem) {
+            throw new IllegalArgumentException("cannot copy root collection");
+        }
+
+        CollectionItem newParent = (CollectionItem) itemPathTranslator.findItemParent(destPath);
+
+        if (newParent == null) {
+            throw new ItemNotFoundException("parent collection not found");
+        }
+
+        verifyNotInLoop(item, newParent);
+
+        Item newItem = copyItemInternal(item, newParent, deepCopy);
+        newItem.setName(copyName);
+        this.em.flush();
+
     }
 
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#moveItem(java.lang.String, java.lang.String)
-     */
+    @Override
     public void moveItem(String fromPath, String toPath) {
-        try {
 
-            // Get current item
-            Item item = itemPathTranslator.findItemByPath(fromPath);
+        // Get current item
+        Item item = itemPathTranslator.findItemByPath(fromPath);
 
-            if (item == null) {
-                throw new ItemNotFoundException("item " + fromPath + " not found");
-            }
-
-            if (item instanceof HomeCollectionItem) {
-                throw new IllegalArgumentException("cannot move root collection");
-            }
-
-            // Name of moved item
-            String moveName = itemPathTranslator.getItemName(toPath);
-
-            if (moveName == null || "".equals(moveName)) {
-                throw new IllegalArgumentException("path must include name");
-            }
-
-            // Parent of moved item
-            CollectionItem parent = (CollectionItem) itemPathTranslator.findItemParent(toPath);
-
-            if (parent == null) {
-                throw new ItemNotFoundException("parent collecion not found");
-            }
-
-            // Current parent
-            CollectionItem oldParent = (CollectionItem) itemPathTranslator.findItemParent(fromPath);
-
-            verifyNotInLoop(item, parent);
-
-            item.setName(moveName);
-            if (!parent.getUid().equals(oldParent.getUid())) {
-                ((HibCollectionItem) parent).removeTombstone(item);
-
-                // Copy over existing CollectionItemDetails
-                ((HibItem) item).addParent(parent);
-
-                // Remove item from old parent collection
-                getHibItem(oldParent).addTombstone(new HibItemTombstone(oldParent, item));
-                ((HibItem) item).removeParent(oldParent);
-            }
-
-            getSession().flush();
-
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } catch (ConstraintViolationException cve) {
-            logConstraintViolationException(cve);
-            throw cve;
+        if (item == null) {
+            throw new ItemNotFoundException("item " + fromPath + " not found");
         }
+
+        if (item instanceof HomeCollectionItem) {
+            throw new IllegalArgumentException("cannot move root collection");
+        }
+
+        // Name of moved item
+        String moveName = itemPathTranslator.getItemName(toPath);
+
+        if (moveName == null || "".equals(moveName)) {
+            throw new IllegalArgumentException("path must include name");
+        }
+
+        // Parent of moved item
+        CollectionItem parent = (CollectionItem) itemPathTranslator.findItemParent(toPath);
+
+        if (parent == null) {
+            throw new ItemNotFoundException("parent collecion not found");
+        }
+
+        // Current parent
+        CollectionItem oldParent = (CollectionItem) itemPathTranslator.findItemParent(fromPath);
+
+        verifyNotInLoop(item, parent);
+
+        item.setName(moveName);
+        if (!parent.getUid().equals(oldParent.getUid())) {
+            ((HibCollectionItem) parent).removeTombstone(item);
+
+            // Copy over existing CollectionItemDetails
+            ((HibItem) item).addParent(parent);
+
+            // Remove item from old parent collection
+            getHibItem(oldParent).addTombstone(new HibItemTombstone(oldParent, item));
+            ((HibItem) item).removeParent(oldParent);
+        }
+        this.em.flush();
     }
 
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#refreshItem(org.unitedinternet.cosmo.model.Item)
-     */
+    @Override
     public void refreshItem(Item item) {
-        try {
-            getSession().refresh(item);
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        this.em.refresh(item);
     }
 
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.dao.ItemDao#initializeItem(org.unitedinternet.cosmo.model.Item)
-     */
+    @Override
     public void initializeItem(Item item) {
-        try {
-            LOG.info("initialize Item : "+item.getUid());
-            // initialize all the proxied-associations, to prevent
-            // lazy-loading of this data
-            Hibernate.initialize(item.getAttributes());
-            Hibernate.initialize(item.getStamps());
-            Hibernate.initialize(item.getTombstones());
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        LOG.info("initialize Item : " + item.getUid());
+        // Trigger loading by calling size on lazy collections
+        item.getAttributes().size();
+        item.getStamps().size();
+        item.getTombstones().size();
     }
 
-    
     /**
      * find the set of collection items as children of the given collection item.
      * 
-     * @param collectionItem parent collection item
+     * @param collectionItem
+     *            parent collection item
      * @return set of children collection items or empty list of parent collection has no children
      */
-    public Set<CollectionItem> findCollectionItems(CollectionItem collectionItem){
-        try {
-            Set<CollectionItem> children = new HashSet<>();
-            Query<CollectionItem> hibQuery = getSession()
-                    .createNamedQuery("collections.children.by.parent", CollectionItem.class)
-                    .setParameter("parent", collectionItem);
+    @Override
+    public Set<CollectionItem> findCollectionItems(CollectionItem collectionItem) {
 
-            List<CollectionItem> results = hibQuery.getResultList();
-            children.addAll(results);            
-            return children;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        Set<CollectionItem> children = new HashSet<>();
+        TypedQuery<CollectionItem> hibQuery = this.em
+                .createNamedQuery("collections.children.by.parent", CollectionItem.class)
+                .setParameter("parent", collectionItem);
+        List<CollectionItem> results = hibQuery.getResultList();
+        children.addAll(results);
+        return children;
     }
-    
-    /**
-     * Find a set of items using an ItemFilter.
-     *
-     * @param filter criteria to filter items by
-     * @return set of items matching ItemFilter
-     */
+
+    @Override
     public Set<Item> findItems(ItemFilter filter) {
-        try {
-            return itemFilterProcessor.processFilter(filter);
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
+        return itemFilterProcessor.processFilter(filter);
     }
 
-    /**
-     * Find a set of items using a set of ItemFilters.  The set of items
-     * returned includes all items that match any of the filters.
-     *
-     * @param filters criteria to filter items by
-     * @return set of items matching any of the filters
-     */
+    @Override
     public Set<Item> findItems(ItemFilter[] filters) {
-        try {
-            HashSet<Item> returnSet = new HashSet<Item>();
-            for (ItemFilter filter : filters) {
-                returnSet.addAll(itemFilterProcessor.processFilter(filter));
-            }
-            return returnSet;
-        } catch (HibernateException e) {
-            getSession().clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        Set<Item> returnSet = new HashSet<Item>();
+        for (ItemFilter filter : filters) {
+            returnSet.addAll(itemFilterProcessor.processFilter(filter));
         }
+        return returnSet;
+
     }
 
     /**
-     * Generates a unique ID. Provided for consumers that need to
-     * manipulate an item's UID before creating the item.
+     * Generates a unique ID. Provided for consumers that need to manipulate an item's UID before creating the item.
      */
     public String generateUid() {
         return idGenerator.nextStringIdentifier();
     }
-
-    /**
-     * Set the unique ID generator for new items
-     *
-     * @param idGenerator
-     */
-    public void setIdGenerator(VersionFourGenerator idGenerator) {
-        this.idGenerator = idGenerator;
-    }
-
-    public VersionFourGenerator getIdGenerator() {
-        return idGenerator;
-    }
-
-    /**
-     * Set the unique key generator for new tickets
-     *
-     * @param ticketKeyGenerator
-     */
-    public void setTicketKeyGenerator(TokenService ticketKeyGenerator) {
-        this.ticketKeyGenerator = ticketKeyGenerator;
-    }
-
-    public TokenService getTicketKeyGenerator() {
-        return ticketKeyGenerator;
-    }
-
-    public ItemPathTranslator getItemPathTranslator() {
-        return itemPathTranslator;
-    }
-
-    /**
-     * Set the path translator. The path translator is responsible for
-     * translating a path to an item in the database.
-     *
-     * @param itemPathTranslator
-     */
-    public void setItemPathTranslator(ItemPathTranslator itemPathTranslator) {
-        this.itemPathTranslator = itemPathTranslator;
-    }
-
-
-    public ItemFilterProcessor getItemFilterProcessor() {
-        return itemFilterProcessor;
-    }
-
-    public void setItemFilterProcessor(ItemFilterProcessor itemFilterProcessor) {
-        this.itemFilterProcessor = itemFilterProcessor;
-    }
-
 
     /*
      * (non-Javadoc)
@@ -682,8 +464,8 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
         ((HibItem) item2).addParent(newParent);
 
         // save Item before attempting deep copy
-        getSession().save(item2);
-        getSession().flush();
+        this.em.persist(item2);
+        this.em.flush();
 
         // copy children if collection and deepCopy = true
         if (deepCopy == true && item instanceof CollectionItem) {
@@ -697,19 +479,18 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
     }
 
     /**
-     * Checks to see if a parent Item is currently a child of a target item. If
-     * so, then this would put the hierarchy into a loop and is not allowed.
+     * Checks to see if a parent Item is currently a child of a target item. If so, then this would put the hierarchy
+     * into a loop and is not allowed.
      *
      * @param item
      * @param newParent
-     * @throws org.unitedinternet.cosmo.dao.ModelValidationException if newParent is child of item
+     * @throws org.unitedinternet.cosmo.dao.ModelValidationException
+     *             if newParent is child of item
      */
     protected void verifyNotInLoop(Item item, CollectionItem newParent) {
-        // need to verify that the new parent is not a child
-        // of the item, otherwise we get a loop
+        // Need to verify that the new parent is not a child of the item, otherwise we get a loop
         if (getBaseModelObject(item).getId().equals(getBaseModelObject(newParent).getId())) {
-            throw new ModelValidationException(newParent,
-                    "Invalid parent - will cause loop");
+            throw new ModelValidationException(newParent, "Invalid parent - will cause loop");
         }
 
         // If item is not a collection then all is good
@@ -718,7 +499,7 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
         }
 
         CollectionItem collection = (CollectionItem) item;
-        getSession().refresh(collection);
+        this.em.refresh(collection);
 
         for (Item nextItem : collection.getChildren()) {
             verifyNotInLoop(nextItem, newParent);
@@ -726,33 +507,34 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
     }
 
     /**
-     * Verifies that name is unique in collection, meaning no item exists
-     * in collection with the same item name.
+     * Verifies that name is unique in collection, meaning no item exists in collection with the same item name.
      *
-     * @param item       item name to check
-     * @param collection collection to check against
-     * @throws org.unitedinternet.cosmo.dao.DuplicateItemNameException if item with same name exists
-     *                                    in collection
+     * @param item
+     *            item name to check
+     * @param collection
+     *            collection to check against
+     * @throws org.unitedinternet.cosmo.dao.DuplicateItemNameException
+     *             if item with same name exists in collection
      */
     protected void verifyItemNameUnique(Item item, CollectionItem collection) {
-        Query<Long> query = getSession().createNamedQuery("itemId.by.parentId.name", Long.class);
-        query.setParameter("name", item.getName()).setParameter("parentid",
-                ((HibItem) collection).getId());
-        List<Long> results = query.getResultList();
+        List<Long> results = this.em.createNamedQuery("itemId.by.parentId.name", Long.class)
+                .setParameter("name", item.getName()).setParameter("parentid", ((HibItem) collection).getId())
+                .getResultList();
         if (results.size() > 0) {
-            throw new DuplicateItemNameException(item, "item name " + item.getName() +
-                    " already exists in collection " + collection.getUid());
+            throw new DuplicateItemNameException(item,
+                    "item name " + item.getName() + " already exists in collection " + collection.getUid());
         }
     }
 
     /**
      * Find the DbItem with the specified dbId
      *
-     * @param dbId dbId of DbItem to find
+     * @param dbId
+     *            dbId of DbItem to find
      * @return DbItem with specified dbId
      */
     protected Item findItemByDbId(Long dbId) {
-        return (Item) getSession().get(Item.class, dbId);
+        return (Item) this.em.find(Item.class, dbId);
     }
 
     // Set server generated item properties
@@ -788,54 +570,53 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
     }
 
     protected Item findItemByParentAndName(Long userDbId, Long parentDbId, String name) {
-        Query<Item> query = null;
+        TypedQuery<Item> query = null;
         if (parentDbId != null) {
-            query = getSession().createNamedQuery("item.by.ownerId.parentId.name", Item.class)
+            query = this.em.createNamedQuery("item.by.ownerId.parentId.name", Item.class)
                     .setParameter("ownerid", userDbId).setParameter("parentid", parentDbId).setParameter("name", name);
 
         } else {
-            query = getSession().createNamedQuery("item.by.ownerId.nullParent.name", Item.class)
+            query = this.em.createNamedQuery("item.by.ownerId.nullParent.name", Item.class)
                     .setParameter("ownerid", userDbId).setParameter("name", name);
         }
-        query.setHibernateFlushMode(FlushMode.MANUAL);
+        query.setFlushMode(FlushModeType.COMMIT);
         List<Item> itemList = query.getResultList();
         return itemList.size() > 0 ? itemList.get(0) : null;
     }
 
     protected Item findItemByParentAndNameMinusItem(Long userDbId, Long parentDbId, String name, Long itemId) {
-        Query<Item> query = null;
+        TypedQuery<Item> query = null;
         if (parentDbId != null) {
-            query = getSession().createNamedQuery("item.by.ownerId.parentId.name.minusItem", Item.class)
+            query = this.em.createNamedQuery("item.by.ownerId.parentId.name.minusItem", Item.class)
                     .setParameter("itemid", itemId).setParameter("ownerid", userDbId)
                     .setParameter("parentid", parentDbId).setParameter("name", name);
         } else {
-            query = getSession().createNamedQuery("item.by.ownerId.nullParent.name.minusItem", Item.class)
+            query = this.em.createNamedQuery("item.by.ownerId.nullParent.name.minusItem", Item.class)
                     .setParameter("itemid", itemId).setParameter("ownerid", userDbId).setParameter("name", name);
         }
-        query.setHibernateFlushMode(FlushMode.MANUAL);
+        query.setFlushMode(FlushModeType.COMMIT);
         List<Item> itemList = query.getResultList();
         return itemList.size() > 0 ? itemList.get(0) : null;
     }
 
     protected HomeCollectionItem findRootItem(Long dbUserId) {
-        Query<HomeCollectionItem> query = getSession()
+        TypedQuery<HomeCollectionItem> query = this.em
                 .createNamedQuery("homeCollection.by.ownerId", HomeCollectionItem.class)
                 .setParameter("ownerid", dbUserId);
-        query.setCacheable(true);
-        query.setHibernateFlushMode(FlushMode.MANUAL);
+        query.setFlushMode(FlushModeType.COMMIT);
         List<HomeCollectionItem> itemList = query.getResultList();
         return itemList.size() > 0 ? itemList.get(0) : null;
     }
 
     protected void checkForDuplicateUid(Item item) {
-        // verify uid not in use
+        // Verify uid not in use
         if (item.getUid() != null) {
             // Lookup item by uid
-            Query<Long> query = getSession().createNamedQuery("itemid.by.uid", Long.class).setParameter("uid",
+            TypedQuery<Long> query = this.em.createNamedQuery("itemid.by.uid", Long.class).setParameter("uid",
                     item.getUid());
-            query.setHibernateFlushMode(FlushMode.MANUAL);
+            query.setFlushMode(FlushModeType.COMMIT);
             List<Long> idList = query.getResultList();
-            // if uid is in use throw exception
+            // If uid is in use throw exception
             if (idList.size() > 0) {
                 throw new UidInUseException(item.getUid(), "uid " + item.getUid() + " already in use");
             }
@@ -863,44 +644,33 @@ public abstract class ItemDaoImpl extends AbstractDaoImpl implements ItemDao {
         return null;
     }
 
-    protected void attachToSession(Item item) {
-        if (getSession().contains(item)) {
-            return;
-        }
-        getSession().lock(item, LockMode.NONE);
-    }
-
     protected void removeItemFromCollectionInternal(Item item, CollectionItem collection) {
+        this.em.merge(collection);
+        this.em.merge(item);
 
-        getSession().update(collection);
-        getSession().update(item);
-
-        // do nothing if item doesn't belong to collection
+        // Do nothing if item doesn't belong to collection
         if (!item.getParents().contains(collection)) {
             return;
         }
-
         getHibItem(collection).addTombstone(new HibItemTombstone(collection, item));
         ((HibItem) item).removeParent(collection);
+        // If the item belongs to no collection, then it should be purged.
 
-        // If the item belongs to no collection, then it should
-        // be purged.
         if (item.getParents().size() == 0) {
             removeItemInternal(item);
         }
     }
 
-    protected void addItemToCollectionInternal(Item item,
-                                               CollectionItem collection) {
+    protected void addItemToCollectionInternal(Item item, CollectionItem collection) {
         verifyItemNameUnique(item, collection);
-        getSession().update(item);
-        getSession().update(collection);
+        this.em.merge(item);
+        this.em.merge(collection);
         ((HibCollectionItem) collection).removeTombstone(item);
         ((HibItem) item).addParent(collection);
     }
 
     protected void removeItemInternal(Item item) {
-        getSession().delete(item);
+        this.em.remove(item);
     }
 
     protected BaseModelObject getBaseModelObject(Object obj) {

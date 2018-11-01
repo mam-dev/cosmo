@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.dao.hibernate.AbstractHibernateDaoTestCase;
+import org.unitedinternet.cosmo.dao.hibernate.AbstractSpringDaoTestCase;
 import org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl;
 import org.unitedinternet.cosmo.dao.hibernate.UserDaoImpl;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
@@ -46,7 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Test StandardTriageStatusQueryProcessor using hibernate
  * implementations.
  */
-public class HibernateTriageStatusQueryProcessorTest extends AbstractHibernateDaoTestCase {
+public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTestCase {
 
     @Autowired
     private ContentDaoImpl contentDao;
