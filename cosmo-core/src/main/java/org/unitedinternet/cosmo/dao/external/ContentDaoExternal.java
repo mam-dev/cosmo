@@ -12,8 +12,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
+import org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.ext.ContentSource;
@@ -48,18 +50,18 @@ import net.fortuna.ical4j.model.component.VEvent;
  * @author daniel grigore
  *
  */
-@Component
+@Repository
 public class ContentDaoExternal implements ContentDao {
 
     private static final Log LOG = LogFactory.getLog(ContentDaoExternal.class);
 
     private final ContentSource contentSource;
 
-    private final ContentDao contentDaoInternal;
+    private final ContentDaoImpl contentDaoInternal;
 
     private final ItemFilterProcessor itemFilterProcessor;
 
-    public ContentDaoExternal(ContentSource contentSource, final ContentDao contentDaoInternal,
+    public ContentDaoExternal(ContentSource contentSource, final ContentDaoImpl contentDaoInternal,
             ItemFilterProcessor itemFilterProcessor) {
         this.contentSource = contentSource;
         this.contentDaoInternal = contentDaoInternal;

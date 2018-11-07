@@ -24,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
@@ -33,6 +34,7 @@ import org.unitedinternet.cosmo.server.ItemPath;
 /**
  */
 @Component
+@Transactional
 public class TicketAuthenticationProvider
     implements AuthenticationProvider {
     private static final Log LOG = LogFactory.getLog(TicketAuthenticationProvider.class);

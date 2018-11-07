@@ -27,6 +27,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.token.TokenService;
@@ -132,12 +133,11 @@ public abstract class ItemDaoImpl implements ItemDao {
 
     @Override
     public Item findItemByUid(String uid) {
-
-        // prevent auto flushing when looking up item by uid
+        // Prevent auto flushing when looking up item by uid        
         List<HibItem> results = this.em.createQuery("FROM HibItem h WHERE h.uid= :uid", HibItem.class)
                 .setParameter("uid", uid).getResultList();
         if (!results.isEmpty()) {
-            return results.get(0);
+            return (HibItem) Hibernate.unproxy(results.get(0));            
         }
         return null;
     }

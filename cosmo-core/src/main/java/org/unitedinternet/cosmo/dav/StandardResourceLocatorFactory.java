@@ -20,32 +20,28 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.model.User;
 
 /**
- * Standard implementation of {@link DavResourceLocatorFactory}.
- * Returns instances of {@link StandardResourceLocator}.
+ * Standard implementation of {@link DavResourceLocatorFactory}. Returns instances of {@link StandardResourceLocator}.
  *
  * @see DavResourceLocatorFactory
  */
 @Component
 public class StandardResourceLocatorFactory implements DavResourceLocatorFactory, ExtendedDavConstants {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(StandardResourceLocatorFactory.class);
+
+    public StandardResourceLocatorFactory() {
+        super();
+    }
 
     // DavResourceLocatorFactory methods
-    
-    public DavResourceLocator createResourceLocatorByPath(URL context,
-                                                          String path) {
+
+    public DavResourceLocator createResourceLocatorByPath(URL context, String path) {
         return new StandardResourceLocator(context, path, this);
     }
 
-    public DavResourceLocator createResourceLocatorByUri(URL context,
-                                                         String raw)
-        throws CosmoDavException {
+    public DavResourceLocator createResourceLocatorByUri(URL context, String raw) throws CosmoDavException {
         try {
             URI uri = new URI(raw);
 
@@ -59,36 +55,31 @@ public class StandardResourceLocatorFactory implements DavResourceLocatorFactory
 
                 // make sure that absolute URLs use the same scheme and
                 // authority (host:port)
-                if (url.getProtocol() != null &&
-                    ! url.getProtocol().equals(context.getProtocol())) {
-                    throw new BadRequestException("target " + uri
-                            + " does not specify same scheme " + "as context "
-                            + context.toString());
+                if (url.getProtocol() != null && !url.getProtocol().equals(context.getProtocol())) {
+                    throw new BadRequestException(
+                            "target " + uri + " does not specify same scheme " + "as context " + context.toString());
                 }
-                
+
                 // look at host
-                if(url.getHost() !=null &&  ! url.getHost().equals(context.getHost())) {
-                    throw new BadRequestException("target " + uri
-                            + " does not specify same host " + "as context "
-                            + context.toString());
+                if (url.getHost() != null && !url.getHost().equals(context.getHost())) {
+                    throw new BadRequestException(
+                            "target " + uri + " does not specify same host " + "as context " + context.toString());
                 }
-                
+
                 // look at ports
                 // take default ports 80 and 443 into account so that
                 // https://server is the same as https://server:443
                 int port1 = translatePort(context.getProtocol(), context.getPort());
                 int port2 = translatePort(url.getProtocol(), url.getPort());
-                
-                if(port1!=port2) {
-                    throw new BadRequestException("target " + uri
-                            + " does not specify same port " + "as context "
-                            + context.toString());
+
+                if (port1 != port2) {
+                    throw new BadRequestException(
+                            "target " + uri + " does not specify same port " + "as context " + context.toString());
                 }
             }
 
-            if (! url.getPath().startsWith(context.getPath())) {
-                throw new BadRequestException(uri + " does not specify correct dav path " + 
-                        context.getPath());
+            if (!url.getPath().startsWith(context.getPath())) {
+                throw new BadRequestException(uri + " does not specify correct dav path " + context.getPath());
             }
 
             // trim base path
@@ -101,26 +92,20 @@ public class StandardResourceLocatorFactory implements DavResourceLocatorFactory
         }
     }
 
-    public DavResourceLocator createHomeLocator(URL context,
-                                                User user)
-        throws CosmoDavException {
+    public DavResourceLocator createHomeLocator(URL context, User user) throws CosmoDavException {
         String path = TEMPLATE_HOME.bind(user.getUsername());
         return new StandardResourceLocator(context, path, this);
     }
 
-    public DavResourceLocator createPrincipalLocator(URL context,
-                                                     User user)
-        throws CosmoDavException {
+    public DavResourceLocator createPrincipalLocator(URL context, User user) throws CosmoDavException {
         String path = TEMPLATE_USER.bind(user.getUsername());
         return new StandardResourceLocator(context, path, this);
     }
-    
+
     private int translatePort(String protocol, int port) {
-        if (port == -1 || port == 80 && "http".equals(protocol) 
-                || port == 443 && "https".equals(protocol)) {
+        if (port == -1 || port == 80 && "http".equals(protocol) || port == 443 && "https".equals(protocol)) {
             return -1;
-        }
-        else {
+        } else {
             return port;
         }
     }

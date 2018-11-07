@@ -24,7 +24,9 @@ import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_OU
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
@@ -35,9 +37,9 @@ import org.unitedinternet.cosmo.dav.impl.DavEvent;
 import org.unitedinternet.cosmo.dav.impl.DavFile;
 import org.unitedinternet.cosmo.dav.impl.DavFreeBusy;
 import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
-import org.unitedinternet.cosmo.dav.impl.DavTask;
 import org.unitedinternet.cosmo.dav.impl.DavInboxCollection;
 import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
+import org.unitedinternet.cosmo.dav.impl.DavTask;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
@@ -62,9 +64,11 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  * @see WebDavResource
  * @see Item
  */
-//@Component
+@Service
+@Transactional
 public class StandardResourceFactory
     implements DavResourceFactory {
+    
     private static final Log LOG =  LogFactory.getLog(StandardResourceFactory.class);
 
     private ContentService contentService;
@@ -73,8 +77,9 @@ public class StandardResourceFactory
     private EntityFactory entityFactory;
     private CalendarQueryProcessor calendarQueryProcessor;
     private ICalendarClientFilterManager clientFilterManager;
-    private boolean schedulingEnabled = false;
     private UserIdentitySupplier userIdentitySupplier;
+    
+    private boolean schedulingEnabled = false;
 
     public StandardResourceFactory(ContentService contentService,
                                    UserService userService,
@@ -83,7 +88,7 @@ public class StandardResourceFactory
                                    CalendarQueryProcessor calendarQueryProcessor,
                                    ICalendarClientFilterManager clientFilterManager,
                                    UserIdentitySupplier userIdentitySupplier,
-                                   boolean schedulingEnabled) {
+                                   @Value("${cosmo.caldav.schedulingEnabled}") boolean schedulingEnabled) {
     	
     	
         this.contentService = contentService;

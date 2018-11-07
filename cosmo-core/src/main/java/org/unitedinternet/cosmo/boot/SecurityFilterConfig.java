@@ -38,8 +38,8 @@ import org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter;
 @SuppressWarnings("serial")
 public class SecurityFilterConfig {
 
-    private static final String PATH_DAV = "/dav/*";
-    private static final String ROLES = "ROLES_WE_DONT_HAVE";
+    public static final String PATH_DAV = "/dav/*";
+    public static final String ROLES = "ROLES_WE_DONT_HAVE";
 
     /**
      * @see StandardRequestHandler component.
@@ -66,12 +66,16 @@ public class SecurityFilterConfig {
 
     @Bean
     public ServletRegistrationBean<?> davServlet() {
-        return new ServletRegistrationBean<>(new HttpRequestHandlerServlet() {
+        HttpRequestHandlerServlet handler = new HttpRequestHandlerServlet() {
             @Override
             public String getServletName() {
                 return DAV_SERVLET_NAME;
             }
-        }, PATH_DAV);
+        };
+        ServletRegistrationBean<?> bean = new ServletRegistrationBean<>(handler, PATH_DAV);
+        bean.setName(handler.getServletName());
+        bean.setOrder(0);
+        return bean;
     }
 
     @Bean

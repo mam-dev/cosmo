@@ -7,10 +7,12 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.stereotype.Component;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
+import org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
@@ -32,20 +34,20 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
  * @see HibCollectionSubscriptionItem
  * @see CollectionSubscription
  */
-@Component
+@Repository
 public class ContentDaoSubscriptionImpl implements ContentDao {
 
-    private final ContentDao contentDaoInternal;
+    private final ContentDaoImpl contentDaoInternal;
 
     private final FreeBusyObfuscater freeBusyObfuscater;
 
     @PersistenceContext
     private EntityManager em;
 
-    public ContentDaoSubscriptionImpl(ContentDao contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater) {
+    public ContentDaoSubscriptionImpl(ContentDaoImpl contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater) {
         super();
         this.contentDaoInternal = contentDaoInternal;
-        this.freeBusyObfuscater = freeBusyObfuscater;        
+        this.freeBusyObfuscater = freeBusyObfuscater;
     }
 
     @Override
@@ -206,7 +208,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     @Override
     public String generateUid() {
         throw new UnsupportedOperationException();
-    }    
+    }
 
     @Override
     public CollectionItem createCollection(CollectionItem parent, CollectionItem collection) {
@@ -311,12 +313,12 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     public void removeItemsFromCollection(CollectionItem collection) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public long countItems(long ownerId) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public long countItems(long ownerId, long fromTimestamp) {
         throw new UnsupportedOperationException();
@@ -329,10 +331,10 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Set<Item> obfuscate(HibCollectionSubscriptionItem parent, Set<Item> items) {
         if (isFreeBusy(parent)) {
-            // XXX - Check read-only flag on Transactional is enough
             for (Item item : items) {
-                if (item instanceof ContentItem) {                    
-                    this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);                    
+                if (item instanceof ContentItem) {
+                    this.em.unwrap(Session.class).setDefaultReadOnly(true);
+                    this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
                 }
             }
         }
@@ -341,7 +343,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Item obfuscate(HibCollectionSubscriptionItem parent, Item item) {
         if (isFreeBusy(parent) && item instanceof ContentItem) {
-            // XXX - Check read-only flag on Transactional is enough
+            this.em.unwrap(Session.class).setDefaultReadOnly(true);
             this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
         }
         return item;
