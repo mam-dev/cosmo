@@ -249,11 +249,11 @@ public abstract class ItemDaoImpl implements ItemDao {
         if (ticket.getKey() == null) {
             ticket.setKey(ticketKeyGenerator.allocateToken("").getKey());
         }
-
-        ticket.setCreated(new Date());
-        this.em.merge(item);
+        ticket.setCreated(new Date());        
         item.addTicket(ticket);
-        this.em.flush();
+        this.em.persist(ticket);
+        this.em.merge(item);        
+        this.em.flush();        
     }
 
     @Override
