@@ -35,8 +35,7 @@ public class CollectionSubscriptionDaoImpl implements CollectionSubscriptionDao 
 
     @Override
     public void addOrUpdate(CollectionSubscription collectionSubscription) {
-        this.em.persist(collectionSubscription);
-        this.em.flush();
+        this.em.persist(collectionSubscription);        
     }
 
     @Override
