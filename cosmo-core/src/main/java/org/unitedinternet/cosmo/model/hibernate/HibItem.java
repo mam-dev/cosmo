@@ -121,7 +121,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     private Map<QName, Attribute> attributes = new HashMap<QName, Attribute>(0);
 
     @OneToMany(targetEntity=HibTicket.class, mappedBy = "item", 
-            fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+            fetch=FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Ticket> tickets = new HashSet<Ticket>(0);
 
