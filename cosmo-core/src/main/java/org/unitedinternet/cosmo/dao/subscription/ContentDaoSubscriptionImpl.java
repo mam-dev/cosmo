@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -333,7 +332,6 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
         if (isFreeBusy(parent)) {
             for (Item item : items) {
                 if (item instanceof ContentItem) {
-                    this.em.unwrap(Session.class).setDefaultReadOnly(true);
                     this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
                 }
             }
@@ -343,7 +341,6 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private Item obfuscate(HibCollectionSubscriptionItem parent, Item item) {
         if (isFreeBusy(parent) && item instanceof ContentItem) {
-            this.em.unwrap(Session.class).setDefaultReadOnly(true);
             this.freeBusyObfuscater.apply(parent.getOwner(), (ContentItem) item);
         }
         return item;
