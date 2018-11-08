@@ -57,7 +57,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
  *
  */
 @Repository
-public class CalendarDaoImpl  implements CalendarDao {
+public class CalendarDaoImpl implements CalendarDao {
 
     private static final Log LOG = LogFactory.getLog(CalendarDaoImpl.class);
 
@@ -179,6 +179,10 @@ public class CalendarDaoImpl  implements CalendarDao {
 
     @Override
     public ContentItem findEventByIcalUid(String uid, CollectionItem calendar) {
+        if (!(calendar instanceof HibCollectionItem)) {
+            // External collections cannot be queried.
+            return null;
+        }
         try {
             TypedQuery<ContentItem> query = this.em.createNamedQuery("event.by.calendar.icaluid", ContentItem.class);
             query.setParameter("calendar", calendar);
