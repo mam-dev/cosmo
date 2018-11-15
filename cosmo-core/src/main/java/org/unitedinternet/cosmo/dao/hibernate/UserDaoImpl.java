@@ -58,11 +58,11 @@ public class UserDaoImpl implements UserDao {
             throw new IllegalArgumentException("new user is required");
         }
 
-        if (findUserByUsernameIgnoreCase(user.getUsername()) != null) {
+        if (findUserByUsername(user.getUsername()) != null) {
             throw new DuplicateUsernameException(user.getUsername());
         }
 
-        if (findUserByEmailIgnoreCase(user.getEmail()) != null) {
+        if (findUserByEmail(user.getEmail()) != null) {
             throw new DuplicateEmailException(user.getEmail());
         }
 
@@ -122,7 +122,7 @@ public class UserDaoImpl implements UserDao {
         // Prevent auto flushing when querying for existing users
         this.em.setFlushMode(FlushModeType.COMMIT);
 
-        User findUser = findUserByUsernameOrEmailIgnoreCaseAndId(getBaseModelObject(user).getId(), user.getUsername(),
+        User findUser = findUserByUsernameOrEmail(getBaseModelObject(user).getId(), user.getUsername(),
                 user.getEmail());
 
         if (findUser != null) {
@@ -163,26 +163,14 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
-    private User findUserByUsernameIgnoreCase(String username) {
-        TypedQuery<User> query = this.em.createNamedQuery("user.byUsername.ignorecase", User.class)
-                .setParameter("username", username);
-        return this.getUserFromQuery(query);
-    }
-
-    private User findUserByUsernameOrEmailIgnoreCaseAndId(Long userId, String username, String email) {
-        TypedQuery<User> query = this.em.createNamedQuery("user.byUsernameOrEmail.ignorecase.ingoreId", User.class)
+    private User findUserByUsernameOrEmail(Long userId, String username, String email) {
+        TypedQuery<User> query = this.em.createNamedQuery("user.byUsernameOrEmail", User.class)
                 .setParameter("username", username).setParameter("email", email).setParameter("userid", userId);
         return this.getUserFromQuery(query);
     }
 
     private User findUserByEmail(String email) {
         TypedQuery<User> query = this.em.createNamedQuery("user.byEmail", User.class).setParameter("email", email);
-        return this.getUserFromQuery(query);
-    }
-
-    private User findUserByEmailIgnoreCase(String email) {
-        TypedQuery<User> query = this.em.createNamedQuery("user.byEmail.ignorecase", User.class).setParameter("email",
-                email);
         return this.getUserFromQuery(query);
     }
 
