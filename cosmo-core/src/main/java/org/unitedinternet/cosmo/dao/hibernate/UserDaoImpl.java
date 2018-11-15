@@ -59,11 +59,11 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
                 throw new IllegalArgumentException("new user is required");
             }
 
-            if (findUserByUsernameIgnoreCase(user.getUsername()) != null) {
+            if (findUserByUsername(user.getUsername()) != null) {
                 throw new DuplicateUsernameException(user.getUsername());
             }
 
-            if (findUserByEmailIgnoreCase(user.getEmail()) != null) {
+            if (findUserByEmail(user.getEmail()) != null) {
                 throw new DuplicateEmailException(user.getEmail());
             }
 
@@ -183,7 +183,7 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
             // prevent auto flushing when querying for existing users
             getSession().setHibernateFlushMode(FlushMode.MANUAL);
 
-            User findUser = findUserByUsernameOrEmailIgnoreCaseAndId(getBaseModelObject(user).getId(),
+            User findUser = findUserByUsernameOrEmail(getBaseModelObject(user).getId(),
                     user.getUsername(), user.getEmail());
 
             if (findUser != null) {
@@ -264,18 +264,10 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
         return (User) getSession().byNaturalId(HibUser.class).using("username", username).load();
     }
 
-    private User findUserByUsernameIgnoreCase(String username) {
-        Session session = getSession();
-        Query<User> query = session.createNamedQuery("user.byUsername.ignorecase", User.class).setParameter("username",
-                username);
-        query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
-        return this.getUserFromQuery(query);
-    }
 
-    private User findUserByUsernameOrEmailIgnoreCaseAndId(Long userId, String username, String email) {
+    private User findUserByUsernameOrEmail(Long userId, String username, String email) {
         Session session = getSession();
-        Query<User> query = session.createNamedQuery("user.byUsernameOrEmail.ignorecase.ingoreId", User.class)
+        Query<User> query = session.createNamedQuery("user.byUsernameOrEmail", User.class)
                 .setParameter("username", username).setParameter("email", email).setParameter("userid", userId);
         query.setCacheable(true);
         query.setFlushMode(FlushMode.MANUAL);
@@ -285,15 +277,6 @@ public class UserDaoImpl extends AbstractDaoImpl implements UserDao {
     private User findUserByEmail(String email) {
         Session session = getSession();
         Query<User> query = session.createNamedQuery("user.byEmail", User.class).setParameter("email", email);
-        query.setCacheable(true);
-        query.setFlushMode(FlushMode.MANUAL);
-        return this.getUserFromQuery(query);
-    }
-
-    private User findUserByEmailIgnoreCase(String email) {
-        Session session = getSession();
-        Query<User> query = session.createNamedQuery("user.byEmail.ignorecase", User.class).setParameter("email",
-                email);
         query.setCacheable(true);
         query.setFlushMode(FlushMode.MANUAL);
         return this.getUserFromQuery(query);
