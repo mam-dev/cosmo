@@ -42,9 +42,9 @@ Setting up a CalDAV server with cosmo-api and cosmo-core.
 To be able to run the application one needs to configure the following:
  * At least one (concrete) implementation of ``org.springframework.security.core.AuthenticationProvider`` annotated with ``@Component`` 
  * Exactly one (concrete) implementation of ``org.unitedinternet.cosmo.db.DataSourceProvider``
- * One Spring Boot application main class annotated with @SpringBootApplication
+ * One Spring Boot application main class annotated with ``@SpringBootApplication``
 
-To be able to override one default implementation Spring @Primary annotation can be used.
+To be able to override one default implementation Spring ``@Primary`` annotation can be used.
 
 
 ## Building and running the existing demo application
@@ -58,7 +58,7 @@ To create a collection for a new user a MKCALENDAR request is needed like :
 
 `curl -X"MKCALENDAR" -H"Content-Type:application/xml" -u${your_email}:${your_passwd} http://localhost:8080/cosmo/dav/${your_email}/calendar`
 
-The newly created collection can be configured in Mozilla Lightning application by using the URL: `http://localhost:8080/cosmo/dav/${your_email}/calendar`
+The newly created collection can be configured in Mozilla Lightning application for instance by using the URL: `http://localhost:8080/cosmo/dav/${your_email}/calendar`
 
 
 
