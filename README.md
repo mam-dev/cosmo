@@ -35,119 +35,30 @@ It also injects public services into developer components.
 
 ## Technical requirements
 
-The application that uses cosmo-api and cosmo-core must be a Java Servlet 3.0 application (and be deployed in a compliant 
-Servlet 3.0 container).
+The application that uses cosmo-api and cosmo-core must be Spring Boot application.
 
-Setting up a CalDAV server with cosmo-api and cosmo-core
+Setting up a CalDAV server with cosmo-api and cosmo-core.
 
-At least one (concrete) implementation of ``org.springframework.security.core.AuthenticationProvider`` annotated with ``@CalendarSecurity`` 
-must be provided. Exactly one (concrete) implementation of ``org.unitedinternet.cosmo.db.DataSourceProvider`` annotated
-with ``@CalendarRepository`` must be provided.
+To be able to run the application one needs to configure the following:
+ * At least one (concrete) implementation of ``org.springframework.security.core.AuthenticationProvider`` annotated with ``@Component`` 
+ * Exactly one (concrete) implementation of ``org.unitedinternet.cosmo.db.DataSourceProvider``
+ * One Spring Boot application main class annotated with @SpringBootApplication
 
-Other components can exist without a restriction. All of these are looked up in a Spring context (if exists), 
-otherwise are instantiated directly.
-
-
-###Building and running the existing demo project
-The cosmo-webapp application is just for demoing purposes. To launch it,
-in the project's root directory just run ``mvn tomcat7:run-war -Dexample=true``.
-The calendar server will be packaged, tested and run. It will be available for CalDAV requests at
-http://localhost:8080/cosmo/dav/.
-The application simply creates a user with an empty calendar called 'calendar' if 
-the user doesn't exist and then you can perform CalDAV requests to URI /cosmo/dav/&lt;username>/calendar/ where  &lt;username>
-is the username you provided for login.
-
-###Example of Spring Application that creates a user if he doesn't exist:
-
-web.xml:
-
-	<web-app>
-	...
-	<context-param>
-	        <param-name>contextConfigLocation</param-name>
-	        <param-value>classpath*:/applicationContext.xml</param-value>
-	    </context-param>
-	    <listener>
-	        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	    </listener>  
-	...
-	</web-app>
-
-applicationContext.xml:
-
-	<beans>
-	...
-	    <bean id="authenticationProvider" class="com.unitedinternet.calendar.security.DummyAuthenticationProvider"/>
-	    
-	    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" lazy-init="true" destroy-method="close">
-	         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-	         <property name="url" value="jdbc:mysql://localhost/os?autoReconnect=true"/>
-	         <property name="username" value="os"/> 
-	         <property name="password" value="*" />
-	         <property name="maxActive" value="100"/> 
-	         <property name="maxIdle" value="20" />
-	         <property name="maxWait" value="10000"/>
-	         <property name="poolPreparedStatements" value="true" />
-	         <property name="defaultAutoCommit" value="false" />
-	    </bean>   
-	    <bean id="dataSourceProviderImpl" class="com.unitedinternet.calendar.repository.DataSourceProviderImpl">
-	        <constructor-arg ref="dataSource"/>
-	        <constructor-arg value="MySQL5InnoDB"/>
-	    </bean>
-	...
-	</beans>
-
-The required authentication provider which in our case simply (for example's sake) considers each user a valid one 
-is the class com.unitedinternet.calendar.security.DummyAuthenticationProvider:
-
-	 	...
-	@CalendarSecurity
-	public class DummyAuthenticationProvider implements AuthenticationProvider{
-	    	...
-		@Override
-		public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		    String userName = authentication.getName();
-			return new UsernamePasswordAuthenticationToken(userName, "somePassword");
-		}
-	 
-		...
-
-If a user component is not found in the Spring application context, it will be instantiated. The same happens
-to the successful authentication listener that creates a calendar user if he doesn't already exist with the given credentials after a successful authentication. (Please keep in mind that in this example each authentication is valid):
-
-		...
-	@CalendarSecurity
-	public class UserCreationAuthenticationListener implements SuccessfulAuthenticationListener{
-	    
-	    @Provided
-		private UserService userService;
-		private EntityFactory entityFactory;
-		private ContentService contentService;
-		
-		
-		@Override
-		public void onSuccessfulAuthentication(Authentication authentication) {
-			createUserIfNotPresent(authentication);
-		}
-		...
-		@Provided
-		public void setEntityFactory(EntityFactory entityFactory) {
-			his.entityFactory = entityFactory;
-		}
-		@Provided
-		public void setContentService(ContentService contentService) {
-			this.contentService = contentService;
-		}
-		...
+To be able to override one default implementation Spring @Primary annotation can be used.
 
 
-The @CalendarSecurity annotation and implementation of SuccessfulAuthenticationListener tells the runtime that an 
-instance of this class must be invoked after a successful authentication.
-@Provided annotation associated with an externalizable service tells the container that it must inject the implementation
-into that instance variable. The injection is available via setter and via field. 
+## Building and running the existing demo application
 
+The cosmo-webapp application is just for demo purposes.
+To launch it, in the project's root directory (cosmo-webapp) just run ``mvn spring-boot:run``.
+The calendar server will start using an in-memory database (data will be lost when the application stops).
+It will be available for CalDAV requests at http://localhost:8080/cosmo/dav/.
+The application simply creates a user if it does not exists and it does not check the password.
+To create a collection for a new user a MKCALENDAR request is needed like :
 
+`curl -X"MKCALENDAR" -H"Content-Type:application/xml" -u${your_email}:${your_passwd} http://localhost:8080/cosmo/dav/${your_email}/calendar`
 
+The newly created collection can be configured in Mozilla Lightning application by using the URL: `http://localhost:8080/cosmo/dav/${your_email}/calendar`
 
 
 
