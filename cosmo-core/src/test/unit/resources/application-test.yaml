@@ -4,8 +4,31 @@ cosmo:
     serverInteger: 1235    
   caldav:   
      schedulingEnabled: true
+  event:
+    validation:
+      allowed:
+        recurrence:
+          frequencies: DAILY,WEEKLY,MONTHLY,YEARLY,SECONDLY
+      summary:
+       min:
+        length: 0
+       max: 
+        length: 2137483647
+      location:
+       min:
+        length: 0
+       max: 
+        length: 2137483647
+      description:
+       min:
+        length: 0
+       max: 
+        length: 2137483647
+      attendees:
+         max:
+           length: 100   
 
-# connection timeout for reaching external content when validation is performed (in millis) 
+#Connection timeout for reaching external content when validation is performed (in millis) 
 external:
   content:
     connection:

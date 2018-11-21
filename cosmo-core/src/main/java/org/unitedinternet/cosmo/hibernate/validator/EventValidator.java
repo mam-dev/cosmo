@@ -119,7 +119,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
             @Override
             protected boolean isValid(VEvent event, ValidationConfig config) {
 
-                return isTextPropertyValid(event.getProperty(prop), config.summaryMinLength, config.summaryMaxLength);
+                return isTextPropertyValid(event.getProperty(prop), config.getSummaryMinLength(), config.getSummaryMaxLength());
             }
 
         },
@@ -127,8 +127,8 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
             @Override
             protected boolean isValid(VEvent event, ValidationConfig config) {
-                return isTextPropertyValid(event.getProperty(prop), config.descriptionMinLength,
-                        config.descriptionMaxLength);
+                return isTextPropertyValid(event.getProperty(prop), config.getDescriptionMinLength(),
+                        config.getDescriptionMaxLength());
             }
 
         },
@@ -136,7 +136,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
             @Override
             protected boolean isValid(VEvent event, ValidationConfig config) {
-                return isTextPropertyValid(event.getProperty(prop), config.locationMinLength, config.locationMaxLength);
+                return isTextPropertyValid(event.getProperty(prop), config.getLocationMinLength(), config.getLocationMaxLength());
             }
 
         },
@@ -169,7 +169,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                 }
 
                 String recurFrequency = rrule.getRecur().getFrequency();
-                if (!config.allowedRecurrenceFrequencies.contains(recurFrequency)) {
+                if (!config.getAllowedRecurrenceFrequencies().contains(recurFrequency)) {
                     return false;
                 }
 
@@ -184,7 +184,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                 List<?> attendees = event.getProperties(prop);
                 int attendeesSize = attendees == null ? 0 : attendees.size();
 
-                return attendeesSize < config.attendeesMaxSize;
+                return attendeesSize < config.getAttendeesMaxSize();
             }
 
         };
