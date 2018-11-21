@@ -1,11 +1,34 @@
 cosmo:
-  tikets: 
-    serverSecret: cosmossecret
-    serverInteger: 1235    
+  tickets: 
+    serverSecret: 73d320ab-e7d3-4183-9a62-9628e5efe181 
+    serverInteger: 163184592    
   caldav:   
      schedulingEnabled: true
+  event:
+    validation:
+      allowed:
+        recurrence:
+          frequencies: DAILY,WEEKLY,MONTHLY,YEARLY,SECONDLY
+      summary:
+       min:
+        length: 0
+       max: 
+        length: 2137483647
+      location:
+       min:
+        length: 0
+       max: 
+        length: 2137483647
+      description:
+       min:
+        length: 0
+       max: 
+        length: 2137483647
+      attendees:
+         max:
+           length: 100   
 
-# connection timeout for reaching external content when validation is performed (in millis) 
+# Connection timeout for reaching external content when validation is performed (in millis) 
 external:
   content:
     connection:

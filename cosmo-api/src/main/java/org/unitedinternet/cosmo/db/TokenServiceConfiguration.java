@@ -11,20 +11,23 @@ import org.springframework.security.core.token.TokenService;
 @Configuration
 public class TokenServiceConfiguration {
 
-	@Value("${cosmo.tikets.serverSecret}")
-	private String serverSecret;
-	
-	@Value("${cosmo.tikets.serverInteger}")
-	private Integer serverInteger;
-	
-	@Bean
-	public TokenService getTokenService() {
+    @Value("${cosmo.tickets.serverSecret}")
+    private String serverSecret;
 
-		KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
-		keyBasedPersistenceTokenService.setServerSecret(serverSecret);
-		keyBasedPersistenceTokenService.setServerInteger(serverInteger);
-		keyBasedPersistenceTokenService.setPseudoRandomNumberBytes(16);
-		keyBasedPersistenceTokenService.setSecureRandom(new SecureRandom());
-		return keyBasedPersistenceTokenService;
-	}
+    @Value("${cosmo.tickets.serverInteger}")
+    private Integer serverInteger;
+
+    @Bean
+    public TokenService getTokenService() {
+        KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
+        keyBasedPersistenceTokenService.setServerSecret(serverSecret);
+        keyBasedPersistenceTokenService.setServerInteger(serverInteger);
+        keyBasedPersistenceTokenService.setPseudoRandomNumberBytes(16);
+        keyBasedPersistenceTokenService.setSecureRandom(new SecureRandom());
+        return keyBasedPersistenceTokenService;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new SecureRandom().nextInt(Integer.MAX_VALUE));
+    }
 }

@@ -1,7 +1,7 @@
 cosmo:
-  tikets: 
-    serverSecret: cosmossecret
-    serverInteger: 1235    
+  tickets: 
+    serverSecret: b4da02a6-9a45-436f-89d8-20a285795314
+    serverInteger: 517340066    
   caldav:   
      schedulingEnabled: true
   event:
