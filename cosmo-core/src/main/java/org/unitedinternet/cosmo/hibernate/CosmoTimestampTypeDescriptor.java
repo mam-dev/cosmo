@@ -41,6 +41,7 @@ public class CosmoTimestampTypeDescriptor extends AbstractTypeDescriptor<Date> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <X> X unwrap(Date value, Class<X> type, WrapperOptions options) {
         if (value == null) {
             return null;

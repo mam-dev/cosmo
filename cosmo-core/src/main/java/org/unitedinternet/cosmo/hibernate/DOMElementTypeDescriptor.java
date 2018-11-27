@@ -85,6 +85,7 @@ public class DOMElementTypeDescriptor extends AbstractTypeDescriptor<Element>{
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <X> X unwrap(Element value, Class<X> type, WrapperOptions options) {
         if ( value == null ) {
             return null;

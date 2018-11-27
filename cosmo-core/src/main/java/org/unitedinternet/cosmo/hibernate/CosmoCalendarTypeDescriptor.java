@@ -24,18 +24,18 @@ import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 /**
  * Adapter for Calendar type descriptor.
  * 
- * @author ccoman
+ * @author cristina coman
  * 
  */
 public class CosmoCalendarTypeDescriptor extends AbstractTypeDescriptor<Calendar> {
-
-    
     private static final long serialVersionUID = -6135150975606583510L;
+    
     public static final CosmoCalendarTypeDescriptor INSTANCE = new CosmoCalendarTypeDescriptor();
 
     public static class CalendarMutabilityPlan extends MutableMutabilityPlan<Calendar> {
         
         private static final long serialVersionUID = 3323888185833891112L;
+        
         public static final CalendarMutabilityPlan INSTANCE = new CalendarMutabilityPlan();
 
         public Calendar deepCopyNotNull(Calendar value) {
@@ -83,6 +83,7 @@ public class CosmoCalendarTypeDescriptor extends AbstractTypeDescriptor<Calendar
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <X> X unwrap(Calendar value, Class<X> type, WrapperOptions options) {
         if (value == null) {
             return null;

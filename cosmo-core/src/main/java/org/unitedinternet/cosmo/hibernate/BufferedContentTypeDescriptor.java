@@ -26,20 +26,21 @@ import org.unitedinternet.cosmo.util.BufferedContent;
 
 /**
  * Type descriptor from creating BufferedContent instances.
+ * 
  * @author iulia
  *
  */
-public class BufferedContentTypeDescriptor extends AbstractTypeDescriptor<BufferedContent>{
-    
+public class BufferedContentTypeDescriptor extends AbstractTypeDescriptor<BufferedContent> {
+
     private static final long serialVersionUID = -1055420379476000710L;
     public static final BufferedContentTypeDescriptor INSTANCE = new BufferedContentTypeDescriptor();
-    
+
     protected BufferedContentTypeDescriptor() {
-        super(BufferedContent.class, BufferedContentMutabilityPlan.INSTANCE );
+        super(BufferedContent.class, BufferedContentMutabilityPlan.INSTANCE);
     }
 
     public static class BufferedContentMutabilityPlan implements MutabilityPlan<BufferedContent> {
-        
+
         private static final long serialVersionUID = 4332020476637486780L;
         public static final BufferedContentMutabilityPlan INSTANCE = new BufferedContentMutabilityPlan();
 
@@ -56,21 +57,21 @@ public class BufferedContentTypeDescriptor extends AbstractTypeDescriptor<Buffer
         }
 
         public Serializable disassemble(BufferedContent value) {
-            throw new UnsupportedOperationException( "Blobs are not cacheable" );
+            throw new UnsupportedOperationException("Blobs are not cacheable");
         }
 
         public BufferedContent assemble(Serializable cached) {
-            throw new UnsupportedOperationException( "Blobs are not cacheable" );
+            throw new UnsupportedOperationException("Blobs are not cacheable");
         }
     }
-    
+
     @Override
     public BufferedContent fromString(String string) {
         BufferedContent bufferedContent = null;
         try {
             new BufferedContent(new ByteArrayInputStream(string.getBytes("UTF-8")));
         } catch (IOException e) {
-           throw new CosmoIOException(e);
+            throw new CosmoIOException(e);
         }
         return bufferedContent;
     }
@@ -78,48 +79,48 @@ public class BufferedContentTypeDescriptor extends AbstractTypeDescriptor<Buffer
     @Override
     public String toString(BufferedContent value) {
         final byte[] bytes;
-        bytes = DataHelper.extractBytes( value.getInputStream());
-        return PrimitiveByteArrayTypeDescriptor.INSTANCE.toString( bytes );
+        bytes = DataHelper.extractBytes(value.getInputStream());
+        return PrimitiveByteArrayTypeDescriptor.INSTANCE.toString(bytes);
     }
 
     @Override
-    public <X> X unwrap(BufferedContent value, Class<X> type,
-            WrapperOptions options) {
-        if ( value == null ) {
+    @SuppressWarnings("unchecked")
+    public <X> X unwrap(BufferedContent value, Class<X> type, WrapperOptions options) {
+        if (value == null) {
             return null;
         }
-        if ( BufferedContent.class.isAssignableFrom(type)){
+        if (BufferedContent.class.isAssignableFrom(type)) {
             return (X) value;
         }
-        if ( BinaryStream.class.isAssignableFrom(type)) {
-                return (X) new BinaryStreamImpl(DataHelper.extractBytes(value.getInputStream()));
+        if (BinaryStream.class.isAssignableFrom(type)) {
+            return (X) new BinaryStreamImpl(DataHelper.extractBytes(value.getInputStream()));
         }
-        throw unknownUnwrap( type );
+        throw unknownUnwrap(type);
     }
 
     @Override
     public <X> BufferedContent wrap(X value, WrapperOptions options) {
-        if ( value == null ) {
+        if (value == null) {
             return null;
         }
-        if ( BufferedContent.class.isInstance( value ) ) {
+        if (BufferedContent.class.isInstance(value)) {
             return (BufferedContent) value;
         }
         if (InputStream.class.isInstance(value)) {
             try {
-                return new BufferedContent((InputStream)value);
+                return new BufferedContent((InputStream) value);
             } catch (IOException e) {
                 throw new CosmoIOException(e);
-            } 
+            }
         }
-        if(Blob.class.isInstance(value)){
+        if (Blob.class.isInstance(value)) {
             try {
-                return new BufferedContent(((Blob)value).getBinaryStream());
-            } catch (IOException |SQLException e) {
+                return new BufferedContent(((Blob) value).getBinaryStream());
+            } catch (IOException | SQLException e) {
                 throw new CosmoIOException(e);
-            } 
+            }
         }
-        throw unknownWrap( value.getClass() );
+        throw unknownWrap(value.getClass());
     }
 
 }

@@ -17,24 +17,22 @@ package org.unitedinternet.cosmo.hibernate;
 
 import java.sql.Types;
 
-import org.hibernate.dialect.MySQL5InnoDBDialect;
+import org.hibernate.dialect.MariaDB53Dialect;
 
 /**
- * Overrides default MySQL5InnoDBDialect and uses
- * decimal instead of numeric for numeric types.  
- * In MySQL5, numeric is implemented as decimal, so
- * event though numberic works, it is the same as
- * decimal and schema validation was failing because
- * hibernate was expecting numberic and was getting
- * back decimal from the jdbc meta data.
+ * Overrides default MariaDB53Dialect and uses decimal instead of numeric for numeric types. In MySQL5, numeric is
+ * implemented as decimal, so event though numeric works, it is the same as decimal and schema validation was failing
+ * because Hibernate was expecting numeric and was getting back decimal from the JDBC meta data.
  *
  */
-public class CosmoMySQL5InnoDBDialect extends MySQL5InnoDBDialect {
+public class CosmoMySQL5InnoDBDialect extends MariaDB53Dialect {
     public CosmoMySQL5InnoDBDialect() {
         super();
-        registerColumnType( Types.NUMERIC, "decimal($p,$s)" );
-        //Fix for: "Wrong column type in begenda.attribute for column booleanvalue. 
-        //Found: bit, expected: boolean" at validation
+        registerColumnType(Types.NUMERIC, "decimal($p,$s)");
+        /*
+         * Fix for: "Wrong column type in begenda.attribute for column booleanvalue. Found: bit, expected: boolean" at
+         * validation. See https://hibernate.atlassian.net/browse/HHH-6935
+         */
         registerColumnType(Types.BOOLEAN, "tinyint");
     }
 }
