@@ -37,7 +37,7 @@
 		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
-		<jackrabbit.version>2.13.2</jackrabbit.version>
+		<jackrabbit.version>2.19.0</jackrabbit.version>
 		<ical4j.version>2.0.4</ical4j.version>
 		<icu4j.version>54.1.1</icu4j.version>		
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
@@ -47,7 +47,7 @@
 
 		<mariadb.version>1.4.6</mariadb.version>
 		<mariadb4j.version>2.2.2</mariadb4j.version>
-		<xerces.version>2.11.0</xerces.version>
+		<xerces.version>2.12.0</xerces.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<stax.version>1.0.1</stax.version>
 		<woodstox.version>4.0.6</woodstox.version>
@@ -64,7 +64,7 @@
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<additionalparam>-Xdoclint:none</additionalparam>
 		
-		<spring.boot.version>2.0.1.RELEASE</spring.boot.version>
+		<spring.boot.version>2.1.1.RELEASE</spring.boot.version>
 	</properties>
 
 	<modules>
