@@ -65,7 +65,7 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  * @see Item
  */
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class StandardResourceFactory
     implements DavResourceFactory {
     

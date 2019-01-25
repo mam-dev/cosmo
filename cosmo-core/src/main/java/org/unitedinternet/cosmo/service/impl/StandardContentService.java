@@ -67,7 +67,7 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
  * @see ContentDao
  */
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class StandardContentService implements ContentService {
     private static final Log LOG =
         LogFactory.getLog(StandardContentService.class);

@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.Instance;
 import org.unitedinternet.cosmo.calendar.InstanceList;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
@@ -66,6 +67,7 @@ import net.fortuna.ical4j.model.property.Uid;
  * CalendarQueryProcessor implementation that uses CalendarDao.
  */
 @org.springframework.stereotype.Component
+@Transactional(readOnly = true)
 public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
 
     private static final Log LOG = LogFactory.getLog(StandardCalendarQueryProcessor.class);
