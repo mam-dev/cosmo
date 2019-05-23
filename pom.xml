@@ -57,7 +57,7 @@
 		
 		<!-- Deactivate checkstyle, findbugs, jacoco and pmd -->
 		<checkstyle.skip>true</checkstyle.skip>
-		<findbugs.skip>true</findbugs.skip>
+		<spotbugs.skip>true</spotbugs.skip>
 		<jacoco.skip>true</jacoco.skip>
 		<pmd.skip>true</pmd.skip>
 		<enforcer.skip>true</enforcer.skip>
