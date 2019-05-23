@@ -324,6 +324,9 @@
 			<plugin>
 				<artifactId>maven-license-plugin</artifactId>
 				<groupId>com.mycila.maven-license-plugin</groupId>
+				<configuration>
+					<strictCheck>false</strictCheck>
+				</configuration>
 				<executions>
 					<execution>
 						<phase>none</phase>
