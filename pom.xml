@@ -384,15 +384,7 @@
 				<configuration>
 					<failOnError>false</failOnError>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<configuration>
-					<warDirectory>${basedir}/target/cosmo</warDirectory>
-					<path>/cosmo</path>
-				</configuration>
-			</plugin>
+			</plugin>			
 			<plugin>
 				<artifactId>maven-license-plugin</artifactId>
 				<groupId>com.mycila.maven-license-plugin</groupId>
@@ -424,8 +416,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.2</version>
+				<artifactId>findbugs-maven-plugin</artifactId>				
 				<configuration>
 					<failOnError>true</failOnError>
 				</configuration>
