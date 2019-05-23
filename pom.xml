@@ -63,7 +63,6 @@
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<additionalparam>-Xdoclint:none</additionalparam>
-		
 		<spring.boot.version>2.1.1.RELEASE</spring.boot.version>
 	</properties>
 
@@ -326,6 +325,7 @@
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<configuration>
 					<strictCheck>false</strictCheck>
+					<failIfMissing>false</failIfMissing>					
 				</configuration>
 				<executions>
 					<execution>
