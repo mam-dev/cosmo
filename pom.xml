@@ -325,7 +325,8 @@
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<configuration>
 					<strictCheck>false</strictCheck>
-					<failIfMissing>false</failIfMissing>					
+					<failIfMissing>false</failIfMissing>
+					<skip>true</skip>					
 				</configuration>
 				<executions>
 					<execution>
