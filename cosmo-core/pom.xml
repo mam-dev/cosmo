@@ -24,8 +24,7 @@
 		<maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
 		<maven-clean-plugin.version>2.1.1</maven-clean-plugin.version>
 		<maven-war-plugin.version>2.2</maven-war-plugin.version>
-		<maven-assembly-plugin.version>2.2.2</maven-assembly-plugin.version>
-		<findbugs.suppressions.config.file>findbugs-suppressions.xml</findbugs.suppressions.config.file>
+		<maven-assembly-plugin.version>2.2.2</maven-assembly-plugin.version>		
 		<maven-pmd-plugin.failOnViolation>false</maven-pmd-plugin.failOnViolation>
 
 		<jacoco.check.complexityRatio>0.34</jacoco.check.complexityRatio>

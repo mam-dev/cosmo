@@ -13,7 +13,7 @@
 	<description>Cosmo API</description>
 
 	<properties>
-		<findbugs.suppressions.config.file>findbugs-suppressions.xml</findbugs.suppressions.config.file>
+		
 	</properties>
 	
 	<dependencies>
@@ -28,7 +28,7 @@
 		</dependency>
 		<dependency>
 		  <groupId>javax.servlet</groupId>
-		  <artifactId>servlet-api</artifactId>
+		  <artifactId>javax.servlet-api</artifactId>		  
 		  <scope>provided</scope>
 		</dependency>
 		<!-- ical4j related libs -->
@@ -47,38 +47,6 @@
 			<artifactId>spring-security-core</artifactId>			
 		</dependency>
 	</dependencies>
-	
-	 <build>
-    	<pluginManagement>
-			<plugins>
-				<plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>                    
-                    <executions>
-                        <execution>
-                            <id>default-check</id>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                            <inherited>true</inherited>
-                            <configuration>
-                                <failOnError>true</failOnError>
-                                <excludeFilterFile>${findbugs.suppressions.config.file}</excludeFilterFile>
-                                <xmlOutput>true</xmlOutput>
-                                <effort>Max</effort>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <inherited>true</inherited>
-                    <configuration>
-                        <excludeFilterFile>${findbugs.suppressions.config.file}</excludeFilterFile>
-                        <xmlOutput>true</xmlOutput>
-                        <effort>Max</effort>
-                    </configuration>
-                </plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 
   <scm>
     <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
