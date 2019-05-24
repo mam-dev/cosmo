@@ -319,31 +319,31 @@
 					<configLocation>checkstyle-suppressions.xml</configLocation>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>                    
-                    <configuration>
-                        <header>${maven-license-plugin.header}</header>
-                        <strictCheck>false</strictCheck>
-                        <failIfMissing>false</failIfMissing>
-                        <failIfUnknown>false</failIfUnknown>
-                        <includes>
-                            <include>src/**/*.java</include>
-                        </includes>
-                        <mapping>
-                            <java>SLASHSTAR_STYLE</java>
-                        </mapping>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>net.oneandone.maven.poms</groupId>
-                            <artifactId>foss-configs</artifactId>
-                            <version>${foss-configs.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>		
-			
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>${maven-license-plugin.header}</header>
+					<strictCheck>false</strictCheck>
+					<failIfMissing>false</failIfMissing>
+					<failIfUnknown>false</failIfUnknown>
+					<includes>
+						<include>src/**/*.java</include>
+					</includes>
+					<mapping>
+						<java>SLASHSTAR_STYLE</java>
+					</mapping>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.oneandone.maven.poms</groupId>
+						<artifactId>foss-configs</artifactId>
+						<version>${foss-configs.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -355,6 +355,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<reporting>
 		<plugins>
 			<plugin>
