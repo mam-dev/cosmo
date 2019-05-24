@@ -60,6 +60,7 @@
 		<spotbugs.skip>true</spotbugs.skip>
 		<jacoco.skip>true</jacoco.skip>
 		<pmd.skip>true</pmd.skip>
+		<cpd.skip>true</cpd.skip>
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<spring.boot.version>2.1.1.RELEASE</spring.boot.version>
