@@ -62,7 +62,6 @@
 		<pmd.skip>true</pmd.skip>
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-		<additionalparam>-Xdoclint:none</additionalparam>
 		<spring.boot.version>2.1.1.RELEASE</spring.boot.version>
 	</properties>
 
@@ -319,26 +318,38 @@
 					<configLocation>checkstyle-suppressions.xml</configLocation>
 				</configuration>
 			</plugin>
-					
+			
 			<plugin>
-				<artifactId>maven-license-plugin</artifactId>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<configuration>
-					<strictCheck>false</strictCheck>
-					<failIfMissing>false</failIfMissing>
-					<skip>true</skip>					
-				</configuration>
-				<executions>
-					<execution>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>                    
+                    <configuration>
+                        <header>${maven-license-plugin.header}</header>
+                        <strictCheck>false</strictCheck>
+                        <failIfMissing>false</failIfMissing>
+                        <failIfUnknown>false</failIfUnknown>
+                        <includes>
+                            <include>src/**/*.java</include>
+                        </includes>
+                        <mapping>
+                            <java>SLASHSTAR_STYLE</java>
+                        </mapping>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.oneandone.maven.poms</groupId>
+                            <artifactId>foss-configs</artifactId>
+                            <version>${foss-configs.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>		
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
 					<doclint>none</doclint>
+					<quiet>true</quiet>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 		</plugins>
