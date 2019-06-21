@@ -27,13 +27,6 @@
 		<maven-assembly-plugin.version>2.2.2</maven-assembly-plugin.version>		
 		<maven-pmd-plugin.failOnViolation>false</maven-pmd-plugin.failOnViolation>
 
-		<jacoco.check.complexityRatio>0.34</jacoco.check.complexityRatio>
-		<jacoco.check.branchRatio>0.35</jacoco.check.branchRatio>
-		<jacoco.check.methodRatio>0.48</jacoco.check.methodRatio>
-		<jacoco.check.lineRatio>0.43</jacoco.check.lineRatio>
-		<jacoco.check.instructionRatio>0.42</jacoco.check.instructionRatio>
-		<jacoco.check.classRatio>0.66</jacoco.check.classRatio>
-
 	</properties>
 
 	
