@@ -9,4 +9,5 @@ deploy:
  script: printf "\nRun release script \n"; mvn --version
  on:
   branch: master
+  jdk: openjdk8
   
