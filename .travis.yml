@@ -2,7 +2,7 @@ language: java
 jdk:
 - openjdk8
 before_install:
-- openssl aes-256-cbc -K $encrypted_fa283f02e738_key -iv $encrypted_fa283f02e738_iv -in gpg-secret-key.gpg.enc -out .travis/gpg-secret-key.gpg -d
+- openssl aes-256-cbc -K $encrypted_fa283f02e738_key -iv $encrypted_fa283f02e738_iv -in .travis/gpg-secret-key.gpg.enc -out .travis/gpg-secret-key.gpg -d
 - gpg --import .travis/gpg-secret-key.gpg
 
 after_success:
