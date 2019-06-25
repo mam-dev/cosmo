@@ -10,7 +10,7 @@ after_success:
 
 deploy:
   povider: script
-  script: mvn deploy --settings .travis/settings.xml 
+  script: "mvn deploy --settings .travis/settings.xml" 
   on:
     branch: master
     jdk: openjdk8
