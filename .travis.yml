@@ -8,8 +8,11 @@ before_install:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 
+#Run all tests
+script: mvn clean verify -Dmaven.test.skip=true
+
 deploy:
-  povider: script
+  provider: script
   script: "mvn deploy --settings .travis/settings.xml" 
   on:
     branch: master
