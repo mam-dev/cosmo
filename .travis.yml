@@ -4,3 +4,9 @@ jdk:
 
 after_success:   
  - bash <(curl -s https://codecov.io/bash)
+deploy:
+ povider: script
+ script: printf "\nRun release script \n"; mvn --version
+ on:
+  branch: master
+  
