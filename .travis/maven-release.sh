@@ -2,8 +2,8 @@
 
 set -e
 
-print "Ensuring that pom  matches $TRAVIS_TAG"
+echo "Ensuring that pom  matches $TRAVIS_TAG"
 mvn org.codehaus.mojo:versions-maven-plugin:set -DnewVersion=$TRAVIS_TAG
 
-print "Uploading to oss repo "
+echo "Uploading to oss repo "
 mvn deploy --settings .travis/settings.xml -DskipTests=true --batch-mode --update-snapshots
