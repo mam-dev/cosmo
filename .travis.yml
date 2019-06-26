@@ -13,10 +13,9 @@ script: mvn clean verify -Dmaven.test.skip=true
 
 deploy:
   provider: script
-  script: "mvn deploy --settings .travis/settings.xml" 
+  script: ".travis/maven-release.sh" 
   on:
-    branch: master
-    jdk: openjdk8
+    tags: true
 
 env:
   global:
