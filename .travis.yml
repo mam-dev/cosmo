@@ -9,11 +9,11 @@ after_success:
 - bash <(curl -s https://codecov.io/bash)
 
 #Run all tests
-script: mvn clean verify -Dmaven.test.skip=true
+script: mvn clean verify
 
 deploy:
   provider: script
-  script: ".travis/maven-release.sh" 
+  script: ".travis/maven-deploy.sh" 
   on:
     tags: true
 
