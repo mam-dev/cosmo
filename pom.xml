@@ -374,7 +374,20 @@
 					</execution>
 				</executions>
 			</plugin>
-		
+			
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.8</version>
+				<extensions>true</extensions>				
+				<configuration>
+					<nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+                                        <skipStaging>true</skipStaging>
+					<serverId>sonatype-nexus-staging</serverId>
+					<stagingProfileId>netoneandone-cosmo-002</stagingProfileId>
+					<stagingRepositoryId>netoneandone-cosmo-001</stagingRepositoryId>	
+				</configuration>				
+			</plugin>
 			
 		</plugins>
 	</build>
