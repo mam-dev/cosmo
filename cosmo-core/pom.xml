@@ -10,7 +10,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<groupId>net.oneandone.cosmo</groupId>
+		<groupId>net.pashazz.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
 		<version>3.6.1-SNAPSHOT</version>
 	</parent>
@@ -51,7 +51,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.oneandone.cosmo</groupId>
+			<groupId>net.pashazz.cosmo</groupId>
 			<artifactId>cosmo-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -103,22 +103,7 @@
 			<version>0.9.9</version>
 		</dependency>
 		<!-- Databases -->
-		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-		</dependency>
-		
-		<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-core</artifactId>
-				<scope>test</scope>				
-		</dependency>
-		<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-app</artifactId>
-				<scope>test</scope>				
-		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>

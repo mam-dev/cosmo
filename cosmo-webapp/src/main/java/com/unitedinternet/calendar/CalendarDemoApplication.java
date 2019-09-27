@@ -22,10 +22,10 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
  * 
  * @author daniel grigore
  *
- */
-@SpringBootApplication
+ */@
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @SpringBootConfiguration
-@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
+//@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @ComponentScan(basePackages = { "org.unitedinternet.cosmo", "com.unitedinternet.calendar" })
 @EntityScan(basePackages = "org.unitedinternet.cosmo.model.hibernate")
 public class CalendarDemoApplication extends SpringBootServletInitializer {

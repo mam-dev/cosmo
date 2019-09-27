@@ -34,7 +34,7 @@ public class FirstLoggingEventAddHandler implements EventAddHandler {
     }
 
     @Override
-    public void afterAdd(CollectionItem parent, Set<ContentItem> contentItems) {
+    public void afterAdd(CollectionItemp arent, Set<ContentItem> contentItems) {
         LOG.info("[FirstHandler] Added {} items  to parent {}", contentItems.size(), parent.getDisplayName());
     }
 }

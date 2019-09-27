@@ -16,7 +16,7 @@
 		<version>1.6.1</version>
 	</parent>
 
-	<groupId>net.oneandone.cosmo</groupId>
+	<groupId>net.pashazz.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
 	<version>3.6.1-SNAPSHOT</version>
 
@@ -45,8 +45,7 @@
 		<slf4j.version>1.7.21</slf4j.version>
 		<logback.version>1.1.7</logback.version>
 
-		<mariadb.version>1.4.6</mariadb.version>
-		<mariadb4j.version>2.2.2</mariadb4j.version>
+		<postgresql.version>42.2.8</postgresql.version>
 		<xerces.version>2.12.0</xerces.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<stax.version>1.0.1</stax.version>
@@ -110,21 +109,9 @@
 
 			<!-- database drivers -->
 			<dependency>
-				<groupId>org.mariadb.jdbc</groupId>
-				<artifactId>mariadb-java-client</artifactId>
-				<version>${mariadb.version}</version>
-			</dependency>
-						
-			<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-core</artifactId>
-				<version>${mariadb4j.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-app</artifactId>
-				<version>${mariadb4j.version}</version>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
 			</dependency>
 			
 			<dependency>
@@ -406,8 +393,8 @@
 	</reporting>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
-		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/pashazz/cosmo.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/pashazz/cosmo.git</connection>
 		<url>https://github.com/1and1/</url>
 		<tag>cosmo-multimodule-1.5.3</tag>
 	</scm>
