@@ -1,13 +1,16 @@
 package org.unitedinternet.cosmo.boot;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -31,12 +34,12 @@ import org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter;
 
 /**
  * Configuration class that defines the DAV servlet as well as the list of filters.
- * 
+ *
  * @author daniel grigore
  *
  */
 @Configuration
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "SpringJavaInjectionPointsAutowiringInspection"})
 public class SecurityFilterConfig {
 
     public static final String PATH_DAV = "/dav/*";
@@ -112,4 +115,5 @@ public class SecurityFilterConfig {
         filterBean.addUrlPatterns(PATH_DAV);
         return filterBean;
     }
+
 }
