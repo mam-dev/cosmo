@@ -10,7 +10,8 @@ import org.springframework.context.annotation.DependsOn;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import java.io.PrintWriter;
+import java.util.Properties;
 
 /**
  * Data source configuration that starts an embedded Maria DB instance before data source is created.
@@ -20,20 +21,16 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  */
 @Configuration
 @ConfigurationProperties("spring.datasource")
-public class DataSourceConfig extends HikariConfig {
-
-    @Bean(initMethod = "start", destroyMethod = "stop", name = "mariaDB")
-    public MariaDB4jSpringService mariaDBService() {
-        MariaDB4jSpringService db = new MariaDB4jSpringService();
-        db.setDefaultBaseDir("target/maridb/base");
-        db.setDefaultDataDir("target/maridb/data");
-        db.setDefaultPort(33060);
-        return db;
-    }
-
+public class DataSourceConfig {
     @Bean
-    @DependsOn("mariaDB")
     public DataSource ds() {
-        return new HikariDataSource(this);
+        Properties props = new Properties();
+        props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource");
+        props.setProperty("dataSource.user", "test");
+        props.setProperty("dataSource.password", "test");
+        props.setProperty("dataSource.databaseName", "caldav");
+        props.put("dataSource.logWriter", new PrintWriter(System.out));
+
+        return new HikariDataSource(new HikariConfig(props));
     }
 }
