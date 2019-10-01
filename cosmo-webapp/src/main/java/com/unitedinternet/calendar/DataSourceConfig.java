@@ -21,16 +21,12 @@ import java.util.Properties;
  */
 @Configuration
 @ConfigurationProperties("spring.datasource")
-public class DataSourceConfig {
+public class DataSourceConfig extends HikariConfig {
     @Bean
     public DataSource ds() {
-        Properties props = new Properties();
-        props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource");
-        props.setProperty("dataSource.user", "test");
-        props.setProperty("dataSource.password", "test");
-        props.setProperty("dataSource.databaseName", "caldav");
-        props.put("dataSource.logWriter", new PrintWriter(System.out));
-
-        return new HikariDataSource(new HikariConfig(props));
+        this.setJdbcUrl("jdbc:mysql://localhost:3306/caldav");
+        this.setUsername("test");
+        this.setPassword("test");
+        return  new HikariDataSource(this);
     }
 }
