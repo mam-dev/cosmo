@@ -15,27 +15,34 @@
  */
 package org.unitedinternet.cosmo.service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Service interface. Services provide facades that encapsulate
  * business logic and interact with data access objects (DAOs) to
  * execute business operations.
  */
-public interface Service {
+public interface Service extends InitializingBean, DisposableBean {
 
     /**
      * Initializes the service, sanity checking required properties
      * and defaulting optional properties.
      */
-	@PostConstruct
     public void init();
 
     /**
      * Readies the service for garbage collection, shutting down any
      * resources used.
      */
-	@PreDestroy
+    @Override
     public void destroy();
+
+    @Override
+    default void afterPropertiesSet() throws Exception {
+        init();
+    }
+
+
 }

@@ -3,6 +3,7 @@ package org.unitedinternet.cosmo.boot;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
+import org.apache.catalina.core.ApplicationFilterConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -19,6 +20,7 @@ import org.springframework.security.web.access.intercept.DefaultFilterInvocation
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.support.HttpRequestHandlerServlet;
@@ -111,5 +113,12 @@ public class SecurityFilterConfig {
         FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(proxy);
         filterBean.addUrlPatterns(PATH_DAV);
         return filterBean;
+    }
+
+    //Enable MKCALENDAR for HTTP requests
+    @Bean
+    public HttpFirewall httpFirewall() {
+        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+        return firewall;
     }
 }

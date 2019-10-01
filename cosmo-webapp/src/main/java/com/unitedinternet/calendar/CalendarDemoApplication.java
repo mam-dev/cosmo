@@ -22,7 +22,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
  * 
  * @author daniel grigore
  *
- */@
+ */
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @SpringBootConfiguration
 //@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
