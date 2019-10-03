@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>cosmo-multimodule</artifactId>
 		<groupId>net.oneandone.cosmo</groupId>
-		<version>3.0.0</version>
+		<version>3.6.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
 			<artifactId>cosmo-core</artifactId>
-			<version>3.5.0</version>
+			<version>3.6.0</version>
 		</dependency>
 
 		<dependency>
@@ -41,8 +41,6 @@
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-app</artifactId>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
