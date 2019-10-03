@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.support.HttpRequestHandlerServlet;
@@ -64,6 +65,9 @@ public class SecurityFilterConfig {
     @Autowired
     private CosmoExceptionLoggerFilter cosmoExceptionFilter;
 
+    @Autowired
+    private HttpFirewall httpFirewall;
+
     @Bean
     public ServletRegistrationBean<?> davServlet() {
         HttpRequestHandlerServlet handler = new HttpRequestHandlerServlet() {
@@ -102,8 +106,9 @@ public class SecurityFilterConfig {
         SecurityFilterChain filterChain = new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE,
                 this.cosmoExceptionFilter, this.extraTicketFilter, this.ticketFilter,
                 new BasicAuthenticationFilter(authManager, this.authEntryPoint), securityFilter);
-
-        FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(new FilterChainProxy(filterChain));
+        FilterChainProxy proxy = new FilterChainProxy(filterChain);
+        proxy.setFirewall(this.httpFirewall);
+        FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(proxy);
         filterBean.addUrlPatterns(PATH_DAV);
         return filterBean;
     }
