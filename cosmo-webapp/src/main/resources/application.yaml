@@ -63,5 +63,10 @@ spring:
      hibernate.cache.use_query_cache: false
      hibernate.cache.use_second_level_cache: false
      hibernate.show_sql: false
-     hibernate.hbm2ddl.auto: create
+     hibernate.hbm2ddl.auto: create # Drops on creation. See https://stackoverflow.com/questions/438146/what-are-the-possible-values-of-the-hibernate-hbm2ddl-auto-configuration-and-wha
      hibernate.id.new_generator_mappings: false
+
+  log4j:
+    logger:
+      org.unitedinternet.cosmo: DEBUG
+      org.apache.jackrabbit.webdav: DEBUG
