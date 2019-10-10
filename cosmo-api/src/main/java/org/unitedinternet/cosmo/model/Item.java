@@ -22,6 +22,8 @@ import java.util.Set;
 /**
  * Represents an item on server.  All
  * content in cosmo extends from Item.
+ *
+ * Item is supposed to be persisted in a DB
  */
 public interface Item extends AuditableObject{
 
