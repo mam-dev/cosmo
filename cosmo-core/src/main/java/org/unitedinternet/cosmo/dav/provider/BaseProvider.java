@@ -369,7 +369,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
 
     // our methods
     /**
-     * 
+     *  A helper method for both GET and HEAD
      * @param request
      * @param response
      * @param resource

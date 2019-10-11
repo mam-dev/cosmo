@@ -83,6 +83,10 @@ import org.w3c.dom.Element;
 public class DavCollectionBase extends DavItemResourceBase implements
         DavItemCollection {
     private static final Log LOG = LogFactory.getLog(DavCollectionBase.class);
+
+    /* a list of names of <code>Attribute</code>s that should not be
+     exposed through DAV as dead properties.
+    */
     private static final Set<String> DEAD_PROPERTY_FILTER = new HashSet<String>();
     private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 
@@ -235,7 +239,19 @@ public class DavCollectionBase extends DavItemResourceBase implements
 
     // DavItemCollection
 
+    /**
+     * A non-specific item collection item collection is not a calendar collection
+     * @return
+     */
     public boolean isCalendarCollection() {
+        return false;
+    }
+
+    /**
+     * A non-specific item collection is not an addressbook collection
+     * @return
+     */
+    public boolean isAddressbookCollection() {
         return false;
     }
 

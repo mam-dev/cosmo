@@ -30,6 +30,11 @@ public interface DavItemCollection extends DavItemResource, DavCollection {
     boolean isCalendarCollection();
 
     /**
+     * @return true if this resource represents an address book
+     * collection.
+     */
+    boolean isAddressbookCollection();
+    /**
      * @return true if this resource represents a home collection.
      */
     boolean isHomeCollection();

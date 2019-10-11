@@ -41,7 +41,7 @@ public interface CaldavConstants {
         "urn:ietf:params:xml:ns:caldav";
     public static final Namespace NAMESPACE_CALDAV =
         Namespace.getNamespace(PRE_CALDAV, NS_CALDAV);
-    
+
     /** The Calendar Server XML namespace */
     public static final String PRE_CS = "CS";
     public static final String NS_CS =
