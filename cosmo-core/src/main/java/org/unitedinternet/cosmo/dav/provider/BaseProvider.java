@@ -658,6 +658,15 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
      * @throws CosmoDavException
      */
     protected void checkNoRequestBody(DavRequest request) throws CosmoDavException {
+        boolean hasBody = hasBody(request);
+
+        if (hasBody) {
+            throw new UnsupportedMediaTypeException("Body not expected for method " + request.getMethod());
+        }
+    }
+
+    /** Checks if a request has a body */
+    protected boolean hasBody(DavRequest request) throws CosmoDavException {
         boolean hasBody = false;
         try {
             hasBody = request.getRequestDocument() != null;
@@ -667,10 +676,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         } catch (DavException e) {
             throw new CosmoDavException(e);
         }
-
-        if (hasBody) {
-            throw new UnsupportedMediaTypeException("Body not expected for method " + request.getMethod());
-        }
+        return hasBody;
     }
 
     /**
