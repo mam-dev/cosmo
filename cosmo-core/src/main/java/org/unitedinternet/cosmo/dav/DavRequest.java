@@ -52,4 +52,12 @@ public interface DavRequest
 
     DavResourceLocator getDestinationResourceLocator()
         throws CosmoDavException;
+
+    /**
+     * This is extended MKCOL: https://tools.ietf.org/html/rfc5689
+     * @return
+     * @throws CosmoDavException
+     */
+    DavPropertySet getMkcolProperties()
+        throws CosmoDavException;
 }

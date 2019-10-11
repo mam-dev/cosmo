@@ -8,4 +8,6 @@ public class AddressbookCollectionProvider extends CollectionProvider {
     public AddressbookCollectionProvider(DavResourceFactory resourceFactory, EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
     }
+
+
 }

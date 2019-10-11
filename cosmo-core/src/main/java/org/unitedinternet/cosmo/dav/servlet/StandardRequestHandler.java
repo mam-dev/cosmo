@@ -30,18 +30,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
 import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
-import org.unitedinternet.cosmo.dav.ForbiddenException;
-import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
-import org.unitedinternet.cosmo.dav.NotModifiedException;
-import org.unitedinternet.cosmo.dav.PreconditionFailedException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
@@ -100,7 +89,7 @@ public class StandardRequestHandler
     /**
      * <p>
      * Processes the request and returns a response. Calls
-     * {@link DavResourceFactory.createResource(DavResourceLocator, DavRequest, DavResponse)}
+     * {@link DavResourceFactory.createResource( DavResourceLocator , DavRequest, DavResponse)}
      * to find the targeted resource. Calls {@link #preconditions(DavRequest, DavResponse, WebDavResource)}
      * to verify preconditions. Calls {@link #process(DavRequest, DavResponse, WebDavResource)}
      * to execute the verified request.
@@ -111,6 +100,7 @@ public class StandardRequestHandler
      * an entity describing the error.
      * </p>
      */
+    @SuppressWarnings("JavadocReference")
     public void handleRequest(HttpServletRequest request,
                               HttpServletResponse response)
         throws ServletException, IOException {

@@ -75,7 +75,7 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
     public HibCalendarCollectionStamp() {
     }
    
-    /* (non-Javadoc)
+    /**
      * @see org.unitedinternet.cosmo.model.Stamp#getType()
      */
     public String getType() {
@@ -175,7 +175,8 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         HibICalendarAttribute.setValue(getItem(), ATTR_CALENDAR_TIMEZONE, timezone);
     }
     
-    /* (non-Javadoc)
+    /**
+     *
      * @see org.unitedinternet.cosmo.model.CalendarCollectionStamp#getEventStamps()
      */
     public Set<EventStamp> getEventStamps() {

@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -67,9 +68,9 @@ public class CollectionProvider extends BaseProvider {
         if (! collection.getParent().exists()) {
             throw new ConflictException("One or more intermediate collections must be created");
         }
-        checkNoRequestBody(request);
 
-        collection.getParent().addCollection(collection, null);
+        MultiStatusResponse msr = collection.getParent().addCollection(collection, null);
+
         response.setStatus(201);
     }
     

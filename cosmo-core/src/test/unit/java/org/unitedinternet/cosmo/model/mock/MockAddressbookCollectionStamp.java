@@ -7,6 +7,11 @@ import java.io.Serializable;
 public class MockAddressbookCollectionStamp extends MockStamp
 implements Serializable, AddressbookCollectionStamp {
 
+    MockAddressbookCollectionStamp() {}
+    MockAddressbookCollectionStamp(CollectionItem collection) {
+        this();
+        setItem(collection);
+    }
     //AddressbookCollection specific attributes
     public static final QName ATTR_ADDRESSBOOK_DESCRIPTION = new MockQName(AddressbookCollectionStamp.class, "description");
 

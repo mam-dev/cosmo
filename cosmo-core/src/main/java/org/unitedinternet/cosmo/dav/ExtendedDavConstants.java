@@ -57,10 +57,15 @@ public interface ExtendedDavConstants extends DavConstants {
 
     DavPropertyName OWNER =
         DavPropertyName.create(XML_OWNER, NAMESPACE);
+
+
+
     DavPropertyName SUPPORTEDREPORTSET =
         DavPropertyName.create("supported-report-set", NAMESPACE);
     DavPropertyName CURRENTUSERPRINCIPAL =
             DavPropertyName.create("current-user-principal", NAMESPACE);
+
+
 
 
     String QN_PROPFIND =

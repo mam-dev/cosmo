@@ -97,7 +97,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
     private DavPropertyNameSet propfindProps;
     private DavPropertySet proppatchSet;
     private DavPropertyNameSet proppatchRemove;
-    private DavPropertySet mkcalendarSet;
+    private DavPropertySet mkcolSet;
     private Ticket ticket;
     private ReportInfo reportInfo;
     private boolean bufferRequestContent = false;
@@ -330,16 +330,31 @@ public class StandardDavRequest extends WebdavRequestImpl implements
         return destinationLocator;
     }
 
+
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DavPropertySet getMkcolProperties() throws CosmoDavException {
+        if (mkcolSet == null) {
+            mkcolSet = parseMkcolRequest();
+        }
+        return mkcolSet;
+    }
+
+
     // CaldavRequest methods
     /**
      * 
      * {@inheritDoc}
      */
     public DavPropertySet getMkCalendarSetProperties() throws CosmoDavException {
-        if (mkcalendarSet == null) {
-            mkcalendarSet = parseMkCalendarRequest();
+        if (mkcolSet == null) {
+            mkcolSet = parseMkCalendarRequest();
         }
-        return mkcalendarSet;
+        return mkcolSet;
     }
 
     // TicketDavRequest methods
@@ -583,23 +598,60 @@ public class StandardDavRequest extends WebdavRequestImpl implements
      * @throws CosmoDavException 
      */
     private DavPropertySet parseMkCalendarRequest() throws CosmoDavException {
-        DavPropertySet propertySet = new DavPropertySet();
 
         Document requestDocument = getSafeRequestDocument(false);
         if (requestDocument == null) {
-            return propertySet;
+            return new DavPropertySet();
         }
 
         Element root = requestDocument.getDocumentElement();
+
+        /* This should be
+           <C:mkcalendar
+                 xmlns:C="urn:ietf:params:xml:ns:caldav">*/
+
         if (!DomUtil.matches(root, ELEMENT_CALDAV_MKCALENDAR, NAMESPACE_CALDAV)) {
             throw new BadRequestException("Expected " + QN_MKCALENDAR
                     + " root element");
         }
+
+        return paseDavPropertySet(root);
+    }
+
+    private DavPropertySet parseMkcolRequest()  throws CosmoDavException{
+        Document requestDocument = getSafeRequestDocument(false);
+        if (requestDocument == null) {
+            return new DavPropertySet();
+        }
+
+        Element root = requestDocument.getDocumentElement();
+
+        /* This should be
+           <C:mkcalendar
+                 xmlns:C="urn:ietf:params:xml:ns:caldav">*/
+
+        if (!DomUtil.matches(root, ELEMENT_CALDAV_MKCOL, NAMESPACE_CALDAV)) {
+            throw new BadRequestException("Expected " + QN_MKCOL
+                    + " root element");
+        }
+
+        return paseDavPropertySet(root);
+
+    }
+    private DavPropertySet paseDavPropertySet(Element root) throws BadRequestException {
+        /* This should be
+             <D:set xmlns:D="DAV">
+             </D:set>
+         */
+        DavPropertySet propertySet = new DavPropertySet();
         Element set = DomUtil.getChildElement(root, XML_SET, NAMESPACE);
         if (set == null) {
             throw new BadRequestException("Expected " + QN_SET + " child of "
-                    + QN_MKCALENDAR);
+                    + root.getParentNode().getNodeName());
         }
+        /* This should be
+        <D:prop> with all the props inside.
+         */
         Element prop = DomUtil.getChildElement(set, XML_PROP, NAMESPACE);
         if (prop == null) {
             throw new BadRequestException("Expected " + QN_PROP + " child of "

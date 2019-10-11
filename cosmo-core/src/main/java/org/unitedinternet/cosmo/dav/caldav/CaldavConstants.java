@@ -49,6 +49,12 @@ public interface CaldavConstants {
     public static final Namespace NAMESPACE_CS =
         Namespace.getNamespace(PRE_CS, NS_CS);
 
+
+    /** The CalDAV XML element name <CALDAV:mkcol> */
+    public static final String ELEMENT_CALDAV_MKCOL = "mkcol";
+    public static final String QN_MKCOL = DomUtil.getExpandedName(ELEMENT_CALDAV_MKCOL, NAMESPACE_CALDAV);
+
+
     /** The CalDAV XML element name <CALDAV:mkcalendar> */
     public static final String ELEMENT_CALDAV_MKCALENDAR = "mkcalendar";
     public static final String QN_MKCALENDAR = 
@@ -254,6 +260,8 @@ public interface CaldavConstants {
     public static final DavPropertyName MAXRESOURCESIZE =
         DavPropertyName.create(PROPERTY_CALDAV_MAX_RESOURCE_SIZE,
                                NAMESPACE_CALDAV);
+
+
 
     public static final CosmoQName RESOURCE_TYPE_SCHEDULE_INBOX =
         new CosmoQName(NS_CALDAV, ELEMENT_CALDAV_SCHEDULE_INBOX, PRE_CALDAV);

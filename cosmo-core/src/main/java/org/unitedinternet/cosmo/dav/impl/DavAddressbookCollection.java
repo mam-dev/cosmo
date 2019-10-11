@@ -42,5 +42,6 @@ public class DavAddressbookCollection extends DavCollectionBase implements Cardd
 
     public DavAddressbookCollection(DavResourceLocator locator, DavResourceFactory factory, EntityFactory entityFactory) throws CosmoDavException {
         super(locator, factory, entityFactory);
+        getItem().addStamp(entityFactory.createAddressbookCollectionStamp((CollectionItem) getItem()));
     }
 }
