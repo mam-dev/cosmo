@@ -15,6 +15,13 @@ public interface CarddavConstants {
     public static final Namespace NAMESPACE_CARDDAV =
             Namespace.getNamespace(PRE_CARDDAV, NS_CARDDAV);
 
+
+    public static final String ELEMENT_ADDRESSBOOK = "addressbook";
+
+
+    public static final DavPropertyName ADDRESSBOOK =
+            DavPropertyName.create(ELEMENT_ADDRESSBOOK, NAMESPACE_CARDDAV);
+
         /* The CardDAV property name CARDDAV:addressbook-description */
     public static final String PROPERTY_CARDDAV_ADDRESSBOOK_DESCRIPTION =
             "addressbook-description";

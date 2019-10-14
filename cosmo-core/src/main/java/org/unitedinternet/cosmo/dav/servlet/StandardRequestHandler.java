@@ -36,22 +36,8 @@ import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
-import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
-import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
-import org.unitedinternet.cosmo.dav.impl.StandardDavRequest;
-import org.unitedinternet.cosmo.dav.impl.StandardDavResponse;
-import org.unitedinternet.cosmo.dav.provider.CalendarCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.CalendarResourceProvider;
-import org.unitedinternet.cosmo.dav.provider.CollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.DavProvider;
-import org.unitedinternet.cosmo.dav.provider.FileProvider;
-import org.unitedinternet.cosmo.dav.provider.HomeCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.OutboxCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.UserPrincipalCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.UserPrincipalProvider;
+import org.unitedinternet.cosmo.dav.impl.*;
+import org.unitedinternet.cosmo.dav.provider.*;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
@@ -318,6 +304,8 @@ public class StandardRequestHandler
         if (resource instanceof DavCalendarCollection) {
             return new CalendarCollectionProvider(resourceFactory, entityFactory);
         }
+        if (resource instanceof DavAddressbookCollection)
+            return new AddressbookCollectionProvider(resourceFactory, entityFactory);
         if (resource instanceof DavCollectionBase) {
             return new CollectionProvider(resourceFactory, entityFactory);
         }

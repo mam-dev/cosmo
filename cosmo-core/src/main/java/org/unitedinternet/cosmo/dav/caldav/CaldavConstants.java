@@ -59,8 +59,15 @@ public interface CaldavConstants {
     public static final String ELEMENT_CALDAV_MKCALENDAR = "mkcalendar";
     public static final String QN_MKCALENDAR = 
         DomUtil.getExpandedName(ELEMENT_CALDAV_MKCALENDAR, NAMESPACE_CALDAV);
+
     /** The CalDAV XML element name <CALDAV:calendar> */
     public static final String ELEMENT_CALDAV_CALENDAR = "calendar";
+
+
+    /** CalDAV "calendar" resource type property */
+
+    public static final DavPropertyName CALENDAR = DavPropertyName.create(ELEMENT_CALDAV_CALENDAR,
+            NAMESPACE_CALDAV);
     /** The CalDAV XML element name <CALDAV:comp> */
     public static final String ELEMENT_CALDAV_COMP = "comp";
     /** The CalDAV XML element name <CALDAV:supported-collation> */

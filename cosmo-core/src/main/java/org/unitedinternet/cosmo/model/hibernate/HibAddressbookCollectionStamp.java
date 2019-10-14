@@ -1,10 +1,16 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.model.AddressbookCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
 
+import javax.persistence.DiscriminatorValue;
+
+@DiscriminatorValue("addressbook") //https://docs.jboss.org/hibernate/stable/annotations/reference/en/html_single/#d0e1168
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibAddressbookCollectionStamp extends HibStamp implements AddressbookCollectionStamp {
 
     public static final QName ATTR_ADDRESSBOOK_DESCRIPTION = new HibQName(AddressbookCollectionStamp.class, "description");

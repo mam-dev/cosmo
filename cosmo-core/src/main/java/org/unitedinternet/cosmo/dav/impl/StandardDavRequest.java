@@ -615,7 +615,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
                     + " root element");
         }
 
-        return paseDavPropertySet(root);
+        return parseDavPropertySet(root);
     }
 
     private DavPropertySet parseMkcolRequest()  throws CosmoDavException{
@@ -627,18 +627,18 @@ public class StandardDavRequest extends WebdavRequestImpl implements
         Element root = requestDocument.getDocumentElement();
 
         /* This should be
-           <C:mkcalendar
-                 xmlns:C="urn:ietf:params:xml:ns:caldav">*/
+           <D:mkcol
+                 xmlns:D="DAV:">*/
 
-        if (!DomUtil.matches(root, ELEMENT_CALDAV_MKCOL, NAMESPACE_CALDAV)) {
+        if (!DomUtil.matches(root, ELEMENT_CALDAV_MKCOL, NAMESPACE)) {
             throw new BadRequestException("Expected " + QN_MKCOL
                     + " root element");
         }
 
-        return paseDavPropertySet(root);
+        return parseDavPropertySet(root);
 
     }
-    private DavPropertySet paseDavPropertySet(Element root) throws BadRequestException {
+    private DavPropertySet parseDavPropertySet(Element root) throws BadRequestException {
         /* This should be
              <D:set xmlns:D="DAV">
              </D:set>
