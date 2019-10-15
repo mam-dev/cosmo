@@ -8,7 +8,9 @@ import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
+@Entity
 @DiscriminatorValue("addressbook") //https://docs.jboss.org/hibernate/stable/annotations/reference/en/html_single/#d0e1168
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibAddressbookCollectionStamp extends HibStamp implements AddressbookCollectionStamp {
