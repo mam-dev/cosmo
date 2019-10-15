@@ -98,19 +98,8 @@ public class CalendarCollectionProvider extends CollectionProvider {
         }
         DavPropertySet properties = request.getMkCalendarSetProperties();
         MultiStatusResponse msr = collection.getParent().addCollection(collection, properties);
-
-        if (properties.isEmpty() || !hasNonOK(msr)) {
-            response.setStatus(201);
-            response.setHeader("Cache-control", "no-cache");
-            response.setHeader("Pragma", "no-cache");
-            return;
-        }
-
-        MultiStatus ms = new MultiStatus();
-        ms.addResponse(msr);
-        response.sendMultiStatus(ms);
-
-    }
+        sendMultiStatus(properties, msr, response);
+      }
 
     @Override
     protected void spool(DavRequest request, DavResponse response, WebDavResource resource, boolean withEntity)

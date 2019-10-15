@@ -19,7 +19,9 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
+import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -68,13 +70,31 @@ public class CollectionProvider extends BaseProvider {
         if (! collection.getParent().exists()) {
             throw new ConflictException("One or more intermediate collections must be created");
         }
-
+        DavPropertySet properties = request.getMkcolProperties();
         MultiStatusResponse msr = collection.getParent().addCollection(collection, null);
-
-        response.setStatus(201);
+        sendMultiStatus(properties, msr, response);
     }
-    
 
+    /**
+     * Send multi status response (according to WebDAV RFC) using WebDAV OR send empty response with code 201
+     * if no properties are sent.
+     * @param properties DAV properties
+     * @param msr a MultiStatusResponse that you get from calling addCollection on DavCollection
+     * @param response
+     * @throws java.io.IOException
+     * @see DavCollection
+     */
+    protected void  sendMultiStatus (DavPropertySet properties, MultiStatusResponse msr, DavResponse response) throws java.io.IOException {
+        if (properties.isEmpty() || !hasNonOK(msr)) {
+            response.setStatus(201);
+            response.setHeader("Cache-control", "no-cache");
+            response.setHeader("Pragma", "no-cache");
+        }
+        MultiStatus ms = new MultiStatus();
+        ms.addResponse(msr);
+        response.sendMultiStatus(ms);
+
+    }
     public void mkcalendar(DavRequest request,
                            DavResponse response,
                            DavCollection collection)
