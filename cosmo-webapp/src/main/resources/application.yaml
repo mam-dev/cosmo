@@ -68,5 +68,5 @@ spring:
 
   log4j:
     logger:
-      org.unitedinternet.cosmo: DEBUG
+      org.unitedinternet.cosmo: TRACE
       org.apache.jackrabbit.webdav: DEBUG

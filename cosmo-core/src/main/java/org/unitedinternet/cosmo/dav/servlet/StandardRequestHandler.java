@@ -16,19 +16,20 @@
 package org.unitedinternet.cosmo.dav.servlet;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-
 import org.apache.abdera.util.EntityTag;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
@@ -197,6 +198,16 @@ public class StandardRequestHandler
             }
         } catch (Exception e) {
             LOG.error("Error on dumpRequest class StandardRequestHandler "+ e);
+        }
+
+
+        try {
+        sb.append("------------------- Request body ----------------\n");
+        sb.append(IOUtils.toString(req.getReader()));
+        sb.append("\n----------------End request body -------------------\n");
+        }
+        catch (IOException e) {
+            LOG.error(e);
         }
         sb.append("------------------------ End dump of request -------------------");
         //Fix Log Forging - java fortify
