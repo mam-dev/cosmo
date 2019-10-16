@@ -108,9 +108,9 @@ public class ICalDate implements ICalendarConstants {
                 // If timezone can't be translated, then datetime will
                 // essentiallyi be floating.
                 if (tz != null) {
-                    String id = tz.getVTimeZone().getProperties().
-                        getProperty(Property.TZID).getValue();
-                    tzid = new TzId(id);
+                    net.fortuna.ical4j.model.property.TzId id = tz.getVTimeZone().getProperties().
+                        getProperty(Property.TZID);
+                    tzid = new TzId(id.getValue());
                 }
             }
         } else {
@@ -148,9 +148,9 @@ public class ICalDate implements ICalendarConstants {
             if (tz == null) {
                 throw new UnknownTimeZoneException(origId);
             }
-            String id = tz.getVTimeZone().getProperties().
-                getProperty(Property.TZID).getValue();
-            tzid = new TzId(id);
+            net.fortuna.ical4j.model.property.TzId prop =  tz.getVTimeZone().getProperties().
+                getProperty(Property.TZID);
+            tzid = new TzId(prop.getValue());
         }
         text = dates.toString();
         this.dates = dates;

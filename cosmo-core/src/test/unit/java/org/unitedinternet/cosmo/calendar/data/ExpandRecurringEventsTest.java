@@ -30,6 +30,7 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 
+import net.fortuna.ical4j.model.property.Summary;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -78,17 +79,17 @@ public class ExpandRecurringEventsTest {
         Iterator<VEvent> it = comps.iterator();
         VEvent event = it.next();
         
-        Assert.assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
         Assert.assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
         Assert.assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060104T190000Z", event.getStartDate().getDate().toString());
         Assert.assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
         
@@ -136,17 +137,17 @@ public class ExpandRecurringEventsTest {
         Iterator<VEvent> it = comps.iterator();
         VEvent event = it.next();
         
-        Assert.assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
         Assert.assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
         Assert.assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6 changed", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6 changed", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060104T210000Z", event.getStartDate().getDate().toString());
         Assert.assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
         
@@ -191,7 +192,7 @@ public class ExpandRecurringEventsTest {
         Iterator<VEvent> it = comps.iterator();
         VEvent event = it.next();
         
-        Assert.assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+        Assert.assertEquals("event 6", event.getProperties().<Summary>getProperty(Property.SUMMARY).getValue());
         Assert.assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
         Assert.assertNull(event.getRecurrenceId());
         

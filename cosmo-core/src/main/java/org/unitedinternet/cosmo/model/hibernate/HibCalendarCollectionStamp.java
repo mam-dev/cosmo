@@ -22,12 +22,10 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.*;
 import net.fortuna.ical4j.model.component.VTimeZone;
 
+import net.fortuna.ical4j.model.property.TzId;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.hibernate.validator.Color;
@@ -75,13 +73,13 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
     public HibCalendarCollectionStamp() {
     }
    
-    /**
+    /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Stamp#getType()
      */
     public String getType() {
         return "calendar";
     }
-    
+
     public HibCalendarCollectionStamp(CollectionItem collection) {
         this();
         setItem(collection);
@@ -91,7 +89,7 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         CalendarCollectionStamp stamp = new HibCalendarCollectionStamp();
         return stamp;
     }
-        
+
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.CalendarCollectionStamp#getDescription()
      */
@@ -132,12 +130,12 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         // calendar stored as ICalendarAttribute on Item
         return HibICalendarAttribute.getValue(getItem(), ATTR_CALENDAR_TIMEZONE);
     }
-    
+
     @Override
     public void setTargetUri(String targetUri) {
         HibStringAttribute.setValue(getItem(), ATTR_CALENDAR_TARGET_URI, targetUri);
     }
-    
+
     @Override
     public String getTargetUri() {
         return HibStringAttribute.getValue(getItem(), ATTR_CALENDAR_TARGET_URI);
@@ -154,7 +152,7 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         VTimeZone vtz = (VTimeZone) timezone.getComponents().getComponent(Component.VTIMEZONE);
         return new TimeZone(vtz);
     }
-   
+
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.CalendarCollectionStamp#getTimezoneName()
      */
@@ -163,8 +161,9 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         if (timezone == null) {
             return null;
         }
-        return timezone.getComponents().getComponent(Component.VTIMEZONE).
-            getProperties().getProperty(Property.TZID).getValue();
+        TzId tzId = timezone.getComponents().getComponent(Component.VTIMEZONE).
+            getProperties().getProperty(Property.TZID);
+        return tzId.getValue();
     }
 
     /* (non-Javadoc)
@@ -174,9 +173,8 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         // timezone stored as ICalendarAttribute on Item
         HibICalendarAttribute.setValue(getItem(), ATTR_CALENDAR_TIMEZONE, timezone);
     }
-    
-    /**
-     *
+
+    /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.CalendarCollectionStamp#getEventStamps()
      */
     public Set<EventStamp> getEventStamps() {
