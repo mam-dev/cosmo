@@ -19,18 +19,10 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.webdav.MultiStatus;
-import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
-import org.unitedinternet.cosmo.dav.ConflictException;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
-import org.unitedinternet.cosmo.dav.ExistsException;
-import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
+import org.unitedinternet.cosmo.dav.*;
+import org.unitedinternet.cosmo.dav.impl.MkcolResponseFactory;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
@@ -46,6 +38,7 @@ public class CollectionProvider extends BaseProvider {
     @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(CollectionProvider.class);
 
+    private static final String MKCOL_RESPONSE = "mkcol-response";
     public CollectionProvider(DavResourceFactory resourceFactory,
             EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);
@@ -71,8 +64,8 @@ public class CollectionProvider extends BaseProvider {
             throw new ConflictException("One or more intermediate collections must be created");
         }
         DavPropertySet properties = request.getMkcolProperties();
-        MultiStatusResponse msr = collection.getParent().addCollection(collection, null);
-        sendMultiStatus(properties, msr, response);
+        CreateCollectionResponse ccr = collection.getParent().addCollection(collection, properties, new MkcolResponseFactory());
+        sendCollectionResponse(properties, ccr, response);
     }
 
     /**
@@ -84,17 +77,20 @@ public class CollectionProvider extends BaseProvider {
      * @throws java.io.IOException
      * @see DavCollection
      */
-    protected void  sendMultiStatus (DavPropertySet properties, MultiStatusResponse msr, DavResponse response) throws java.io.IOException {
-        if (properties.isEmpty() || !hasNonOK(msr)) {
+    protected void sendCollectionResponse(DavPropertySet properties, CreateCollectionResponse msr, DavResponse response) throws java.io.IOException {
+        if (properties.isEmpty() || !CreateCollectionResponse.hasNonOK(msr)) {
             response.setStatus(201);
             response.setHeader("Cache-control", "no-cache");
             response.setHeader("Pragma", "no-cache");
+        } else {
+            response.setStatus(403);
         }
-        MultiStatus ms = new MultiStatus();
-        ms.addResponse(msr);
-        response.sendMultiStatus(ms);
+
+
+        response.sendXmlResponse(msr, response.getStatus());
 
     }
+
     public void mkcalendar(DavRequest request,
                            DavResponse response,
                            DavCollection collection)

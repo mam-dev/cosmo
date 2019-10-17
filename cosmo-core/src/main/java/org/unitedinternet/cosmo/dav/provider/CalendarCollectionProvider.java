@@ -23,8 +23,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.webdav.MultiStatus;
-import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.springframework.core.env.Environment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -39,6 +37,8 @@ import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarLocationException;
 import org.unitedinternet.cosmo.dav.caldav.MissingParentException;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavItemCollection;
+import org.unitedinternet.cosmo.dav.impl.MkcalendarResponseFactory;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -93,12 +93,13 @@ public class CalendarCollectionProvider extends CollectionProvider {
         }
         // XXX DAV:needs-privilege DAV:bind on parent collection
 
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("MKCALENDAR at " + collection.getResourcePath());
         }
         DavPropertySet properties = request.getMkCalendarSetProperties();
-        MultiStatusResponse msr = collection.getParent().addCollection(collection, properties);
-        sendMultiStatus(properties, msr, response);
+        CreateCollectionResponse ccr = collection.getParent().addCollection(collection, properties, new MkcalendarResponseFactory());
+        sendCollectionResponse(properties, ccr, response);
       }
 
     @Override

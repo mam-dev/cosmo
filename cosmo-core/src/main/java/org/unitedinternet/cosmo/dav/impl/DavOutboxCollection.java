@@ -27,6 +27,8 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponseFactory;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
@@ -182,8 +184,9 @@ public class DavOutboxCollection extends DavResourceBase
         throw new UnsupportedOperationException();
     }
 
-    public MultiStatusResponse addCollection(DavCollection collection,
-                                             DavPropertySet properties)
+    public CreateCollectionResponse addCollection(DavCollection collection,
+                                                  DavPropertySet properties,
+                                                  CreateCollectionResponseFactory factory)
         throws CosmoDavException {
         throw new UnsupportedOperationException();
     }

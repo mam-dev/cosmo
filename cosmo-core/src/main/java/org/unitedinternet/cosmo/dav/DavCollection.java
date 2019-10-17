@@ -18,7 +18,8 @@ package org.unitedinternet.cosmo.dav;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
-import org.apache.jackrabbit.webdav.MultiStatusResponse;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponseFactory;
 
 /**
  * An interface for DAV collection resources.
@@ -34,9 +35,10 @@ public interface DavCollection extends WebDavResource {
 
     /**
      * Adds a new collection to this resource.
+     * @return
      */
-    MultiStatusResponse addCollection(DavCollection collection,
-                                             DavPropertySet properties)
+    CreateCollectionResponse addCollection(DavCollection collection,
+                                           DavPropertySet properties, CreateCollectionResponseFactory factory)
         throws CosmoDavException;
 
     /**
