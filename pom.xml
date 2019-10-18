@@ -36,7 +36,6 @@
 		<hibernate-validator.version>6.0.17.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
-
 		<jackrabbit.version>2.19.5</jackrabbit.version>
 		<ical4j.version>2.2.5</ical4j.version>
 		<icu4j.version>54.1.1</icu4j.version>		
