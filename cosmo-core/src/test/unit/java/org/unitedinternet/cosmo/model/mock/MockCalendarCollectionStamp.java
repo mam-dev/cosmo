@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.fortuna.ical4j.model.property.TzId;
 import org.unitedinternet.cosmo.hibernate.validator.Timezone;
 import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
@@ -208,7 +209,7 @@ public class MockCalendarCollectionStamp extends MockStamp
         if (timezone == null) {
             return null;
         }
-        return timezone.getComponents().getComponent(Component.VTIMEZONE).getProperties().getProperty(Property.TZID)
+        return timezone.getComponents().getComponent(Component.VTIMEZONE).getProperties().<TzId>getProperty(Property.TZID)
                 .getValue();
     }
 

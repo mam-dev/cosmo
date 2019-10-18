@@ -16,7 +16,7 @@
 		<version>1.6.1</version>
 	</parent>
 
-	<groupId>net.pashazz.cosmo</groupId>
+	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
 	<version>3.6.1-SNAPSHOT</version>
 
@@ -26,7 +26,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<org.springframework.security.version>5.1.6.RELEASE</org.springframework.security.version>		
@@ -34,11 +33,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		
-		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
+		<hibernate-validator.version>6.0.17.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
+
 		<jackrabbit.version>2.19.5</jackrabbit.version>
-		<ical4j.version>2.0.4</ical4j.version>
+		<ical4j.version>2.2.5</ical4j.version>
 		<icu4j.version>54.1.1</icu4j.version>		
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
 		<aopalliance.version>1.0</aopalliance.version>
@@ -123,9 +123,9 @@
 
 			<!-- ical4j related libs -->
 			<dependency>
-				<groupId>net.oneandone.ical4j</groupId>
+				<groupId>org.mnode.ical4j</groupId>
 				<artifactId>ical4j</artifactId>
-				<version>${ical4j.version}</version>
+				<version>2.2.5</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>commons-logging</artifactId>
@@ -393,8 +393,8 @@
 	</reporting>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/pashazz/cosmo.git</developerConnection>
-		<connection>scm:git:ssh://git@github.com/pashazz/cosmo.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/oneandone/cosmo.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/oneandone/cosmo.git</connection>
 		<url>https://github.com/1and1/</url>
 		<tag>cosmo-multimodule-1.5.3</tag>
 	</scm>

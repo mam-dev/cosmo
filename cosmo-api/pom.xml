@@ -2,18 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.pashazz.cosmo</groupId>
+		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
 		<version>3.6.1-SNAPSHOT</version>
 	</parent>
-		
 	<artifactId>cosmo-api</artifactId>
-
 	<name>cosmo-api</name>
 	<description>Cosmo API</description>
 
 	<properties>
-		
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 	
 	<dependencies>
@@ -34,8 +33,9 @@
 		</dependency>
 		<!-- ical4j related libs -->
 		<dependency>
-			<groupId>net.oneandone.ical4j</groupId>
-			<artifactId>ical4j</artifactId>
+			<groupId>org.mnode.ical4j</groupId>
+            <artifactId>ical4j</artifactId>
+            <version>2.2.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>
@@ -47,7 +47,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>			
 		</dependency>
-
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>

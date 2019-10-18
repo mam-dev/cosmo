@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.calendar.data;
 import java.io.FileInputStream;
 import java.io.StringReader;
 
+import net.fortuna.ical4j.model.property.Summary;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -76,8 +77,8 @@ public class LimitRecurrenceSetTest {
 
         ComponentList<CalendarComponent> events = comps.getComponents("VEVENT");
         for(CalendarComponent c : events) {            
-            Assert.assertNotSame("event 6 changed 3",c.getProperties().getProperty("SUMMARY").getValue());
-            Assert.assertNotSame("event 6 changed 4",c.getProperties().getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed 3",c.getProperties().<Summary>getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed 4",c.getProperties().<Summary>getProperty("SUMMARY").getValue());
         }
     }
     
@@ -115,7 +116,7 @@ public class LimitRecurrenceSetTest {
         // Make sure 2nd override is dropped
         ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);        
         for(VEvent c : vevents) {            
-            Assert.assertNotSame("event 6 changed 2",c.getProperties().getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed 2",c.getProperties().<Summary>getProperty("SUMMARY").getValue());
         }   
     }
     
@@ -155,8 +156,8 @@ public class LimitRecurrenceSetTest {
         ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);
         
         for(VEvent c : vevents) {            
-            Assert.assertNotSame("event 6 changed",c.getProperties().getProperty("SUMMARY").getValue());
-            Assert.assertNotSame("event 6 changed 2",c.getProperties().getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed",c.getProperties().<Summary>getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed 2",c.getProperties().<Summary>getProperty("SUMMARY").getValue());
         }   
     }
     
