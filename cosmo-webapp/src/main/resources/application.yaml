@@ -51,9 +51,6 @@ spring:
   profiles:
     active: local
   datasource:
-    jdbcUrl: jdbc:mysql://localhost:33060/test?autoReconnect=true
-    username: root
-    password: 
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:
       maximum-pool-size: 10     
