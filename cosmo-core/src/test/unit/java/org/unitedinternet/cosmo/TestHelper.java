@@ -38,12 +38,7 @@ import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.XParameter;
-import net.fortuna.ical4j.model.property.Action;
-import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Uid;
-import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.model.property.XProperty;
+import net.fortuna.ical4j.model.property.*;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
@@ -152,10 +147,10 @@ public class TestHelper {
         VTimeZone tz = TimeZoneRegistryFactory.getInstance().createRegistry().
             getTimeZone("America/Los_Angeles").getVTimeZone();
         String tzValue =
-            tz.getProperties().getProperty(Property.TZID).getValue();
+            tz.getProperties().<TzId>getProperty(Property.TZID).getValue();
         net.fortuna.ical4j.model.parameter.TzId tzParam =
             new net.fortuna.ical4j.model.parameter.TzId(tzValue);
-        event.getProperties().getProperty(Property.DTSTART).
+        event.getProperties().<DtStart>getProperty(Property.DTSTART).
             getParameters().add(tzParam);
 
         // add an alarm for 5 minutes before the event with an xparam

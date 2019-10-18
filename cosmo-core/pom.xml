@@ -151,8 +151,10 @@
 
 		<!-- ical4j related libs -->
 		<dependency>
-			<groupId>net.oneandone.ical4j</groupId>
+			<groupId>org.mnode.ical4j</groupId>
 			<artifactId>ical4j</artifactId>
+			<version>2.2.5</version>
+
 			<exclusions>
 				<exclusion>
 					<groupId>commons-codec</groupId>
@@ -167,6 +169,7 @@
 			<groupId>com.ibm.icu</groupId>
 			<artifactId>icu4j</artifactId>
 		</dependency>
+
 
 		<!-- servlet -->
 		<dependency>
@@ -251,6 +254,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
+			<version>5.4.6.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.javassist</groupId>
@@ -287,7 +291,17 @@
             <artifactId>javax.activation-api</artifactId>
             <version>1.2.0</version>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<testSourceDirectory>src/test/unit/java</testSourceDirectory>

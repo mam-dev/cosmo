@@ -108,7 +108,10 @@ public class TimeZoneExtractor {
         if (ical == null) {
             return null;
         }
-
+        // add line feeds.
+        if (!ical.contains("\r\n")) {
+            ical = ical.replace("\n", "\r\n");
+        }
         Calendar calendar = null;
         try {
             CalendarBuilder builder =
