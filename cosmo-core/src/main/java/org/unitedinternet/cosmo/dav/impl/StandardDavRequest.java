@@ -15,30 +15,6 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.abdera.util.EntityTag;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -51,13 +27,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
-import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceLocator;
-import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
-import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
-import org.unitedinternet.cosmo.dav.UnsupportedMediaTypeException;
+import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilegeSet;
@@ -70,6 +40,19 @@ import org.unitedinternet.cosmo.util.BufferedServletInputStream;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  */

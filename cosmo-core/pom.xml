@@ -254,6 +254,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
+			<version>5.4.6.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.javassist</groupId>
@@ -290,7 +291,17 @@
             <artifactId>javax.activation-api</artifactId>
             <version>1.2.0</version>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<testSourceDirectory>src/test/unit/java</testSourceDirectory>

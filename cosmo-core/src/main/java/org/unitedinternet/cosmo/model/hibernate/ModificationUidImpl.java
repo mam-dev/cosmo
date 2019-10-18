@@ -30,7 +30,7 @@ import net.fortuna.ical4j.model.DateTime;
  * Represents a uid for a NoteItem modification.
  * The uid of a NoteItem modification is composed of
  * the parent uid and the recurrenceId of the modification item.
- * If the recurrenceId of a modificatino contains timezone 
+ * If the recurrenceId of a modification contains timezone
  * information it will be converted to UTC when the uid is
  * serialized to a String.
  * Examples:

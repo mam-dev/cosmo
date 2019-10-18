@@ -34,7 +34,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		
-		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
+		<hibernate-validator.version>6.0.17.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
 		<jackrabbit.version>2.19.0</jackrabbit.version>
