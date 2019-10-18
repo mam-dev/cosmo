@@ -51,7 +51,6 @@ spring:
   profiles:
     active: local
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
     hikari:
       maximum-pool-size: 10     
   jpa:        
