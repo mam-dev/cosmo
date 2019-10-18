@@ -31,6 +31,10 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jackrabbit.webdav.Status;
+import org.unitedinternet.cosmo.dav.*;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponseFactory;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
@@ -42,14 +46,6 @@ import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResourceLocator;
-import org.unitedinternet.cosmo.dav.LockedException;
-import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalMatchReport;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalPropertySearchReport;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
@@ -83,6 +79,10 @@ import org.w3c.dom.Element;
 public class DavCollectionBase extends DavItemResourceBase implements
         DavItemCollection {
     private static final Log LOG = LogFactory.getLog(DavCollectionBase.class);
+
+    /* a list of names of <code>Attribute</code>s that should not be
+     exposed through DAV as dead properties.
+    */
     private static final Set<String> DEAD_PROPERTY_FILTER = new HashSet<String>();
     private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 
@@ -214,20 +214,74 @@ public class DavCollectionBase extends DavItemResourceBase implements
         members.add(base);
     }
 
-    public MultiStatusResponse addCollection(DavCollection collection, DavPropertySet properties) throws CosmoDavException {
+    public CreateCollectionResponse addCollection(DavCollection collection, DavPropertySet properties, CreateCollectionResponseFactory factory) throws CosmoDavException {
         if(!(collection instanceof DavCollectionBase)){
             throw new IllegalArgumentException("Expected instance of :[" + DavCollectionBase.class.getName() + "]");
         }
         
         DavCollectionBase base = (DavCollectionBase) collection;
         base.populateItem(null);
-        MultiStatusResponse msr = base.populateAttributes(properties);
-        if (!hasNonOK(msr)) {
+        CreateCollectionResponse ccr = base.populateAttributes(properties, factory);
+        if (!(CreateCollectionResponse.hasNonOK(ccr))) {
             saveSubcollection(base);
             members.add(base);
         }
+        return ccr;
+    }
+
+
+    protected CreateCollectionResponse populateAttributes(DavPropertySet properties, CreateCollectionResponseFactory factory) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("populating attributes for " + getResourcePath());
+        }
+
+        CreateCollectionResponse msr = factory.get(null);
+        if (properties == null) {
+            return msr;
+        }
+
+        org.apache.jackrabbit.webdav.property.DavProperty<?> property = null;
+        List<DavPropertyName> df = new ArrayList<DavPropertyName>();
+        CosmoDavException error = null;
+        DavPropertyName failed = null;
+        for (DavPropertyIterator i = properties.iterator(); i.hasNext();) {
+            try {
+                 //Skip collection type as it's handled by StandardResourceFactory.resolve.
+                property = i.nextProperty();
+                if (property.getName() != DavPropertyName.RESOURCETYPE) {
+                    setResourceProperty((WebDavProperty) property, true);
+                }
+                df.add(property.getName());
+                msr.add(property.getName(), 200);
+            } catch (CosmoDavException e) {
+                // we can only report one error message in the
+                // responsedescription, so even if multiple properties would
+                // fail, we return 424 for the second and subsequent failures
+                // as well
+                if (error == null) {
+                    error = e;
+                    failed = property.getName();
+                } else {
+                    df.add(property.getName());
+                }
+            }
+        }
+
+        if (error == null) {
+            return msr;
+        }
+
+        // replace the other response with a new one, since we have to
+        // change the response code for each of the properties that would
+        // have been set successfully
+        msr = factory.get(error.getMessage());
+        for (DavPropertyName n : df)
+            msr.add(n, 424);
+        msr.add(failed, error.getErrorCode());
+
         return msr;
     }
+
 
     public WebDavResource findMember(String href) throws CosmoDavException {
         return memberToResource(href);
@@ -235,7 +289,19 @@ public class DavCollectionBase extends DavItemResourceBase implements
 
     // DavItemCollection
 
+    /**
+     * A non-specific item collection item collection is not a calendar collection
+     * @return
+     */
     public boolean isCalendarCollection() {
+        return false;
+    }
+
+    /**
+     * A non-specific item collection is not an addressbook collection
+     * @return
+     */
+    public boolean isAddressbookCollection() {
         return false;
     }
 

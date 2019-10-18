@@ -16,53 +16,29 @@
 package org.unitedinternet.cosmo.dav.servlet;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-
 import org.apache.abdera.util.EntityTag;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.DavResourceFactory;
-import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
-import org.unitedinternet.cosmo.dav.DavResponse;
-import org.unitedinternet.cosmo.dav.ForbiddenException;
-import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
-import org.unitedinternet.cosmo.dav.NotModifiedException;
-import org.unitedinternet.cosmo.dav.PreconditionFailedException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
-import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
-import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
-import org.unitedinternet.cosmo.dav.impl.StandardDavRequest;
-import org.unitedinternet.cosmo.dav.impl.StandardDavResponse;
-import org.unitedinternet.cosmo.dav.provider.CalendarCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.CalendarResourceProvider;
-import org.unitedinternet.cosmo.dav.provider.CollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.DavProvider;
-import org.unitedinternet.cosmo.dav.provider.FileProvider;
-import org.unitedinternet.cosmo.dav.provider.HomeCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.OutboxCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.UserPrincipalCollectionProvider;
-import org.unitedinternet.cosmo.dav.provider.UserPrincipalProvider;
+import org.unitedinternet.cosmo.dav.impl.*;
+import org.unitedinternet.cosmo.dav.provider.*;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
@@ -100,7 +76,7 @@ public class StandardRequestHandler
     /**
      * <p>
      * Processes the request and returns a response. Calls
-     * {@link DavResourceFactory.createResource(DavResourceLocator, DavRequest, DavResponse)}
+     * {@link DavResourceFactory.createResource( DavResourceLocator , DavRequest, DavResponse)}
      * to find the targeted resource. Calls {@link #preconditions(DavRequest, DavResponse, WebDavResource)}
      * to verify preconditions. Calls {@link #process(DavRequest, DavResponse, WebDavResource)}
      * to execute the verified request.
@@ -111,6 +87,7 @@ public class StandardRequestHandler
      * an entity describing the error.
      * </p>
      */
+    @SuppressWarnings("JavadocReference")
     public void handleRequest(HttpServletRequest request,
                               HttpServletResponse response)
         throws ServletException, IOException {
@@ -222,6 +199,16 @@ public class StandardRequestHandler
         } catch (Exception e) {
             LOG.error("Error on dumpRequest class StandardRequestHandler "+ e);
         }
+
+
+        try {
+        sb.append("------------------- Request body ----------------\n");
+        sb.append(IOUtils.toString(req.getReader()));
+        sb.append("\n----------------End request body -------------------\n");
+        }
+        catch (IOException e) {
+            LOG.error(e);
+        }
         sb.append("------------------------ End dump of request -------------------");
         //Fix Log Forging - java fortify
         //Writing unvalidated user input to log files can allow an attacker to forge log entries or
@@ -328,6 +315,8 @@ public class StandardRequestHandler
         if (resource instanceof DavCalendarCollection) {
             return new CalendarCollectionProvider(resourceFactory, entityFactory);
         }
+        if (resource instanceof DavAddressbookCollection)
+            return new AddressbookCollectionProvider(resourceFactory, entityFactory);
         if (resource instanceof DavCollectionBase) {
             return new CollectionProvider(resourceFactory, entityFactory);
         }

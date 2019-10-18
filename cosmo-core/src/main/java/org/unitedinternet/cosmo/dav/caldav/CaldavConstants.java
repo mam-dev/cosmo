@@ -41,7 +41,7 @@ public interface CaldavConstants {
         "urn:ietf:params:xml:ns:caldav";
     public static final Namespace NAMESPACE_CALDAV =
         Namespace.getNamespace(PRE_CALDAV, NS_CALDAV);
-    
+
     /** The Calendar Server XML namespace */
     public static final String PRE_CS = "CS";
     public static final String NS_CS =
@@ -49,12 +49,25 @@ public interface CaldavConstants {
     public static final Namespace NAMESPACE_CS =
         Namespace.getNamespace(PRE_CS, NS_CS);
 
+
+    /** The CalDAV XML element name <CALDAV:mkcol> */
+    public static final String ELEMENT_CALDAV_MKCOL = "mkcol";
+    public static final String QN_MKCOL = DomUtil.getExpandedName(ELEMENT_CALDAV_MKCOL, NAMESPACE_CALDAV);
+
+
     /** The CalDAV XML element name <CALDAV:mkcalendar> */
     public static final String ELEMENT_CALDAV_MKCALENDAR = "mkcalendar";
     public static final String QN_MKCALENDAR = 
         DomUtil.getExpandedName(ELEMENT_CALDAV_MKCALENDAR, NAMESPACE_CALDAV);
+
     /** The CalDAV XML element name <CALDAV:calendar> */
     public static final String ELEMENT_CALDAV_CALENDAR = "calendar";
+
+
+    /** CalDAV "calendar" resource type property */
+
+    public static final DavPropertyName CALENDAR = DavPropertyName.create(ELEMENT_CALDAV_CALENDAR,
+            NAMESPACE_CALDAV);
     /** The CalDAV XML element name <CALDAV:comp> */
     public static final String ELEMENT_CALDAV_COMP = "comp";
     /** The CalDAV XML element name <CALDAV:supported-collation> */
@@ -254,6 +267,8 @@ public interface CaldavConstants {
     public static final DavPropertyName MAXRESOURCESIZE =
         DavPropertyName.create(PROPERTY_CALDAV_MAX_RESOURCE_SIZE,
                                NAMESPACE_CALDAV);
+
+
 
     public static final CosmoQName RESOURCE_TYPE_SCHEDULE_INBOX =
         new CosmoQName(NS_CALDAV, ELEMENT_CALDAV_SCHEDULE_INBOX, PRE_CALDAV);

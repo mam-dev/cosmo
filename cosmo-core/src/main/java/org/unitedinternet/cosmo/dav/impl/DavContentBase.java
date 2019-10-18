@@ -45,7 +45,7 @@ import org.unitedinternet.cosmo.model.User;
 
 /**
  * Extends <code>DavItemResourceBase</code> to adapt the Cosmo
- * <code>ContentItem</code> to the DAV resource model.
+ * <code>{@link ContentItem}</code> to the DAV resource model.
  *
  * This class defines the following live properties:
  *

@@ -61,6 +61,7 @@ import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
 import org.unitedinternet.cosmo.dav.io.DavInputContext;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
+import org.unitedinternet.cosmo.dav.util.DavRequestUtils;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
@@ -369,7 +370,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
 
     // our methods
     /**
-     * 
+     *  A helper method for both GET and HEAD
      * @param request
      * @param response
      * @param resource
@@ -658,15 +659,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
      * @throws CosmoDavException
      */
     protected void checkNoRequestBody(DavRequest request) throws CosmoDavException {
-        boolean hasBody = false;
-        try {
-            hasBody = request.getRequestDocument() != null;
-        } catch (IllegalArgumentException e) {
-            // parse error indicates that there was a body to parse
-            hasBody = true;
-        } catch (DavException e) {
-            throw new CosmoDavException(e);
-        }
+        boolean hasBody = DavRequestUtils.hasBody(request);
 
         if (hasBody) {
             throw new UnsupportedMediaTypeException("Body not expected for method " + request.getMethod());

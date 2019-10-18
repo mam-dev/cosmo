@@ -32,6 +32,10 @@ public interface Service extends InitializingBean, DisposableBean {
      */
     public void init();
 
+    @Override
+    default void afterPropertiesSet() {
+        init();
+    }
     /**
      * Readies the service for garbage collection, shutting down any
      * resources used.

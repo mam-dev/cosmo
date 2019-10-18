@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
-import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
@@ -38,6 +37,8 @@ import org.unitedinternet.cosmo.dav.acl.report.PrincipalMatchReport;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalPropertySearchReport;
 import org.unitedinternet.cosmo.dav.acl.report.PrincipalSearchPropertySetReport;
 import org.unitedinternet.cosmo.dav.impl.DavResourceBase;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
+import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponseFactory;
 import org.unitedinternet.cosmo.dav.property.*;
 import org.unitedinternet.cosmo.model.User;
 
@@ -151,8 +152,9 @@ public class DavUserPrincipalCollection extends DavResourceBase implements DavCo
     /**
      * 
      * {@inheritDoc}
+     * @return
      */
-    public MultiStatusResponse addCollection(DavCollection collection, DavPropertySet properties) throws CosmoDavException {
+    public CreateCollectionResponse addCollection(DavCollection collection, DavPropertySet properties, CreateCollectionResponseFactory factory) throws CosmoDavException {
         throw new UnsupportedOperationException();
     }
 

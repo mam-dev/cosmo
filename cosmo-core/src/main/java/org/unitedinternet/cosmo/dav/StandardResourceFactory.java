@@ -24,22 +24,24 @@ import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_OU
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jackrabbit.webdav.DavConstants;
+import org.apache.jackrabbit.webdav.property.DavProperty;
+import org.apache.jackrabbit.webdav.property.DavPropertyName;
+import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.apache.jackrabbit.webdav.xml.ElementIterator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
-import org.unitedinternet.cosmo.dav.impl.DavAvailability;
-import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
-import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
-import org.unitedinternet.cosmo.dav.impl.DavEvent;
-import org.unitedinternet.cosmo.dav.impl.DavFile;
-import org.unitedinternet.cosmo.dav.impl.DavFreeBusy;
-import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
-import org.unitedinternet.cosmo.dav.impl.DavInboxCollection;
-import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
-import org.unitedinternet.cosmo.dav.impl.DavTask;
+import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
+import org.unitedinternet.cosmo.dav.carddav.CarddavConstants;
+import org.unitedinternet.cosmo.dav.impl.*;
+import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
+import org.unitedinternet.cosmo.dav.property.WebDavProperty;
+import org.unitedinternet.cosmo.dav.util.DavRequestUtils;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
@@ -57,6 +59,11 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.UserService;
 import org.unitedinternet.cosmo.util.UriTemplate;
+import org.w3c.dom.Element;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Standard implementation of <code>DavResourceFactory</code>.
@@ -78,6 +85,8 @@ public class StandardResourceFactory implements DavResourceFactory {
     private ICalendarClientFilterManager clientFilterManager;
     private UserIdentitySupplier userIdentitySupplier;
 
+    private Map<DavPropertyName, Class> collectionResourceTypes = new HashMap<>();
+
     private boolean schedulingEnabled = false;
 
     public StandardResourceFactory(ContentService contentService, UserService userService,
@@ -94,6 +103,10 @@ public class StandardResourceFactory implements DavResourceFactory {
         this.clientFilterManager = clientFilterManager;
         this.userIdentitySupplier = userIdentitySupplier;
         this.schedulingEnabled = schedulingEnabled;
+
+        /* Resource type AGAINST collection type */
+        collectionResourceTypes.put(CaldavConstants.CALENDAR, DavCalendarCollection.class);
+        collectionResourceTypes.put(CarddavConstants.ADDRESSBOOK, DavAddressbookCollection.class);
     }
 
     /**
@@ -127,6 +140,39 @@ public class StandardResourceFactory implements DavResourceFactory {
             return new DavCalendarCollection(locator, this, entityFactory);
         }
         if (request.getMethod().equals("MKCOL")) {
+            /* Read properties and decide what collection to create */
+            DavPropertySet properties = request.getMkcolProperties();
+            if (properties.contains(DavPropertyName.RESOURCETYPE)) {
+                WebDavProperty resourceType = (WebDavProperty) properties.get(DavPropertyName.RESOURCETYPE);
+
+                Element e = (Element)resourceType.getValue();
+                ElementIterator i = DomUtil.getChildren(e);
+                DavCollection collection = null;
+                while (i.hasNext()){
+                    Element child = i.next();
+                    StandardDavProperty prop = StandardDavProperty.createFromXml(child);
+                    if (collectionResourceTypes.containsKey(prop.getName())) {
+                        LOG.debug("Found collection type: " + prop.getName().toString());
+                        if (collection == null)
+                        {
+                            try {
+                                collection = (DavCollection)collectionResourceTypes.get(prop.getName())
+                                        .getConstructor(DavResourceLocator.class, DavResourceFactory.class, EntityFactory.class).
+                                                newInstance(locator, this, entityFactory);
+
+                            } catch (Exception ex) {
+                                String message = "Unable to instantiate Collection class for resource type: " + prop.getName() + ": " + ex.toString();
+                                LOG.error(message);
+                                throw new BadRequestException(message);
+                            }
+                        } else {
+                            throw new BadRequestException("Two incompatible resource types specified");
+                        }
+                    }
+                }
+                return collection;
+            }
+
             return new DavCollectionBase(locator, this, entityFactory);
         }
         if (request.getMethod().equals("PUT")) {

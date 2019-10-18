@@ -22,32 +22,7 @@ import java.util.Calendar;
 
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
-import org.unitedinternet.cosmo.model.AvailabilityItem;
-import org.unitedinternet.cosmo.model.BinaryAttribute;
-import org.unitedinternet.cosmo.model.CalendarAttribute;
-import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.DecimalAttribute;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.EventExceptionStamp;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.FileItem;
-import org.unitedinternet.cosmo.model.FreeBusyItem;
-import org.unitedinternet.cosmo.model.IntegerAttribute;
-import org.unitedinternet.cosmo.model.MessageStamp;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.PasswordRecovery;
-import org.unitedinternet.cosmo.model.Preference;
-import org.unitedinternet.cosmo.model.QName;
-import org.unitedinternet.cosmo.model.StringAttribute;
-import org.unitedinternet.cosmo.model.TaskStamp;
-import org.unitedinternet.cosmo.model.TextAttribute;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.TicketType;
-import org.unitedinternet.cosmo.model.TriageStatus;
-import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.XmlAttribute;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
 import org.w3c.dom.Element;
 
@@ -108,6 +83,10 @@ public class HibEntityFactory implements EntityFactory {
 
     public CalendarCollectionStamp createCalendarCollectionStamp(CollectionItem col) {
         return new HibCalendarCollectionStamp(col);
+    }
+
+    public AddressbookCollectionStamp createAddressbookCollectionStamp(CollectionItem col) {
+        return new HibAddressbookCollectionStamp(col);
     }
 
     public CollectionSubscription createCollectionSubscription() {

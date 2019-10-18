@@ -16,11 +16,9 @@
 package org.unitedinternet.cosmo.dav.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.Status;
 import org.apache.jackrabbit.webdav.io.InputContext;
-import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
@@ -401,59 +398,6 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             item.setClientCreationDate(Calendar.getInstance().getTime());
             item.setClientModifiedDate(item.getClientCreationDate());
         }
-    }
-
-    /**
-     * Sets the attributes the item backing this resource from the given
-     * property set.
-     */
-    protected MultiStatusResponse populateAttributes(DavPropertySet properties) {
-        if (log.isDebugEnabled()) {
-            log.debug("populating attributes for " + getResourcePath());
-        }
-
-        MultiStatusResponse msr = new MultiStatusResponse(getHref(), null);
-        if (properties == null) {
-            return msr;
-        }
-
-        org.apache.jackrabbit.webdav.property.DavProperty<?> property = null;
-        List<DavPropertyName> df = new ArrayList<DavPropertyName>();
-        CosmoDavException error = null;
-        DavPropertyName failed = null;
-        for (DavPropertyIterator i = properties.iterator(); i.hasNext();) {
-            try {
-                property = i.nextProperty();
-                setResourceProperty((WebDavProperty) property, true);
-                df.add(property.getName());
-                msr.add(property.getName(), 200);
-            } catch (CosmoDavException e) {
-                // we can only report one error message in the
-                // responsedescription, so even if multiple properties would
-                // fail, we return 424 for the second and subsequent failures
-                // as well
-                if (error == null) {
-                    error = e;
-                    failed = property.getName();
-                } else {
-                    df.add(property.getName());
-                }
-            }
-        }
-
-        if (error == null) {
-            return msr;
-        }
-
-        // replace the other response with a new one, since we have to
-        // change the response code for each of the properties that would
-        // have been set successfully
-        msr = new MultiStatusResponse(getHref(), error.getMessage());
-        for (DavPropertyName n : df)
-            msr.add(n, 424);
-        msr.add(failed, error.getErrorCode());
-
-        return msr;
     }
 
     /**

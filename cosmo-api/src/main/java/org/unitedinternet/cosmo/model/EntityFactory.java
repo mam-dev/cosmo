@@ -86,8 +86,14 @@ public interface EntityFactory {
      * @return new CalendarCollectionStamp
      */
     public CalendarCollectionStamp createCalendarCollectionStamp(CollectionItem col);
-    
-    
+
+    /**
+     * Create new AddressbookCollectionStamp
+     * @param col - associated CollectionItem
+     *
+     */
+    public AddressbookCollectionStamp createAddressbookCollectionStamp(CollectionItem col);
+
     /**
      * Create new TriageStatus
      * @return new TriageStatus

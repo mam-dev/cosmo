@@ -55,15 +55,11 @@ spring:
       maximum-pool-size: 10     
   jpa:        
     properties:
+     hibernate.dialect: org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect
+     hibernate.cache.use_query_cache: false
+     hibernate.cache.use_second_level_cache: false
+     hibernate.show_sql: false
+     hibernate.hbm2ddl.auto: create # Drops on creation. See https://stackoverflow.com/questions/438146/what-are-the-possible-values-of-the-hibernate-hbm2ddl-auto-configuration-and-wha
+     hibernate.id.new_generator_mappings: false
 
-      hibernate.cache.use_query_cache: false
-      hibernate.cache.use_second_level_cache: false
-      hibernate.show_sql: false
-      hibernate.hbm2ddl.auto: create
-      hibernate.id.new_generator_mappings: false
-
-logging:
-  level:
-    org.springframework.beans: TRACE
-    org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer: DEBUG
 
