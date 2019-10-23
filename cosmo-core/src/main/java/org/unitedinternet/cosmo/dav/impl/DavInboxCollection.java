@@ -50,6 +50,7 @@ import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
+import org.unitedinternet.cosmo.dav.caldav.report.QueryReport;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.Etag;
@@ -84,6 +85,8 @@ public class DavInboxCollection extends DavResourceBase
         registerLiveProperty(DavPropertyName.ISCOLLECTION);
         registerLiveProperty(DavPropertyName.RESOURCETYPE);
         registerLiveProperty(DavPropertyName.GETETAG);
+        
+        REPORT_TYPES.add(QueryReport.REPORT_TYPE_CALDAV_QUERY);
     }
 
     public DavInboxCollection(DavResourceLocator locator,

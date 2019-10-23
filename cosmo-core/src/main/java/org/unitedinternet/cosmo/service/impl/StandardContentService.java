@@ -729,7 +729,7 @@ public class StandardContentService implements ContentService {
         }
         try {
             contentDao.updateCollectionTimestamp(parent); 
-            LOG.info("collection timestamp updated");
+            LOG.debug("collection timestamp updated");
         } finally {
             lockManager.unlockCollection(parent);
         }   
