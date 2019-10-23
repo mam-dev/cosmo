@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>3.6.1-SNAPSHOT</version>
+		<version>3.6.1</version>
 	</parent>
 		
 	<artifactId>cosmo-api</artifactId>
@@ -52,7 +52,7 @@
     <developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 	<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 	<url>https://github.com/1and1/</url>
-	<tag>cosmo-multimodule-1.5.3</tag>
+	<tag>cosmo-multimodule-3.6.1</tag>
   </scm>
 
 </project>
