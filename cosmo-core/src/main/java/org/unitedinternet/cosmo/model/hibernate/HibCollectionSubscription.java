@@ -25,10 +25,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 /**
  * Hibernate persistent CollectionSubscription.
@@ -44,9 +41,9 @@ public class HibCollectionSubscription extends HibAuditableObject implements Col
     @JoinColumn(name = "target_collection_id")
     private CollectionItem targetCollection;
     
-    @ManyToOne(targetEntity = HibUser.class)
+    @ManyToOne(targetEntity = HibUserBase.class)
     @JoinColumn(name = "ownerid")
-    private User owner;
+    private UserBase owner;
     
     @OneToOne(targetEntity = HibTicket.class)
     @JoinColumn(name = "ticketid")
@@ -74,12 +71,12 @@ public class HibCollectionSubscription extends HibAuditableObject implements Col
     }
 
     @Override
-    public User getOwner() {
+    public UserBase getOwner() {
         return this.owner;
     }
 
     @Override
-    public void setOwner(User owner) {
+    public void setOwner(UserBase owner) {
         this.owner = owner;
     }
 

@@ -60,6 +60,8 @@ public class PrincipalCollectionSet extends StandardDavProperty
         HashSet<String> hrefs = new HashSet<String>();
         hrefs.add(TEMPLATE_USERS.
                   bindAbsolute(locator.getBaseHref()));
+        hrefs.add(TEMPLATE_GROUPS.
+                bindAbsolute(locator.getBaseHref()));
         return hrefs;
     }
 }

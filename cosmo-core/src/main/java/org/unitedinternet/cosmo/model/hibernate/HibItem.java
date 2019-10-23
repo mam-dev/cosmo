@@ -49,17 +49,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
-import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.AttributeTombstone;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionItemDetails;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.QName;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.StampTombstone;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.Tombstone;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 
 /**
@@ -146,10 +136,10 @@ public abstract class HibItem extends HibAuditableObject implements Item {
 
     private transient Set<CollectionItem> parents = null;
 
-    @ManyToOne(targetEntity=HibUser.class, fetch=FetchType.LAZY)
+    @ManyToOne(targetEntity=HibUserBase.class, fetch=FetchType.LAZY)
     @JoinColumn(name="ownerid", nullable = false)
     @NotNull
-    private User owner;
+    private UserBase owner;
 
 
     @Override
@@ -383,12 +373,12 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     }
 
     @Override
-    public User getOwner() {
+    public UserBase getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(User owner) {
+    public void setOwner(UserBase owner) {
         this.owner = owner;
     }
 

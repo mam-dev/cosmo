@@ -64,10 +64,12 @@ public abstract class HibAuditableObject extends BaseModelObject implements Audi
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.AuditableObject#getCreationDate()
      */
+    @Override
     public Date getCreationDate() {
         return creationDate;
     }
 
+    @Override
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -75,37 +77,31 @@ public abstract class HibAuditableObject extends BaseModelObject implements Audi
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.AuditableObject#getModifiedDate()
      */
+    @Override
     public Date getModifiedDate() {
         return modifiedDate;
     }
 
+    @Override
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.AuditableObject#updateTimestamp()
-     */
-    public void updateTimestamp() {
-        modifiedDate = new Date();
-    }
+
     
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.AuditableObject#getEntityTag()
      */
+    @Override
     public String getEntityTag() {
         return etag;
     }
-    
+
+    @Override
     public void setEntityTag(String etag) {
         this.etag = etag;
     }
     
-    /**
-     * Calculates object's entity tag. Returns the empty string. Subclasses should override this.
-     */
-    public abstract String calculateEntityTag();
 
     /**
      * <p>
@@ -116,7 +112,7 @@ public abstract class HibAuditableObject extends BaseModelObject implements Audi
         
         // Use MessageDigest stored in threadlocal so that each
         // thread has its own instance.
-        MessageDigest md = ETAG_DIGEST_LOCAL.get();        
+        MessageDigest md = ETAG_DIGEST_LOCAL.get();
         return Base64.encodeBase64String(md.digest(bytes));
     }
     

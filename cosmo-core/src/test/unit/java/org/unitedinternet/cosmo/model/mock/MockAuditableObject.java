@@ -23,12 +23,13 @@ import org.apache.commons.codec.binary.Base64;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.model.AuditableObject;
 import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.EntityTagCalculableObject;
 
 /**
  * Extends BaseModelObject and adds creationDate, modifiedDate
  * to track when Object was created and modified.
  */
-public abstract class MockAuditableObject implements AuditableObject {
+public abstract class MockAuditableObject  implements AuditableObject, EntityTagCalculableObject {
 
     private static final ThreadLocal<MessageDigest> ETAG_DIGEST_LOCAL = new ThreadLocal<MessageDigest>();
     private static final EntityFactory FACTORY = new MockEntityFactory();
@@ -44,6 +45,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Gets creation date.
      * @return The date.
      */
+    @Override
     public Date getCreationDate() {
         return creationDate;
     }
@@ -55,6 +57,8 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Sets creation date.
      * @param creationDate The creation date.
      */
+
+    @Override
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -66,6 +70,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Gets modified date.
      * @return the date.
      */
+    @Override
     public Date getModifiedDate() {
         return modifiedDate;
     }
@@ -77,20 +82,11 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Sets modified date.
      * @param modifiedDate Modified date.
      */
+    @Override
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceAuditableObject#updateTimestamp()
-     */
-    /**
-     * Updates timestamp.
-     */
-    public void updateTimestamp() {
-        modifiedDate = new Date();
-    }
-    
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.copy.InterfaceAuditableObject#getEntityTag()
      */

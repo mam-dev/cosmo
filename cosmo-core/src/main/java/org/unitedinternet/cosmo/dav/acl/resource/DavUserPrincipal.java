@@ -326,7 +326,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
         
         properties.add(new AlternateUriSet());
         properties.add(new PrincipalUrl(getResourceLocator(), user));
-        properties.add(new GroupMembership());
+        properties.add(new GroupMembership(getResourceLocator(), user));
     }
 
     protected void setLiveProperty(WebDavProperty property, boolean create)

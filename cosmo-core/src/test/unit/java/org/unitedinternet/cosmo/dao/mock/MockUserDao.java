@@ -21,14 +21,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.lang.NonNull;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.PasswordRecovery;
-import org.unitedinternet.cosmo.model.Preference;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.mock.MockAuditableObject;
+import org.unitedinternet.cosmo.model.mock.MockGroup;
 import org.unitedinternet.cosmo.model.mock.MockUser;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
 
@@ -37,6 +36,7 @@ import org.unitedinternet.cosmo.util.VersionFourGenerator;
  */
 public class MockUserDao implements UserDao {
     static int idseq = 0;
+
 
     @SuppressWarnings("rawtypes")
     private HashMap usernameIdx;
@@ -47,6 +47,9 @@ public class MockUserDao implements UserDao {
     @SuppressWarnings("rawtypes")
     private HashMap activationIdIdx;
     private HashMap<String, PasswordRecovery> passwordRecoveryIdx;
+
+    private final HashMap groupUidIdx;
+    private final HashMap groupUsernameIdx;
 
     private MockDaoStorage storage = null;
     
@@ -64,6 +67,10 @@ public class MockUserDao implements UserDao {
         uidIdx = new HashMap();
         activationIdIdx = new HashMap();
         passwordRecoveryIdx = new HashMap<String, PasswordRecovery>();
+
+        //Indexes for groups
+        groupUidIdx = new HashMap<>();
+        groupUsernameIdx = new HashMap<>();
 
         // add overlord user
         MockUser overlord = new MockUser();
@@ -93,6 +100,14 @@ public class MockUserDao implements UserDao {
         return (User) usernameIdx.get(username);
     }
 
+    @Override
+    public Group getGroup(String name) {
+        if (name == null) {
+            return null;
+        }
+        return (Group) groupUsernameIdx.get(name);
+    }
+
     /**
      * Gets user by uid.
      * {@inheritDoc}
@@ -104,6 +119,14 @@ public class MockUserDao implements UserDao {
             return null;
         }
         return (User) uidIdx.get(uid);
+    }
+
+    @Override
+    public Group getGroupByUid(String uid) {
+        if (uid == null) {
+            return null;
+        }
+        return (Group) groupUidIdx.get(uid);
     }
 
     /**
@@ -139,6 +162,7 @@ public class MockUserDao implements UserDao {
      * @return The user.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public User createUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("null user");
@@ -148,19 +172,12 @@ public class MockUserDao implements UserDao {
         
         // Set create/modified date, etag for User and associated subscriptions
         // and perferences.
-        ((MockAuditableObject) user).setModifiedDate(new Date());
-        ((MockAuditableObject) user).setCreationDate(new Date());
-        ((MockAuditableObject) user).setEntityTag(((MockAuditableObject) user)
-                .calculateEntityTag());
-               
+
         
         for(Preference p: user.getPreferences()) {
-            ((MockAuditableObject) p).setEntityTag(((MockAuditableObject) p)
-                    .calculateEntityTag());
-            ((MockAuditableObject) p).setModifiedDate(new Date());
-            ((MockAuditableObject) p).setCreationDate(new Date());
+            p.updateTimestamp();
         }
-            
+        user.updateTimestamp();
         ((MockUser) user).validate();
         if (usernameIdx.containsKey(user.getUsername())) {
             throw new DuplicateUsernameException(user.getUsername());
@@ -176,6 +193,26 @@ public class MockUserDao implements UserDao {
         return user;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Group createGroup(Group group) {
+        if (group == null) {
+            throw new IllegalArgumentException("null group");
+        }
+        group.setUid(idGenerator.nextStringIdentifier());
+        group.updateTimestamp();
+
+        ((MockGroup) group).validateUsername();
+        if (groupUsernameIdx.containsKey(group.getUsername())) {
+            throw new DuplicateUsernameException(group.getUsername());
+        }
+
+        groupUsernameIdx.put(group.getUsername(), group);
+        groupUidIdx.put(group.getUid(), group);
+        return group;
+
+    }
+
     /**
      * Updates user.
      * {@inheritDoc}
@@ -183,6 +220,7 @@ public class MockUserDao implements UserDao {
      * @return The user.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public User updateUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("null user");
@@ -190,20 +228,12 @@ public class MockUserDao implements UserDao {
         
         // Update modified date, etag for User and associated subscriptions
         // and preferences.
-        ((MockAuditableObject) user).setModifiedDate(new Date());
-        ((MockAuditableObject) user).setEntityTag(((MockAuditableObject) user)
-                .calculateEntityTag());
-                
-        
+
         for(Preference p: user.getPreferences()) {
-            ((MockAuditableObject) p).setEntityTag(((MockAuditableObject) p)
-                    .calculateEntityTag());
-            ((MockAuditableObject) p).setModifiedDate(new Date());
-            if (p.getCreationDate()==null) {
-                ((MockAuditableObject) p).setCreationDate(new Date());
-            }
+            p.updateTimestamp();
         }
-        
+        user.updateTimestamp();
+
         ((MockUser) user).validate();
         String key = user.isUsernameChanged() ?
             user.getOldUsername() :
@@ -230,6 +260,42 @@ public class MockUserDao implements UserDao {
         return user;
     }
 
+    @Override
+    public Group updateGroup(Group group) {
+        // Check for not null
+        if (group == null) {
+            throw new IllegalArgumentException("null group");
+        }
+
+
+        //update all timestamps
+        for (Preference p: group.getPreferences()) {
+            p.updateTimestamp();
+        }
+        group.updateTimestamp();
+
+        ((MockGroup) group).validateUsername();
+
+        String key = group.isUsernameChanged() ?
+            group.getOldUsername() :
+            group.getUsername();
+        if (! groupUsernameIdx.containsKey(key)) {
+            throw new IllegalArgumentException("group not found");
+        }
+        if (group.isUsernameChanged() &&
+                groupUsernameIdx.containsKey(group.getUsername())) {
+            throw new DuplicateUsernameException(group.getUsername());
+        }
+
+
+        groupUsernameIdx.put(group.getUsername(), group);
+        if (group.isUsernameChanged()) {
+            groupUsernameIdx.remove(group.getOldUsername());
+            storage.setRootUid(group.getUsername(), storage.getRootUid(group.getOldUsername()));
+        }
+        return group;
+    }
+
     /**
      * Removes user.
      * {@inheritDoc}
@@ -246,6 +312,16 @@ public class MockUserDao implements UserDao {
         }
     }
 
+    @Override
+    public void removeGroup(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("null group name");
+        }
+        if (usernameIdx.containsKey(name)) {
+            groupUsernameIdx.remove(name);
+        }
+    }
+
     /**
      * Removes user.
      * {@inheritDoc}
@@ -257,6 +333,14 @@ public class MockUserDao implements UserDao {
         }
         usernameIdx.remove(user.getUsername());
         emailIdx.remove(user.getEmail());
+    }
+
+    @Override
+    public void removeGroup(Group group) {
+        if (group == null) {
+            return;
+        }
+        groupUsernameIdx.remove(group.getUsername());
     }
 
     // Dao methods

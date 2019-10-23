@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao;
 
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
 
 /**
@@ -34,6 +35,9 @@ public interface UserDao extends Dao {
      * @return The user account.
      */
     public User getUser(String username);
+
+    public Group getGroup(String name);
+
     
     
     /**
@@ -44,6 +48,9 @@ public interface UserDao extends Dao {
      * @return The user account identified by the given uid.
      */
     public User getUserByUid(String uid);
+
+    public Group getGroupByUid(String uid);
+
 
     /**
      * Returns the user account identified by the given email address.
@@ -64,6 +71,8 @@ public interface UserDao extends Dao {
      */
     public User createUser(User user);
 
+    public Group createGroup(Group group);
+
     /**
      * Updates a user account that exists in the repository. Returns a
      * new instance of <code>User</code>  after saving the original
@@ -75,6 +84,8 @@ public interface UserDao extends Dao {
      */
     public User updateUser(User user);
 
+    public Group updateGroup(Group group);
+
     /**
      * Removes the user account identified by the given username from
      * the repository.
@@ -83,11 +94,16 @@ public interface UserDao extends Dao {
      */
     public void removeUser(String username);
 
+    public void removeGroup (String name);
+
+
     /**
      * Removes a user account from the repository.
      *
      * @param user the user to remove
      */
     public void removeUser(User user);
+
+    public void removeGroup(Group group);
         
 }

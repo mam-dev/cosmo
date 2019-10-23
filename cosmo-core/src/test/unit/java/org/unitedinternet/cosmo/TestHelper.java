@@ -179,7 +179,7 @@ public class TestHelper {
      * @return The ticket.
      */
     public Ticket makeDummyTicket(String timeout) {
-        Ticket ticket = entityFactory.creatTicket();
+        Ticket ticket = entityFactory.createTicket();
         ticket.setTimeout(timeout);
         ticket.setPrivileges(new HashSet<String>());
         ticket.getPrivileges().add(Ticket.PRIVILEGE_READ);

@@ -169,9 +169,9 @@ public interface Item extends AuditableObject{
      */
     public void setDisplayName(String displayName);
 
-    public User getOwner();
+    public UserBase getOwner();
 
-    public void setOwner(User owner);
+    public void setOwner(UserBase owner);
 
     public String getUid();
 

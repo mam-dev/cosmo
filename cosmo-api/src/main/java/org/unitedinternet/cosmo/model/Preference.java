@@ -31,6 +31,6 @@ public interface Preference extends AuditableObject{
 
     public User getUser();
 
-    public void setUser(User user);
+    public void setUser(UserBase user);
 
 }

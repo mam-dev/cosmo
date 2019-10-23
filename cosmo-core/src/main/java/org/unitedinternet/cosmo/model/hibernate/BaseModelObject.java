@@ -26,13 +26,17 @@ import javax.persistence.MappedSuperclass;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.unitedinternet.cosmo.model.EntityTagCalculableObject;
 
 /**
  * Base class for model objects.
+ *
+ * These objects support setting creation and modification date via setters
+ * It is implied that an entity tag  depend on time and therefore updateTimestamp updates the entity tag
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass
-public abstract class BaseModelObject implements Serializable {
+public abstract class BaseModelObject implements Serializable, EntityTagCalculableObject {
 
     private static final long serialVersionUID = 8396186357498363586L;
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
@@ -52,4 +56,5 @@ public abstract class BaseModelObject implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
 }

@@ -15,31 +15,19 @@
  */
 package org.unitedinternet.cosmo.model.mock;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.Preference;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
 
 /**
  */
-public class MockUser extends MockAuditableObject implements User {
+public class MockUser extends MockUserBase implements User {
 
-    /**
-     */
-    public static final int USERNAME_LEN_MIN = 3;
-    /**
-     */
-    public static final int USERNAME_LEN_MAX = 32;
-    /**
-     */
-    public static final Pattern USERNAME_PATTERN = Pattern
-            .compile("^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$");
 
     /**
      */
@@ -60,11 +48,6 @@ public class MockUser extends MockAuditableObject implements User {
      */
     public static final int EMAIL_LEN_MAX = 128;
 
-    private String uid;
-
-    private String username;
-
-    private transient String oldUsername;
 
     private String password;
 
@@ -78,110 +61,18 @@ public class MockUser extends MockAuditableObject implements User {
 
     private String activationId;
 
-    private Boolean admin;
-
-    private transient Boolean oldAdmin;
-
     private Boolean locked;
 
-    private Set<Preference> preferences = new HashSet<Preference>(0);
-    
-    private Set<CollectionSubscription> subscriptions = new HashSet<>();
-
+    private Set<Group> groups = new HashSet<>();
     /**
      * Constructor.
      */
     public MockUser() {
-        admin = Boolean.FALSE;
+        super();
         locked = Boolean.FALSE;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getUid()
-     */
-    /**
-     * Gets uid.
-     * 
-     * @return The string.
-     */
-    public final String getUid() {
-        return uid;
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#setUid(java.lang.String)
-     */
-    /**
-     * Sets uid.
-     * 
-     * @param uid
-     *            The id.
-     */
-    public final void setUid(final String uid) {
-        this.uid = uid;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getUsername()
-     */
-    /**
-     * Gets username.
-     * 
-     * @return The username.
-     */
-    public final String getUsername() {
-        return username;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#setUsername(java.lang.String)
-     */
-    /**
-     * Sets username.
-     * 
-     * @param username
-     *            The username.
-     */
-    public final void setUsername(final String username) {
-        oldUsername = this.username;
-        this.username = username;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getOldUsername()
-     */
-    /**
-     * Gets old username.
-     * 
-     * @return The old username.
-     */
-    public final String getOldUsername() {
-        return oldUsername != null ? oldUsername : username;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#isUsernameChanged()
-     */
-    /**
-     * Verify if the username is changed.
-     * 
-     * @return The boolean if the username is changed.
-     */
-    public final boolean isUsernameChanged() {
-        return oldUsername != null && !oldUsername.equals(username);
-    }
 
     /*
      * (non-Javadoc)
@@ -328,63 +219,7 @@ public class MockUser extends MockAuditableObject implements User {
         return oldEmail != null && !oldEmail.equals(email);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getAdmin()
-     */
-    /**
-     * Gets admin.
-     * 
-     * @return admin.
-     */
-    public final Boolean getAdmin() {
-        return admin;
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getOldAdmin()
-     */
-    /**
-     * Gets old admin.
-     * 
-     * @return The old admin.
-     */
-    public final Boolean getOldAdmin() {
-        return oldAdmin;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#isAdminChanged()
-     */
-    /**
-     * Verify if admin is changed.
-     * 
-     * @return If admin is changed or not.
-     */
-    public final boolean isAdminChanged() {
-        return oldAdmin != null && !oldAdmin.equals(admin);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#setAdmin(java.lang.Boolean)
-     */
-    /**
-     * Sets admin.
-     * 
-     * @param admin
-     *            The admin.
-     */
-    public final void setAdmin(final Boolean admin) {
-        oldAdmin = this.admin;
-        this.admin = admin;
-    }
 
     /*
      * (non-Javadoc)
@@ -415,18 +250,21 @@ public class MockUser extends MockAuditableObject implements User {
         this.activationId = activationId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#isOverlord()
-     */
-    /**
-     * Is overload.
-     * 
-     * @return The boolean for is overload.
-     */
-    public final boolean isOverlord() {
-        return username != null && username.equals(USERNAME_OVERLORD);
+    @Override
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    @Override
+    public void addGroup(Group group) {
+        groups.add(group);
+        group.getUsers().add(this);
+    }
+
+    @Override
+    public void removeGroup(Group group) {
+        groups.remove(group);
+        group.getUsers().remove(this);
     }
 
     /*
@@ -484,38 +322,7 @@ public class MockUser extends MockAuditableObject implements User {
         this.locked = locked;
     }
 
-    /**
-     * Username determines equality
-     * 
-     * @param obj
-     *            The object.
-     * @return The equals boolean.
-     */
-    @Override
-    public final boolean equals(final Object obj) {
-        if (obj == null || username == null) {
-            return false;
-        }
-        if (!(obj instanceof User)) {
-            return false;
-        }
 
-        return username.equals(((User) obj).getUsername());
-    }
-
-    /**
-     * Hashcode. {@inheritDoc}
-     * 
-     * @return The hashCode.
-     */
-    @Override
-    public final int hashCode() {
-        if (username == null) {
-            return super.hashCode();
-        } else {
-            return username.hashCode();
-        }
-    }
 
     /**
      * ToString. {@inheritDoc}
@@ -523,9 +330,9 @@ public class MockUser extends MockAuditableObject implements User {
      * @return The string.
      */
     public final String toString() {
-        return new ToStringBuilder(this).append("username", username).append("password", "xxxxxx")
+        return new ToStringBuilder(this).append("username", getUsername()).append("password", "xxxxxx")
                 .append("firstName", firstName).append("lastName", lastName).append("email", email)
-                .append("admin", admin).append("activationId", activationId).append("locked", locked).toString();
+                .append("admin", getAdmin()).append("activationId", activationId).append("locked", locked).toString();
     }
 
     /*
@@ -543,27 +350,7 @@ public class MockUser extends MockAuditableObject implements User {
         validateEmail();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#validateUsername()
-     */
-    /**
-     * Validate username.
-     */
-    public final void validateUsername() {
-        if (username == null) {
-            throw new ModelValidationException(this, "Username not specified");
-        }
-        if (username.length() < USERNAME_LEN_MIN || username.length() > USERNAME_LEN_MAX) {
-            throw new ModelValidationException(this,
-                    "Username must be " + USERNAME_LEN_MIN + " to " + USERNAME_LEN_MAX + " characters in length");
-        }
-        Matcher m = USERNAME_PATTERN.matcher(username);
-        if (!m.matches()) {
-            throw new ModelValidationException(this, "Username contains illegal " + "characters");
-        }
-    }
+
 
     /*
      * (non-Javadoc)
@@ -637,95 +424,6 @@ public class MockUser extends MockAuditableObject implements User {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getPreferences()
-     */
-    /**
-     * Gets preferences.
-     * 
-     * @return preferences.
-     */
-    public final Set<Preference> getPreferences() {
-        return preferences;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.unitedinternet.cosmo.model.copy.InterfaceUser#addPreference(org.unitedinternet.cosmo.model.copy.Preference)
-     */
-    /**
-     * Adds preference.
-     * 
-     * @param preference
-     *            The preference.
-     */
-    public final void addPreference(final Preference preference) {
-        preference.setUser(this);
-        preferences.add(preference);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#getPreference(java.lang.String)
-     */
-    /**
-     * Gets preference.
-     * 
-     * @param key
-     *            The key.
-     * @return The preference.
-     */
-    public final Preference getPreference(final String key) {
-        for (Preference pref : preferences) {
-            if (pref.getKey().equals(key)) {
-                return pref;
-            }
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#removePreference(java.lang.String)
-     */
-    /**
-     * Removes preference.
-     * 
-     * @param key
-     *            The key.
-     */
-    public final void removePreference(final String key) {
-        removePreference(getPreference(key));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#removePreference(org.unitedinternet.cosmo.model.copy.
-     * Preference)
-     */
-    /**
-     * Removes preference.
-     * 
-     * @param preference
-     *            The preference.
-     */
-    public final void removePreference(final Preference preference) {
-        if (preference != null) {
-            preferences.remove(preference);
-        }
-    }
-    
-    @Override
-    public Set<CollectionSubscription> getSubscriptions() {
-        return this.subscriptions;
-    }
 
     /**
      * Calculates entity tag.
@@ -735,7 +433,7 @@ public class MockUser extends MockAuditableObject implements User {
     public final String calculateEntityTag() {
         String username = getUsername() != null ? getUsername() : "-";
         String modTime = getModifiedDate() != null ? Long.valueOf(getModifiedDate().getTime()).toString() : "-";
-        String etag = username + ":" + modTime;
-        return encodeEntityTag(etag.getBytes());
+        String etag = "user:" + username + ":" + modTime;
+        return encodeEntityTag(etag.getBytes(StandardCharsets.UTF_8));
     }
 }

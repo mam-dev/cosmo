@@ -165,7 +165,12 @@ public class HibEntityFactory implements EntityFactory {
         return new HibUser();
     }
 
-    public Ticket creatTicket() {
+    @Override
+    public Group createGroup() {
+        return new HibGroup();
+    }
+
+    public Ticket createTicket() {
         return new HibTicket();
     }
 

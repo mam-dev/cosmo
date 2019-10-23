@@ -701,7 +701,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
             throw new BadRequestException("Empty or invalid " + QN_PRIVILEGE);
         }
 
-        Ticket ticket = entityFactory.creatTicket();
+        Ticket ticket = entityFactory.createTicket();
         ticket.setTimeout(timeout);
         privileges.setTicketPrivileges(ticket);
 

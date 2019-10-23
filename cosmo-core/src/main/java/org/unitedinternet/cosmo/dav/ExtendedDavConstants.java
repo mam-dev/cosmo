@@ -102,4 +102,6 @@ public interface ExtendedDavConstants extends DavConstants {
         new UriTemplate("/{username}/Outbox");
     UriTemplate TEMPLATE_HOME =
         new UriTemplate("/{username}/*");
+    UriTemplate TEMPLATE_GROUPS = new UriTemplate("/groups");
+    UriTemplate TEMPLATE_GROUP = new UriTemplate("/groups/{groupname}");
 }

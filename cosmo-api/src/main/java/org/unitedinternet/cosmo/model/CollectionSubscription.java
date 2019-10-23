@@ -36,9 +36,9 @@ public interface CollectionSubscription extends AuditableObject {
      * 
      * @return the owner of this subscription (sharee).
      */
-    public User getOwner();
+    public UserBase getOwner();
 
-    public void setOwner(User owner);
+    public void setOwner(UserBase owner);
 
     /**
      * Gets the ticket set for this subscription based on which sharee privileges will be calculated.

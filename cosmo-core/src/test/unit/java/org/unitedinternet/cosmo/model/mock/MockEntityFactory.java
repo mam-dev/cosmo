@@ -300,12 +300,17 @@ public class MockEntityFactory implements EntityFactory {
         return new MockUser();
     }
 
+    @Override
+    public Group createGroup() {
+        return new MockGroup();
+    }
+
     /**
      * Creates ticket.
      * {@inheritDoc}
      * @return The ticket.
      */
-    public Ticket creatTicket() {
+    public Ticket createTicket() {
         return new MockTicket();
     }
 

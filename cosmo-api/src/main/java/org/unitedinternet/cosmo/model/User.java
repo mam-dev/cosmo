@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Represents a user in the cosmo server.
  */
-public interface User extends AuditableObject{
+public interface User extends UserBase{
 
     /**
      */
@@ -201,62 +201,27 @@ public interface User extends AuditableObject{
      */
     public boolean isEmailChanged();
 
-    /**
-     */
-    public Boolean getAdmin();
 
-    public Boolean getOldAdmin();
-
-    /**
-     */
-    public boolean isAdminChanged();
-
-    /**
-     */
-    public void setAdmin(Boolean admin);
-
-    /**
-     */
-    public String getActivationId();
-
-    /**
-     */
-    public void setActivationId(String activationId);
-
-    /**
-     */
-    public boolean isOverlord();
-
-    /**
-     */
-    public boolean isActivated();
-
-    /**
-     *
-     *
-     */
-    public void activate();
+    public void validateRawPassword();
 
     public Boolean isLocked();
 
     public void setLocked(Boolean locked);
 
-    /**
-     */
-    public void validateRawPassword();
+    public boolean isActivated();
 
-    public Set<Preference> getPreferences();
 
-    public void addPreference(Preference preference);
+    public String getActivationId();
 
-    public Preference getPreference(String key);
+    public void setActivationId(String activationId);
 
-    public void removePreference(String key);
+    public Set<Group> getGroups();
 
-    public void removePreference(Preference preference);    
+    public void addGroup(Group group);
 
-    public String calculateEntityTag();
-    
-    public Set<CollectionSubscription> getSubscriptions();
+    public void removeGroup (Group group);
+
+
+
 
 }

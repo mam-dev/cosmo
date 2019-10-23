@@ -64,8 +64,13 @@ public interface EntityFactory {
      * @return new User
      */
     public User createUser();
-    
-    
+
+    /**
+     * Create new Group
+     */
+    public Group createGroup();
+
+
     /**
      * Create new CollectionSubscription
      * @return new CollectionSubscription
@@ -158,7 +163,7 @@ public interface EntityFactory {
      * Create new Ticket
      * @return new Ticket
      */
-    public Ticket creatTicket();
+    public Ticket createTicket();
     
     
     /**

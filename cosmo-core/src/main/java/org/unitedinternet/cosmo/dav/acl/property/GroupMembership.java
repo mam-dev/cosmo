@@ -19,8 +19,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
+import org.unitedinternet.cosmo.model.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -34,8 +36,12 @@ import org.w3c.dom.Element;
 public class GroupMembership extends StandardDavProperty
     implements AclConstants {
 
-    public GroupMembership() {
-        super(GROUPMEMBERSHIP, new HashSet<String>(), true);
+
+
+
+    public GroupMembership(DavResourceLocator locator, User user) {
+        super(GROUPMEMBERSHIP, hrefs(locator, user), true);
+
     }
 
     public Set<String> getHrefs() {
@@ -54,11 +60,11 @@ public class GroupMembership extends StandardDavProperty
         return name;
     }
 
-    /*private static HashSet<String> hrefs(DavResourceLocator locator,
+    private static HashSet<String> hrefs(DavResourceLocator locator,
                                          User user) {
         HashSet<String> hrefs = new HashSet<String>();
         // XXX: when we add groups, use the service locator to find the
         // principal url for each of the user's groups
         return hrefs;
-    }*/
+    }
 }
