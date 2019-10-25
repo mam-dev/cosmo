@@ -17,10 +17,17 @@ public class HibGroup extends HibUserBase implements Group {
     public static final int DISPLAYNAME_LEN_MIN = 1;
 
     public static final int DISPLAYNAME_LEN_MAX = 128;
-    @ManyToMany(targetEntity = HibUser.class)
+
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            targetEntity = HibUser.class,
+            cascade = {
+                    CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE,
+            })
     @JoinTable(name="usergroupmap", joinColumns = {
             @JoinColumn(name ="fk_group") },
-            inverseJoinColumns = {@JoinColumn(name ="fk_user")})
+            inverseJoinColumns = {@JoinColumn(name ="fk_user"),
+            })
     private Set<User> users = new HashSet<>();
 
     @Column(name = "displayname")

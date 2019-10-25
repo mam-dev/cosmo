@@ -77,8 +77,7 @@ public class AllowAllAuthenticationProvider implements AuthenticationProvider {
             group = this.userService.createGroup(group);
         }
         group.addUser(user);
-        user = this.userService.updateUser(user);
-        this.userService.updateGroup(group);
+
 
 
 

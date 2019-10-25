@@ -157,6 +157,11 @@ public class HibUser extends HibUserBase implements User {
     }
 
     @Override
+    public boolean isOverlord() {
+        return getUsername() != null && getUsername().equals(USERNAME_OVERLORD);
+    }
+
+    @Override
     public Set<Group> getGroups() {
         return groups;
     }

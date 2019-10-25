@@ -114,19 +114,19 @@
                 + " preference where preference.key=:key and preference.value=:value"),
         
         // UserOrGroup (HibUserBase) Queries
-        @NamedQuery(name="userOrGroup.byUsername", query="from HibGroup where username=:username"),
-        @NamedQuery(name = "userOrGroup.byUid", query = "from HibGroup where uid=:uid"),
-        @NamedQuery(name = "userOrGroup.all", query = "from HibGroup"),
-        @NamedQuery(name = "userOrGroup.count", query = "select count(id) from HibGroup"),
-        @NamedQuery(name = "usersOrGroups.byPreference", query = "select g from HibGroup g join g.preferences"
+        @NamedQuery(name="userOrGroup.byUsername", query="from HibUserBase where username=:username"),
+        @NamedQuery(name = "userOrGroup.byUid", query = "from HibUserBase where uid=:uid"),
+        @NamedQuery(name = "userOrGroup.all", query = "from HibUserBase"),
+        @NamedQuery(name = "userOrGroup.count", query = "select count(id) from HibUserBase"),
+        @NamedQuery(name = "usersOrGroups.byPreference", query = "select g from HibUserBase g join g.preferences"
                 + " preference where preference.key=:key and preference.value=:value"),
         
         // Group Queries
-        @NamedQuery(name="group.byUsername", query="from HibUserBase where username=:username"),
-        @NamedQuery(name = "group.byUid", query = "from HibUserBase where uid=:uid"),
-        @NamedQuery(name = "group.all", query = "from HibUserBase"),
-        @NamedQuery(name = "group.count", query = "select count(id) from HibUserBase"),
-        @NamedQuery(name = "groups.byPreference", query = "select u from HibUserBase u join u.preferences"
+        @NamedQuery(name="group.byUsername", query="from HibGroup where username=:username"),
+        @NamedQuery(name = "group.byUid", query = "from HibGroup where uid=:uid"),
+        @NamedQuery(name = "group.all", query = "from HibGroup"),
+        @NamedQuery(name = "group.count", query = "select count(id) from HibGroup"),
+        @NamedQuery(name = "groups.byPreference", query = "select u from HibGroup u join u.preferences"
                 + " preference where preference.key=:key and preference.value=:value"),
         
         

@@ -15,13 +15,6 @@
  */
 package org.unitedinternet.cosmo.dav;
 
-import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_COLLECTION;
-import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_ITEM;
-import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER;
-import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USERS;
-import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_INBOX;
-import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_OUTBOX;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavConstants;
@@ -43,18 +36,7 @@ import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.util.DavRequestUtils;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
-import org.unitedinternet.cosmo.model.AvailabilityItem;
-import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.FileItem;
-import org.unitedinternet.cosmo.model.FreeBusyItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.UserIdentitySupplier;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.UserService;
@@ -64,6 +46,8 @@ import org.w3c.dom.Element;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.*;
 
 /**
  * Standard implementation of <code>DavResourceFactory</code>.
@@ -234,6 +218,12 @@ public class StandardResourceFactory implements DavResourceFactory {
             return createUserPrincipalResource(locator, match);
         }
 
+
+        match = TEMPLATE_GROUP.match(uri);
+        if (match != null) {
+            return createGroupPrincipalResource(locator, match);
+        }
+
         if (schedulingEnabled) {
             match = TEMPLATE_USER_INBOX.match(uri);
             if (match != null) {
@@ -245,6 +235,7 @@ public class StandardResourceFactory implements DavResourceFactory {
                 return new DavOutboxCollection(locator, this);
             }
         }
+
 
         return createUnknownResource(locator, uri);
     }
@@ -307,6 +298,12 @@ public class StandardResourceFactory implements DavResourceFactory {
             throws CosmoDavException {
         User user = userService.getUser(match.get("username"));
         return user != null ? new DavUserPrincipal(user, locator, this, userIdentitySupplier) : null;
+    }
+
+    protected WebDavResource createGroupPrincipalResource(DavResourceLocator locator, UriTemplate.Match match)
+            throws CosmoDavException {
+        Group group = userService.getGroup(match.get("groupname"));
+        return group != null ? new DavUserPrincipal(group, locator, this, userIdentitySupplier) : null;
     }
 
     protected WebDavResource createUnknownResource(DavResourceLocator locator, String uri) throws CosmoDavException {

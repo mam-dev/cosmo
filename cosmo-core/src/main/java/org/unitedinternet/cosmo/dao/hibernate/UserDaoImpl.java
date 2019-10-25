@@ -111,7 +111,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Group getGroup(String name) {
-        return null;
+        return findGroupByName(name);
     }
 
     @Override
@@ -163,7 +163,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     public void removeUser(User user) {
-        // TODO: Should probably let DB take care of this with cascade constaint
+        for (Group g : user.getGroups()) {
+            g.removeUser(user);
+        }
         this.em.remove(user);
         this.em.flush();
 
@@ -247,7 +249,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private UserBase findUserOrGroupByName(String name) {
-        List<HibUserBase> usersList = this.em.createNamedQuery("user.byUsername", HibUserBase.class)
+        List<HibUserBase> usersList = this.em.createNamedQuery("userOrGroup.byUsername", HibUserBase.class)
                 .setParameter("username", name).getResultList();
         if (!usersList.isEmpty()) {
             return usersList.get(0);
