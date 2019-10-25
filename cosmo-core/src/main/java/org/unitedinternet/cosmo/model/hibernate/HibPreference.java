@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.model.Preference;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 
 /**
  * Hibernate persistent Preference.
@@ -42,10 +42,10 @@ public class HibPreference extends HibAuditableObject implements Preference {
 
     private static final long serialVersionUID = 1376628118792909420L;
     
-    @ManyToOne(targetEntity=HibUser.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity=HibUserBase.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "userid", nullable = false)
     @NotNull
-    private User user;
+    private UserBase user;
     
     @Column(name = "preferencename", nullable = false, length = 255)
     @NotNull
@@ -95,14 +95,16 @@ public class HibPreference extends HibAuditableObject implements Preference {
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Preference#getUser()
      */
-    public User getUser() {
+    @Override
+    public UserBase getUser() {
         return user;
     }
 
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Preference#setUser(org.unitedinternet.cosmo.model.User)
      */
-    public void setUser(User user) {
+    @Override
+    public void setUser(UserBase user) {
         this.user = user;
     }
     

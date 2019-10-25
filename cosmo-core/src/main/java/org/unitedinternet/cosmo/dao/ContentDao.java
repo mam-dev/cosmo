@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 
 /**
  * Interface for DAO that provides base operations for content items.
@@ -136,11 +136,11 @@ public interface ContentDao extends ItemDao {
     
     /**
      * Remove all content owned by a user
-     * 
+     *
      * @param user
      *            user to remove content for
      */
-    public void removeUserContent(User user);
+    public void removeUserContent(UserBase user);
 
     /**
      * Remove collection item

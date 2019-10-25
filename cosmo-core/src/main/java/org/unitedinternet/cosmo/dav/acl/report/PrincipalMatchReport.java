@@ -34,6 +34,7 @@ import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Element;
 
 /**
@@ -207,7 +208,7 @@ public class PrincipalMatchReport extends MultiStatusReport
         if (! (resource instanceof DavUserPrincipal)) {
             return false;
         }
-        User principal = ((DavUserPrincipal)resource).getUser();
+        UserBase principal = ((DavUserPrincipal)resource).getUser();
         if (! currentUser.equals(principal)) {
             return false;
         }

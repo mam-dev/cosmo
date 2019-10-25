@@ -191,7 +191,7 @@ public class HibUser extends HibUserBase implements User {
         this.activationId = null;
     }
 
-    HibUser() {
+    public HibUser() {
         super();
         locked = Boolean.FALSE;
     }

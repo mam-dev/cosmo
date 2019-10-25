@@ -66,6 +66,7 @@ public class TestHelper {
 
     protected static CalendarBuilder calendarBuilder = new CalendarBuilder();
 
+    //Counters of dummy objects
     static int apseq = 0;
     static int cseq = 0;
     static int eseq = 0;

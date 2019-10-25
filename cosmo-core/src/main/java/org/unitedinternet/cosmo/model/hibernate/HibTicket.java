@@ -35,10 +35,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.TicketType;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 /**
  * Hibernate persistent Ticket.
@@ -70,9 +67,9 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
     @org.hibernate.annotations.Type(type="timestamp")
     private Date created;
     
-    @ManyToOne(targetEntity=HibUser.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity=HibUserBase.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "ownerid")
-    private User owner;
+    private UserBase owner;
     
     @ManyToOne(targetEntity=HibItem.class, fetch=FetchType.LAZY)
     @JoinColumn(name="itemid")
@@ -181,14 +178,14 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Ticket#getOwner()
      */
-    public User getOwner() {
+    public UserBase getOwner() {
         return owner;
     }
 
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Ticket#setOwner(org.unitedinternet.cosmo.model.User)
      */
-    public void setOwner(User owner) {
+    public void setOwner(UserBase owner) {
         this.owner = owner;
     }
 

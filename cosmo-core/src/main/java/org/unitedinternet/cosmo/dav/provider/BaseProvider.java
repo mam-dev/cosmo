@@ -62,10 +62,7 @@ import org.unitedinternet.cosmo.dav.io.DavInputContext;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.dav.util.DavRequestUtils;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.security.CosmoSecurityContext;
 
 /**
@@ -560,7 +557,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
                     || resource instanceof DavOutboxCollection) {
                 hasPrivilege = uae.evaluateUserPrincipalCollection(privilege);
             } else {
-                User user = ((DavUserPrincipal) resource).getUser();
+                UserBase user = ((DavUserPrincipal) resource).getUser();
                 hasPrivilege = uae.evaluateUserPrincipal(user, privilege);
             }
         }

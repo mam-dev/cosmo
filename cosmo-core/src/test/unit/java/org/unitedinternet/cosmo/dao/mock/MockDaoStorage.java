@@ -26,13 +26,7 @@ import java.util.Set;
 
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.mock.MockCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockHomeCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockItem;
@@ -179,7 +173,7 @@ public class MockDaoStorage {
      * @param user The user.
      * @return Home collection item.
      */
-    public HomeCollectionItem createRootItem(User user) {
+    public HomeCollectionItem createRootItem(UserBase user) {
         MockHomeCollectionItem rootCollection = new MockHomeCollectionItem();
         rootCollection.setName(user.getUsername());
         rootCollection.setOwner(user);

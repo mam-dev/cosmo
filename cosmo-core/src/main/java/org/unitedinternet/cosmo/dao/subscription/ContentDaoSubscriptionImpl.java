@@ -13,15 +13,7 @@ import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
 import org.unitedinternet.cosmo.dao.hibernate.ContentDaoImpl;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.TicketType;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
 
@@ -38,12 +30,12 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
 
     private final ContentDaoImpl contentDaoInternal;
 
-    private final FreeBusyObfuscater freeBusyObfuscater;
+    private final FreeBusyObfuscator freeBusyObfuscater;
 
     @PersistenceContext
     private EntityManager em;
 
-    public ContentDaoSubscriptionImpl(ContentDaoImpl contentDaoInternal, FreeBusyObfuscater freeBusyObfuscater) {
+    public ContentDaoSubscriptionImpl(ContentDaoImpl contentDaoInternal, FreeBusyObfuscator freeBusyObfuscater) {
         super();
         this.contentDaoInternal = contentDaoInternal;
         this.freeBusyObfuscater = freeBusyObfuscater;
@@ -90,17 +82,17 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
-    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public HomeCollectionItem getRootItem(User user) {
+    public HomeCollectionItem getRootItem(UserBase user) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public HomeCollectionItem createRootItem(User user) {
+    public HomeCollectionItem createRootItem(UserBase user) {
         throw new UnsupportedOperationException();
     }
 
@@ -289,7 +281,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
-    public void removeUserContent(User user) {
+    public void removeUserContent(UserBase user) {
         throw new UnsupportedOperationException();
     }
 

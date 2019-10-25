@@ -72,6 +72,7 @@ public class MockUserDao implements UserDao {
         groupUidIdx = new HashMap<>();
         groupUsernameIdx = new HashMap<>();
 
+
         // add overlord user
         MockUser overlord = new MockUser();
         overlord.setUsername(User.USERNAME_OVERLORD);
@@ -83,6 +84,13 @@ public class MockUserDao implements UserDao {
         overlord.setCreationDate(new Date());
         overlord.setModifiedDate(new Date());
         createUser(overlord);
+
+        //Add overlords group
+        MockGroup overlords = new MockGroup();
+        overlords.setDisplayName("Overlords");
+        overlord.addGroup(overlords);
+        createGroup(overlords);
+        updateUser(overlord);
     }
 
     // UserDao methods

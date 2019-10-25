@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
@@ -67,9 +68,6 @@ import org.unitedinternet.cosmo.dav.property.IsCollection;
 import org.unitedinternet.cosmo.dav.property.LastModified;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.UserIdentity;
-import org.unitedinternet.cosmo.model.UserIdentitySupplier;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
 
@@ -106,17 +104,20 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
         REPORT_TYPES.add(PrincipalMatchReport.REPORT_TYPE_PRINCIPAL_MATCH);
     }
 
-    private User user;
+    private UserBase user;
     private DavUserPrincipalCollection parent;
     private DavAcl acl;
     private UserIdentitySupplier userIdentitySupplier;
 
-    public DavUserPrincipal(User user,
+    public DavUserPrincipal(UserBase user,
                             DavResourceLocator locator,
                             DavResourceFactory factory,
                             UserIdentitySupplier userIdentitySupplier)
         throws CosmoDavException {
         super(locator, factory);
+        if (!(user instanceof User) && !(user instanceof Group)) {
+            throw new CosmoException();
+        }
         this.user = user;
         this.acl = makeAcl();
         this.userIdentitySupplier = userIdentitySupplier;
@@ -142,25 +143,8 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
     }
 
     public String getDisplayName() {
-    	UserIdentity userIdentity = userIdentitySupplier.forUser(user);
-        String firstName = userIdentity.getFirstName();
-        String lastName = userIdentity.getLastName();
-        String email = userIdentity.getEmails().isEmpty() ? "" : userIdentity.getEmails().iterator().next();
-        
-        String toReturn = null;
-        
-        if(firstName == null && lastName == null){
-            toReturn = email;
-        }else if(firstName == null){
-            toReturn = lastName;
-        }else if(lastName == null){
-            toReturn = firstName;
-        }else {
-            toReturn = firstName + " " + lastName; 
-        }
-        return toReturn;
+        return userIdentitySupplier.forUserOrGroup(user).getDisplayName();
     }
-
     public String getETag() {
         return "\"" + user.getEntityTag() + "\"";
     }
@@ -224,7 +208,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
 
     // our methods
 
-    public User getUser() {
+    public UserBase getUser() {
         return user;
     }
 

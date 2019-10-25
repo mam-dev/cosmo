@@ -65,15 +65,7 @@ import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.property.Uuid;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
-import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionLockedException;
-import org.unitedinternet.cosmo.model.DataSizeException;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.QName;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.util.PathUtil;
 import org.w3c.dom.Element;
@@ -385,7 +377,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
         // Only initialize owner once
         if (item.getOwner() == null) {
-            User owner = getSecurityManager().getSecurityContext().getUser();
+            UserBase owner = getSecurityManager().getSecurityContext().getUser();
             if (owner == null) {
                 Ticket ticket = getSecurityManager().getSecurityContext()
                         .getTicket();

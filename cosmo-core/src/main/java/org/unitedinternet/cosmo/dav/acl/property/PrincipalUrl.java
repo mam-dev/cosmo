@@ -19,9 +19,10 @@ import org.apache.jackrabbit.webdav.xml.DomUtil;
 
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
-import org.unitedinternet.cosmo.model.User;
 
+import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -35,18 +36,12 @@ public class PrincipalUrl extends StandardDavProperty
     implements AclConstants {
 
     public PrincipalUrl(DavResourceLocator locator,
-                        User user) {
-        super(PRINCIPALURL, href(locator, user), true);
+                        UserBase user) {
+        super(PRINCIPALURL, PrincipalUtils.href(locator, user), true);
     }
 
     public String getHref() {
         return (String) getValue();
-    }
-
-    private static String href(DavResourceLocator locator,
-                               User user) {
-        return TEMPLATE_USER.bindAbsolute(locator.getBaseHref(),
-                                          user.getUsername());
     }
 
     public Element toXml(Document document) {

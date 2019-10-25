@@ -21,6 +21,7 @@ import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 import org.unitedinternet.cosmo.model.UserIdentitySupplier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,12 +39,11 @@ public class CalendarUserAddressSet extends StandardDavProperty implements Calda
      * @param locator DavResourceLocator
      * @param user Cosmo User
      */
-    public CalendarUserAddressSet(User user, UserIdentitySupplier identitySupplier) {
-        super(CALENDARUSERADDRESSSET, identitySupplier.forUser(user).getEmails(), true);
-        this.userEmails = identitySupplier.forUser(user).getEmails();
+    public CalendarUserAddressSet(UserBase user, UserIdentitySupplier identitySupplier) {
+        super(CALENDARUSERADDRESSSET, identitySupplier.forUserOrGroup(user).getEmails(), true);
+        this.userEmails = identitySupplier.forUserOrGroup(user).getEmails();
     }
 
-   
 
     
     /* (non-Javadoc)

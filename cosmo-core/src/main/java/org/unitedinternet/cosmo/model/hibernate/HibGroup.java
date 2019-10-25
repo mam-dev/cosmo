@@ -46,7 +46,7 @@ public class HibGroup extends HibUserBase implements Group {
     }
 
     @Override
-    public String displayName() {
+    public String getDisplayName() {
         return displayName;
     }
 

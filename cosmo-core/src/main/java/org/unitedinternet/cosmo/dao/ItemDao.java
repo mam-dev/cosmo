@@ -17,12 +17,7 @@ package org.unitedinternet.cosmo.dao;
 
 import java.util.Set;
 
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 
 /**
@@ -93,7 +88,7 @@ public interface ItemDao extends Dao {
      *            cleans the session before loading the item
      * @return home collection item.
      */
-    public HomeCollectionItem getRootItem(User user, boolean forceReload);
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload);
 
     /**
      * Get the root item for a user
@@ -102,7 +97,7 @@ public interface ItemDao extends Dao {
      *            The user for get the root item.
      * @return home collection item.
      */
-    public HomeCollectionItem getRootItem(User user);
+    public HomeCollectionItem getRootItem(UserBase user);
 
     /**
      * Create the root item for a user.
@@ -111,7 +106,7 @@ public interface ItemDao extends Dao {
      *            The user for create the root item.
      * @return Home collection item.
      */
-    public HomeCollectionItem createRootItem(User user);
+    public HomeCollectionItem createRootItem(UserBase user);
 
     /**
      * Copy an item to the given path

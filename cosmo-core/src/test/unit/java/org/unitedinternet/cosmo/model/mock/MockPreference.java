@@ -17,6 +17,7 @@ package org.unitedinternet.cosmo.model.mock;
 
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 
 /**
  * Represents a user preference.
@@ -24,7 +25,7 @@ import org.unitedinternet.cosmo.model.User;
 public class MockPreference extends MockAuditableObject implements Preference {
 
    
-    private User user;
+    private UserBase user;
     
     
     private String key;
@@ -99,7 +100,8 @@ public class MockPreference extends MockAuditableObject implements Preference {
      * Gets user.
      * @return The user.
      */
-    public User getUser() {
+    @Override
+    public UserBase getUser() {
         return user;
     }
 
@@ -110,7 +112,8 @@ public class MockPreference extends MockAuditableObject implements Preference {
      * Sets user.
      * @param user The user.
      */
-    public void setUser(User user) {
+    @Override
+    public void setUser(UserBase user) {
         this.user = user;
     }
     

@@ -1,5 +1,7 @@
 package org.unitedinternet.cosmo.model;
 
+import org.unitedinternet.cosmo.CosmoException;
+
 /**
  * Defines a contract for supplying identification data for a user.
  * 
@@ -18,4 +20,18 @@ package org.unitedinternet.cosmo.model;
 
 public interface UserIdentitySupplier {
 	UserIdentity forUser(User user);
+	UserIdentity forGroup (Group group);
+
+	default UserIdentity forUserOrGroup (UserBase user) {
+		if (user instanceof  User)
+		{
+			return forUser((User)user);
+		} else if (user instanceof Group) {
+			return forGroup((Group)user);
+		} else {
+			throw new CosmoException();
+		}
+	}
+
+
 }

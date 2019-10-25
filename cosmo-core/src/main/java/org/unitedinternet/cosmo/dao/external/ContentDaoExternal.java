@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
@@ -20,18 +19,7 @@ import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionForbidden;
 import org.unitedinternet.cosmo.ext.ContentSource;
 import org.unitedinternet.cosmo.ext.ExternalContentRuntimeException;
-import org.unitedinternet.cosmo.model.BaseEventStamp;
-import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.EventExceptionStamp;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.EqualsExpression;
 import org.unitedinternet.cosmo.model.filter.EventStampFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -281,17 +269,17 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     @Override
-    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public HomeCollectionItem getRootItem(User user) {
+    public HomeCollectionItem getRootItem(UserBase user) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public HomeCollectionItem createRootItem(User user) {
+    public HomeCollectionItem createRootItem(UserBase user) {
         throw new UnsupportedOperationException();
     }
 
@@ -434,7 +422,7 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     @Override
-    public void removeUserContent(User user) {
+    public void removeUserContent(UserBase user) {
         throw new UnsupportedOperationException();
     }
 

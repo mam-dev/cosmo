@@ -31,7 +31,7 @@ public class MockGroup  extends MockUserBase implements Group {
     }
 
     @Override
-    public String displayName() {
+    public String getDisplayName() {
         return displayName;
     }
 

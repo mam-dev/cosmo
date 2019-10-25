@@ -27,15 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.ItemDao;
 import org.unitedinternet.cosmo.dao.ItemNotFoundException;
-import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.QName;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.ItemFilterEvaluater;
 import org.unitedinternet.cosmo.model.filter.ItemFilterPostProcessor;
@@ -116,7 +108,7 @@ public class MockItemDao implements ItemDao {
     }
 
     @Override
-    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload) {
         return getRootItem(user);
     }
 
@@ -150,7 +142,7 @@ public class MockItemDao implements ItemDao {
      * @param user The user.
      * @return Home collection item.
      */
-    public HomeCollectionItem getRootItem(User user) {
+    public HomeCollectionItem getRootItem(UserBase user) {
         if (user == null) {
             throw new IllegalArgumentException("null user");
         }
@@ -167,7 +159,7 @@ public class MockItemDao implements ItemDao {
      * @param user The user.
      * @return The home collection item.
      */
-    public HomeCollectionItem createRootItem(User user) {
+    public HomeCollectionItem createRootItem(UserBase user) {
         if (user == null) {
             throw new IllegalArgumentException("null user");
         }
@@ -529,7 +521,8 @@ public class MockItemDao implements ItemDao {
      * @return The root.
      */
     @SuppressWarnings("rawtypes")
-    protected Set findRootChildren(User user) {
+    protected Set findRootChildren(UserBase user) {
+        /* TODO May a mistake be right here? Should it be user.getUsername() ? */
         return storage.findItemChildren(storage.getRootItem(user.getUid()));
     }
     

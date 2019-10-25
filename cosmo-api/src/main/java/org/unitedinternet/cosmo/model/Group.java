@@ -9,8 +9,10 @@ public interface Group extends UserBase  {
 
     public void removeUser (User user);
 
-    public String displayName();
+    public String getDisplayName();
 
     public void setDisplayName(String displayName);
+
+
 
 }

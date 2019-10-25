@@ -35,5 +35,5 @@ public interface ScheduleDao extends Dao {
 
     public Set<Schedule> getSchedulesForUser(User user);
 
-    public void genableScheduleForUser(Schedule schedule, User user, boolean enabled);
+    public void enableScheduleForUser(Schedule schedule, User user, boolean enabled);
 }

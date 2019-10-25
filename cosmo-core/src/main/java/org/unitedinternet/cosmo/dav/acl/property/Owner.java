@@ -18,9 +18,11 @@ package org.unitedinternet.cosmo.dav.acl.property;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.model.User;
 
+import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -33,8 +35,8 @@ import org.w3c.dom.Document;
 public class Owner extends StandardDavProperty {
 
     public Owner(DavResourceLocator locator,
-                 User user) {
-        super(OWNER, href(locator, user), true);
+                 UserBase user) {
+        super(OWNER, PrincipalUtils.href(locator, user), true);
     }
 
     public String getHref() {
@@ -49,12 +51,4 @@ public class Owner extends StandardDavProperty {
         return name;
     }
 
-    private static String href(DavResourceLocator locator,
-                               User user) {
-        if (user == null) {
-            return null;
-        }
-        return TEMPLATE_USER.bindAbsolute(locator.getBaseHref(),
-                                          user.getUsername());
-    }
 }

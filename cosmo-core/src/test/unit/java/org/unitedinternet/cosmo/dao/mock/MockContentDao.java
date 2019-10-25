@@ -20,11 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.unitedinternet.cosmo.dao.ContentDao;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.UidInUseException;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.mock.MockCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockItem;
 import org.springframework.dao.ConcurrencyFailureException;
@@ -223,7 +219,7 @@ public class MockContentDao extends MockItemDao implements ContentDao {
      * {@inheritDoc}
      * @param user The user.
      */
-    public void removeUserContent(User user) {
+    public void removeUserContent(UserBase user) {
         // do nothing for now
     }
 

@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.service.impl;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
@@ -32,8 +33,10 @@ import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 import org.unitedinternet.cosmo.service.OverlordDeletionException;
 import org.unitedinternet.cosmo.service.ServiceEvent;
 import org.unitedinternet.cosmo.service.ServiceListener;
@@ -74,6 +77,7 @@ public class StandardUserService extends BaseService implements UserService {
      * @throws DataRetrievalFailureException
      *             if the account does not exist
      */
+    @Override
     public User getUser(String username) {
         if (LOG.isDebugEnabled()) {
             // Fix Log Forging - fortify
@@ -82,6 +86,12 @@ public class StandardUserService extends BaseService implements UserService {
             LOG.debug("getting user " + username);
         }
         return userDao.getUser(username);
+    }
+
+    @Override
+    public Group getGroup(String name) {
+        LOG.debug("getting group " + name);
+        return  userDao.getGroup(name);
     }
 
     /**
@@ -93,6 +103,7 @@ public class StandardUserService extends BaseService implements UserService {
      * @throws DataRetrievalFailureException
      *             if the account does not exist
      */
+    @Override
     public User getUserByEmail(String email) {
         if (LOG.isDebugEnabled()) {
             // Fix Log Forging - fortify
@@ -113,8 +124,14 @@ public class StandardUserService extends BaseService implements UserService {
      * @throws DataIntegrityViolationException
      *             if the username or email address is already in use
      */
+    @Override
     public User createUser(User user) {
         return createUser(user, new ServiceListener[] {});
+    }
+
+    @Override
+    public Group createGroup(Group group) {
+        return createGroup(group, new ServiceListener[] {});
     }
 
     /**
@@ -128,6 +145,7 @@ public class StandardUserService extends BaseService implements UserService {
      * @throws DataIntegrityViolationException
      *             if the username or email address is already in use
      */
+    @Override
     public User createUser(User user, ServiceListener[] listeners) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("creating user " + user.getUsername());
@@ -164,6 +182,29 @@ public class StandardUserService extends BaseService implements UserService {
         return newUser;
     }
 
+    @Override
+    public Group createGroup(Group group, ServiceListener[] listeners) {
+        LOG.debug("creating group: " + group.getUsername());
+
+        fireBeforeEvent(new ServiceEvent("CREATE_GROUP", group), listeners);
+        try {
+            userDao.createGroup(group);
+            LOG.info("created new group: " + group.getUsername());
+        } catch (DataIntegrityViolationException e) {
+            if (userDao.getUser(group.getUsername()) != null) {
+                throw new DuplicateUsernameException(group.getUsername());
+            }
+            throw e;
+        }
+        Group newGroup = userDao.getGroup(group.getUsername());
+
+        HomeCollectionItem home = contentDao.createRootItem(newGroup);
+        fireAfterEvent(new ServiceEvent("CREATE_GROUP", group, home), listeners);
+
+        return newGroup;
+    }
+
+
     /**
      * Updates a user account that exists in the repository. If the password has been changed, digests the raw new
      * password and uses the result to replace the stored password. Returns a new instance of <code>User</code> after
@@ -177,6 +218,7 @@ public class StandardUserService extends BaseService implements UserService {
      * @throws DataIntegrityViolationException
      *             if the username or email address is already in use
      */
+    @Override
     public User updateUser(User user) {
         boolean isUsernameChanged = user.isUsernameChanged();
         if (LOG.isDebugEnabled()) {
@@ -216,12 +258,33 @@ public class StandardUserService extends BaseService implements UserService {
         return newUser;
     }
 
+    @Override
+    public Group updateGroup (Group group) {
+        boolean isNameChanged = group.isUsernameChanged();
+        LOG.debug("updating group " +  group.getOldUsername());
+
+        if (isNameChanged) {
+            LOG.debug(group.getOldUsername() + ":  changing group name to"  + group.getUsername());
+        }
+        userDao.updateGroup(group);
+
+        Group newGroup = userDao.getGroup(group.getUsername());
+        if (isNameChanged) {
+            LOG.debug("renaming root item for group: " + newGroup.getUsername());
+            HomeCollectionItem rootCollection = contentDao.getRootItem(newGroup);
+            rootCollection.setName(newGroup.getUsername());
+            contentDao.updateCollection(rootCollection);
+        }
+        return newGroup;
+    }
+
     /**
      * Removes the user account identified by the given username from the repository.
      *
      * @param username
      *            the username of the account to return
      */
+    @Override
     public void removeUser(String username) {
         if (LOG.isDebugEnabled()) {
             // Fix Log Forging - fortify
@@ -233,12 +296,21 @@ public class StandardUserService extends BaseService implements UserService {
         removeUserAndItems(user);
     }
 
+    @Override
+    public void removeGroup(String name) {
+        LOG.debug("removing group: " + name);
+        Group group = userDao.getGroup(name);
+        removeUserAndItems(group);
+    }
+
+
     /**
      * Removes a user account from the repository.
      *
      * @param user
      *            the account to remove
      */
+    @Override
     public void removeUser(User user) {
         if (LOG.isDebugEnabled()) {
             // Fix Log Forging - fortify
@@ -249,11 +321,18 @@ public class StandardUserService extends BaseService implements UserService {
         removeUserAndItems(user);
     }
 
+    @Override
+    public void removeGroup(Group group) {
+        LOG.debug("removing group " + group.getUsername());
+        removeUserAndItems(group);
+    }
+
     /**
      * Removes a set of user accounts from the repository. Will not remove the overlord.
      * 
      * @param users
      */
+    @Override
     public void removeUsers(Set<User> users) throws OverlordDeletionException {
         for (User user : users) {
             if (user.isOverlord()) {
@@ -271,6 +350,20 @@ public class StandardUserService extends BaseService implements UserService {
             }
         }
 
+    }
+
+    @Override
+    public void removeGroups(Set<Group> groups) {
+        for (Group group: groups) {
+            removeUserAndItems(group);
+            LOG.debug("removing group: "+ group.getUsername());
+        }
+    }
+
+    @Override
+    public  void removeGroupsByName(Set<String> names) {
+        removeGroups(names.stream().map(name -> userDao.getGroup(name))
+                .collect(Collectors.toSet()));
     }
 
     /**
@@ -400,8 +493,9 @@ public class StandardUserService extends BaseService implements UserService {
     /**
      * Remove all Items associated to User. This is done by removing the HomeCollectionItem, which is the root
      * collection of all the user's items.
+     * @param user
      */
-    private void removeUserAndItems(User user) {
+    private void removeUserAndItems(UserBase user) {
         if (user == null) {
             return;
         }
@@ -411,6 +505,17 @@ public class StandardUserService extends BaseService implements UserService {
         // remove dangling items
         // (items that only exist in other user's collections)
         contentDao.removeUserContent(user);
-        userDao.removeUser(user);
+
+        if (user instanceof User) {
+
+            userDao.removeUser((User) user);
+            LOG.debug("removed user and all items: " + user);
+        }
+        else if (user instanceof Group) {
+            userDao.removeGroup((Group) user);
+            LOG.debug("removed group and all items: " + user);
+        } else {
+            throw new CosmoException();
+        }
     }
 }

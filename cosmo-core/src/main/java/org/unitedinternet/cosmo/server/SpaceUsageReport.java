@@ -21,11 +21,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.FileItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 /**
  * Aggregates information about a user's usage of storage space.
@@ -96,7 +92,7 @@ public class SpaceUsageReport {
         }
 
         /** */
-        public User getOwner() {
+        public UserBase getOwner() {
             return item.getOwner();
         }
     }

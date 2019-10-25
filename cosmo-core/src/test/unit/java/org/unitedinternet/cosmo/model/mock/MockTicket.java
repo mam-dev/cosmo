@@ -22,10 +22,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.TicketType;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 /**
  * A bean encapsulating the information about a ticket used in the
@@ -51,7 +48,7 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
     
     private Date created;
     
-    private User owner;
+    private UserBase owner;
     
     private Item item;
 
@@ -208,7 +205,8 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
      * Gets owner.
      * @return The user.
      */
-    public User getOwner() {
+    @Override
+    public UserBase getOwner() {
         return owner;
     }
 
@@ -219,7 +217,8 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
      * Sets owner.
      * @param owner The owner.
      */
-    public void setOwner(User owner) {
+    @Override
+    public void setOwner(UserBase owner) {
         this.owner = owner;
     }
 

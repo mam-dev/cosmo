@@ -22,6 +22,8 @@ import javax.validation.constraints.NotNull;
 
 import org.unitedinternet.cosmo.model.ServerProperty;
 
+import java.util.Date;
+
 /**
  * Hibernate persistent ServerProperty.
  */
@@ -76,4 +78,5 @@ public class HibServerProperty extends BaseModelObject implements ServerProperty
     public void setValue(String value) {
         this.value = value;
     }
+
 }

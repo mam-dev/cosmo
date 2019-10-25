@@ -72,9 +72,9 @@ public interface Ticket extends AuditableObject {
      */
     public void setCreated(Date created);
 
-    public User getOwner();
+    public UserBase getOwner();
 
-    public void setOwner(User owner);
+    public void setOwner(UserBase owner);
 
     /**
      */

@@ -1,9 +1,6 @@
 package org.unitedinternet.cosmo.dao.subscription;
 
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.EventExceptionStamp;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.util.FreeBusyUtil;
 
 import net.fortuna.ical4j.model.Calendar;
@@ -19,14 +16,14 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class FreeBusyObfuscaterDefault implements FreeBusyObfuscater {
+public class FreeBusyObfuscatorDefault implements FreeBusyObfuscator {
 
-    public FreeBusyObfuscaterDefault() {
+    public FreeBusyObfuscatorDefault() {
         // Default one.
     }
 
     @Override
-    public void apply(User owner, ContentItem contentItem) {
+    public void apply(UserBase owner, ContentItem contentItem) {
         contentItem.setDisplayName(FREE_BUSY_TEXT);
         contentItem.setName(FREE_BUSY_TEXT);        
         EventStamp stamp = (EventStamp) contentItem.getStamp(EventStamp.class);

@@ -22,6 +22,7 @@ import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.model.User;
 
+import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -40,7 +41,7 @@ public class CalendarHomeSet extends StandardDavProperty
      * @param user The user.
      */
     public CalendarHomeSet(DavResourceLocator locator,
-                           User user) {
+                           UserBase user) {
         super(CALENDARHOMESET, href(locator, user), true);
     }
 
@@ -63,7 +64,7 @@ public class CalendarHomeSet extends StandardDavProperty
     }
 
     private static String href(DavResourceLocator locator,
-                               User user) {
+                               UserBase user) {
         return TEMPLATE_HOME.bindAbsolute(locator.getBaseHref(), user.getUsername());
     }
 }

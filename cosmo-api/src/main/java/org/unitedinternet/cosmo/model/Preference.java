@@ -29,7 +29,7 @@ public interface Preference extends AuditableObject{
 
     public void setValue(String value);
 
-    public User getUser();
+    public UserBase getUser();
 
     public void setUser(UserBase user);
 

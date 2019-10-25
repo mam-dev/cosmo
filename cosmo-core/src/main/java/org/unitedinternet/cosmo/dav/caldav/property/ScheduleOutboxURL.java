@@ -22,6 +22,7 @@ import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.model.User;
 
+import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -38,7 +39,7 @@ public class ScheduleOutboxURL extends StandardDavProperty implements CaldavCons
      * @param locator DavResourceLocator
      * @param user Cosmo User
      */
-    public ScheduleOutboxURL(DavResourceLocator locator, User user) {
+    public ScheduleOutboxURL(DavResourceLocator locator, UserBase user) {
         super(SCHEDULEOUTBOXURL, href(locator, user), true);
     }
 
@@ -62,7 +63,7 @@ public class ScheduleOutboxURL extends StandardDavProperty implements CaldavCons
         return name;
     }
 
-    private static String href(DavResourceLocator locator, User user) {
+    private static String href(DavResourceLocator locator, UserBase  user) {
         return TEMPLATE_USER_OUTBOX.bindAbsolute(locator.getBaseHref(), user.getUsername());
     }
 }

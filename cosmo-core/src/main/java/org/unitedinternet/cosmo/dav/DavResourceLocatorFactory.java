@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.dav;
 import java.net.URL;
 
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 
 /**
  * <p>
@@ -90,6 +91,6 @@ public interface DavResourceLocatorFactory {
      * @throws CosmoDavException - if something is wrong this exception is thrown.
      */
     DavResourceLocator createPrincipalLocator(URL context,
-                                                     User user)
+                                              UserBase user)
         throws CosmoDavException;
 }

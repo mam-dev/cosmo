@@ -30,9 +30,13 @@ import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 import org.unitedinternet.cosmo.model.hibernate.BaseModelObject;
+import org.unitedinternet.cosmo.model.hibernate.HibGroup;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
+import org.unitedinternet.cosmo.model.hibernate.HibUserBase;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
 
 /**
@@ -58,7 +62,7 @@ public class UserDaoImpl implements UserDao {
             throw new IllegalArgumentException("new user is required");
         }
 
-        if (findUserByUsername(user.getUsername()) != null) {
+        if (findUserOrGroupByName(user.getUsername()) != null) {
             throw new DuplicateUsernameException(user.getUsername());
         }
 
@@ -77,8 +81,37 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Group createGroup(Group group) {
+        if (group == null) {
+            throw new IllegalArgumentException("group is required");
+        }
+
+        if (getBaseModelObject(group).getId() != -1) {
+            throw new IllegalArgumentException("new group is required");
+        }
+        /** TODO: Maybe split users and groups onto different tables? **/
+        if (findUserOrGroupByName(group.getUsername()) != null) {
+            throw new DuplicateUsernameException(group.getUsername());
+        }
+
+
+        if (group.getUid() == null || "".equals(group.getUid())) {
+            group.setUid(getIdGenerator().nextStringIdentifier());
+        }
+
+        this.em.persist(group);
+        this.em.flush();
+        return group;
+    }
+
+    @Override
     public User getUser(String username) {
         return findUserByUsername(username);
+    }
+
+    @Override
+    public Group getGroup(String name) {
+        return null;
     }
 
     @Override
@@ -87,6 +120,11 @@ public class UserDaoImpl implements UserDao {
             throw new IllegalArgumentException("uid required");
         }
         return findUserByUid(uid);
+    }
+
+    @Override
+    public Group getGroupByUid(String uid) {
+        return null;
     }
 
     @Override
@@ -111,11 +149,30 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public void removeGroup(String name) {
+        try {
+            Group group = findGroupByName(name);
+            if (group != null) {
+                removeGroup(group);;
+            }
+        } catch (HibernateException e) {
+            this.em.clear();;
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
     public void removeUser(User user) {
         // TODO: Should probably let DB take care of this with cascade constaint
         this.em.remove(user);
         this.em.flush();
 
+    }
+
+    @Override
+    public void removeGroup(Group group) {
+        this.em.remove(group);
+        this.em.flush();
     }
 
     public User updateUser(User user) {
@@ -139,6 +196,23 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    @Override
+    public Group updateGroup(Group group) {
+        // Prevent auto flushing when querying for existing users
+        this.em.setFlushMode(FlushModeType.COMMIT);
+
+        UserBase findUser = findUserOrGroupByName(group.getUsername());
+
+        if (findUser != null) {
+                throw new DuplicateUsernameException(group.getUsername());
+        }
+        group.updateTimestamp();
+        this.em.merge(group);
+        this.em.flush();
+
+        return group;
+    }
+
     @PostConstruct
     public void init() {
         if (idGenerator == null) {
@@ -155,7 +229,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private User findUserByUsername(String username) {
-        List<HibUser> usersList = this.em.createQuery(" FROM HibUser u WHERE u.username= :username", HibUser.class)
+        List<HibUser> usersList = this.em.createNamedQuery("user.byUsername", HibUser.class)
                 .setParameter("username", username).getResultList();
         if (!usersList.isEmpty()) {
             return usersList.get(0);
@@ -163,25 +237,56 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
+    private Group findGroupByName(String name) {
+        List<HibGroup> groupsList = this.em.createNamedQuery("group.byUsername", HibGroup.class)
+                .setParameter("username", name).getResultList();
+        if (!groupsList.isEmpty()) {
+            return groupsList.get(0);
+        }
+        return null;
+    }
+
+    private UserBase findUserOrGroupByName(String name) {
+        List<HibUserBase> usersList = this.em.createNamedQuery("user.byUsername", HibUserBase.class)
+                .setParameter("username", name).getResultList();
+        if (!usersList.isEmpty()) {
+            return usersList.get(0);
+        }
+        return null;
+    }
+
+
     private User findUserByUsernameOrEmail(Long userId, String username, String email) {
         TypedQuery<User> query = this.em.createNamedQuery("user.byUsernameOrEmail", User.class)
                 .setParameter("username", username).setParameter("email", email).setParameter("userid", userId);
-        return this.getUserFromQuery(query);
+        return this.getFirstFromQuery(query);
     }
 
     private User findUserByEmail(String email) {
         TypedQuery<User> query = this.em.createNamedQuery("user.byEmail", User.class).setParameter("email", email);
-        return this.getUserFromQuery(query);
+        return this.getFirstFromQuery(query);
     }
 
     private User findUserByUid(String uid) {
         TypedQuery<User> query = this.em.createNamedQuery("user.byUid", User.class).setParameter("uid", uid);
-        return this.getUserFromQuery(query);
+        return this.getFirstFromQuery(query);
     }
 
-    private User getUserFromQuery(TypedQuery<User> query) {
-        List<User> users = query.getResultList();
-        return users.size() > 0 ? users.get(0) : null;
+    private Group findGroupByUid(String uid) {
+        TypedQuery<Group> query = this.em.createNamedQuery("group.byUid", Group.class).setParameter("uid", uid);
+        return this.getFirstFromQuery(query);
+    }
+
+    private UserBase findUserOrGroupByUid(String uid) {
+        TypedQuery<UserBase> query = this.em.createNamedQuery("userOrGroup.byUid", UserBase.class).setParameter("uid", uid);
+        return this.getFirstFromQuery(query);
+    }
+
+
+
+    private <T> T getFirstFromQuery(TypedQuery<T> query) {
+        List<T> items = query.getResultList();
+        return items.size() > 0 ? items.get(0) : null;
     }
 
     private BaseModelObject getBaseModelObject(Object obj) {

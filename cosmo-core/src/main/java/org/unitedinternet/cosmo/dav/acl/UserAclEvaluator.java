@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 
 /**
  * <p>
@@ -126,7 +127,7 @@ public class UserAclEvaluator implements AclEvaluator {
      * principal has all permissions on his user principal resource </li>
      * </ul>
      */
-    public boolean evaluateUserPrincipal(User user,
+    public boolean evaluateUserPrincipal(UserBase user,
                                          DavPrivilege privilege) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Evaluating privilege " + privilege + " against user principal " + 

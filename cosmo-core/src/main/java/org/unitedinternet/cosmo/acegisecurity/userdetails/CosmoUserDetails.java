@@ -90,7 +90,7 @@ public class CosmoUserDetails implements UserDetails {
      * @return <code>true</code> if the user is not locked,
      * <code>false</code> otherwise
      */
-    public boolean isAccountNonLocked() {if
+    public boolean isAccountNonLocked() {
         if (user.isOverlord()) {
             return true;
         }

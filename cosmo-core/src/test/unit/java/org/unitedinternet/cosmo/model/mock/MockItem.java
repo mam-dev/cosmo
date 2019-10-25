@@ -25,17 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.AttributeTombstone;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionItemDetails;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.QName;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.StampTombstone;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.Tombstone;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 
 /**
@@ -79,7 +69,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
     
     private Set<CollectionItemDetails> parentDetails = new HashSet<CollectionItemDetails>(0);
     
-    private User owner;
+    private UserBase owner;
   
     
     /* (non-Javadoc)
@@ -510,7 +500,8 @@ public abstract class MockItem extends MockAuditableObject implements Item {
      * Gets owner.
      * @return The user.
      */
-    public User getOwner() {
+    @Override
+    public UserBase getOwner() {
         return owner;
     }
 
@@ -521,7 +512,8 @@ public abstract class MockItem extends MockAuditableObject implements Item {
      * Sets owner.
      * @param owner The owner.
      */
-    public void setOwner(User owner) {
+    @Override
+    public void setOwner(UserBase owner) {
         this.owner = owner;
     }
 

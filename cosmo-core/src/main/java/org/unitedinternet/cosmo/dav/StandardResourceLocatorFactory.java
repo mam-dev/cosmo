@@ -21,7 +21,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.springframework.stereotype.Component;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 
 /**
  * Standard implementation of {@link DavResourceLocatorFactory}. Returns instances of {@link StandardResourceLocator}.
@@ -97,8 +99,8 @@ public class StandardResourceLocatorFactory implements DavResourceLocatorFactory
         return new StandardResourceLocator(context, path, this);
     }
 
-    public DavResourceLocator createPrincipalLocator(URL context, User user) throws CosmoDavException {
-        String path = TEMPLATE_USER.bind(user.getUsername());
+    public DavResourceLocator createPrincipalLocator(URL context, UserBase user) throws CosmoDavException {
+        String path = PrincipalUtils.relativePath(user);
         return new StandardResourceLocator(context, path, this);
     }
 

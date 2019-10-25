@@ -17,10 +17,7 @@ package org.unitedinternet.cosmo.model.mock;
 
 import java.nio.charset.Charset;
 
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 /**
  * Represents a subscription to a shared collection. A subscription belongs to a user and consists of a ticket key and a
@@ -30,7 +27,7 @@ public class MockCollectionSubscription extends MockAuditableObject implements C
 
     private CollectionItem targetCollection;
 
-    private User owner;
+    private UserBase owner;
 
     private Ticket ticket;
 
@@ -54,12 +51,12 @@ public class MockCollectionSubscription extends MockAuditableObject implements C
     }
 
     @Override
-    public User getOwner() {
+    public UserBase getOwner() {
         return this.owner;
     }
 
     @Override
-    public void setOwner(User owner) {
+    public void setOwner(UserBase owner) {
         this.owner = owner;
     }
 

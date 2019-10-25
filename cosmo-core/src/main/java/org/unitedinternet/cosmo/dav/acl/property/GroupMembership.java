@@ -19,10 +19,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,7 +43,7 @@ public class GroupMembership extends StandardDavProperty
 
 
 
-    public GroupMembership(DavResourceLocator locator, User user) {
+    public GroupMembership(DavResourceLocator locator, UserBase user) {
         super(GROUPMEMBERSHIP, hrefs(locator, user), true);
 
     }
@@ -61,10 +65,21 @@ public class GroupMembership extends StandardDavProperty
     }
 
     private static HashSet<String> hrefs(DavResourceLocator locator,
-                                         User user) {
+                                         UserBase userOrGroup) {
         HashSet<String> hrefs = new HashSet<String>();
+        if (userOrGroup instanceof User)
         // XXX: when we add groups, use the service locator to find the
         // principal url for each of the user's groups
+        {
+            User user = (User) userOrGroup;
+            for (Group group : user.getGroups()) {
+                hrefs.add(PrincipalUtils.href(locator, group));
+            }
+        } else if (userOrGroup instanceof Group) {
+            // TODO groups inside groups
+        } else {
+            throw new CosmoException();
+        }
         return hrefs;
     }
 }

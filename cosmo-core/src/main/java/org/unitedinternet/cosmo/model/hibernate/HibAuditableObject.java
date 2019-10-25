@@ -32,7 +32,7 @@ import org.unitedinternet.cosmo.model.EntityFactory;
  * Hibernate persistent AuditableObject.
  */
 @MappedSuperclass
-public abstract class HibAuditableObject extends BaseModelObject implements AuditableObject {
+public abstract class HibAuditableObject extends EntityTagCalculableModelObject implements AuditableObject {
 
     private static final ThreadLocal<MessageDigest> ETAG_DIGEST_LOCAL = new ThreadLocal<MessageDigest>(){
         /**

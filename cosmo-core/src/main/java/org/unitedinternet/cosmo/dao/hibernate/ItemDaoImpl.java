@@ -39,15 +39,7 @@ import org.unitedinternet.cosmo.dao.ItemNotFoundException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.dao.query.ItemFilterProcessor;
 import org.unitedinternet.cosmo.dao.query.ItemPathTranslator;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.ICalendarItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.UidInUseException;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.BaseModelObject;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
@@ -158,7 +150,7 @@ public abstract class ItemDaoImpl implements ItemDao {
 
     }
 
-    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload) {
         if (forceReload) {
             this.em.clear();
         }
@@ -166,19 +158,19 @@ public abstract class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public HomeCollectionItem getRootItem(User user) {
+    public HomeCollectionItem getRootItem(UserBase user) {
         return findRootItem(getBaseModelObject(user).getId());
     }
 
     @Override
-    public HomeCollectionItem createRootItem(User user) {
+    public HomeCollectionItem createRootItem(UserBase user) {
 
         if (user == null) {
-            throw new IllegalArgumentException("invalid user");
+            throw new IllegalArgumentException("invalid user/group");
         }
 
         if (findRootItem(getBaseModelObject(user).getId()) != null) {
-            throw new CosmoException("user already has root item", new CosmoException());
+            throw new CosmoException(user.toString() + " already has root item", new CosmoException());
         }
 
         HomeCollectionItem newItem = new HibHomeCollectionItem();
@@ -241,7 +233,7 @@ public abstract class ItemDaoImpl implements ItemDao {
             throw new IllegalArgumentException("item cannot be null");
         }
 
-        User owner = ticket.getOwner();
+        UserBase owner = ticket.getOwner();
         if (owner == null) {
             throw new IllegalArgumentException("ticket must have owner");
         }

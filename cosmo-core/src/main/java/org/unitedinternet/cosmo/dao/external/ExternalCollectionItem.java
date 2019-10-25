@@ -11,16 +11,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionItemDetails;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.QName;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.Tombstone;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 
 public class ExternalCollectionItem implements CollectionItem {
 
@@ -205,14 +196,16 @@ public class ExternalCollectionItem implements CollectionItem {
         delegate.setDisplayName(displayName);
     }
 
-    public User getOwner() {
+
+    public UserBase getOwner() {
         return delegate.getOwner();
     }
 
-    public void setOwner(User owner) {
+    @Override
+    public void setOwner(UserBase owner) {
         delegate.setOwner(owner);
     }
-
+    
     public String getUid() {
         return delegate.getUid();
     }

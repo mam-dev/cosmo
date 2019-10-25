@@ -17,6 +17,7 @@ package org.unitedinternet.cosmo.service;
 
 import java.util.Set;
 
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
 
 /**
@@ -35,6 +36,8 @@ public interface UserService extends Service {
      */
     public User getUser(String username);
 
+    public Group getGroup(String name);
+
     /**
      * Returns the user account identified by the given email address.
      *
@@ -47,7 +50,7 @@ public interface UserService extends Service {
     public User getUserByEmail(String email);
 
     /**
-     * Creates a user account in the repository. Digests the raw password and uses the result to replace the raw
+     * Creates a user (group) account in the repository. Digests the raw password and uses the result to replace the raw
      * password. Returns a new instance of <code>User</code> after saving the original one.
      *
      * @param user
@@ -57,8 +60,10 @@ public interface UserService extends Service {
      */
     public User createUser(User user);
 
+    public Group createGroup (Group group);
+
     /**
-     * Creates a user account in the repository as per {@link #createUser(User)}. Sends the {@link #EVENT_CREATE_USER}
+     * Creates a user (group)  account in the repository as per {@link #createUser(User)}. Sends the {@link #EVENT_CREATE_USER}
      * event to each provided listener.
      *
      * @param user
@@ -69,6 +74,8 @@ public interface UserService extends Service {
      *             if the username or email address is already in use
      */
     public User createUser(User user, ServiceListener[] listeners);
+
+    public Group createGroup(Group group, ServiceListener[] listeners);
 
     /**
      * Updates a user account that exists in the repository. If the password has been changed, digests the raw new
@@ -85,6 +92,8 @@ public interface UserService extends Service {
      */
     public User updateUser(User user);
 
+    public Group updateGroup (Group group);
+
     /**
      * Removes a user account from the repository.
      *
@@ -92,6 +101,8 @@ public interface UserService extends Service {
      *            the account to remove
      */
     public void removeUser(User user);
+
+    public void removeGroup (Group group);
 
     /**
      * Removes the user account identified by the given username from the repository.
@@ -101,6 +112,8 @@ public interface UserService extends Service {
      */
     public void removeUser(String username);
 
+    public void removeGroup (String name);
+
     /**
      * Removes a set of user accounts from the repository.
      * 
@@ -109,6 +122,8 @@ public interface UserService extends Service {
      */
     public void removeUsers(Set<User> users) throws OverlordDeletionException;
 
+    public void removeGroups(Set<Group> groups);
+
     /**
      * Removes the user accounts identified by the given usernames from the repository.
      * 
@@ -116,6 +131,8 @@ public interface UserService extends Service {
      * @throws OverlordDeletionException
      */
     public void removeUsersByName(Set<String> usernames) throws OverlordDeletionException;
+
+    public void removeGroupsByName(Set<String> names);
 
     /**
      * Generates a random password in a format suitable for presentation as an authentication credential.

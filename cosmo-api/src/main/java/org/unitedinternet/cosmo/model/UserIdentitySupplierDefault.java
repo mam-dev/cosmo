@@ -20,9 +20,13 @@ public class UserIdentitySupplierDefault implements UserIdentitySupplier {
 
     @Override
     public UserIdentity forUser(User user) {
-        Set<String> emails = new HashSet<>();
-        emails.add(user.getEmail());
-        return UserIdentity.of(emails, user.getFirstName(), user.getLastName());
+        return new DefaultUserIdentity(user);
     }
+
+    @Override
+    public UserIdentity forGroup(Group group) {
+        return new DefaultGroupIdentity(group);
+    }
+
 
 }
