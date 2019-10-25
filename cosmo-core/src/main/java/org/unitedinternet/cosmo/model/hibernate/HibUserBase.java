@@ -108,7 +108,7 @@ public abstract class HibUserBase  extends HibAuditableObject implements UserBas
 
     @Override
     public Boolean getAdmin() {
-        return oldAdmin;
+        return admin;
     }
 
     @Override

@@ -33,6 +33,7 @@ import org.unitedinternet.cosmo.model.User;
 /**
  * Hibernate persistent User.
  */
+@Entity
 @Table(name = "users", indexes = { @Index(name = "idx_activationid", columnList = "activationId") })
 @DiscriminatorValue("user")
 public class HibUser extends HibUserBase implements User {
@@ -90,7 +91,7 @@ public class HibUser extends HibUserBase implements User {
     @Column(name = "locked")
     private Boolean locked;
 
-    @ManyToMany(mappedBy = "groups", targetEntity = HibGroup.class)
+    @ManyToMany(mappedBy = "users", targetEntity = HibGroup.class)
     private Set<Group> groups = new HashSet<>();
 
     @Override

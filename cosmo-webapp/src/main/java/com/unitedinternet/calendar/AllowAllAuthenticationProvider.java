@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.acegisecurity.userdetails.CosmoUserDetails;
 import org.unitedinternet.cosmo.model.EntityFactory;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.service.UserService;
 
@@ -30,6 +31,8 @@ public class AllowAllAuthenticationProvider implements AuthenticationProvider {
 
     private final UserService userService;
     private final EntityFactory entityFactory;
+
+    private final String DEFAULT_GROUP_NAME = "all";
 
     public AllowAllAuthenticationProvider(UserService userService, EntityFactory entityFactory) {
         super();
@@ -51,16 +54,34 @@ public class AllowAllAuthenticationProvider implements AuthenticationProvider {
         User user = this.userService.getUser(userName);
         if (user != null) {
             LOGGER.info("[AUTH] Found user with email address: {}", user.getEmail());
-            return user;
+        } else {
+            LOGGER.info("[AUTH] No user found for email address: {}. Creating one...", userName);
+            user = this.entityFactory.createUser();
+            user.setUsername(userName);
+            user.setEmail(userName);
+            user.setFirstName(userName);
+            user.setLastName(userName);
+            user.setPassword("NOT_NULL");
+            user = this.userService.createUser(user);
         }
-        LOGGER.info("[AUTH] No user found for email address: {}. Creating one...", userName);
-        user = this.entityFactory.createUser();
-        user.setUsername(userName);
-        user.setEmail(userName);
-        user.setFirstName(userName);
-        user.setLastName(userName);
-        user.setPassword("NOT_NULL");
-        user = this.userService.createUser(user);
+        // Add every user onto group named "all"
+
+        Group group = this.userService.getGroup(DEFAULT_GROUP_NAME);
+        if (group != null) {
+            LOGGER.info("[AUTH] Found group " + group.getUsername() + ": " + group.getDisplayName());
+        } else {
+            LOGGER.info("[AUTH] No group found with name '{}'. Creating a new one...", DEFAULT_GROUP_NAME);
+            group = this.entityFactory.createGroup();
+            group.setUsername(DEFAULT_GROUP_NAME);
+            group.setDisplayName("Group For Everyone");
+            group = this.userService.createGroup(group);
+        }
+        group.addUser(user);
+        user = this.userService.updateUser(user);
+        this.userService.updateGroup(group);
+
+
+
         return user;
     }
 

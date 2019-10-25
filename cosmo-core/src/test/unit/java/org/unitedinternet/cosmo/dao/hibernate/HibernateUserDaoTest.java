@@ -15,12 +15,16 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
+import junitx.framework.ArrayAssert;
+import junitx.framework.ListAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.hibernate.HibGroup;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
 
 /**
@@ -63,6 +67,14 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         user2.setAdmin(Boolean.FALSE);
 
         user2 = userDao.createUser(user2);
+        
+        Group group1 = new HibGroup() ;
+        group1.setDisplayName("Group1");
+        group1.setUsername("group1");;
+        group1.addUser(user1);
+        group1.addUser(user2);
+        
+        group1 = userDao.createGroup(group1);
 
         // find by username
         User queryUser1 = userDao.getUser("user1");
@@ -76,6 +88,14 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         queryUser1 = userDao.getUserByUid(user1.getUid());
         Assert.assertNotNull(queryUser1);
         verifyUser(user1, queryUser1);
+
+        clearSession();
+
+        //Find group and check that it contains users.
+        Group queryGroup1 = userDao.getGroup("group1");
+
+        Assert.assertNotNull(queryGroup1);
+        verifyGroup(group1, queryGroup1);
 
         clearSession();
 
@@ -320,5 +340,13 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         Assert.assertEquals(user1.getFirstName(), user2.getFirstName());
         Assert.assertEquals(user1.getLastName(), user2.getLastName());
         Assert.assertEquals(user1.getPassword(), user2.getPassword());
+    }
+    
+    private void verifyGroup(Group group1, Group group2) {
+        Assert.assertEquals(group1.getUid(), group2.getUid());
+        Assert.assertEquals(group1.getUsername(), group1.getUsername());
+        Assert.assertEquals(group1.getAdmin(), group1.getAdmin());
+        Assert.assertEquals(group1.getDisplayName(), group1.getDisplayName());
+        ArrayAssert.assertEquivalenceArrays(group1.getUsers().toArray(), group2.getUsers().toArray());
     }
 }
