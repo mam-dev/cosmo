@@ -22,10 +22,13 @@ import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.property.AlternateUriSet;
+import org.unitedinternet.cosmo.dav.acl.property.GroupMemberSet;
 import org.unitedinternet.cosmo.dav.acl.property.GroupMembership;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalUrl;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
+import org.unitedinternet.cosmo.model.Group;
+import org.unitedinternet.cosmo.model.User;
 
 import javax.xml.namespace.QName;
 
@@ -44,7 +47,7 @@ public class DavUserPrincipalTest extends BaseDavTestCase implements AclConstant
         //initialize it on order to be able to run test
         testHelper.getSecurityManager().initiateSecurityContext("test", "test");
 
-        DavUserPrincipal p = testHelper.getPrincipal(testHelper.getUser());
+        DavUserPrincipal p = testHelper.getUserPrincipal(testHelper.getUser());
 
 
         // section 4
@@ -88,5 +91,49 @@ public class DavUserPrincipalTest extends BaseDavTestCase implements AclConstant
         Assert.assertNotNull("No group-membership property", groupMembership);
         Assert.assertTrue("Found hrefs for group-membership",
                    groupMembership.getHrefs().isEmpty());
+    }
+
+    @Test
+    public void testGroupProperties() throws Exception {
+
+
+        testHelper.getSecurityManager().initiateSecurityContext("test", "test");
+        User user = testHelper.makeDummyUser("test", "test");
+        Group group =  testHelper.makeDummyGroup("testgroup");
+
+        group.addUser(user);
+
+        Assert.assertTrue("not a member of group", user.isMemberOf(group));
+
+
+        DavUserPrincipal u = testHelper.getUserPrincipal(user);
+
+        DavUserPrincipal g = testHelper.getGroupPrincipal(group);
+
+        // 4.2
+        PrincipalUrl principalUrl = (PrincipalUrl)
+            g.getProperty(PRINCIPALURL);
+        Assert.assertNotNull("No principal-URL property", principalUrl);
+        Assert.assertEquals("principal-URL value not the same as locator href",
+                     g.getResourceLocator().getHref(false),
+                     principalUrl.getHref());
+
+        //4.3
+        GroupMemberSet groupMemberSet =
+                (GroupMemberSet)g.getProperty(GROUPMEMBERSET);
+
+        Assert.assertNotNull("No group-member-set property", groupMemberSet);
+        Assert.assertEquals("GroupMemberSet should be 1",1, groupMemberSet.getHrefs().size());
+        Assert.assertEquals(u.getResourceLocator().getHref(false),
+                groupMemberSet.getHrefs().toArray()[0]);
+
+        // 4.4
+        GroupMembership groupMembership = (GroupMembership)
+            u.getProperty(GROUPMEMBERSHIP);
+        Assert.assertNotNull("No group-membership property", groupMembership);
+        Assert.assertEquals("GroupMembership size should be 1", 1, groupMembership.getHrefs().size());
+        Assert.assertEquals( g.getResourceLocator().getHref(false), groupMembership.getHrefs().toArray()[0]);
+
+
     }
 }

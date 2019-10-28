@@ -25,6 +25,7 @@ import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavEvent;
 import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.util.UriTemplate;
@@ -111,17 +112,25 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
     }
 
     /**
-     * Gets principal.
+     * Gets user principal.
      * @param user The user.
      * @return The dav user principal.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    public DavUserPrincipal getPrincipal(User user)
+    public DavUserPrincipal getUserPrincipal(User user)
         throws Exception {
         String path = TEMPLATE_USER.bind(false, user.getUsername());
         DavResourceLocator locator =
             locatorFactory.createResourceLocatorByPath(baseUrl, path);
         return new DavUserPrincipal(user, locator, resourceFactory, getUserIdentitySupplier());
+    }
+
+    public DavUserPrincipal getGroupPrincipal(Group group)
+    throws Exception {
+        String path = TEMPLATE_GROUP.bind(false, group.getUsername());
+        DavResourceLocator locator =
+                locatorFactory.createResourceLocatorByPath(baseUrl, path);
+        return new DavUserPrincipal(group, locator, resourceFactory, getUserIdentitySupplier());
     }
 
     /**

@@ -88,6 +88,7 @@ public class MockUserDao implements UserDao {
         //Add overlords group
         MockGroup overlords = new MockGroup();
         overlords.setDisplayName("Overlords");
+        overlords.setUsername("overlords");
         overlord.addGroup(overlords);
         createGroup(overlords);
         updateUser(overlord);

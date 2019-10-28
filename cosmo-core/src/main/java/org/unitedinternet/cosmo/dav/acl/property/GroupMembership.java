@@ -34,8 +34,7 @@ import org.w3c.dom.Element;
  * Represents the DAV:group-membership property.
  *
  * The property is protected. The value is a list of hrefs indicating
- * the groups in which the principal is directly a member. The list
- * will always contain 0 elements since groups are not yet supported.
+ * the groups in which the principal is directly a member.
  */
 public class GroupMembership extends StandardDavProperty
     implements AclConstants {

@@ -69,6 +69,9 @@ public class UserAclEvaluator implements AclEvaluator {
         if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
             return true;
         }
+        if (item.getOwner() instanceof Group) {
+            return principal.isMemberOf((Group) item.getOwner());
+        }
         return item.getOwner().equals(principal);
     }
 

@@ -42,15 +42,7 @@ import net.fortuna.ical4j.model.property.*;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.EntityFactory;
-import org.unitedinternet.cosmo.model.FileItem;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.Preference;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
 import org.unitedinternet.cosmo.security.mock.MockAnonymousPrincipal;
 import org.unitedinternet.cosmo.security.mock.MockUserPrincipal;
@@ -242,6 +234,12 @@ public class TestHelper {
         return user;
     }
 
+    public Group makeDummyGroup(String name) {
+        Group group = entityFactory.createGroup();
+        group.setDisplayName(name);
+        group.setUsername(name);
+        return group;
+    }
     /**
      * Makes dummy user.
      * @return The user.
