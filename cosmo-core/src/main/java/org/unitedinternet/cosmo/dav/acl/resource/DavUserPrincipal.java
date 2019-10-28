@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.dav.acl.property.GroupMemberSet;
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResource;
@@ -311,6 +312,11 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
         properties.add(new AlternateUriSet());
         properties.add(new PrincipalUrl(getResourceLocator(), user));
         properties.add(new GroupMembership(getResourceLocator(), user));
+
+        if (user instanceof Group) {
+            properties.add(new GroupMemberSet(getResourceLocator(), (Group) user));
+        }
+
     }
 
     protected void setLiveProperty(WebDavProperty property, boolean create)

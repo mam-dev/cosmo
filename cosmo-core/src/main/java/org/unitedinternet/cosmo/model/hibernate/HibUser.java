@@ -231,4 +231,14 @@ public class HibUser extends HibUserBase implements User {
         String etag = "user:" + username + ":" + modTime;
         return encodeEntityTag(etag.getBytes(StandardCharsets.UTF_8));
     }
+
+    /**
+     * Indicates whether the user is a member of given group.
+     * @param group
+     * @return
+     */
+    @Override
+    public boolean isMemberOf(Group group) {
+        return group.getUsers().contains(this);
+    }
 }

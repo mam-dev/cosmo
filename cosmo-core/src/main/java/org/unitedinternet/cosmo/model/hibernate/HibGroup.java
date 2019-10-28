@@ -70,4 +70,9 @@ public class HibGroup extends HibUserBase implements Group {
         String etag = "group:" + username + ":" + modTime;
         return encodeEntityTag(etag.getBytes(StandardCharsets.UTF_8));
     }
+
+    @Override
+    public boolean isMemberOf(Group group) {
+        return false;
+    }
 }

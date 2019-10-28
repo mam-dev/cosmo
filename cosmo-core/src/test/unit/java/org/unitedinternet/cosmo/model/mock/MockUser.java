@@ -436,4 +436,9 @@ public class MockUser extends MockUserBase implements User {
         String etag = "user:" + username + ":" + modTime;
         return encodeEntityTag(etag.getBytes(StandardCharsets.UTF_8));
     }
+
+    @Override
+    public boolean isMemberOf(Group group) {
+        return group.getUsers().contains(this);
+    }
 }

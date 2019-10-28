@@ -62,4 +62,11 @@ public interface UserBase  extends AuditableObject {
     public String calculateEntityTag();
 
     public Set<CollectionSubscription> getSubscriptions();
+
+        /**
+     * Indicates whether the user is a member of given group.
+     * @param group
+     * @return
+     */
+    public boolean isMemberOf(Group group);
 }

@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.dav.acl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserBase;
@@ -123,15 +124,15 @@ public class UserAclEvaluator implements AclEvaluator {
      * <li> The specified privilege is
      * <code>DAV:read-current-user-privilege-set</code>, since a user
      * automatically has that privilege for all items </li>
-     * <li> The principal is the same as the given user, since any user
+     * <li> The principal is the same as the given user (or given user is a member of a group represented by principal) since any user
      * principal has all permissions on his user principal resource </li>
      * </ul>
      */
-    public boolean evaluateUserPrincipal(UserBase user,
+    public boolean evaluateUserPrincipal(UserBase userOrGroupPrincipalRepresentative,
                                          DavPrivilege privilege) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Evaluating privilege " + privilege + " against user principal " + 
-                    user.getUsername() + " for principal " + principal.getUsername());
+                    userOrGroupPrincipalRepresentative.getUsername() + " for principal " + principal.getUsername());
         }
         if (principal.getAdmin()) {
             return true;
@@ -139,6 +140,9 @@ public class UserAclEvaluator implements AclEvaluator {
         if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
             return true;
         }
-        return user.equals(principal);
+        if (userOrGroupPrincipalRepresentative instanceof Group) {
+            return principal.isMemberOf((Group) userOrGroupPrincipalRepresentative);
+        }
+        return userOrGroupPrincipalRepresentative.equals(principal);
     }
 }

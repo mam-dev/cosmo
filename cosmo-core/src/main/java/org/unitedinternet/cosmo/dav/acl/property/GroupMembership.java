@@ -52,6 +52,7 @@ public class GroupMembership extends StandardDavProperty
         return (Set<String>) getValue();
     }
 
+    @Override
     public Element toXml(Document document) {
         Element name = getName().toXml(document);
 
