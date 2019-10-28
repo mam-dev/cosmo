@@ -26,10 +26,7 @@ import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
@@ -103,7 +100,7 @@ public class SecurityAdviceTest {
         dummyContent.setOwner(user1);
         dummyContent.setUid("1");
         dummyContent = contentDao.createContent(rootCollection, dummyContent);
-        
+
         // login as user1
         initiateContext(user1);
         
@@ -136,6 +133,65 @@ public class SecurityAdviceTest {
         // login as user1
         initiateContext(user1);
         
+        // should succeed
+        proxyService.updateContent(dummyContent);
+    }
+
+    @Test
+    public void testSecuredApiWithGroup() throws Exception {
+        User user1 = testHelper.makeDummyUser("user1", "password");
+        User user2 = testHelper.makeDummyUser("user2", "password");
+        User user3 = testHelper.makeDummyUser("user3", "password");
+
+        Group group = testHelper.makeDummyGroup("group");
+        user1.addGroup(group);
+        user2.addGroup(group);
+
+        CollectionItem rootCollection = contentDao.createRootItem(group);
+        ContentItem dummyContent = new MockNoteItem();
+        dummyContent.setName("foo");
+        dummyContent.setOwner(user1);
+        dummyContent.setUid("1");
+        dummyContent = contentDao.createContent(rootCollection, dummyContent);
+
+        // login as user1
+        initiateContext(user1);
+
+        // should work fine
+        proxyService.findItemByUid("1");
+
+        // login as user1
+        initiateContext(user2);
+
+        // should work fine
+        proxyService.findItemByUid("1");
+        //Assert.assertTrue(sa.getSecured());
+
+        // now set security context to user3
+        initiateContext(user3);
+        //Assert.assertFalse(sa.getSecured());
+        // should fail
+        try {
+            proxyService.findItemByUid("1");
+            Assert.fail("able to view item");
+        } catch (ItemSecurityException e) {
+            Assert.assertEquals("1", e.getItem().getUid());
+            Assert.assertEquals(Permission.READ, e.getPermission());
+        }
+
+        // try to update item
+        // should fail
+        try {
+            proxyService.updateContent(dummyContent);
+            Assert.fail("able to update item");
+        } catch (ItemSecurityException e) {
+            Assert.assertEquals("1", e.getItem().getUid());
+            Assert.assertEquals(Permission.WRITE, e.getPermission());
+        }
+
+        // login as user1
+        initiateContext(user1);
+
         // should succeed
         proxyService.updateContent(dummyContent);
     }

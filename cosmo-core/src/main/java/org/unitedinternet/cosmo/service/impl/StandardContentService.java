@@ -32,19 +32,7 @@ import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionLockedException;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.EventStamp;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.ModificationUid;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.NoteOccurrence;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.StampUtils;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.ModificationUidImpl;
 import org.unitedinternet.cosmo.service.ContentService;
@@ -90,7 +78,7 @@ public class StandardContentService implements ContentService {
      *
      * @param user
      */
-    public HomeCollectionItem getRootItem(User user, boolean forceReload) {
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload) {
         if (LOG.isDebugEnabled()) {
             //Fix Log Forging - fortify
             //Writing unvalidated user input to log files can allow an attacker to forge log entries
@@ -105,7 +93,7 @@ public class StandardContentService implements ContentService {
      *
      * @param user
      */
-    public HomeCollectionItem getRootItem(User user) {
+    public HomeCollectionItem getRootItem(UserBase user) {
         if (LOG.isDebugEnabled()) {
         	//Fix Log Forging - fortify
         	//Writing unvalidated user input to log files can allow an attacker to forge log entries

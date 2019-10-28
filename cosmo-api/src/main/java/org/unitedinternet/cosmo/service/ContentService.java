@@ -19,14 +19,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.Stamp;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
 
@@ -41,7 +34,7 @@ public interface ContentService extends Service {
      * @param user The givern user.
      * @return The root item for a user.
      */
-    public HomeCollectionItem getRootItem(User user);
+    public HomeCollectionItem getRootItem(UserBase user);
 
     /**
      * Get the root item for a user
@@ -50,7 +43,7 @@ public interface ContentService extends Service {
      * @param forceReload if true, cleans hibernate session before loading.
      * @return The root item for a user.
      */
-    public HomeCollectionItem getRootItem(User user, boolean forceReload);
+    public HomeCollectionItem getRootItem(UserBase user, boolean forceReload);
 
     /**
      * Searches for an item stamp by item uid. The implementation will hit directly the the DB. 

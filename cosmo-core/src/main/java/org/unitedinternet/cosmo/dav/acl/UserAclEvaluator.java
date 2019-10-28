@@ -18,10 +18,10 @@ package org.unitedinternet.cosmo.dav.acl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserBase;
+import org.unitedinternet.cosmo.security.util.SecurityHelperUtils;
 
 /**
  * <p>
@@ -63,16 +63,7 @@ public class UserAclEvaluator implements AclEvaluator {
             LOG.debug("Evaluating privilege " + privilege +  " against item '" + item.getName() + 
                     "' owned by " + item.getOwner().getUsername() + " for principal " + principal.getUsername());
         }
-        if (principal.getAdmin()) {
-            return true;
-        }
-        if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
-            return true;
-        }
-        if (item.getOwner() instanceof Group) {
-            return principal.isMemberOf((Group) item.getOwner());
-        }
-        return item.getOwner().equals(principal);
+        return SecurityHelperUtils.canAccess(principal, item, privilege);
     }
 
     /*
@@ -137,15 +128,9 @@ public class UserAclEvaluator implements AclEvaluator {
             LOG.debug("Evaluating privilege " + privilege + " against user principal " + 
                     userOrGroupPrincipalRepresentative.getUsername() + " for principal " + principal.getUsername());
         }
-        if (principal.getAdmin()) {
-            return true;
-        }
         if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
             return true;
         }
-        if (userOrGroupPrincipalRepresentative instanceof Group) {
-            return principal.isMemberOf((Group) userOrGroupPrincipalRepresentative);
-        }
-        return userOrGroupPrincipalRepresentative.equals(principal);
+        return SecurityHelperUtils.canAccessPrincipal(principal, userOrGroupPrincipalRepresentative);
     }
 }

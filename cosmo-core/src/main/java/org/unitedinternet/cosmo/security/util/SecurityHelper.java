@@ -19,11 +19,8 @@ import java.util.Set;
 
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.security.CosmoSecurityContext;
@@ -49,20 +46,12 @@ public class SecurityHelper {
      * @return true if the security context has sufficient privileges
      *         to view user
      */
-    public boolean hasUserAccess(CosmoSecurityContext context, User user) {
+    public boolean hasUserAccess(CosmoSecurityContext context, UserBase user) {
         if(context.getUser()==null) {
             return false;
         }
         
-        if(context.getUser().getAdmin().booleanValue()) {
-            return true;
-        }
-        
-        if(context.getUser().equals(user)) {
-            return true;
-        }
-        
-        return false;
+        return SecurityHelperUtils.canAccessPrincipal(context.getUser(), user);
     }
     
     /**
@@ -154,22 +143,11 @@ public class SecurityHelper {
     }
     
     private boolean hasReadAccess(User user, Item item, Set<Ticket> tickets) {
-        // Admin always has access
-        if (user.getAdmin() != null && user.getAdmin().booleanValue()) {
+        // SecurityHelperUtils provides non-ticket authorization logic
+        if (SecurityHelperUtils.canAccess(user, item, DavPrivilege.READ)) {
             return true;
         }
 
-        // Case 1. User owns item
-        if (item.getOwner().equals(user)) {
-            return true;
-        }
-
-        // Case 2: User owns collection that item is in
-        for (CollectionItem parent : item.getParents()) {
-            if (parent.getOwner().equals(user)) {
-                return true;
-            }
-        }
 
         // Case 3: ticket for item present
         if (tickets != null) {
@@ -230,21 +208,9 @@ public class SecurityHelper {
     }
     
     private boolean hasWriteAccess(User user, Item item, Set<Ticket> tickets) {
-        // Admin always has access
-        if(user.getAdmin()!=null && user.getAdmin().booleanValue()) {
+
+        if (SecurityHelperUtils.canAccess(user, item, DavPrivilege.WRITE)) {
             return true;
-        }
-        
-        // Case 1. User owns item
-        if(item.getOwner().equals(user)) {
-            return true;
-        }
-        
-        // Case 2: User owns collection that item is in
-        for(CollectionItem parent: item.getParents()) {
-            if(parent.getOwner().equals(user)) {
-                return true;
-            }
         }
         
         // Case 3: ticket for item present

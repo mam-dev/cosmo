@@ -81,7 +81,7 @@
         // FIXME stfl .and.nullparent is not the correct name anymore!
         // FIXME check on class == HibCollectionItem  or select from HibCollectionItem
         @NamedQuery(name = "item.by.ownerName.name.nullParent", query = "select i from "
-                + "HibCollectionItem i, HibUser u where i.owner=u and u.username=:username and" + " i.name=:name"),
+                + "HibCollectionItem i, HibUserBase u where i.owner=u and u.username=:username and" + " i.name=:name"),
         @NamedQuery(name = "contentItem.by.parent.timestamp", query = "select item from HibContentItem "
                 + "item left join fetch item.stamps left join fetch item.attributes left join fetch"
                 + " item.tombstones join item.parentDetails pd where pd.primaryKey.collection=:parent and "

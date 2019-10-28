@@ -27,12 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.aop.OrderedAdvice;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.CollectionItem;
-import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
 import org.unitedinternet.cosmo.security.CosmoSecurityContext;
@@ -64,7 +59,7 @@ public class SecurityAdvice extends OrderedAdvice {
     }
 
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.getRootItem(..)) &&" + "args(user)")
-    public Object checkGetRootItem(ProceedingJoinPoint pjp, User user) throws Throwable {
+    public Object checkGetRootItem(ProceedingJoinPoint pjp, UserBase user) throws Throwable {
         if (LOG.isDebugEnabled()) {
             LOG.debug("in checkGetRootItem(user)");
         }
