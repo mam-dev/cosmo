@@ -74,6 +74,8 @@ public class DavPrivilege
                          new DavPrivilege[] { WRITE_PROPERTIES, WRITE_CONTENT,
                                               BIND, UNBIND });
 
+
+
     public static final DavPrivilege READ_CURRENT_USER_PRIVILEGE_SET =
         new DavPrivilege(qn("read-current-user-privilege-set"));
     public static final DavPrivilege READ_FREE_BUSY =

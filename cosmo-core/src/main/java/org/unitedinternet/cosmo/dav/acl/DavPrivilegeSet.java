@@ -17,10 +17,13 @@ package org.unitedinternet.cosmo.dav.acl;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.apache.jackrabbit.webdav.security.Privilege;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
 
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
@@ -119,21 +122,15 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
     }
 
     public static final DavPrivilegeSet createFromXml(Element root) {
-        if (! DomUtil.matches(root, "privilege", NAMESPACE)) {
-            throw new IllegalArgumentException("Expected DAV:privilege element");
-        }
         DavPrivilegeSet privileges = new DavPrivilegeSet();
-
-        if (DomUtil.hasChildElement(root, "read", NAMESPACE)) {
-            privileges.add(DavPrivilege.READ);
+        final DavPrivilege[] definedPrivileges = {DavPrivilege.BIND, DavPrivilege.READ, DavPrivilege.WRITE,
+                DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET, DavPrivilege.ALL, DavPrivilege.READ_FREE_BUSY, DavPrivilege.WRITE_CONTENT, DavPrivilege.WRITE_PROPERTIES};
+        for (DavPrivilege privilege : definedPrivileges) {
+            if (DomUtil.hasChildElement(root, privilege.getQName().getLocalPart(),
+                    Namespace.getNamespace(privilege.getQName().getPrefix(), privilege.getQName().getNamespaceURI()))) {
+                privileges.add(privilege);
+            }
         }
-        if (DomUtil.hasChildElement(root, "write", NAMESPACE)) {
-            privileges.add(DavPrivilege.WRITE);
-        }
-        if (DomUtil.hasChildElement(root, "read-free-busy", NAMESPACE_CALDAV)) {
-            privileges.add(DavPrivilege.READ_FREE_BUSY);
-        }
-
         return privileges;
     }
 }

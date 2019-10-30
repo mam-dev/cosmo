@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<D:ace xmlns:D="DAV:">
+       <D:principal>
+         <D:href>http://www.example.com/users/esedlar</D:href>
+       </D:principal>
+       <D:grant>
+         <D:privilege><D:read/></D:privilege>
+         <D:privilege><D:write/></D:privilege>
+       </D:grant>
+</D:ace>
