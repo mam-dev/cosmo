@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.jackrabbit.webdav.security.Privilege;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.apache.jackrabbit.webdav.xml.ElementIterator;
 import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
 
@@ -57,14 +58,11 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
         for (String priv : ticket.getPrivileges()) {
             if (priv.equals(Ticket.PRIVILEGE_READ)) {
                 add(DavPrivilege.READ);
-            }
-            else if (priv.equals(Ticket.PRIVILEGE_WRITE)) {
+            } else if (priv.equals(Ticket.PRIVILEGE_WRITE)) {
                 add(DavPrivilege.WRITE);
-            }
-            else if (priv.equals(Ticket.PRIVILEGE_FREEBUSY)) {
+            } else if (priv.equals(Ticket.PRIVILEGE_FREEBUSY)) {
                 add(DavPrivilege.READ_FREE_BUSY);
-            }
-            else {
+            } else {
                 throw new IllegalStateException("Unrecognized ticket privilege " + priv);
             }
         }
@@ -74,7 +72,7 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
 
     public Element toXml(Document document) {
         Element root =
-            DomUtil.createElement(document, "privilege", NAMESPACE);
+                DomUtil.createElement(document, "privilege", NAMESPACE);
         for (DavPrivilege p : this) {
             if (p.isAbstract()) {
                 continue;
@@ -121,15 +119,34 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
         return StringUtils.join(this, ", ");
     }
 
+    /**
+     * This method creates a DavPrivilegeSet from a set of DAV:privilege nodes as per ACL method in RFC.
+     *
+     * @param root parent of DAV:privilege nodes
+     * @return
+     */
+    public static final DavPrivilegeSet fromXmlAcl(Element root) {
+        DavPrivilegeSet dps = new DavPrivilegeSet();
+        for (ElementIterator it = DomUtil.getChildren(root); it.hasNext(); ) {
+            Element priv = it.next();
+            dps.add(DavPrivilege.fromXml(priv));
+        }
+        return dps;
+    }
+
+    /***
+     * This method creates a DavPrivilegeSet from a single DAV:privilege node encompassing all the children privileges
+     * @param root DAV:privilege node with many children
+     * @return
+     */
     public static final DavPrivilegeSet createFromXml(Element root) {
+        if (!DomUtil.matches(root, "privilege", NAMESPACE)) {
+            throw new IllegalArgumentException("must be a DAV:privilege element, found " + root.getNodeName());
+        }
         DavPrivilegeSet privileges = new DavPrivilegeSet();
-        final DavPrivilege[] definedPrivileges = {DavPrivilege.BIND, DavPrivilege.READ, DavPrivilege.WRITE,
-                DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET, DavPrivilege.ALL, DavPrivilege.READ_FREE_BUSY, DavPrivilege.WRITE_CONTENT, DavPrivilege.WRITE_PROPERTIES};
-        for (DavPrivilege privilege : definedPrivileges) {
-            if (DomUtil.hasChildElement(root, privilege.getQName().getLocalPart(),
-                    Namespace.getNamespace(privilege.getQName().getPrefix(), privilege.getQName().getNamespaceURI()))) {
-                privileges.add(privilege);
-            }
+        for (ElementIterator it = DomUtil.getChildren(root); it.hasNext(); ) {
+            Element elem = it.next();
+            privileges.add(DavPrivilege.extractPrivilege(elem));
         }
         return privileges;
     }

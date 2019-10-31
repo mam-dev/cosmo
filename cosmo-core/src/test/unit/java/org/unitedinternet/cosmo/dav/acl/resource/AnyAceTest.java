@@ -3,6 +3,8 @@ package org.unitedinternet.cosmo.dav.acl.resource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.unitedinternet.cosmo.dav.acl.AcePrincipal;
+import org.unitedinternet.cosmo.dav.acl.AcePrincipalType;
 import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.w3c.dom.Document;
@@ -50,5 +52,9 @@ public class AnyAceTest {
         Assert.assertEquals(2, ace.getPrivileges().size());
         Assert.assertTrue(ace.getPrivileges().contains(DavPrivilege.READ));
         Assert.assertTrue(ace.getPrivileges().contains(DavPrivilege.WRITE));
+        AcePrincipal principal = ace.getAcePrincipal();
+        Assert.assertEquals(AcePrincipalType.HREF, principal.getType());
+        Assert.assertEquals("http://www.example.com/users/esedlar", principal.getValue());
+
     }
 }

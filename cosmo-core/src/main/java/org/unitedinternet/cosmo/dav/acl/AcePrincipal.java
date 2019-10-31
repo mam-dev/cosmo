@@ -53,7 +53,7 @@ public class AcePrincipal implements DavConstants {
             DavPropertyName davPropertyName = DavPropertyName.createFromXml(property);
             principal.setPropertyName(davPropertyName);
         } else if (DomUtil.matches(principalChild, "href", NAMESPACE)) {
-            principal.setHref(principalChild.getNodeValue());
+            principal.setHref(DomUtil.getText(principalChild));
         }
         return principal;
     }

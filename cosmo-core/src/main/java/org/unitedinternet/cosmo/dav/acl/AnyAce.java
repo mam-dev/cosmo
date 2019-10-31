@@ -102,7 +102,7 @@ public class AnyAce extends DavAce {
             ace.setInverted(false);
             principalElement = getOneNamespaceElement(aceElement, "principal");
         }
-        DavPrivilegeSet privileges =  DavPrivilegeSet.createFromXml(categoryElement);
+        DavPrivilegeSet privileges =  DavPrivilegeSet.fromXmlAcl(categoryElement);
         ace.setPrivileges(privileges);
 
         AcePrincipal principal = AcePrincipal.fromXml(principalElement);

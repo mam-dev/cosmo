@@ -143,7 +143,7 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
         loadProperties();
         return properties.getPropertyNames();
     }
-
+    @Override
     public org.apache.jackrabbit.webdav.property.DavProperty<?> getProperty(DavPropertyName name) {
         loadProperties();
         return properties.get(name);

@@ -15,8 +15,7 @@
  */
 package org.unitedinternet.cosmo.dav.acl;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
@@ -86,6 +85,16 @@ public class DavPrivilege
                          new DavPrivilege[] { READ, WRITE,
                                               READ_CURRENT_USER_PRIVILEGE_SET,
                                               READ_FREE_BUSY });
+    public static final Map<String, DavPrivilege> NONABSTRACT_PRIVILEGE_MAP;
+    static {
+        Map<String, DavPrivilege> map = new HashMap<>();
+        map.put(READ.getQName().toString(), READ);
+        map.put(WRITE.getQName().toString(), WRITE);
+        map.put(READ_CURRENT_USER_PRIVILEGE_SET.getQName().toString(), READ_CURRENT_USER_PRIVILEGE_SET);
+        map.put(READ_FREE_BUSY.getQName().toString(), READ_FREE_BUSY);
+        //Abstract privileges could not be added in an ACL method and therefore are not added
+        NONABSTRACT_PRIVILEGE_MAP = Collections.unmodifiableMap(map);
+    }
 
     private CosmoQName qname;
     private boolean isAbstract;
@@ -116,6 +125,22 @@ public class DavPrivilege
                 this.subPrivileges.add(subPrivilege);
             }
         }
+    }
+
+    static DavPrivilege extractPrivilege(Element elem) {
+        String key = DomUtil.getExpandedName(elem.getLocalName(), Namespace.getNamespace(elem.getPrefix(), elem.getNamespaceURI()));
+        DavPrivilege privilege = DavPrivilege.NONABSTRACT_PRIVILEGE_MAP.getOrDefault(key, null);
+        if (privilege == null) {
+            throw new IllegalArgumentException("Unsupported DAV privilege: " + key);
+        }
+        return privilege;
+    }
+
+    public static DavPrivilege fromXml(Element root) {
+        if (!DomUtil.matches(root, "privilege", NAMESPACE)) {
+            throw new IllegalArgumentException("DAV:privilege element required, found: " + root.getLocalName());
+        }
+        return extractPrivilege(DomUtil.getFirstChildElement(root));
     }
 
     // XmlSerializable methods
