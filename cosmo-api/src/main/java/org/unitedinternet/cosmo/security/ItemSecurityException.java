@@ -26,11 +26,11 @@ public class ItemSecurityException
     extends CosmoSecurityException {
 
     private Item item = null;
-    private int permission;
+    private Permission permission;
     
     /**
      */
-    public ItemSecurityException(Item item, String message, int permission) {
+    public ItemSecurityException(Item item, String message, Permission permission) {
         super(message);
         this.item = item;
         this.permission = permission;
@@ -38,7 +38,7 @@ public class ItemSecurityException
 
     /**
      */
-    public ItemSecurityException(Item item, String message, Throwable cause, int permission) {
+    public ItemSecurityException(Item item, String message, Throwable cause, Permission permission) {
         super(message, cause);
         this.item = item;
         this.permission = permission;
@@ -48,7 +48,7 @@ public class ItemSecurityException
         return item;
     }
     
-    public int getPermission() {
+    public Permission getPermission() {
         return permission;
     }
 

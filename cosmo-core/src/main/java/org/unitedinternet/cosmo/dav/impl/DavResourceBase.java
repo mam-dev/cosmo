@@ -40,6 +40,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.PropEntry;
+import org.apache.jackrabbit.webdav.security.AclResource;
 import org.apache.jackrabbit.webdav.version.DeltaVResource;
 import org.apache.jackrabbit.webdav.version.OptionsInfo;
 import org.apache.jackrabbit.webdav.version.OptionsResponse;

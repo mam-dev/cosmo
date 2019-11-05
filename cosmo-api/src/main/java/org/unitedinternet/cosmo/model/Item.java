@@ -214,4 +214,10 @@ public interface Item extends AuditableObject{
 
     public Item copy();
 
+    /**
+     * Get all unprotected ACEs.
+     * @return
+     */
+    public Set<Ace> getAces();
+
 }

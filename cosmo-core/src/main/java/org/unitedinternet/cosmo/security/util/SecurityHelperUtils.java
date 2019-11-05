@@ -1,9 +1,21 @@
 package org.unitedinternet.cosmo.security.util;
 
+
+
+import org.apache.jackrabbit.webdav.DavConstants;
+import org.apache.jackrabbit.webdav.DavResource;
+import org.apache.jackrabbit.webdav.property.DavProperty;
+import org.apache.jackrabbit.webdav.property.DavPropertyName;
+import org.apache.jackrabbit.webdav.property.HrefProperty;
+
+import org.unitedinternet.cosmo.dav.StandardResourceLocatorFactory;
+
 import org.unitedinternet.cosmo.dav.acl.AcePrincipal;
 import org.unitedinternet.cosmo.dav.acl.AcePrincipalType;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.model.*;
+import org.unitedinternet.cosmo.security.Permission;
 
 public class SecurityHelperUtils {
     public static boolean canAccessPrincipal(User who, UserBase what) {
@@ -29,18 +41,17 @@ public class SecurityHelperUtils {
      *
      * @param who
      * @param what
-     * @param privilege
+     * @param perm permission
      * @return
      */
-    public static boolean canAccess(User who, Item what, DavPrivilege privilege) {
+
+    public static boolean canAccess(User who, Item what, Permission perm) {
         /**
          * This code represents proctected ACEs present in DavItemResourceBase.makeAcl
          */
         if (canAccessPrincipal(who, what.getOwner())) {
             return true;
         }
-        if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET))
-            return true;
         for (CollectionItem parent : what.getParents()) {
             if (canAccessPrincipal(who, parent.getOwner())) {
                 return true;
@@ -51,20 +62,15 @@ public class SecurityHelperUtils {
          */
 
         /* TODO read ACLs from item itself! */
-
+        for (Ace ace : what.getAces()) {
+            if (ace.getType().equals(Ace.Type.AUTHENTICATED) ||
+                    (ace.getType().equals(Ace.Type.USER) && (ace.getUser().equals(who) ||
+                    (ace.getUser() instanceof Group && who.isMemberOf((Group)ace.getUser()))))) {
+                if (ace.getPermissions().contains(perm))
+                    return true;
+            }
+        }
         return false;
-    }
-
-    public static boolean matchPrincipal (UserBase user, Item what,  AcePrincipal principal) {
-        if (principal.getType().equals(AcePrincipalType.ALL)) {
-            return true;
-        }
-        if (principal.getType().equals(AcePrincipalType.AUTHENTICATED)) {
-            return true;
-        }
-        if (principal.getType().equals(AcePrincipalType.SELF)) {
-
-        }
     }
 
 }

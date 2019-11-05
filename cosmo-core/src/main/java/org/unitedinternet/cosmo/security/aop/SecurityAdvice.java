@@ -27,6 +27,10 @@ import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.aop.OrderedAdvice;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.UserDao;
+import org.unitedinternet.cosmo.dav.DavResourceLocator;
+import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.acl.DavAcl;
+import org.unitedinternet.cosmo.dav.impl.DavResourceBase;
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
@@ -36,6 +40,7 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.security.util.SecurityHelper;
+import org.unitedinternet.cosmo.security.util.SecurityHelperUtils;
 import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
 
 /**
@@ -57,6 +62,7 @@ public class SecurityAdvice extends OrderedAdvice {
         this.securityManager = securityManager;        
         this.securityHelper = new SecurityHelper(contentDao, userDao);
     }
+
 
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.getRootItem(..)) &&" + "args(user)")
     public Object checkGetRootItem(ProceedingJoinPoint pjp, UserBase user) throws Throwable {
@@ -125,6 +131,7 @@ public class SecurityAdvice extends OrderedAdvice {
 
         return item;
     }
+
 
     @Around("execution(* org.unitedinternet.cosmo.service.ContentService.addItemToCollection(..)) &&"
             + "args(item, collection)")
@@ -556,7 +563,7 @@ public class SecurityAdvice extends OrderedAdvice {
         return false;
     }
 
-    private void throwItemSecurityException(Item item, int permission) {
+    private void throwItemSecurityException(Item item, Permission permission) {
         throw new ItemSecurityException(item, "principal does not have access to item " + item.getUid(), permission);
     }
 }

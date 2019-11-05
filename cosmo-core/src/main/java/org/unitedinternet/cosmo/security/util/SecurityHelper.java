@@ -24,6 +24,7 @@ import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.security.CosmoSecurityContext;
+import org.unitedinternet.cosmo.security.Permission;
 
 /**
  * Contains methods that help determine if a
@@ -144,7 +145,8 @@ public class SecurityHelper {
     
     private boolean hasReadAccess(User user, Item item, Set<Ticket> tickets) {
         // SecurityHelperUtils provides non-ticket authorization logic
-        if (SecurityHelperUtils.canAccess(user, item, DavPrivilege.READ)) {
+
+        if (SecurityHelperUtils.canAccess(user, item, Permission.READ)) {
             return true;
         }
 
@@ -209,7 +211,7 @@ public class SecurityHelper {
     
     private boolean hasWriteAccess(User user, Item item, Set<Ticket> tickets) {
 
-        if (SecurityHelperUtils.canAccess(user, item, DavPrivilege.WRITE)) {
+        if (SecurityHelperUtils.canAccess(user, item, Permission.WRITE)) {
             return true;
         }
         
