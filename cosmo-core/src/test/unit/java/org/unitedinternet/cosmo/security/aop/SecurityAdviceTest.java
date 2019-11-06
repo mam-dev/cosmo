@@ -92,14 +92,25 @@ public class SecurityAdviceTest {
      */
     @Test
     public void testSecuredApiWithUser() throws Exception {
-        User user1 = testHelper.makeDummyUser("user1", "password");
-        User user2 = testHelper.makeDummyUser("user2", "password");
+        User user1 = testHelper.makeDummyUser("user1", "password"); // User1 is owner: can read & write
+        User user2 = testHelper.makeDummyUser("user2", "password"); // User2 is nothing: can't read & write
+        User user3 = testHelper.makeDummyUser("user3", "password"); // User3 is given an unprotected ACE: can read, can't write
+
+
         CollectionItem rootCollection = contentDao.createRootItem(user1);
         ContentItem dummyContent = new MockNoteItem();
         dummyContent.setName("foo");
         dummyContent.setOwner(user1);
         dummyContent.setUid("1");
         dummyContent = contentDao.createContent(rootCollection, dummyContent);
+
+        //User3 can only read
+        Ace ace = testHelper.makeDummyAce();
+        ace.setUser(user3);
+        ace.getPermissions().add(Permission.READ);
+        dummyContent.addAce(ace);
+
+
 
         // login as user1
         initiateContext(user1);
@@ -114,25 +125,46 @@ public class SecurityAdviceTest {
         // should fail
         try {
             proxyService.findItemByUid("1");
-            Assert.fail("able to view item");
+            Assert.fail("able to view item by user2");
         } catch (ItemSecurityException e) {
             Assert.assertEquals("1", e.getItem().getUid());
             Assert.assertEquals(Permission.READ, e.getPermission());
         }
+
         
         // try to update item
         // should fail
         try {
             proxyService.updateContent(dummyContent);
-            Assert.fail("able to update item");
+            Assert.fail("able to update item by user2");
         } catch (ItemSecurityException e) {
             Assert.assertEquals("1", e.getItem().getUid());
             Assert.assertEquals(Permission.WRITE, e.getPermission());
         }
+
+
+        //login as user3
+        initiateContext(user3);
+
+        //read fine
+        proxyService.findItemByUid("1");
+
+        //update fail
+        try {
+            proxyService.updateContent(dummyContent);
+            Assert.fail("able to update item by user3");
+        } catch (ItemSecurityException e) {
+            Assert.assertEquals("1", e.getItem().getUid());
+            Assert.assertEquals(Permission.WRITE, e.getPermission());
+        }
+
         
         // login as user1
         initiateContext(user1);
-        
+
+
+
+
         // should succeed
         proxyService.updateContent(dummyContent);
     }
@@ -195,7 +227,9 @@ public class SecurityAdviceTest {
         // should succeed
         proxyService.updateContent(dummyContent);
     }
-    
+
+
+
     /**
      * Tests secured api with ticket.
      * @throws Exception - if something is wrong this exception is thrown.
@@ -211,11 +245,11 @@ public class SecurityAdviceTest {
         // create RO and RW tickets on collection
         Ticket roTicket = testHelper.makeDummyTicket();
         roTicket.setKey("T1");
-        roTicket.getPrivileges().add(Ticket.PRIVILEGE_READ);
+        roTicket.getPermissions().add(Permission.READ);
         collection.getTickets().add(roTicket);
         Ticket rwTicket = testHelper.makeDummyTicket();
         rwTicket.setKey("T2");
-        rwTicket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwTicket.getPermissions().add(Permission.WRITE);
         collection.getTickets().add(rwTicket);
         
         collection = contentDao.createCollection(rootCollection, collection);

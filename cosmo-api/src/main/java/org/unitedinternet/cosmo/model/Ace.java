@@ -15,6 +15,9 @@ public interface Ace {
      */
     public Item getItem();
 
+    public void setItem(Item item);
+
+
     public enum Type {
         USER, //DAV:href with a partucular user
         AUTHENTICATED, // All authenticated users, DAV:authenticated
@@ -25,8 +28,16 @@ public interface Ace {
 
     public Type getType();
 
+    public void setType(Type type);
+
+    public void setUser(UserBase user);
+
     public UserBase getUser(); // May be null if getType != USER
 
     public Set<Permission> getPermissions();
+
+    public boolean isDeny();
+
+    public void setIsDeny(boolean isDeny);
 
 }

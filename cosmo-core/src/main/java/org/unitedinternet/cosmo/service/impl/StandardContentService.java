@@ -1215,4 +1215,9 @@ public class StandardContentService implements ContentService {
 	    contentDao.removeItemsFromCollection(collection);
 	    contentDao.updateCollectionTimestamp(collection);
     }
+
+    @Override
+    public void alterAcl(Item item, Set<Ace> acl) {
+        contentDao.alterAcl(item, acl);
+    }
 }

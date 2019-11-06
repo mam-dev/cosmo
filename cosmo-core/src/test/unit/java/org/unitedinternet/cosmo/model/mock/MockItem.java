@@ -70,8 +70,9 @@ public abstract class MockItem extends MockAuditableObject implements Item {
     private Set<CollectionItemDetails> parentDetails = new HashSet<CollectionItemDetails>(0);
     
     private UserBase owner;
-  
-    
+    private Set<Ace> aces = new HashSet<>(0);
+
+
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.copy.InterfaceItem#getStamps()
      */
@@ -675,8 +676,18 @@ public abstract class MockItem extends MockAuditableObject implements Item {
         tombstone.setItem(this);
         tombstones.add(tombstone);
     }
-    
-    
+
+    @Override
+    public Set<Ace> getAces() {
+        return aces;
+    }
+
+    @Override
+    public void addAce(Ace ace) {
+        aces.add(ace);
+        ace.setItem(this);
+    }
+
     /**
      * Item uid determines equality
      * @param obj The object.

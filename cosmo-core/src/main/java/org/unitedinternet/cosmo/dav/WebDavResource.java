@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
@@ -23,6 +24,8 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.version.report.Report;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
+import org.unitedinternet.cosmo.dav.acl.UnsupportedPrivilegeException;
 
 /**
  * An interface providing resource functionality required by WebDAV
@@ -52,6 +55,10 @@ public interface WebDavResource
         updateProperties(DavPropertySet setProperties,
                          DavPropertyNameSet removePropertyNames)
         throws CosmoDavException;
+
+    default void updateAcl(Set<AnyAce> aces) throws CosmoDavException {
+        throw new UnsupportedPrivilegeException("This resource has no non-protected ACEs");
+    }
 
     void writeTo(OutputContext out)
         throws CosmoDavException, IOException;

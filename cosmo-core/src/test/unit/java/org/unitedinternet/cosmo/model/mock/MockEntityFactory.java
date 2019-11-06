@@ -141,6 +141,11 @@ public class MockEntityFactory implements EntityFactory {
         return new MockXmlAttribute(qname, e);
     }
 
+    @Override
+    public Ace createAce() {
+        return new MockAce();
+    }
+
     /**
      * Creates event exception stamp.
      * @param note The note item.

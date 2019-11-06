@@ -16,11 +16,7 @@
 package org.unitedinternet.cosmo.dav.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +45,7 @@ import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.acl.DavAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
@@ -66,6 +63,7 @@ import org.unitedinternet.cosmo.dav.property.Uuid;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.*;
+import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.util.PathUtil;
 import org.w3c.dom.Element;
@@ -287,6 +285,19 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         return msr;
     }
 
+    @Override
+    public void updateAcl(Set<AnyAce> aces) throws CosmoDavException {
+        log.debug("Updating ACL for " + item.getName());
+        Set<Ace> newAces = new HashSet<>();
+        for (AnyAce davAce : aces) {
+            //Get a real Ace
+            Ace ace = entityFactory.createAce();
+            davAce.toAce(ace, getResourceLocator(), getResourceFactory());
+            newAces.add(ace);
+        }
+        getContentService().alterAcl(getItem(), newAces);
+    }
+
     // DavItemResource methods
 
     public Item getItem() {
@@ -303,8 +314,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             log.debug("adding ticket for " + item.getName());
 
         // automatically add freebusy privilege along with read
-        if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_READ))
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_FREEBUSY);
+        if (ticket.getPermissions().contains(Permission.READ))
+            ticket.getPermissions().add(Permission.FREEBUSY);
 
         getContentService().createTicket(item, ticket);
     }
@@ -461,6 +472,12 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         allDeny.setProtected(true);
         acl.getAces().add(allDeny);
 
+        //Get all unprotected aces from the Item
+        for (Ace ace : item.getAces()) {
+            AnyAce anyAce = AnyAce.fromAce(ace);
+            acl.getAces().add(anyAce);
+        }
+
         return acl;
     }
 
@@ -502,13 +519,13 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         if (ticket != null) {
             privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
 
-            if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_READ)){
+            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_READ)){
                 privileges.add(DavPrivilege.READ);
             }
-            if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_WRITE)){
+            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_WRITE)){
                 privileges.add(DavPrivilege.WRITE);
             }
-            if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_FREEBUSY)){
+            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_FREEBUSY)){
                 privileges.add(DavPrivilege.READ_FREE_BUSY);
             }
 

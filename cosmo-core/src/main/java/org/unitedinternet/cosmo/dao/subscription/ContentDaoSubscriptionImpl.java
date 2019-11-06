@@ -311,6 +311,11 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
+    public void alterAcl(Item item, Set<Ace> acl) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public long countItems(long ownerId, long fromTimestamp) {
         throw new UnsupportedOperationException();
     }

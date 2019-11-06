@@ -421,4 +421,6 @@ public interface ContentService extends Service {
      */
     public void removeItemsFromCollection(CollectionItem collection);
 
+    public void alterAcl(Item item, Set<Ace> acl);
+
 }

@@ -3,6 +3,7 @@ package org.unitedinternet.cosmo.dav.acl.resource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.acl.AcePrincipal;
 import org.unitedinternet.cosmo.dav.acl.AcePrincipalType;
 import org.unitedinternet.cosmo.dav.acl.AnyAce;
@@ -42,7 +43,7 @@ public class AnyAceTest {
     }
 
     @Test
-    public void testLoadValidHrefXML () {
+    public void testLoadValidHrefXML () throws CosmoDavException {
         Element el = getRootElementFromFile("validhref.xml");
         AnyAce ace = AnyAce.fromXml(el);
 

@@ -31,6 +31,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.acegisecurity.userdetails.CosmoUserDetails;
+import org.unitedinternet.cosmo.dao.ContentDao;
+import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
@@ -39,7 +41,10 @@ import org.unitedinternet.cosmo.security.CosmoSecurityException;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.security.PermissionDeniedException;
+import org.unitedinternet.cosmo.security.util.SecurityHelper;
 import org.unitedinternet.cosmo.service.UserService;
+
+import javax.annotation.PostConstruct;
 
 /**
  * The default implementation of the {@link CosmoSecurityManager}
@@ -56,6 +61,19 @@ public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
     
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ContentDao contentDao;
+
+    SecurityHelper helper;
+
+    @PostConstruct
+    void init() {
+        SecurityHelper helper = new SecurityHelper(contentDao, userDao);
+    }
     
     
     // store additional tickets for authenticated principal
@@ -138,28 +156,21 @@ public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
      * not have the required permission
      */
     public void checkPermission(Item item,
-                                int permission)
+                                Permission permission)
         throws PermissionDeniedException, CosmoSecurityException {
         CosmoSecurityContext ctx = getSecurityContext();
+
 
         if (ctx.isAnonymous()) {
             LOG.warn("Anonymous access attempted to item " + item.getUid());
             throw new PermissionDeniedException("Anonymous principals have no permissions");
         }
 
-        // administrators can do anything to any item
-        if (ctx.isAdmin()) {
-            return;
-        }
+
 
         User user = ctx.getUser();
         if (user != null) {
-            // an item's owner can do anything to an item he owns
-            if (user.equals(item.getOwner())) {
-                return;
-            }
-            LOG.warn("User " + user.getUsername() + " attempted access to item " +
-                    item.getUid() + " owned by " + item.getOwner().getUsername());
+
             throw new PermissionDeniedException("User does not have appropriate permissions on item " + item.getUid());
         }
 
@@ -172,15 +183,15 @@ public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
             // assume that when the security context was initiated the
             // ticket's expiration date was checked
             if (permission == Permission.READ &&
-                ticket.getPrivileges().contains(Ticket.PRIVILEGE_READ)) {
+                ticket.getPermissions().contains(Ticket.PRIVILEGE_READ)) {
                 return;
             }
             if (permission == Permission.WRITE &&
-                ticket.getPrivileges().contains(Ticket.PRIVILEGE_WRITE)) {
+                ticket.getPermissions().contains(Ticket.PRIVILEGE_WRITE)) {
                 return;
             }
             if (permission == Permission.FREEBUSY &&
-                ticket.getPrivileges().contains(Ticket.PRIVILEGE_FREEBUSY)) {
+                ticket.getPermissions().contains(Ticket.PRIVILEGE_FREEBUSY)) {
                 return;
             }
             LOG.warn("Granted ticket " + ticket.getKey() + " attempted access to item " + item.getUid());

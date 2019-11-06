@@ -450,7 +450,12 @@ public class ContentDaoExternal implements ContentDao {
     public long countItems(long ownerId) {
         throw new UnsupportedOperationException();
     }
-    
+
+    @Override
+    public void alterAcl(Item item, Set<Ace> acl) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public long countItems(long ownerId, long fromTimestamp) {
         throw new UnsupportedOperationException();

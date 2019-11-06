@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.jackrabbit.webdav.WebdavRequest;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
@@ -23,6 +24,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 
 import org.apache.abdera.util.EntityTag;
 
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.caldav.CaldavRequest;
 import org.unitedinternet.cosmo.dav.report.ReportRequest;
 import org.unitedinternet.cosmo.dav.ticket.TicketDavRequest;
@@ -60,4 +62,6 @@ public interface DavRequest
      */
     DavPropertySet getMkcolProperties()
         throws CosmoDavException;
+
+    Set<AnyAce> getAclProperties() throws CosmoDavException;
 }

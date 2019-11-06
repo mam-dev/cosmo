@@ -21,14 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -36,6 +29,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.unitedinternet.cosmo.model.*;
+import org.unitedinternet.cosmo.security.Permission;
 
 /**
  * Hibernate persistent Ticket.
@@ -60,8 +54,9 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
             joinColumns = @JoinColumn(name="ticketid")
     )
     @Fetch(FetchMode.JOIN)
-    @Column(name="privilege", nullable=false, length=255)
-    private Set<String> privileges;
+    @Column(name="permission", nullable=false, length=255)
+    @Enumerated(EnumType.STRING)
+    private Set<Permission> permissions;
     
     @Column(name = "creationdate")
     @org.hibernate.annotations.Type(type="timestamp")
@@ -78,7 +73,7 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
     /**
      */
     public HibTicket() {
-        privileges = new HashSet<String>();
+        permissions = new HashSet<>();
     }
 
     /**
@@ -126,38 +121,41 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Ticket#getPrivileges()
      */
-    public Set<String> getPrivileges() {
-        return privileges;
+    @Override
+    public Set<Permission> getPermissions() {
+        return permissions;
     }
-    
+
+    @Override
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Ticket#setPrivileges(java.util.Set)
      */
-    public void setPrivileges(Set<String> privileges) {
-        this.privileges = privileges;
-    }
 
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Ticket#getType()
      */
     public TicketType getType() {
-        if (privileges.contains(PRIVILEGE_READ)) {
-            if (privileges.contains(PRIVILEGE_WRITE)) {
+        if (permissions.contains(PRIVILEGE_READ)) {
+            if (permissions.contains(PRIVILEGE_WRITE)) {
                 return TicketType.READ_WRITE;
             }
             else {
                 return TicketType.READ_ONLY;
             }
         }
-        if (privileges.contains(PRIVILEGE_FREEBUSY)) {
+        if (permissions.contains(PRIVILEGE_FREEBUSY)) {
             return TicketType.FREE_BUSY;
         }
         return null;
     }
 
     private void setTypePrivileges(TicketType type) {
-        for (String p : type.getPrivileges()) {
-            privileges.add(p);
+        for (Permission p : type.getPermissions()) {
+            permissions.add(p);
         }
     }
 
@@ -264,7 +262,7 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
         return new EqualsBuilder().
             append(key, it.key).
             append(timeout, it.timeout).
-            append(privileges, it.privileges).
+            append(permissions, it.permissions).
             isEquals();
     }
 
@@ -274,7 +272,7 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
         return new HashCodeBuilder(3, 5).
             append(key).
             append(timeout).
-            append(privileges).
+            append(permissions).
             toHashCode();
     }
 

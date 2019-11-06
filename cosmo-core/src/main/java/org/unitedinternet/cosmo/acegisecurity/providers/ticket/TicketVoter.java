@@ -26,6 +26,7 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.FilterInvocation;
+import org.unitedinternet.cosmo.security.Permission;
 
 /**
  * Votes affirmatively if the authenticated principal is a ticket and
@@ -69,13 +70,13 @@ public class TicketVoter implements AccessDecisionVoter<Object> {
         }
 
         if (CaldavMethodType.isReadMethod(method)) {
-            return ticket.getPrivileges().contains(TicketType.PRIVILEGE_READ) ?
+            return ticket.getPermissions().contains(Permission.READ) ?
                 ACCESS_GRANTED :
                 ACCESS_DENIED;
         }
 
         if (CaldavMethodType.isWriteMethod(method)) {
-            return ticket.getPrivileges().contains(TicketType.PRIVILEGE_WRITE) ?
+            return ticket.getPermissions().contains(Permission.WRITE) ?
                 ACCESS_GRANTED :
                 ACCESS_DENIED;
         }

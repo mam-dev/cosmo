@@ -557,4 +557,12 @@ public class MockItemDao implements ItemDao {
     public long countItems(long ownerId) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void alterAcl(Item item, Set<Ace> acl) {
+        item.getAces().clear();
+        for (Ace ace : acl) {
+            item.addAce(ace);
+        }
+    }
 }

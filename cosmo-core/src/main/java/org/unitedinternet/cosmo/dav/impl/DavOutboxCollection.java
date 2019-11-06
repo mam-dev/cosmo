@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponse;
 import org.unitedinternet.cosmo.dav.mkcol.CreateCollectionResponseFactory;
+import org.unitedinternet.cosmo.dav.property.*;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
@@ -52,11 +53,6 @@ import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.dav.property.DisplayName;
-import org.unitedinternet.cosmo.dav.property.Etag;
-import org.unitedinternet.cosmo.dav.property.IsCollection;
-import org.unitedinternet.cosmo.dav.property.ResourceType;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
@@ -193,10 +189,7 @@ public class DavOutboxCollection extends DavResourceBase
 
     public DavUserPrincipal findMember(String uri)
         throws CosmoDavException {
-        DavResourceLocator locator = getResourceLocator().getFactory().
-            createResourceLocatorByUri(getResourceLocator().getContext(),
-                                       uri);
-        return (DavUserPrincipal) getResourceFactory().resolve(locator);
+        return PrincipalUtils.findUserPrincipal(uri, getResourceLocator(), getResourceFactory());
     }
 
     // our methods

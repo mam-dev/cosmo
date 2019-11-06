@@ -17,20 +17,18 @@ package org.unitedinternet.cosmo.dav.acl;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.jackrabbit.webdav.security.Privilege;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
-import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
 
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.model.Ticket;
 
+import org.unitedinternet.cosmo.security.Permission;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -55,16 +53,8 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
 
     public DavPrivilegeSet(Ticket ticket) {
         super();
-        for (String priv : ticket.getPrivileges()) {
-            if (priv.equals(Ticket.PRIVILEGE_READ)) {
-                add(DavPrivilege.READ);
-            } else if (priv.equals(Ticket.PRIVILEGE_WRITE)) {
-                add(DavPrivilege.WRITE);
-            } else if (priv.equals(Ticket.PRIVILEGE_FREEBUSY)) {
-                add(DavPrivilege.READ_FREE_BUSY);
-            } else {
-                throw new IllegalStateException("Unrecognized ticket privilege " + priv);
-            }
+        for (Permission perm : ticket.getPermissions()) {
+            add(PermissionPrivilegeConstants.PERMISSION_TO_PRIVILEGE.get(perm));
         }
     }
 
@@ -103,15 +93,11 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
     }
 
     public void setTicketPrivileges(Ticket ticket) {
-        ticket.getPrivileges().clear();
-        if (contains(DavPrivilege.READ)) {
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_READ);
-        }
-        if (contains(DavPrivilege.WRITE)) {
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
-        }
-        if (contains(DavPrivilege.READ_FREE_BUSY)) {
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_FREEBUSY);
+        ticket.getPermissions().clear();
+        for (DavPrivilege privilege : PermissionPrivilegeConstants.PRIVILEGE_TO_PERMISSION.keySet()) {
+            if (containsRecursive(privilege)) {
+                ticket.getPermissions().add(PermissionPrivilegeConstants.PRIVILEGE_TO_PERMISSION.get(privilege));
+            }
         }
     }
 

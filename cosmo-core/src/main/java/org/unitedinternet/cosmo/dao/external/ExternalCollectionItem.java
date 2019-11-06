@@ -245,4 +245,14 @@ public class ExternalCollectionItem implements CollectionItem {
     public Item copy() {
         return delegate.copy();
     }
+
+    @Override
+    public Set<Ace> getAces() {
+        return delegate.getAces();
+    }
+
+    @Override
+    public void addAce(Ace ace) {
+        delegate.addAce(ace);
+    }
 }

@@ -58,6 +58,7 @@ import org.unitedinternet.cosmo.dav.StandardResourceFactory;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.property.Acl;

@@ -121,6 +121,11 @@ public class HibEntityFactory implements EntityFactory {
         return new HibXmlAttribute(qname, e);
     }
 
+    @Override
+    public Ace createAce() {
+        return new HibAce();
+    }
+
     public MessageStamp createMessageStamp() {
         return new HibMessageStamp();
     }

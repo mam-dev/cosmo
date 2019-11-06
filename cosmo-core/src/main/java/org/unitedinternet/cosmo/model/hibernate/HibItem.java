@@ -115,6 +115,12 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Ticket> tickets = new HashSet<Ticket>(0);
 
+    @OneToMany(targetEntity = HibAce.class, mappedBy = "item",
+    fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Ace> aces = new HashSet<>();
+
+
     // turns out this creates a query that is unoptimized for MySQL
     //@Fetch(FetchMode.SUBSELECT)
     @OneToMany(targetEntity=HibStamp.class, mappedBy = "item", 
@@ -450,6 +456,17 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         }
         
         return null;
+    }
+
+    @Override
+    public Set<Ace> getAces() {
+        return aces;
+    }
+
+    @Override
+    public void addAce(Ace ace) {
+        aces.add(ace);
+        ace.setItem(this);
     }
 
     @Override

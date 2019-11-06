@@ -49,6 +49,7 @@ public class SecurityHelperUtils {
         /**
          * This code represents proctected ACEs present in DavItemResourceBase.makeAcl
          */
+
         if (canAccessPrincipal(who, what.getOwner())) {
             return true;
         }

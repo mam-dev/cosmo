@@ -99,8 +99,7 @@
 
     // Ticket Queries
     @NamedQuery(name="ticket.by.key", query="from HibTicket t where t.key=:key"),
-    
-    
+
     // User Queries
     @NamedQuery(name="user.byUsername", query="from HibUser where username=:username"),
     @NamedQuery(name="user.byEmail", query="from HibUser where email=:email"),

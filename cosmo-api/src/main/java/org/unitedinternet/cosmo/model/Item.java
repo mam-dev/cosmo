@@ -220,4 +220,5 @@ public interface Item extends AuditableObject{
      */
     public Set<Ace> getAces();
 
+    void addAce(Ace ace);
 }

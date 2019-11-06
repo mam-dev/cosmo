@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.unitedinternet.cosmo.model.*;
+import org.unitedinternet.cosmo.security.Permission;
 
 /**
  * A bean encapsulating the information about a ticket used in the
@@ -44,7 +45,7 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
     private String timeout;
     
     
-    private Set<String> privileges;
+    private Set<Permission> permissions;
     
     private Date created;
     
@@ -55,7 +56,7 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
     /**
      */
     public MockTicket() {
-        privileges = new HashSet<String>();
+        permissions = new HashSet<>();
     }
 
     /**
@@ -129,8 +130,8 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
      * Gets privileges.
      * @return The privileges.
      */
-    public Set<String> getPrivileges() {
-        return privileges;
+    public Set<Permission> getPermissions() {
+        return permissions;
     }
 
     /* (non-Javadoc)
@@ -138,10 +139,10 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
      */
     /**
      * Sets privileges.
-     * @param privileges The privileges.
+     * @param permissions The privileges.
      */
-    public void setPrivileges(Set<String> privileges) {
-        this.privileges = privileges;
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
     }
 
     /* (non-Javadoc)
@@ -152,15 +153,15 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
      * @return The ticket type.
      */
     public TicketType getType() {
-        if (privileges.contains(PRIVILEGE_READ)) {
-            if (privileges.contains(PRIVILEGE_WRITE)) {
+        if (permissions.contains(Permission.READ)) {
+            if (permissions.contains(Permission.WRITE)) {
                 return TicketType.READ_WRITE;
             }
             else {
                 return TicketType.READ_ONLY;
             }
         }
-        if (privileges.contains(PRIVILEGE_FREEBUSY)) {
+        if (permissions.contains(Permission.FREEBUSY)) {
             return TicketType.FREE_BUSY;
         }
         return null;
@@ -171,9 +172,7 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
      * @param type The ticket type.
      */
     private void setTypePrivileges(TicketType type) {
-        for (String p : type.getPrivileges()) {
-            privileges.add(p);
-        }
+        permissions.addAll(type.getPermissions());
     }
 
     /* (non-Javadoc)
@@ -322,7 +321,7 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
         return new EqualsBuilder().
             append(key, it.key).
             append(timeout, it.timeout).
-            append(privileges, it.privileges).
+            append(permissions, it.permissions).
             isEquals();
     }
 
@@ -335,7 +334,7 @@ public class MockTicket extends MockAuditableObject implements Comparable<Ticket
         return new HashCodeBuilder(3, 5).
             append(key).
             append(timeout).
-            append(privileges).
+            append(permissions).
             toHashCode();
     }
 

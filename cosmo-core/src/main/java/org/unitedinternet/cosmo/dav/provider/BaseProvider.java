@@ -17,6 +17,8 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,13 +46,7 @@ import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.dav.UnsupportedMediaTypeException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.acl.AclConstants;
-import org.unitedinternet.cosmo.dav.acl.AclEvaluator;
-import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
-import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
-import org.unitedinternet.cosmo.dav.acl.TicketAclEvaluator;
-import org.unitedinternet.cosmo.dav.acl.UnsupportedPrivilegeException;
-import org.unitedinternet.cosmo.dav.acl.UserAclEvaluator;
+import org.unitedinternet.cosmo.dav.acl.*;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
@@ -362,7 +358,9 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         if (LOG.isDebugEnabled()) {
             LOG.debug("ACL for " + resource.getResourcePath());
         }
-        throw new UnsupportedPrivilegeException("No unprotected ACEs are supported on this resource");
+        Set<AnyAce> aces = request.getAclProperties();
+        resource.updateAcl(aces);
+
     }
 
     // our methods

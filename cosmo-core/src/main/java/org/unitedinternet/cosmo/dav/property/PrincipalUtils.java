@@ -1,8 +1,9 @@
 package org.unitedinternet.cosmo.dav.property;
 
 import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.dav.DavResourceLocator;
-import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
+import org.unitedinternet.cosmo.dav.*;
+import org.unitedinternet.cosmo.dav.acl.NotRecognizedPrincipalException;
+import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserBase;
@@ -39,6 +40,19 @@ public  class PrincipalUtils implements ExtendedDavConstants {
             return TEMPLATE_GROUP.bind(user.getUsername());
         } else {
             throw new CosmoException();
+        }
+    }
+
+    public static DavUserPrincipal findUserPrincipal(String uri, DavResourceLocator currentLocator, DavResourceFactory resourceFactory) throws NotRecognizedPrincipalException {
+        try {
+            DavResourceLocator locator = currentLocator.getFactory().
+                createResourceLocatorByUri(currentLocator.getContext(),
+                                       uri);
+            return (DavUserPrincipal) resourceFactory.resolve(locator);
+        } catch (ClassCastException e) {
+            throw new NotRecognizedPrincipalException("uri " + uri + " does not represent a principal");
+        } catch (CosmoDavException e) {
+            throw new NotRecognizedPrincipalException("uri " + uri + " does not represent a principal:" + e.getMessage());
         }
     }
 }

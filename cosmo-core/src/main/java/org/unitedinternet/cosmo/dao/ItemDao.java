@@ -302,4 +302,6 @@ public interface ItemDao extends Dao {
      * @return the number of items of the specified ownerId.
      */
     public long countItems(long ownerId);
+
+    public void alterAcl(Item item, Set<Ace> acl);
 }
