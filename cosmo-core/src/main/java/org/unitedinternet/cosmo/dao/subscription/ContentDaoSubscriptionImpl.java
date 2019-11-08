@@ -1,8 +1,6 @@
 package org.unitedinternet.cosmo.dao.subscription;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -311,7 +309,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
-    public void alterAcl(Item item, Set<Ace> acl) {
+    public void alterAcl(Item item, SortedSet<Ace> acl) {
         throw new UnsupportedOperationException();
     }
 

@@ -10,6 +10,7 @@ package org.unitedinternet.cosmo.dao.external;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.unitedinternet.cosmo.model.*;
 
@@ -247,8 +248,13 @@ public class ExternalCollectionItem implements CollectionItem {
     }
 
     @Override
-    public Set<Ace> getAces() {
+    public SortedSet<Ace> getAces() {
         return delegate.getAces();
+    }
+
+    @Override
+    public Set<CollectionItem> getAllParents() {
+        return delegate.getAllParents();
     }
 
     @Override

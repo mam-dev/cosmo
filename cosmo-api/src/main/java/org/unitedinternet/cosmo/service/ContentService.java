@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -421,6 +422,6 @@ public interface ContentService extends Service {
      */
     public void removeItemsFromCollection(CollectionItem collection);
 
-    public void alterAcl(Item item, Set<Ace> acl);
+    public void alterAcl(Item item, List<Ace> acl);
 
 }

@@ -37,6 +37,20 @@ public class HibAce extends BaseModelObject implements Ace {
     @Column(name="isDeny")
     private boolean denied;
 
+    @Column(name="priority")
+    private int order;
+
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
     @Override
     public Item getItem() {
         return item;
@@ -90,4 +104,5 @@ public class HibAce extends BaseModelObject implements Ace {
     public void setIsDeny(boolean isDeny) {
         denied = isDeny;
     }
+
 }

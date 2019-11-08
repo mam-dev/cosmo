@@ -84,7 +84,7 @@ public abstract class DavAce
         Element grantOrDeny =
             DomUtil.createElement(document, denied ? "deny" : "grant",
                                   NAMESPACE);
-        grantOrDeny.appendChild(privileges.toXml(document));
+        privileges.toXmlWithoutContainer(document).forEach(grantOrDeny::appendChild);
         root.appendChild(grantOrDeny);
 
         if (isProtected) {

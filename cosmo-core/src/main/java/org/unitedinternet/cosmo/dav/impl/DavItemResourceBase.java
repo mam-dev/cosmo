@@ -254,6 +254,16 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     // WebDavResource methods
 
     public DavCollection getParent() throws CosmoDavException {
+        return getParentInternal(true);
+    }
+
+    /**
+     * Returns parent for getParent
+     * @param createNewCollection if false -  do not create a new DavCollectionBase if getResourceFactory().resolve() fails
+     * @return
+     * @throws CosmoDavException
+     */
+    private DavCollection getParentInternal(boolean createNewCollection) throws CosmoDavException {
         if (parent == null) {
             DavResourceLocator parentLocator = getResourceLocator()
                     .getParentLocator();
@@ -264,12 +274,13 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
                 throw new ForbiddenException("Resource "
                         + parentLocator.getPath() + " is not a collection");
             }
-            if (parent == null)
+            if (parent == null && createNewCollection)
                 parent = new DavCollectionBase(parentLocator,
                         getResourceFactory(), entityFactory);
         }
 
         return parent;
+
     }
 
     public MultiStatusResponse updateProperties(DavPropertySet setProperties,
@@ -288,7 +299,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     @Override
     public void updateAcl(Set<AnyAce> aces) throws CosmoDavException {
         log.debug("Updating ACL for " + item.getName());
-        Set<Ace> newAces = new HashSet<>();
+        List<Ace> newAces = new ArrayList<>();
         for (AnyAce davAce : aces) {
             //Get a real Ace
             Ace ace = entityFactory.createAce();
@@ -437,28 +448,10 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         acl.getAces().add(unauthenticated);
 
         DavAce owner = new DavAce.PropertyAce(OWNER);
-        owner.getPrivileges().add(DavPrivilege.READ);
+        owner.getPrivileges().add(DavPrivilege.ALL);
         owner.setProtected(true);
         acl.getAces().add(owner);
 
-        for (CollectionItem parent : item.getParents()) {
-            if (parent.getOwner().equals(item.getOwner())){
-                continue;
-            }
-            try {
-                DavResourceLocatorFactory f = getResourceLocator().getFactory();
-                DavResourceLocator l = f.createPrincipalLocator(
-                        getResourceLocator().getContext(), parent.getOwner());
-                DavAce parentOwner = new DavAce.PropertyAce(OWNER);
-                parentOwner.getPrivileges().add(DavPrivilege.ALL);
-                parentOwner.setProtected(true);
-                parentOwner.setInherited(l.getHref(false));
-                acl.getAces().add(parentOwner);
-            } catch (CosmoDavException e) {
-                log.warn("Could not create principal locator for parent collection owner '"
-                        + parent.getOwner().getUsername() + "' - skipping ACE");
-            }
-        }
 
         DavAce allAllow = new DavAce.AllAce();
         allAllow.getPrivileges().add(
@@ -472,12 +465,34 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         allDeny.setProtected(true);
         acl.getAces().add(allDeny);
 
+
+        // Get ACEs from parent. Due to the current situation we only copy owner and unprotected aces from parent
+        List<DavAce> inheritedAces = new ArrayList<>();
+        try {
+            DavResourceBase parent = (DavResourceBase)getParentInternal(false);
+            if (parent != null) {
+                List<DavAce> aces = parent.getAcl().getAces();
+                for (DavAce ace : aces) { // Enhanced for copies values, all ok.
+                    if (ace instanceof DavAce.AllAce || ace instanceof DavAce.UnauthenticatedAce) {
+                        continue;
+                    }
+
+                    ace.setProtected(true);
+                    ace.setInherited(parent.getHref());
+                    inheritedAces.add(ace);
+                }
+            }
+        } catch (CosmoDavException e) {
+            log.warn("Unable to fetch inherited aces from parent by " + this + ": " + e.getMessage());
+        }
+
+
         //Get all unprotected aces from the Item
         for (Ace ace : item.getAces()) {
             AnyAce anyAce = AnyAce.fromAce(ace);
             acl.getAces().add(anyAce);
         }
-
+        acl.getAces().addAll(inheritedAces);
         return acl;
     }
 

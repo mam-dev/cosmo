@@ -15,10 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -415,7 +412,7 @@ public abstract class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public void alterAcl(Item item, Set<Ace> acl) {
+    public void alterAcl(Item item, SortedSet<Ace> acl) {
         for (Ace ace : item.getAces()) {
             this.em.remove(ace);
         }

@@ -7,12 +7,17 @@ import java.util.Set;
 /**
  * Represents an unprotected access control entry supported by Cosmo
  */
-public interface Ace {
+public interface Ace extends Comparable<Ace> {
 
     /**
      *
      * @return Associated item
      */
+
+    public int getOrder();
+
+    public void setOrder(int order);
+
     public Item getItem();
 
     public void setItem(Item item);
@@ -39,5 +44,9 @@ public interface Ace {
     public boolean isDeny();
 
     public void setIsDeny(boolean isDeny);
+
+    default int compareTo(Ace ace) {
+        return (this.getOrder() - ace.getOrder());
+    }
 
 }

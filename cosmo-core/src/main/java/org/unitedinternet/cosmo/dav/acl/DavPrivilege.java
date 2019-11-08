@@ -151,11 +151,14 @@ public class DavPrivilege
         }
         Element privilege = DomUtil.createElement(document, 
                 XML_PRIVILEGE, DavConstants.NAMESPACE); 
-        privilege.appendChild(DomUtil.createElement(document, 
-                qname.getLocalPart(), ns(qname)));
+        privilege.appendChild(toXmlWithoutContainer(document));
         return privilege;
     }
 
+    public Element toXmlWithoutContainer(Document document) {
+        return DomUtil.createElement(document,
+                qname.getLocalPart(), ns(qname));
+    }
     // Comparable methods
 
     public int compareTo(DavPrivilege o) {

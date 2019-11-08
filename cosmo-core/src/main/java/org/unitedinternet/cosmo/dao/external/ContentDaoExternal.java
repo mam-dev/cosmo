@@ -1,13 +1,7 @@
 package org.unitedinternet.cosmo.dao.external;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -452,7 +446,7 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     @Override
-    public void alterAcl(Item item, Set<Ace> acl) {
+    public void alterAcl(Item item, SortedSet<Ace> acl) {
         throw new UnsupportedOperationException();
     }
 

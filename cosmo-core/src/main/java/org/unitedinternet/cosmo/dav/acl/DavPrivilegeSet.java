@@ -15,8 +15,10 @@
  */
 package org.unitedinternet.cosmo.dav.acl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -60,17 +62,41 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
 
     // XmlSerializable methods
 
+    /**
+     * This yields a single <D:privilege></D:privilege> node that contains all the privileges. Suitable for DAV ticket draft implementation:
+     * @param document
+     * @return
+     */
     public Element toXml(Document document) {
         Element root =
-                DomUtil.createElement(document, "privilege", NAMESPACE);
+                DomUtil.createElement(document, XML_PRIVILEGE, NAMESPACE);
         for (DavPrivilege p : this) {
             if (p.isAbstract()) {
                 continue;
             }
-            root.appendChild(p.toXml(document));
+            root.appendChild(p.toXmlWithoutContainer(document));
         }
         return root;
     }
+
+    /**
+     * This yields list of <D:privilege></D:privilege> nodes for each of the privileges
+     * @param document
+     * @return
+     */
+    public List<Element> toXmlWithoutContainer(Document document) {
+        List<Element> elements = new ArrayList<>();
+        for (DavPrivilege p : this) {
+            if (p.isAbstract()) {
+                continue;
+            }
+            elements.add(p.toXml(document));
+        }
+        return elements;
+    }
+
+
+
 
     // our methods
 

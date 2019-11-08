@@ -78,8 +78,8 @@ public class CollectionProvider extends BaseProvider {
      * @see DavCollection
      */
     protected void sendCollectionResponse(DavPropertySet properties, CreateCollectionResponse msr, DavResponse response) throws java.io.IOException {
-        if (properties.isEmpty() || !CreateCollectionResponse.hasNonOK(msr)) {
-            response.setStatus(201);
+        response.setStatus(201);
+        if (properties == null || properties.isEmpty() || !CreateCollectionResponse.hasNonOK(msr)) {
             response.setHeader("Cache-control", "no-cache");
             response.setHeader("Pragma", "no-cache");
         } else {

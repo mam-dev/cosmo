@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dao;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
@@ -303,5 +304,5 @@ public interface ItemDao extends Dao {
      */
     public long countItems(long ownerId);
 
-    public void alterAcl(Item item, Set<Ace> acl);
+    public void alterAcl(Item item, SortedSet<Ace> acl);
 }

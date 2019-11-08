@@ -15,8 +15,7 @@
  */
 package org.unitedinternet.cosmo.security.aop;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -92,9 +91,10 @@ public class SecurityAdviceTest {
      */
     @Test
     public void testSecuredApiWithUser() throws Exception {
-        User user1 = testHelper.makeDummyUser("user1", "password"); // User1 is owner: can read & write
-        User user2 = testHelper.makeDummyUser("user2", "password"); // User2 is nothing: can't read & write
-        User user3 = testHelper.makeDummyUser("user3", "password"); // User3 is given an unprotected ACE: can read, can't write
+        User user1 = testHelper.makeDummyUser("user1", "password"); // User1 is owner: can read & write item 1
+        User user2 = testHelper.makeDummyUser("user2", "password"); // User2 is nothing: can't read & write item 1,
+        User user3 = testHelper.makeDummyUser("user3", "password"); // User3 is given an unprotected ACE: can read, can't write item 1
+        User user4 = testHelper.makeDummyUser("user4", "password"); // User4 does not own item 2 but should be able to edit it and create new items in user2 collection due to unprotected ACE
 
 
         CollectionItem rootCollection = contentDao.createRootItem(user1);
@@ -103,13 +103,34 @@ public class SecurityAdviceTest {
         dummyContent.setOwner(user1);
         dummyContent.setUid("1");
         dummyContent = contentDao.createContent(rootCollection, dummyContent);
-
         //User3 can only read
-        Ace ace = testHelper.makeDummyAce();
-        ace.setUser(user3);
-        ace.getPermissions().add(Permission.READ);
-        dummyContent.addAce(ace);
+        Ace aceContent1 = testHelper.makeDummyAce();
+        aceContent1.setUser(user3);
+        aceContent1.getPermissions().add(Permission.READ);
+        List<Ace> acesContent1 = new ArrayList<>();
+        acesContent1.add(aceContent1);
+        service.alterAcl(dummyContent, acesContent1);
 
+
+        //Create root collection for user2
+        CollectionItem rootCollection2 = contentDao.createRootItem(user2);
+        //Deny all for user3
+        Ace aceCollection2 = testHelper.makeDummyAce();
+        aceCollection2.setIsDeny(true);
+        aceCollection2.setUser(user3);
+        aceCollection2.getPermissions().add(Permission.READ);
+        aceCollection2.getPermissions().add(Permission.WRITE);
+        aceCollection2.getPermissions().add(Permission.FREEBUSY);
+
+        Ace aceCollection2_second = testHelper.makeDummyAce();
+        aceCollection2_second.setType(Ace.Type.AUTHENTICATED);
+        aceCollection2_second.getPermissions().add(Permission.READ);
+        aceCollection2_second.getPermissions().add(Permission.WRITE);
+
+        List<Ace> aces = new ArrayList<>();
+        aces.add(aceCollection2);
+        aces.add(aceCollection2_second);
+        service.alterAcl(rootCollection2, aces);
 
 
         // login as user1
@@ -118,7 +139,17 @@ public class SecurityAdviceTest {
         // should work fine
         proxyService.findItemByUid("1");
         //Assert.assertTrue(sa.getSecured());
-        
+
+        //user1 can create item in collection of user2 so this should be fine
+        ContentItem dummyContentByUser1 = new MockNoteItem();
+        dummyContentByUser1.setName("user1content");
+        dummyContentByUser1.setOwner(user1);
+        dummyContentByUser1.setUid("2");
+        dummyContentByUser1 = proxyService.createContent(rootCollection2, dummyContentByUser1);
+
+
+
+
         // now set security context to user2
         initiateContext(user2);
         //Assert.assertFalse(sa.getSecured());
@@ -130,6 +161,13 @@ public class SecurityAdviceTest {
             Assert.assertEquals("1", e.getItem().getUid());
             Assert.assertEquals(Permission.READ, e.getPermission());
         }
+
+        //User2 should be able to read and write content in its own collection
+        ContentItem item = (ContentItem)proxyService.findItemByUid("2");
+        Assert.assertNotNull(item);
+
+        proxyService.updateContent(item);
+
 
         
         // try to update item
@@ -152,20 +190,58 @@ public class SecurityAdviceTest {
         //update fail
         try {
             proxyService.updateContent(dummyContent);
-            Assert.fail("able to update item by user3");
+            Assert.fail("able to update item with uid 1 by user3");
         } catch (ItemSecurityException e) {
             Assert.assertEquals("1", e.getItem().getUid());
             Assert.assertEquals(Permission.WRITE, e.getPermission());
         }
 
-        
+        //Should fail reading item with uid 2
+        try {
+            proxyService.findItemByUid("2");
+            Assert.fail("able to read item with uid 2 by user3");
+        } catch (ItemSecurityException e) {
+            Assert.assertEquals("2", e.getItem().getUid());
+            Assert.assertEquals(Permission.READ, e.getPermission());
+        }
+
+        //Should fail writing item with uid 2
+        try {
+            proxyService.updateContent(dummyContentByUser1);
+            Assert.fail("able to update item with uid 2 by user3");
+        } catch (ItemSecurityException e) {
+            Assert.assertEquals("2", e.getItem().getUid());
+            Assert.assertEquals(Permission.WRITE, e.getPermission());
+        }
+
+
+        initiateContext(user4);
+
+        // Find item with id 2 - should be ok
+        proxyService.findItemByUid("2");
+        // updating content with id 2 is also ok
+        proxyService.updateContent(dummyContentByUser1);
+
+        //create new item in user2 collection
+        ContentItem dummyContentByUser4 = new MockNoteItem();
+
+        dummyContentByUser4.setOwner(user4);
+        dummyContentByUser4.setUid("3");
+        dummyContentByUser4.setName("foo2content4");
+        dummyContentByUser4 = proxyService.createContent(rootCollection2, dummyContentByUser4);
+
+
         // login as user1
         initiateContext(user1);
 
+        //Can obtain item with uid 3
+        proxyService.findItemByUid("3");
+
+        //And update as well
+        proxyService.updateContent(dummyContentByUser4);
 
 
-
-        // should succeed
+        // And update content in its own collection
         proxyService.updateContent(dummyContent);
     }
 

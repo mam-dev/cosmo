@@ -407,8 +407,13 @@ public class StandardDavRequest extends WebdavRequestImpl implements
     private Document getSafeRequestDocument(boolean requireDocument)
             throws CosmoDavException {
         try {
-            if (StringUtils.isBlank(getContentType()) && requireDocument) {
-                throw new BadRequestException("No Content-Type specified");
+            if (StringUtils.isBlank(getContentType())) {
+                if   (requireDocument) {
+                    throw new BadRequestException("No Content-Type specified");
+                }
+                else {
+                    return null;
+                }
             }
             MimeType mimeType = new MimeType(getContentType());
             if (!(mimeType.match(APPLICATION_XML) || mimeType.match(TEXT_XML))) {
@@ -595,7 +600,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
 
         Document requestDocument = getSafeRequestDocument(false);
         if (requestDocument == null) {
-            return new DavPropertySet();
+            return null;
         }
 
         Element root = requestDocument.getDocumentElement();

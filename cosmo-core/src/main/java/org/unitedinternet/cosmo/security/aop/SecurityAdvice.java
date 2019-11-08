@@ -564,6 +564,6 @@ public class SecurityAdvice extends OrderedAdvice {
     }
 
     private void throwItemSecurityException(Item item, Permission permission) {
-        throw new ItemSecurityException(item, "principal does not have access to item " + item.getUid(), permission);
+        throw new ItemSecurityException(item, "principal does not have access to item " + item.getUid() + " permission " + permission, permission);
     }
 }

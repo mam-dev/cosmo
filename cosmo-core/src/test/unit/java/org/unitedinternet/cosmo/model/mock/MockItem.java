@@ -15,14 +15,7 @@
  */
 package org.unitedinternet.cosmo.model.mock;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.unitedinternet.cosmo.model.*;
@@ -70,7 +63,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
     private Set<CollectionItemDetails> parentDetails = new HashSet<CollectionItemDetails>(0);
     
     private UserBase owner;
-    private Set<Ace> aces = new HashSet<>(0);
+    private SortedSet<Ace> aces = new TreeSet<Ace>();
 
 
     /* (non-Javadoc)
@@ -570,6 +563,25 @@ public abstract class MockItem extends MockAuditableObject implements Item {
             parentDetails.remove(cid);
         }
     }
+
+     public Set<CollectionItem> getAllParents() {
+        Set<CollectionItem> allParents = new HashSet<>();
+        Queue<Item> queue = new LinkedList<>();
+         queue.add(this);
+         while (!queue.isEmpty()) {
+             Item current = queue.poll();
+             try {
+                 if (allParents.contains(current)) {
+                     continue;
+                 }
+             } catch (ClassCastException e)  {
+                 continue; // this may as well not be a CollectionItem and thus there will never be a loop
+             }
+             allParents.addAll(current.getParents());
+             queue.addAll(current.getParents());
+         }
+         return allParents;
+    }
     
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.Item#getParents()
@@ -678,7 +690,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
     }
 
     @Override
-    public Set<Ace> getAces() {
+    public SortedSet<Ace> getAces() {
         return aces;
     }
 
@@ -757,4 +769,6 @@ public abstract class MockItem extends MockAuditableObject implements Item {
             item.addStamp(stamp.copy());
         }
     }
+
+
 }

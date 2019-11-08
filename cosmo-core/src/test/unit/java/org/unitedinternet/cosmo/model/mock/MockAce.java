@@ -13,11 +13,23 @@ public class MockAce implements Ace {
     private Item item;
     private Ace.Type type;
 
+    private int order;
+
     private UserBase user;
 
     private Set<Permission> permissions = new HashSet<>();
 
     private boolean isDeny = false;
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
     @Override
     public Item getItem() {

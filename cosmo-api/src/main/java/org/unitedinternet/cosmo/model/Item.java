@@ -18,6 +18,7 @@ package org.unitedinternet.cosmo.model;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Represents an item on server.  All
@@ -218,7 +219,13 @@ public interface Item extends AuditableObject{
      * Get all unprotected ACEs.
      * @return
      */
-    public Set<Ace> getAces();
+    public SortedSet<Ace> getAces();
+
+    /**
+     * Return parents and parents of parents etc.
+     * @return
+     */
+    public Set<CollectionItem> getAllParents();
 
     void addAce(Ace ace);
 }

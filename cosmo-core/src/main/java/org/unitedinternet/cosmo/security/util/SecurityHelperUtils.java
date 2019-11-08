@@ -18,6 +18,10 @@ import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.security.Permission;
 
 public class SecurityHelperUtils {
+
+    private enum Decision {
+        GRANT, DENY, ABSTAIN
+    }
     public static boolean canAccessPrincipal(User who, UserBase what) {
         if (who.getAdmin()) {
             return true;
@@ -62,16 +66,37 @@ public class SecurityHelperUtils {
          * End code representing protected ACEs
          */
 
-        /* TODO read ACLs from item itself! */
+        Decision decision = canAccessUnprotected(who, what, perm);
+        return decision == Decision.GRANT;
+    }
+
+    /**
+     * Decides whether a user can access an item. The decision is as follows:
+     *
+     * If permission is granted on parent collection, it is granted if not denied in child collection.
+     *
+     *
+     * @param what
+     * @param perm
+     * @return
+     */
+    public static Decision canAccessUnprotected(User who, Item what, Permission perm) {
         for (Ace ace : what.getAces()) {
             if (ace.getType().equals(Ace.Type.AUTHENTICATED) ||
                     (ace.getType().equals(Ace.Type.USER) && (ace.getUser().equals(who) ||
-                    (ace.getUser() instanceof Group && who.isMemberOf((Group)ace.getUser()))))) {
+                            (ace.getUser() instanceof Group && who.isMemberOf((Group) ace.getUser()))))) {
                 if (ace.getPermissions().contains(perm))
-                    return true;
+                    return ace.isDeny() ? Decision.DENY : Decision.GRANT;
             }
         }
-        return false;
+        // Check all parents as well
+        for (CollectionItem parent : what.getAllParents()) {
+            Decision decision = canAccessUnprotected(who, parent, perm);
+                if (decision != Decision.ABSTAIN)
+                    return decision;
+            }
+
+        return Decision.ABSTAIN;
     }
 
 }
