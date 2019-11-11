@@ -40,6 +40,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.PropEntry;
+import org.apache.jackrabbit.webdav.security.AclResource;
 import org.apache.jackrabbit.webdav.version.DeltaVResource;
 import org.apache.jackrabbit.webdav.version.OptionsInfo;
 import org.apache.jackrabbit.webdav.version.OptionsResponse;
@@ -57,6 +58,7 @@ import org.unitedinternet.cosmo.dav.StandardResourceFactory;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.property.Acl;
@@ -143,7 +145,7 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
         loadProperties();
         return properties.getPropertyNames();
     }
-
+    @Override
     public org.apache.jackrabbit.webdav.property.DavProperty<?> getProperty(DavPropertyName name) {
         loadProperties();
         return properties.get(name);

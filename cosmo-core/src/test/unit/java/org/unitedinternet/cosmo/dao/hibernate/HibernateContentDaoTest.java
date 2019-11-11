@@ -1363,7 +1363,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         HashSet privs = new HashSet();
         privs.add("priv1");
         privs.add("privs2");
-        ticket1.setPrivileges(privs);
+        ticket1.setPermissions(privs);
 
         contentDao.createTicket(newItem, ticket1);
 
@@ -1374,7 +1374,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         privs = new HashSet();
         privs.add("priv3");
         privs.add("priv4");
-        ticket2.setPrivileges(privs);
+        ticket2.setPermissions(privs);
 
         contentDao.createTicket(newItem, ticket2);
 
@@ -1933,11 +1933,11 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         Assert.assertEquals(ticket1.getTimeout(), ticket2.getTimeout());
         Assert.assertEquals(ticket1.getOwner().getUsername(), ticket2.getOwner().getUsername());
         @SuppressWarnings("rawtypes")
-        Iterator it1 = ticket1.getPrivileges().iterator();
+        Iterator it1 = ticket1.getPermissions().iterator();
         @SuppressWarnings("rawtypes")
-        Iterator it2 = ticket2.getPrivileges().iterator();
+        Iterator it2 = ticket2.getPermissions().iterator();
 
-        Assert.assertEquals(ticket1.getPrivileges().size(), ticket1.getPrivileges().size());
+        Assert.assertEquals(ticket1.getPermissions().size(), ticket1.getPermissions().size());
 
         while (it1.hasNext()) {
             Assert.assertEquals(it1.next(), it2.next());

@@ -18,10 +18,15 @@ package org.unitedinternet.cosmo.dav.acl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.jackrabbit.webdav.security.Privilege;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserBase;
+import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.security.util.SecurityHelperUtils;
+
+import static org.unitedinternet.cosmo.dav.acl.PermissionPrivilegeConstants.PERMISSION_TO_PRIVILEGE;
+import static org.unitedinternet.cosmo.dav.acl.PermissionPrivilegeConstants.PRIVILEGE_TO_PERMISSION;
 
 /**
  * <p>
@@ -55,6 +60,7 @@ public class UserAclEvaluator implements AclEvaluator {
      * <li> The principal is the same as the owner of the given item, since
      * any user principal has all permissions on any item he owns </li>
      * </ul>
+     *
      */
     public boolean evaluate(Item item,
                             DavPrivilege privilege) {
@@ -63,7 +69,25 @@ public class UserAclEvaluator implements AclEvaluator {
             LOG.debug("Evaluating privilege " + privilege +  " against item '" + item.getName() + 
                     "' owned by " + item.getOwner().getUsername() + " for principal " + principal.getUsername());
         }
-        return SecurityHelperUtils.canAccess(principal, item, privilege);
+        if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
+            return true;
+        }
+
+        Permission perm = null;
+        if (PRIVILEGE_TO_PERMISSION.containsKey(privilege)) {
+            perm = PRIVILEGE_TO_PERMISSION.get(privilege);
+        }
+        for (DavPrivilege priv : PRIVILEGE_TO_PERMISSION.keySet()) {
+            if (priv.containsRecursive(privilege)) {
+                perm = PRIVILEGE_TO_PERMISSION.get(priv);
+                break;
+            }
+        }
+        if (perm == null) {
+            LOG.debug("Can't find Permission for Privilege: " + privilege);
+            return false;
+        }
+        return SecurityHelperUtils.canAccess(principal, item, perm) ;
     }
 
     /*

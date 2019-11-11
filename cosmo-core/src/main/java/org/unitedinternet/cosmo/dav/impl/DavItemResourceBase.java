@@ -16,11 +16,7 @@
 package org.unitedinternet.cosmo.dav.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +45,7 @@ import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.acl.DavAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
@@ -66,6 +63,7 @@ import org.unitedinternet.cosmo.dav.property.Uuid;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.*;
+import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.util.PathUtil;
 import org.w3c.dom.Element;
@@ -256,6 +254,16 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     // WebDavResource methods
 
     public DavCollection getParent() throws CosmoDavException {
+        return getParentInternal(true);
+    }
+
+    /**
+     * Returns parent for getParent
+     * @param createNewCollection if false -  do not create a new DavCollectionBase if getResourceFactory().resolve() fails
+     * @return
+     * @throws CosmoDavException
+     */
+    private DavCollection getParentInternal(boolean createNewCollection) throws CosmoDavException {
         if (parent == null) {
             DavResourceLocator parentLocator = getResourceLocator()
                     .getParentLocator();
@@ -266,12 +274,13 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
                 throw new ForbiddenException("Resource "
                         + parentLocator.getPath() + " is not a collection");
             }
-            if (parent == null)
+            if (parent == null && createNewCollection)
                 parent = new DavCollectionBase(parentLocator,
                         getResourceFactory(), entityFactory);
         }
 
         return parent;
+
     }
 
     public MultiStatusResponse updateProperties(DavPropertySet setProperties,
@@ -285,6 +294,19 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         updateItem();
 
         return msr;
+    }
+
+    @Override
+    public void updateAcl(Set<AnyAce> aces) throws CosmoDavException {
+        log.debug("Updating ACL for " + item.getName());
+        List<Ace> newAces = new ArrayList<>();
+        for (AnyAce davAce : aces) {
+            //Get a real Ace
+            Ace ace = entityFactory.createAce();
+            davAce.toAce(ace, getResourceLocator(), getResourceFactory());
+            newAces.add(ace);
+        }
+        getContentService().alterAcl(getItem(), newAces);
     }
 
     // DavItemResource methods
@@ -303,8 +325,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             log.debug("adding ticket for " + item.getName());
 
         // automatically add freebusy privilege along with read
-        if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_READ))
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_FREEBUSY);
+        if (ticket.getPermissions().contains(Permission.READ))
+            ticket.getPermissions().add(Permission.FREEBUSY);
 
         getContentService().createTicket(item, ticket);
     }
@@ -426,28 +448,10 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         acl.getAces().add(unauthenticated);
 
         DavAce owner = new DavAce.PropertyAce(OWNER);
-        owner.getPrivileges().add(DavPrivilege.READ);
+        owner.getPrivileges().add(DavPrivilege.ALL);
         owner.setProtected(true);
         acl.getAces().add(owner);
 
-        for (CollectionItem parent : item.getParents()) {
-            if (parent.getOwner().equals(item.getOwner())){
-                continue;
-            }
-            try {
-                DavResourceLocatorFactory f = getResourceLocator().getFactory();
-                DavResourceLocator l = f.createPrincipalLocator(
-                        getResourceLocator().getContext(), parent.getOwner());
-                DavAce parentOwner = new DavAce.PropertyAce(OWNER);
-                parentOwner.getPrivileges().add(DavPrivilege.ALL);
-                parentOwner.setProtected(true);
-                parentOwner.setInherited(l.getHref(false));
-                acl.getAces().add(parentOwner);
-            } catch (CosmoDavException e) {
-                log.warn("Could not create principal locator for parent collection owner '"
-                        + parent.getOwner().getUsername() + "' - skipping ACE");
-            }
-        }
 
         DavAce allAllow = new DavAce.AllAce();
         allAllow.getPrivileges().add(
@@ -461,6 +465,34 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         allDeny.setProtected(true);
         acl.getAces().add(allDeny);
 
+
+        // Get ACEs from parent. Due to the current situation we only copy owner and unprotected aces from parent
+        List<DavAce> inheritedAces = new ArrayList<>();
+        try {
+            DavResourceBase parent = (DavResourceBase)getParentInternal(false);
+            if (parent != null) {
+                List<DavAce> aces = parent.getAcl().getAces();
+                for (DavAce ace : aces) { // Enhanced for copies values, all ok.
+                    if (ace instanceof DavAce.AllAce || ace instanceof DavAce.UnauthenticatedAce) {
+                        continue;
+                    }
+
+                    ace.setProtected(true);
+                    ace.setInherited(parent.getHref());
+                    inheritedAces.add(ace);
+                }
+            }
+        } catch (CosmoDavException e) {
+            log.warn("Unable to fetch inherited aces from parent by " + this + ": " + e.getMessage());
+        }
+
+
+        //Get all unprotected aces from the Item
+        for (Ace ace : item.getAces()) {
+            AnyAce anyAce = AnyAce.fromAce(ace);
+            acl.getAces().add(anyAce);
+        }
+        acl.getAces().addAll(inheritedAces);
         return acl;
     }
 
@@ -502,13 +534,13 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         if (ticket != null) {
             privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
 
-            if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_READ)){
+            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_READ)){
                 privileges.add(DavPrivilege.READ);
             }
-            if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_WRITE)){
+            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_WRITE)){
                 privileges.add(DavPrivilege.WRITE);
             }
-            if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_FREEBUSY)){
+            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_FREEBUSY)){
                 privileges.add(DavPrivilege.READ_FREE_BUSY);
             }
 

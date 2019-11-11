@@ -16,12 +16,7 @@
 package org.unitedinternet.cosmo.service.impl;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1214,5 +1209,18 @@ public class StandardContentService implements ContentService {
         }
 	    contentDao.removeItemsFromCollection(collection);
 	    contentDao.updateCollectionTimestamp(collection);
+    }
+
+    @Override
+    public void alterAcl(Item item, List<Ace> acl) {
+        SortedSet<Ace> aces = new TreeSet<>();
+        int order = 0;
+        for (Ace ace : acl ) {
+            ace.setOrder(order);
+            aces.add(ace);
+            order++;
+        }
+
+        contentDao.alterAcl(item, aces);
     }
 }

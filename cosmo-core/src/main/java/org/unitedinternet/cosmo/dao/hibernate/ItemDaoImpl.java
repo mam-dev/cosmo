@@ -15,10 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
@@ -414,6 +411,21 @@ public abstract class ItemDaoImpl implements ItemDao {
         return idGenerator.nextStringIdentifier();
     }
 
+    @Override
+    public void alterAcl(Item item, SortedSet<Ace> acl) {
+        for (Ace ace : item.getAces()) {
+            this.em.remove(ace);
+        }
+        item.getAces().clear();
+        for (Ace ace : acl) {
+            item.addAce(ace);
+            this.em.merge(ace);
+        }
+        this.em.merge(item);
+        this.em.flush();
+    }
+
+
     /*
      * (non-Javadoc)
      *
@@ -676,5 +688,6 @@ public abstract class ItemDaoImpl implements ItemDao {
     protected HibCollectionItem getHibCollectionItem(CollectionItem item) {
         return (HibCollectionItem) item;
     }
+
 
 }

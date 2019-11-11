@@ -15,6 +15,9 @@
  */
 package org.unitedinternet.cosmo.model;
 
+import org.unitedinternet.cosmo.security.Permission;
+
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,45 +28,37 @@ import java.util.Set;
  */
 public class TicketType {
 
-    /** */
-    public static final String PRIVILEGE_READ = "read";
-    /** */
-    public static final String PRIVILEGE_WRITE = "write";
-    /** */
-    public static final String PRIVILEGE_FREEBUSY = "freebusy";
+
 
     public static final String ID_READ_ONLY = "read-only";
-    public static final TicketType READ_ONLY = new TicketType(ID_READ_ONLY,
-            new String[] { PRIVILEGE_READ, PRIVILEGE_FREEBUSY });
+    public static final TicketType READ_ONLY = new TicketType(ID_READ_ONLY, new Permission[] {Permission.READ});
     public static final String ID_READ_WRITE = "read-write";
     public static final TicketType READ_WRITE = new TicketType(
             ID_READ_WRITE,
-            new String[] { PRIVILEGE_READ, PRIVILEGE_WRITE, PRIVILEGE_FREEBUSY });
+            new Permission[] { Permission.READ, Permission.WRITE, Permission.FREEBUSY });
     public static final String ID_FREE_BUSY = "free-busy";
     public static final TicketType FREE_BUSY = new TicketType(ID_FREE_BUSY,
-            new String[] { PRIVILEGE_FREEBUSY });
+            new Permission[] { Permission.FREEBUSY });
 
     private String id;
-    private Set<String> privileges;
+    private Set<Permission> permissions;
 
     public TicketType(String id) {
         this.id = id;
-        this.privileges = new HashSet<String>();
+        this.permissions = new HashSet<>();
     }
 
-    public TicketType(String id, String[] privileges) {
+    public TicketType(String id, Permission[] permissions) {
         this(id);
-        for (String p : privileges) {
-            this.privileges.add(p);
-        }
+        this.permissions.addAll(Arrays.asList(permissions));
     }
 
     public String getId() {
         return id;
     }
 
-    public Set<String> getPrivileges() {
-        return privileges;
+    public Set<Permission> getPermissions() {
+        return permissions;
     }
 
     public String toString() {

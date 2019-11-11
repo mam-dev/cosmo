@@ -70,7 +70,12 @@ public interface AclConstants extends DavConstants {
         "principal-collection-set";
     String PROPERTY_ACL_CURRENT_USER_PRIVILEGE_SET =
         "current-user-privilege-set";
-    String PROPERTY_ACL_ACL = "acl";
+    String ELEMENT_ACL_ACL = "acl";
+
+    String ELEMENT_ACL_ACE = "ace";
+    public static final String QN_ACL = DomUtil.getExpandedName(ELEMENT_ACL_ACL, NAMESPACE);
+
+    public static final String QN_ACE = DomUtil.getExpandedName(ELEMENT_ACL_ACE, NAMESPACE);
 
     /** The ACL property DAV:alternate-URI-set */
     DavPropertyName ALTERNATEURISET =
@@ -91,7 +96,7 @@ public interface AclConstants extends DavConstants {
         DavPropertyName.create(PROPERTY_ACL_CURRENT_USER_PRIVILEGE_SET,
                                NAMESPACE);
     DavPropertyName ACL =
-        DavPropertyName.create(PROPERTY_ACL_ACL, NAMESPACE);
+        DavPropertyName.create(ELEMENT_ACL_ACL, NAMESPACE);
 
     CosmoQName RESOURCE_TYPE_PRINCIPAL =
         new CosmoQName(NAMESPACE.getURI(), ELEMENT_ACL_PRINCIPAL,

@@ -15,12 +15,11 @@
  */
 package org.unitedinternet.cosmo.security;
 
+import java.util.EnumSet;
+
 /**
  * Defines constants representing the permissions implemented in Cosmo.
  */
-public class Permission {
-
-    public static final int READ = 100;
-    public static final int WRITE = READ + 100;
-    public static final int FREEBUSY = WRITE + 100;
+public enum  Permission {
+    READ, WRITE, FREEBUSY,
 }

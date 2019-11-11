@@ -17,13 +17,16 @@ package org.unitedinternet.cosmo.security.util;
 
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.filter.ItemFilter;
 import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.security.CosmoSecurityContext;
+import org.unitedinternet.cosmo.security.Permission;
+import org.unitedinternet.cosmo.security.PermissionDeniedException;
 
 /**
  * Contains methods that help determine if a
@@ -33,7 +36,19 @@ import org.unitedinternet.cosmo.security.CosmoSecurityContext;
 public class SecurityHelper {
     
     private UserDao userDao;
-    
+
+    private static final  Log LOG =
+        LogFactory.getLog(SecurityHelper.class);
+
+    public boolean hasReadAccess(CosmoSecurityContext securityContext, Item item) {
+        return hasAccess(securityContext, item, Permission.READ);
+    }
+
+    public boolean hasWriteAccess(CosmoSecurityContext securityContext, Item item) {
+        return hasAccess(securityContext, item, Permission.WRITE);
+    }
+
+
     public SecurityHelper(ContentDao contentDao, UserDao userDao) {
         this.userDao = userDao;
     }
@@ -61,19 +76,19 @@ public class SecurityHelper {
      */
     public boolean hasAccessToFilter(CosmoSecurityContext context, ItemFilter filter) {
         // admin has access to everything
-        if(context.getUser()!=null && context.getUser().getAdmin().booleanValue()) {
+        if(context.getUser()!=null && context.getUser().getAdmin()) {
             return true;
         }
         
         // Otherwise require read access to parent or note
         if(filter.getParent()!=null) {
-            return hasReadAccess(context, filter.getParent());
+            return hasAccess(context, filter.getParent(), Permission.READ);
         }
         
         if (filter instanceof NoteItemFilter) {
             NoteItemFilter nif = (NoteItemFilter) filter;
             if (nif.getMasterNoteItem() != null) {
-                return hasReadAccess(context, nif.getMasterNoteItem());
+                return hasAccess(context, nif.getMasterNoteItem(), Permission.READ);
             }
         }
         
@@ -87,12 +102,12 @@ public class SecurityHelper {
      * @return true if the security context has sufficient privileges
      *         to view the item
      */
-    public boolean hasReadAccess(CosmoSecurityContext context, Item item) {
+    public boolean hasAccess(CosmoSecurityContext context, Item item, Permission perm) {
         if(context.getUser()!=null) {
-            return hasReadAccess(context.getUser(), item, context.getTickets());
+            return hasAccess(context.getUser(), item, context.getTickets(), perm);
         }
         else if(context.getTicket()!=null) {
-            return  hasReadAccess(context.getTicket(), item, context.getTickets());
+            return  hasAccess(context.getTicket(), item, context.getTickets(), perm);
         }
         
         return false;
@@ -116,7 +131,7 @@ public class SecurityHelper {
                 if (ticket == null) {
                     continue;
                 }
-                if (hasWriteAccess(ticket, item)) {
+                if (hasAccess(ticket, item, Permission.WRITE)) {
                     return true;
                 }
             }
@@ -125,41 +140,22 @@ public class SecurityHelper {
         return false;
     }
     
-    /**
-     * @param context security context
-     * @param item existing item
-     * @return true if the security context has sufficient privileges
-     *         to update the item
-     */
-    public boolean hasWriteAccess(CosmoSecurityContext context, Item item) {
-        if(context.getUser()!=null) {
-            return hasWriteAccess(context.getUser(), item, context.getTickets());
-        }
-        else if(context.getTicket()!=null) {
-            return  hasWriteAccess(context.getTicket(), item, context.getTickets());
-        }
-        
-        return false;
-    }
-    
-    private boolean hasReadAccess(User user, Item item, Set<Ticket> tickets) {
+
+
+    private boolean hasAccess(User user, Item item, Set<Ticket> tickets, Permission permission) {
+        LOG.debug("Checking access " + permission + " for item " + item.getUid() + " for user " + user.getUsername());
         // SecurityHelperUtils provides non-ticket authorization logic
-        if (SecurityHelperUtils.canAccess(user, item, DavPrivilege.READ)) {
+        if (SecurityHelperUtils.canAccess(user, item, permission)) {
             return true;
         }
 
 
-        // Case 3: ticket for item present
-        if (tickets != null) {
-            for (Ticket ticket : tickets) {
-                if (hasReadAccess(ticket, item)) {
-                    return true;
-                }
-            }
-        }
+        // ticket for item present
+        if (hasAccess(item, tickets, permission))
+            return true;
 
         /*
-         * Case 4: check subscriptions. Refresh user to prevent lazy init exceptions
+         * heck subscriptions. Refresh user to prevent lazy init exceptions
          */
         user = this.userDao.getUser(user.getUsername());
         if (user != null) {
@@ -168,7 +164,7 @@ public class SecurityHelper {
                  if(ticket == null) {
                      continue;
                  }
-                 if(hasReadAccess(ticket, item)) {
+                 if(hasAccess(ticket, item, permission)) {
                      return true;
                  }
              }
@@ -177,97 +173,68 @@ public class SecurityHelper {
         // Otherwise no access
         return false;
     }
-    
-    private boolean hasReadAccess(Ticket ticket, Item item, Set<Ticket> tickets) {
-        // check principal ticket
-        if(hasReadAccess(ticket,item)) {
-            return true;
-        }
-        
-        // check other tickets
-        if(tickets!=null) {
-            for(Ticket t: tickets) {
-                if(hasReadAccess(t, item)) {
-                    return true;
-                }
-            }
-        }
-        
-        // otherwise no access
-        return false;
-    }
-    
-    private boolean hasReadAccess(Ticket ticket, Item item) {
-        // ticket must be valid
-        if(ticket.isGranted(item) && !ticket.hasTimedOut()) {
-            return true;
-        }
-       
-        // otherwise no access
-        return false;
-    }
-    
-    private boolean hasWriteAccess(User user, Item item, Set<Ticket> tickets) {
 
-        if (SecurityHelperUtils.canAccess(user, item, DavPrivilege.WRITE)) {
-            return true;
-        }
-        
-        // Case 3: ticket for item present
+    private boolean hasAccess(Item item, Set<Ticket> tickets, Permission permission) {
         if (tickets != null) {
-            for(Ticket ticket: tickets) {
-                if(hasWriteAccess(ticket, item)) {
+            for (Ticket ticket : tickets) {
+                if (hasAccess(ticket, item, permission)) {
                     return true;
                 }
             }
         }
-        
-        // Case 4: check subscriptions refresh user to prevent lazy init exceptions
-        user = userDao.getUser(user.getUsername());
-        if (user != null) {
-            for (CollectionSubscription cs : user.getSubscriptions()) {
-                Ticket ticket = cs.getTicket();
-                if (ticket == null) {
-                    continue;
-                }
-                if (hasWriteAccess(ticket, item)) {
-                    return true;
-                }
-            }
-        }
-        
-        // otherwise no access
         return false;
     }
-    
-    private boolean hasWriteAccess(Ticket ticket, Item item, Set<Ticket> tickets) {
-        // check principal ticket
-        if(hasWriteAccess(ticket,item)) {
+
+    /**
+     * Check access for a principal ticket or a set of other tickets
+     * @param ticket
+     * @param item
+     * @param tickets
+     * @param permission
+     * @return
+     */
+    private boolean hasAccess(Ticket ticket, Item item, Set<Ticket> tickets, Permission permission) {
+        if (hasAccess(ticket, item, permission)) { //principal
             return true;
         }
-        
-        // check other tickets
-        if(tickets!=null) {
-            for(Ticket t: tickets) {
-                if(hasWriteAccess(t, item)) {
-                    return true;
-                }
-            }
-        }
-            
-        // otherwise no access
-        return false;
+        return hasAccess(item, tickets, permission); //other tickets
     }
-    
-    private boolean hasWriteAccess(Ticket ticket, Item item) {
-        // ticket must be valid
-        if(ticket.isGranted(item) && !ticket.hasTimedOut() && ticket.isReadWrite()) {
-            return true;
-        }
-       
-        // otherwise no access
-        return false;
+
+    /**
+     * Ticket permission logic
+     * @param ticket
+     * @param item
+     * @param permission
+     * @return
+     */
+    private boolean hasAccess(Ticket ticket, Item item, Permission permission) {
+        LOG.debug("Checking access " + permission + " for item  " + item.getUid() + " for ticket " + ticket);
+        return isValidTicket(ticket, item) && ticket.getPermissions().contains(permission);
     }
-   
-    
+
+
+
+    public void throwIfNoAccess(CosmoSecurityContext ctx, Item item, Permission permission) throws PermissionDeniedException {
+        if (ctx.isAnonymous()) {
+            LOG.warn("Anonymous access attempted to item " + item.getUid());
+            throw new PermissionDeniedException("Anonymous principals have no permissions");
+        }
+
+        if (!hasAccess(ctx, item, permission)) {
+            LOG.warn("Insufficient privileges while accessing item " + item.getUid() );
+            throw new PermissionDeniedException("Principal has insufficient privileges");
+        }
+
+    }
+
+
+
+
+
+    private boolean isValidTicket(Ticket ticket, Item item) {
+        return ticket.isGranted(item) && !ticket.hasTimedOut();
+    }
+
+
+
 }

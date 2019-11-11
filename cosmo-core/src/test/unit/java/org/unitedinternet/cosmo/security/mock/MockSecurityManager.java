@@ -24,10 +24,7 @@ import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.security.CosmoSecurityContext;
-import org.unitedinternet.cosmo.security.CosmoSecurityException;
-import org.unitedinternet.cosmo.security.CosmoSecurityManager;
-import org.unitedinternet.cosmo.security.PermissionDeniedException;
+import org.unitedinternet.cosmo.security.*;
 
 /**
  * A mock implementation of the {@link CosmoSecurityManager}
@@ -195,7 +192,7 @@ public class MockSecurityManager implements CosmoSecurityManager {
      * @param permission The permission.
      * @throws PermissionDeniedException - if something is wrong this exception is thrown.
      */
-    public void checkPermission(Item item, int permission) throws PermissionDeniedException {
+    public void checkPermission(Item item, Permission permission) throws PermissionDeniedException {
         return; //TODO does this Mock need more?
     }
 

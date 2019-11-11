@@ -16,15 +16,8 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,11 +36,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.Length;
 import org.unitedinternet.cosmo.model.*;
 
@@ -115,6 +104,13 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Ticket> tickets = new HashSet<Ticket>(0);
 
+    @OneToMany(targetEntity = HibAce.class, mappedBy = "item",
+    fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @SortNatural
+    private SortedSet<Ace> aces = new TreeSet<>();
+
+
     // turns out this creates a query that is unoptimized for MySQL
     //@Fetch(FetchMode.SUBSELECT)
     @OneToMany(targetEntity=HibStamp.class, mappedBy = "item", 
@@ -140,6 +136,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     @JoinColumn(name="ownerid", nullable = false)
     @NotNull
     private UserBase owner;
+    private transient Set<CollectionItem> allParents = null;
 
 
     @Override
@@ -432,6 +429,27 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         return parents;
     }
 
+    public Set<CollectionItem> getAllParents() {
+        if (parents != null && allParents != null) {
+            //nullification of parents means cache has to be cleared anyway
+            allParents = new HashSet<>();
+            Queue<Item> queue = new LinkedList<>();
+            Set<Item> visited = new HashSet<>();
+            //BFS
+            queue.add(this);
+            while (!queue.isEmpty()) {
+                Item current = queue.poll();
+                if (visited.contains(current))
+                    continue;
+                allParents.addAll(current.getParents());
+                queue.addAll(current.getParents());
+                visited.add(current);
+            }
+
+        }
+        return allParents;
+    }
+
     @Override
     public CollectionItem getParent() {
         if(getParents().size()==0) {
@@ -450,6 +468,17 @@ public abstract class HibItem extends HibAuditableObject implements Item {
         }
         
         return null;
+    }
+
+    @Override
+    public SortedSet<Ace> getAces() {
+        return aces;
+    }
+
+    @Override
+    public void addAce(Ace ace) {
+        aces.add(ace);
+        ace.setItem(this);
     }
 
     @Override

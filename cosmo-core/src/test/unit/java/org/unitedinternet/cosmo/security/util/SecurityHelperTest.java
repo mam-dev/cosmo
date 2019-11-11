@@ -34,6 +34,7 @@ import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.mock.MockCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.security.CosmoSecurityContext;
+import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.security.mock.MockSecurityContext;
 import org.unitedinternet.cosmo.security.mock.MockTicketPrincipal;
 import org.unitedinternet.cosmo.security.mock.MockUserPrincipal;
@@ -98,15 +99,15 @@ public class SecurityHelperTest {
         
         Ticket roTicket = testHelper.makeDummyTicket();
         roTicket.setKey("1");
-        roTicket.getPrivileges().add(Ticket.PRIVILEGE_READ);
+        roTicket.getPermissions().add(Permission.READ);
         col.getTickets().add(roTicket);
         Ticket rwTicket = testHelper.makeDummyTicket();
         rwTicket.setKey("2");
-        rwTicket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwTicket.getPermissions().add(Permission.WRITE);
         col.getTickets().add(rwTicket);
         Ticket rwBogus = testHelper.makeDummyTicket();
         rwBogus.setKey("3");
-        rwBogus.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwBogus.getPermissions().add(Permission.WRITE);
         
         CosmoSecurityContext context = getSecurityContext(roTicket);
         
@@ -180,18 +181,18 @@ public class SecurityHelperTest {
         
         Ticket roTicket = testHelper.makeDummyTicket();
         roTicket.setKey("1");
-        roTicket.getPrivileges().add(Ticket.PRIVILEGE_READ);
+        roTicket.getPermissions().add(Permission.READ);
         col2.getTickets().add(roTicket);
         Ticket rwTicket = testHelper.makeDummyTicket();
         rwTicket.setKey("2");
-        rwTicket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwTicket.getPermissions().add(Permission.WRITE);
         col2.getTickets().add(rwTicket);
         Ticket rwBogus = testHelper.makeDummyTicket();
         rwBogus.setKey("3");
-        rwBogus.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwBogus.getPermissions().add(Permission.WRITE);
         Ticket rwItemTicket = testHelper.makeDummyTicket();
         rwItemTicket.setKey("4");
-        rwItemTicket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwItemTicket.getPermissions().add(Permission.WRITE);
         note.getTickets().add(rwItemTicket);
         
         CosmoSecurityContext context = getSecurityContext(roTicket);
@@ -236,14 +237,14 @@ public class SecurityHelperTest {
         
         Ticket rwTicket = testHelper.makeDummyTicket();
         rwTicket.setKey("2");
-        rwTicket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwTicket.getPermissions().add(Permission.WRITE);
         col2.getTickets().add(rwTicket);
         Ticket rwBogus = testHelper.makeDummyTicket();
         rwBogus.setKey("3");
-        rwBogus.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwBogus.getPermissions().add(Permission.WRITE);
         Ticket rwItemTicket = testHelper.makeDummyTicket();
         rwItemTicket.setKey("4");
-        rwItemTicket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        rwItemTicket.getPermissions().add(Permission.WRITE);
         note.getTickets().add(rwItemTicket);
         
         Set<Ticket> tickets = new HashSet<Ticket>();
@@ -276,7 +277,7 @@ public class SecurityHelperTest {
         collectionItem.addChild(note);
         
         Ticket ticket  =  testHelper.makeDummyTicket(sharer);
-        ticket.getPrivileges().add(Ticket.PRIVILEGE_READ);
+        ticket.getPermissions().add(Permission.READ);
         ticket.setItem(collectionItem);
         collectionItem.addTicket(ticket);
         
@@ -307,7 +308,7 @@ public class SecurityHelperTest {
         collectionItem.addChild(note);
         
         Ticket ticket  =  testHelper.makeDummyTicket(sharer);
-        ticket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
+        ticket.getPermissions().add(Permission.WRITE);
         ticket.setItem(collectionItem);
         collectionItem.addTicket(ticket);
         

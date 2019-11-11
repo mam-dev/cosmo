@@ -31,8 +31,7 @@ import org.unitedinternet.cosmo.model.EntityTagCalculableObject;
 /**
  * Base class for model objects.
  *
- * These objects support setting creation and modification date via setters
- * It is implied that an entity tag  depend on time and therefore updateTimestamp updates the entity tag
+ *
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass

@@ -15,18 +15,22 @@
  */
 package org.unitedinternet.cosmo.dav.acl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.jackrabbit.webdav.xml.DomUtil;
+import org.apache.jackrabbit.webdav.xml.ElementIterator;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
 
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.model.Ticket;
 
+import org.unitedinternet.cosmo.security.Permission;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,35 +55,48 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
 
     public DavPrivilegeSet(Ticket ticket) {
         super();
-        for (String priv : ticket.getPrivileges()) {
-            if (priv.equals(Ticket.PRIVILEGE_READ)) {
-                add(DavPrivilege.READ);
-            }
-            else if (priv.equals(Ticket.PRIVILEGE_WRITE)) {
-                add(DavPrivilege.WRITE);
-            }
-            else if (priv.equals(Ticket.PRIVILEGE_FREEBUSY)) {
-                add(DavPrivilege.READ_FREE_BUSY);
-            }
-            else {
-                throw new IllegalStateException("Unrecognized ticket privilege " + priv);
-            }
+        for (Permission perm : ticket.getPermissions()) {
+            add(PermissionPrivilegeConstants.PERMISSION_TO_PRIVILEGE.get(perm));
         }
     }
 
     // XmlSerializable methods
 
+    /**
+     * This yields a single <D:privilege></D:privilege> node that contains all the privileges. Suitable for DAV ticket draft implementation:
+     * @param document
+     * @return
+     */
     public Element toXml(Document document) {
         Element root =
-            DomUtil.createElement(document, "privilege", NAMESPACE);
+                DomUtil.createElement(document, XML_PRIVILEGE, NAMESPACE);
         for (DavPrivilege p : this) {
             if (p.isAbstract()) {
                 continue;
             }
-            root.appendChild(p.toXml(document));
+            root.appendChild(p.toXmlWithoutContainer(document));
         }
         return root;
     }
+
+    /**
+     * This yields list of <D:privilege></D:privilege> nodes for each of the privileges
+     * @param document
+     * @return
+     */
+    public List<Element> toXmlWithoutContainer(Document document) {
+        List<Element> elements = new ArrayList<>();
+        for (DavPrivilege p : this) {
+            if (p.isAbstract()) {
+                continue;
+            }
+            elements.add(p.toXml(document));
+        }
+        return elements;
+    }
+
+
+
 
     // our methods
 
@@ -102,15 +119,11 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
     }
 
     public void setTicketPrivileges(Ticket ticket) {
-        ticket.getPrivileges().clear();
-        if (contains(DavPrivilege.READ)) {
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_READ);
-        }
-        if (contains(DavPrivilege.WRITE)) {
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_WRITE);
-        }
-        if (contains(DavPrivilege.READ_FREE_BUSY)) {
-            ticket.getPrivileges().add(Ticket.PRIVILEGE_FREEBUSY);
+        ticket.getPermissions().clear();
+        for (DavPrivilege privilege : PermissionPrivilegeConstants.PRIVILEGE_TO_PERMISSION.keySet()) {
+            if (containsRecursive(privilege)) {
+                ticket.getPermissions().add(PermissionPrivilegeConstants.PRIVILEGE_TO_PERMISSION.get(privilege));
+            }
         }
     }
 
@@ -118,22 +131,35 @@ public class DavPrivilegeSet extends HashSet<DavPrivilege>
         return StringUtils.join(this, ", ");
     }
 
+    /**
+     * This method creates a DavPrivilegeSet from a set of DAV:privilege nodes as per ACL method in RFC.
+     *
+     * @param root parent of DAV:privilege nodes
+     * @return
+     */
+    public static final DavPrivilegeSet fromXmlAcl(Element root) {
+        DavPrivilegeSet dps = new DavPrivilegeSet();
+        for (ElementIterator it = DomUtil.getChildren(root); it.hasNext(); ) {
+            Element priv = it.next();
+            dps.add(DavPrivilege.fromXml(priv));
+        }
+        return dps;
+    }
+
+    /***
+     * This method creates a DavPrivilegeSet from a single DAV:privilege node encompassing all the children privileges
+     * @param root DAV:privilege node with many children
+     * @return
+     */
     public static final DavPrivilegeSet createFromXml(Element root) {
-        if (! DomUtil.matches(root, "privilege", NAMESPACE)) {
-            throw new IllegalArgumentException("Expected DAV:privilege element");
+        if (!DomUtil.matches(root, "privilege", NAMESPACE)) {
+            throw new IllegalArgumentException("must be a DAV:privilege element, found " + root.getNodeName());
         }
         DavPrivilegeSet privileges = new DavPrivilegeSet();
-
-        if (DomUtil.hasChildElement(root, "read", NAMESPACE)) {
-            privileges.add(DavPrivilege.READ);
+        for (ElementIterator it = DomUtil.getChildren(root); it.hasNext(); ) {
+            Element elem = it.next();
+            privileges.add(DavPrivilege.extractPrivilege(elem));
         }
-        if (DomUtil.hasChildElement(root, "write", NAMESPACE)) {
-            privileges.add(DavPrivilege.WRITE);
-        }
-        if (DomUtil.hasChildElement(root, "read-free-busy", NAMESPACE_CALDAV)) {
-            privileges.add(DavPrivilege.READ_FREE_BUSY);
-        }
-
         return privileges;
     }
 }

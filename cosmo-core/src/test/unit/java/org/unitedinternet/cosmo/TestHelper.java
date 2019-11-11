@@ -44,6 +44,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
+import org.unitedinternet.cosmo.security.Permission;
 import org.unitedinternet.cosmo.security.mock.MockAnonymousPrincipal;
 import org.unitedinternet.cosmo.security.mock.MockUserPrincipal;
 import org.w3c.dom.Document;
@@ -174,8 +175,8 @@ public class TestHelper {
     public Ticket makeDummyTicket(String timeout) {
         Ticket ticket = entityFactory.createTicket();
         ticket.setTimeout(timeout);
-        ticket.setPrivileges(new HashSet<String>());
-        ticket.getPrivileges().add(Ticket.PRIVILEGE_READ);
+        ticket.setPermissions(new HashSet<Permission>());
+        ticket.getPermissions().add(Permission.READ);
         return ticket;
     }
 
@@ -250,6 +251,9 @@ public class TestHelper {
         return makeDummyUser(username, username);
     }
 
+    public Ace makeDummyAce() {
+        return entityFactory.createAce();
+    }
     /**
      * Makes dummy subscription.
      * @param collection The coolection item.

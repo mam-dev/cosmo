@@ -15,6 +15,8 @@
  */
 package org.unitedinternet.cosmo.model;
 
+import org.unitedinternet.cosmo.security.Permission;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -51,11 +53,11 @@ public interface Ticket extends AuditableObject {
 
     /**
      */
-    public Set<String> getPrivileges();
+    public Set<Permission> getPermissions();
 
     /**
      */
-    public void setPrivileges(Set<String> privileges);
+    public void setPermissions(Set<Permission> permissions);
 
     /**
      * Returns the ticket type if the ticket's privileges match up

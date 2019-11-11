@@ -256,4 +256,5 @@ public interface EntityFactory {
      */
     public XmlAttribute createXMLAttribute(QName qname, Element e);
 
+    public Ace createAce();
 }

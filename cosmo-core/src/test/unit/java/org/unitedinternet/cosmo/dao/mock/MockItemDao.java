@@ -17,10 +17,7 @@ package org.unitedinternet.cosmo.dao.mock;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -556,5 +553,15 @@ public class MockItemDao implements ItemDao {
     @Override
     public long countItems(long ownerId) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void alterAcl(Item item, SortedSet<Ace> acl) {
+        item.getAces().clear();
+        int order = 0;
+        for (Ace ace : acl) {
+            item.addAce(ace);
+            order++;
+        }
     }
 }

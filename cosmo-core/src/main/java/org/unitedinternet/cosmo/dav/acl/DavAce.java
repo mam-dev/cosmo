@@ -19,6 +19,7 @@ import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
 
+import org.hibernate.mapping.Any;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 
 import org.w3c.dom.Document;
@@ -83,7 +84,7 @@ public abstract class DavAce
         Element grantOrDeny =
             DomUtil.createElement(document, denied ? "deny" : "grant",
                                   NAMESPACE);
-        grantOrDeny.appendChild(privileges.toXml(document));
+        privileges.toXmlWithoutContainer(document).forEach(grantOrDeny::appendChild);
         root.appendChild(grantOrDeny);
 
         if (isProtected) {
@@ -162,9 +163,7 @@ public abstract class DavAce
         }
 
         protected Element principalXml(Document document) {
-            Element root = DomUtil.createElement(document, "href", NAMESPACE);
-            DomUtil.setText(root, href);
-            return root;
+            return AnyAce.hrefXml(document, href);
         }
     }
 
@@ -176,13 +175,13 @@ public abstract class DavAce
 
     public static class AuthenticatedAce extends DavAce {
         protected Element principalXml(Document document) {
-            return DomUtil.createElement(document, "authenticated", NAMESPACE);
+            return AnyAce.allXml(document);
         }
     }
 
     public static class UnauthenticatedAce extends DavAce {
         protected Element principalXml(Document document) {
-            return DomUtil.createElement(document, "unauthenticated", NAMESPACE);
+            return AnyAce.unauthenticatedXml(document);
         }
     }
 
@@ -198,9 +197,7 @@ public abstract class DavAce
         }
 
         protected Element principalXml(Document document) {
-            Element root = DomUtil.createElement(document, "property", NAMESPACE);
-            root.appendChild(property.toXml(document));
-            return root;
+            return AnyAce.propertyXml(document, property);
         }
     }
 

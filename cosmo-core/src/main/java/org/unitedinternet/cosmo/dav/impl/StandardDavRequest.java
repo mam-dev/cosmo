@@ -29,6 +29,7 @@ import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
 import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
+import org.unitedinternet.cosmo.dav.acl.AnyAce;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilegeSet;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
@@ -81,6 +82,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
     private DavPropertySet proppatchSet;
     private DavPropertyNameSet proppatchRemove;
     private DavPropertySet mkcolSet;
+    private Set<AnyAce> aclSet;
     private Ticket ticket;
     private ReportInfo reportInfo;
     private boolean bufferRequestContent = false;
@@ -327,6 +329,15 @@ public class StandardDavRequest extends WebdavRequestImpl implements
         return mkcolSet;
     }
 
+    @Override
+    public Set<AnyAce> getAclProperties() throws CosmoDavException {
+        if (aclSet == null) {
+            aclSet = parseAclRequest();
+        }
+        return aclSet;
+    }
+
+
 
     // CaldavRequest methods
     /**
@@ -396,8 +407,13 @@ public class StandardDavRequest extends WebdavRequestImpl implements
     private Document getSafeRequestDocument(boolean requireDocument)
             throws CosmoDavException {
         try {
-            if (StringUtils.isBlank(getContentType()) && requireDocument) {
-                throw new BadRequestException("No Content-Type specified");
+            if (StringUtils.isBlank(getContentType())) {
+                if   (requireDocument) {
+                    throw new BadRequestException("No Content-Type specified");
+                }
+                else {
+                    return null;
+                }
             }
             MimeType mimeType = new MimeType(getContentType());
             if (!(mimeType.match(APPLICATION_XML) || mimeType.match(TEXT_XML))) {
@@ -584,7 +600,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
 
         Document requestDocument = getSafeRequestDocument(false);
         if (requestDocument == null) {
-            return new DavPropertySet();
+            return null;
         }
 
         Element root = requestDocument.getDocumentElement();
@@ -600,6 +616,41 @@ public class StandardDavRequest extends WebdavRequestImpl implements
 
         return parseDavPropertySet(root);
     }
+
+      private Set<AnyAce> parseAclRequest() throws CosmoDavException {
+          Document document = getSafeRequestDocument(false);
+          if (document == null) {
+              return new HashSet<>();
+          }
+          Element root = document.getDocumentElement();
+
+          /** This should be
+           *<D:acl xmlns:D="DAV:">
+           <D:ace>
+           </D:ace>
+           <D:ace>
+           </D:ace>
+           *
+           */
+          if (!DomUtil.matches(root, ELEMENT_ACL_ACL, NAMESPACE)) {
+              throw new BadRequestException("Expected " + QN_ACL + " root element" );
+          }
+          return parseAceSet(root);
+      }
+
+    private Set<AnyAce> parseAceSet(Element root) throws CosmoDavException {
+        Set<AnyAce> aces = new HashSet<>();
+        ElementIterator iter = DomUtil.getChildren(root);
+        while (iter.hasNext()) {
+            Element aceElement = iter.next();
+            if (!DomUtil.matches(aceElement, ELEMENT_ACL_ACE, NAMESPACE)) {
+                throw new BadRequestException("Expected " + QN_ACE + " as child of " + QN_ACL);
+            }
+            aces.add(AnyAce.fromXml(aceElement));
+        }
+        return aces;
+    }
+
 
     private DavPropertySet parseMkcolRequest()  throws CosmoDavException{
         Document requestDocument = getSafeRequestDocument(false);
@@ -621,6 +672,8 @@ public class StandardDavRequest extends WebdavRequestImpl implements
         return parseDavPropertySet(root);
 
     }
+
+
     private DavPropertySet parseDavPropertySet(Element root) throws BadRequestException {
         /* This should be
              <D:set xmlns:D="DAV">

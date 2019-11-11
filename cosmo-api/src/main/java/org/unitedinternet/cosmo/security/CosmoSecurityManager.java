@@ -65,7 +65,7 @@ public interface CosmoSecurityManager {
      * not have the required permission
      */
     public void checkPermission(Item item,
-                                int permission)
+                                Permission permission)
         throws PermissionDeniedException;
     
     /**
