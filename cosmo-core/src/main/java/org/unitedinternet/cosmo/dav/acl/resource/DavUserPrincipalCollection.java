@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav.acl.resource;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
+import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
@@ -110,8 +112,9 @@ public class DavUserPrincipalCollection extends DavResourceBase implements DavCo
         throw new UnsupportedOperationException();
     }
 
-    public DavResourceIterator getMembers() {
-        throw new UnsupportedOperationException();
+    public DavResourceIterator getMembers() {        
+        // Return an empty list to also support PROPFIND with depth 1 and depth infinity.
+        return new DavResourceIteratorImpl(Collections.emptyList());
     }
     
     @Override
