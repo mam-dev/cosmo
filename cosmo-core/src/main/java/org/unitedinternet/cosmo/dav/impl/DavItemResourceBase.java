@@ -491,99 +491,17 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     }
 
     /**
-     * <p>
-     * Extends the superclass method.
-     * </p>
-     * <p>
-     * If the principal is a user, returns {@link DavPrivilege#READ} and
-     * {@link DavPrivilege@WRITE}. This is a shortcut that assumes the security
-     * layer has only allowed access to the owner of the home collection
-     * specified in the URL used to access this resource. Eventually this method
-     * will check the ACL for all ACEs corresponding to the current principal
-     * and return the privileges those ACEs grant.
-     * </p>
-     * <p>
-     * If the principal is a ticket, returns the dav privileges corresponding to
-     * the ticket's privileges, since a ticket is in effect its own ACE.
-     * </p>
+
      */
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
-        if (!privileges.isEmpty()) {
-            return privileges;
+
+    protected boolean matchProperty(DavPropertyName prop, User user) {
+        if (!prop.equals(OWNER)) { // We don't support unprotected property ACEs
+            return false;
         }
-
-        User user = getSecurityManager().getSecurityContext().getUser();
-        if (user != null) {
-           DavAcl acl = getAcl();
-            for (DavAce davAce : acl.getAces()) {
-                if (davAce.isDenied()) {
-                    continue;
-                }
-                if (privileges.containsAll(davAce.getPrivileges())) {
-                    continue;
-                }
-                AcePrincipal principal = davAce.getPrincipal();
-                switch (principal.getType()) {
-                    // Break from there and then the privileges are added.
-                    // Continue from there otherwise.
-                    case AUTHENTICATED:
-                    case ALL:
-                        break;
-                    case PROPERTY:
-                        DavPropertyName prop = principal.getPropertyName();
-                        if (!prop.equals(OWNER)) { // We don't support unprotected property ACEs
-                            continue;
-                        }
-                        // Check if we're indeed the owner
-                        UserBase owner = getItem().getOwner();
-                        if (user.equals(owner) ||
-                                (owner instanceof Group && user.isMemberOf((Group) owner))) {
-                            break;
-                        }
-                        continue;
-                    case HREF:
-                        try {
-                            DavUserPrincipal userPrincipal = PrincipalUtils.findUserPrincipal(principal.getValue(), getResourceLocator(), getResourceFactory());
-                            if (user.equals(userPrincipal.getUser()) || (
-                                    userPrincipal.getUser() instanceof  Group && user.isMemberOf((Group) userPrincipal.getUser()))) {
-                                break;
-                            }
-                        } catch (NotRecognizedPrincipalException e) {
-                            LOG.error("getCurrentPrincipalPrivileges: while parsing ACEs: " + e );
-                            continue;
-                        }
-                        continue;
-                    default:
-                        continue;
-                }
-                // if we're here, add the privilege
-                privileges.addAll(davAce.getPrivileges());
-            }
-            privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
-            return privileges;
-        }
-
-        Ticket ticket = getSecurityManager().getSecurityContext().getTicket();
-        if (ticket != null) {
-            privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
-
-            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_READ)){
-                privileges.add(DavPrivilege.READ);
-            }
-            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_WRITE)){
-                privileges.add(DavPrivilege.WRITE);
-            }
-            if (ticket.getPermissions().contains(Ticket.PRIVILEGE_FREEBUSY)){
-                privileges.add(DavPrivilege.READ_FREE_BUSY);
-            }
-
-            return privileges;
-        }
-
-        return privileges;
+        // Check if we're indeed the owner
+        UserBase owner = getItem().getOwner();
+        return PrincipalUtils.matchUser(user, owner);
     }
-
     protected void loadLiveProperties(DavPropertySet properties) {
         if (item == null) {
             return;

@@ -47,6 +47,7 @@ import org.apache.jackrabbit.webdav.version.OptionsResponse;
 import org.apache.jackrabbit.webdav.version.report.Report;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.springframework.lang.Nullable;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
@@ -57,15 +58,18 @@ import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.StandardResourceFactory;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
-import org.unitedinternet.cosmo.dav.acl.AclConstants;
-import org.unitedinternet.cosmo.dav.acl.AnyAce;
-import org.unitedinternet.cosmo.dav.acl.DavAcl;
-import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
+import org.unitedinternet.cosmo.dav.acl.*;
 import org.unitedinternet.cosmo.dav.acl.property.Acl;
 import org.unitedinternet.cosmo.dav.acl.property.CurrentUserPrivilegeSet;
+import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.dav.property.SupportedReportSet;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
+import org.unitedinternet.cosmo.model.Group;
+import org.unitedinternet.cosmo.model.Ticket;
+import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
+import org.unitedinternet.cosmo.security.Permission;
 
 /**
  * <p>
@@ -101,6 +105,9 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
     DavResourceFactory factory;
     private DavPropertySet properties;
     private boolean initialized;
+
+    @Nullable
+    private Set<DavPrivilege> privileges = null;
 
     public DavResourceBase(DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
         this.locator = locator;
@@ -352,13 +359,91 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
     protected abstract DavAcl getAcl();
 
     /**
+     *
+     * @param prop
+     * @return
+     */
+    protected boolean matchProperty(DavPropertyName prop, User user) {
+        return false;
+    }
+
+    protected boolean matchSelf(User user) {
+        return false;
+    }
+
+
+
+    /**
+     *   Filter ACEs for the current user.
+     * <p>
+     * If the principal is a ticket, returns the dav privileges corresponding to
+     * the ticket's privileges, since a ticket is in effect its own ACE.
+     * </p>
      * <p>
      * Returns the set of privileges granted on the resource to the current principal. By default no privileges are
-     * returned. Sub classes will overwrite with proper privileges.
+     * returned.
      * </p>
+     *
+     * Subclasses should reimplement matchProperty and matchSelf for
+     * D:owner and D:self ACEs to be returned correctly.
      */
     protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        return new HashSet<>();
+        if (privileges == null) {
+            privileges = new HashSet<>();
+            User user = getSecurityManager().getSecurityContext().getUser();
+            if (user != null) {
+                DavAcl acl = getAcl();
+                for (DavAce davAce : acl.getAces()) {
+                    if (davAce.isDenied()) {
+                        continue;
+                    }
+                    if (privileges.containsAll(davAce.getPrivileges())) {
+                        continue;
+                    }
+                    AcePrincipal principal = davAce.getPrincipal();
+                    switch (principal.getType()) {
+                        // Break from there and then the privileges are added.
+                        // Continue from there otherwise.
+                        case AUTHENTICATED:
+                        case ALL:
+                            break;
+                        case PROPERTY:
+                            if (matchProperty(principal.getPropertyName(), user)) {
+                                break;
+                            } else {
+                                continue;
+                            }
+                        case HREF:
+                            try {
+                                DavUserPrincipal userPrincipal = PrincipalUtils.findUserPrincipal(principal.getValue(), getResourceLocator(), getResourceFactory());
+                                if (PrincipalUtils.matchUser(user, userPrincipal.getUser()))
+                                    break;
+                                else
+                                    continue;
+                            } catch (NotRecognizedPrincipalException e) {
+                                LOG.error("getCurrentPrincipalPrivileges: while parsing ACEs: " + e);
+                                continue;
+                            }
+                        default:
+                            continue;
+                    }
+                    // if we're here, add the privilege
+                    privileges.addAll(davAce.getPrivileges());
+                }
+                privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
+                return privileges;
+            }
+            Ticket ticket = getSecurityManager().getSecurityContext().getTicket();
+            if (ticket != null) {
+                privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
+                for (Permission perm : ticket.getPermissions()) {
+                    privileges.add(PermissionPrivilegeConstants.PERMISSION_TO_PRIVILEGE.get(perm));
+                }
+                return privileges;
+            }
+        }
+
+        return privileges;
     }
 
     /**

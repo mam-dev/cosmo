@@ -244,26 +244,6 @@ public class DavOutboxCollection extends DavResourceBase
         return acl;
     }
 
-    /**
-     * <p>
-     * Extends the superclass method to return {@link DavPrivilege#READ} if
-     * the the current principal is a non-admin user.
-     * </p>
-     */
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
-        if (! privileges.isEmpty()) {
-            return privileges;
-        }
-
-        User user = getSecurityManager().getSecurityContext().getUser();
-        if (user != null) {
-            privileges.add(DavPrivilege.READ);
-        }
-
-        return privileges;
-    }
-
     protected void loadLiveProperties(DavPropertySet properties) {
         properties.add(new DisplayName(getDisplayName()));
         properties.add(new ResourceType(getResourceTypes()));

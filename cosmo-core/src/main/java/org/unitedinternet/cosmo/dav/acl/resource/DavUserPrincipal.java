@@ -254,7 +254,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
         acl.getAces().add(unauthenticated);
 
         DavAce owner = new DavAce.SelfAce();
-        owner.getPrivileges().add(DavPrivilege.ALL);
+        owner.getPrivileges().add(DavPrivilege.READ);
         owner.setProtected(true);
         acl.getAces().add(owner);
 

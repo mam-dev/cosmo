@@ -31,11 +31,16 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
+import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
+import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserBase;
 import org.w3c.dom.Element;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -85,7 +90,7 @@ public class PrincipalMatchReport extends MultiStatusReport
     private boolean self;
     private DavPropertyName principalProperty;
     private User currentUser;
-    private String currentUserPrincipalUrl;
+    private Set<String> currentUserPrincipalUrls = new HashSet<>();
 
     // Report methods
 
@@ -134,13 +139,18 @@ public class PrincipalMatchReport extends MultiStatusReport
         if (currentUser == null) {
             throw new ForbiddenException("Authenticated principal is not a user");
         }
-        String base = getResource().getResourceLocator().getBaseHref();
-        currentUserPrincipalUrl =
-            TEMPLATE_USER.bindAbsolute(base, currentUser.getUsername());
+
+        String currentUserPrincipalUrl =
+                PrincipalUtils.href(getResource().getResourceLocator(), currentUser);
+        currentUserPrincipalUrls.add(currentUserPrincipalUrl);
+
+        for (Group group : currentUser.getGroups()) {
+            currentUserPrincipalUrls.add(PrincipalUtils.href(getResource().getResourceLocator(), group));
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Matching against current user " +
-                      currentUser.getUsername() + " (" +
-                      currentUserPrincipalUrl + ")");
+                      currentUser.getUsername() + " with urls: " + currentUserPrincipalUrls);
         }
     }
 
@@ -209,7 +219,7 @@ public class PrincipalMatchReport extends MultiStatusReport
             return false;
         }
         UserBase principal = ((DavUserPrincipal)resource).getUser();
-        if (! currentUser.equals(principal)) {
+        if (!PrincipalUtils.matchUser(currentUser, principal)) {
             return false;
         }
         LOG.debug("Matched " + resource.getResourcePath());
@@ -231,7 +241,7 @@ public class PrincipalMatchReport extends MultiStatusReport
         // property and that the url itself has been set as the
         // property value so that the DAV:href is reconstructed when the
         // property is serialized.
-        if (value.toString().equals(currentUserPrincipalUrl)) {
+        if (currentUserPrincipalUrls.contains(value.toString())) {
             LOG.debug("Matched " + resource.getResourcePath());
             return true;
         }

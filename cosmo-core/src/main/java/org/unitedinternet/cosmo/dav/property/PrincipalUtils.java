@@ -1,5 +1,6 @@
 package org.unitedinternet.cosmo.dav.property;
 
+import org.springframework.lang.NonNull;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.NotRecognizedPrincipalException;
@@ -28,6 +29,11 @@ public  class PrincipalUtils implements ExtendedDavConstants {
         }
     }
 
+    public static boolean matchUser(User user, UserBase toMatch) {
+        return user.equals(toMatch) || (
+                toMatch instanceof Group && user.isMemberOf((Group) toMatch));
+
+    }
     /**
      * Returns relative  path of user/group
      * @param user
