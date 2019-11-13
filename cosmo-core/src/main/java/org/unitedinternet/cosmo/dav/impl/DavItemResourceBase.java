@@ -489,7 +489,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
         //Get all unprotected aces from the Item
         for (Ace ace : item.getAces()) {
-            AnyAce anyAce = AnyAce.fromAce(ace);
+            AnyAce anyAce = AnyAce.fromAce(ace, getResourceLocator());
             acl.getAces().add(anyAce);
         }
         acl.getAces().addAll(inheritedAces);

@@ -254,6 +254,8 @@ public class TestHelper {
     public Ace makeDummyAce() {
         return entityFactory.createAce();
     }
+
+
     /**
      * Makes dummy subscription.
      * @param collection The coolection item.

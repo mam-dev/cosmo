@@ -10,6 +10,7 @@ import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.*;
@@ -24,10 +25,8 @@ import org.unitedinternet.cosmo.util.UriTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 
 import static org.unitedinternet.cosmo.dav.acl.PermissionPrivilegeConstants.PERMISSION_TO_PRIVILEGE;
 import static org.unitedinternet.cosmo.dav.acl.PermissionPrivilegeConstants.PRIVILEGE_TO_PERMISSION;
@@ -37,8 +36,17 @@ public class AnyAce extends DavAce {
 
     private  static final Log LOG = LogFactory.getLog(AnyAce.class);
 
-    @Autowired
-    private UserService userService;
+
+    private AnyAce() { //used in fromAce
+
+    }
+    public  AnyAce (@NonNull AcePrincipal principal, @NonNull Collection<DavPrivilege> privileges) {
+        getPrivileges().addAll(privileges);
+        setAcePrincipal(principal);
+    }
+    public AnyAce(@NonNull AcePrincipal principal, @NonNull DavPrivilege[] privileges) {
+        this(principal, Arrays.asList(privileges));
+    }
 
     static Element hrefXml(Document document, String href) {
             Element root = DomUtil.createElement(document, "href", NAMESPACE);
@@ -91,12 +99,14 @@ public class AnyAce extends DavAce {
                 return unauthenticatedXml(document);
             case PROPERTY:
                 return propertyXml(document, acePrincipal.getPropertyName());
+            case HREF:
+                return hrefXml(document, acePrincipal.getValue());
             default:
                 throw  new CosmoException();
         }
     }
 
-    public  static AnyAce fromAce (Ace ace) {
+    public  static AnyAce fromAce (Ace ace, DavResourceLocator locator) {
         AnyAce anyAce = new AnyAce();
 
         anyAce.setDenied(ace.isDeny());
@@ -106,6 +116,17 @@ public class AnyAce extends DavAce {
             dps.add(PERMISSION_TO_PRIVILEGE.get(perm));
         }
         anyAce.setPrivileges(dps);
+
+        AcePrincipal principal = new AcePrincipal();
+        switch (ace.getType()) {
+            case AUTHENTICATED:
+                principal.setType(AcePrincipalType.AUTHENTICATED);
+                break;
+            case USER:
+                principal.setHref(PrincipalUtils.href(locator, ace.getUser()));
+                break;
+        }
+        anyAce.setAcePrincipal(principal);
         return anyAce;
     }
 
@@ -167,6 +188,9 @@ public class AnyAce extends DavAce {
 
     public void toAce(Ace destination, DavResourceLocator locator, DavResourceFactory factory) throws NotAllowedPrincipalException, NotRecognizedPrincipalException {
         LOG.debug("Converting AnyAce object " + this + "to Ace (DB-stored) object");
+        if (getAcePrincipal() == null) {
+            throw  new IllegalArgumentException("This object does not have an acePrincipal filled properly");
+        }
         // Clear privileges
         destination.getPermissions().clear();
         //Set privileges
