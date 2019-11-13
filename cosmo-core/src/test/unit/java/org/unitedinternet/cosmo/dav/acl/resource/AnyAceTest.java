@@ -53,7 +53,7 @@ public class AnyAceTest {
         Assert.assertEquals(2, ace.getPrivileges().size());
         Assert.assertTrue(ace.getPrivileges().contains(DavPrivilege.READ));
         Assert.assertTrue(ace.getPrivileges().contains(DavPrivilege.WRITE));
-        AcePrincipal principal = ace.getAcePrincipal();
+        AcePrincipal principal = ace.getPrincipal();
         Assert.assertEquals(AcePrincipalType.HREF, principal.getType());
         Assert.assertEquals("http://www.example.com/users/esedlar", principal.getValue());
 

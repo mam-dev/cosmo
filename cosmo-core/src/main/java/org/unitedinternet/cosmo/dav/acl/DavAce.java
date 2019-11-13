@@ -22,6 +22,7 @@ import org.apache.jackrabbit.webdav.xml.XmlSerializable;
 import org.hibernate.mapping.Any;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 
+import org.unitedinternet.cosmo.model.Ace;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -151,11 +152,16 @@ public abstract class DavAce
 
     protected abstract Element principalXml(Document document);
 
+    public abstract AcePrincipal getPrincipal();
+
     public static class HrefAce extends DavAce {
-        private String href = null;
+        private String href;
+        private AcePrincipal principal;
 
         public HrefAce(String href) {
             this.href = href;
+            this.principal = new AcePrincipal();
+            principal.setHref(href);
         }
 
         public String getHref() {
@@ -165,31 +171,79 @@ public abstract class DavAce
         protected Element principalXml(Document document) {
             return AnyAce.hrefXml(document, href);
         }
+
+        public AcePrincipal getPrincipal() {
+            return principal;
+        }
     }
 
     public static class AllAce extends DavAce {
+        private static AcePrincipal principal;
+
+        static {
+            principal = new AcePrincipal();
+            principal.setType(AcePrincipalType.ALL);
+        }
+
+        @Override
+        public AcePrincipal getPrincipal() {
+            return principal;
+        }
         protected Element principalXml(Document document) {
             return DomUtil.createElement(document, "all", NAMESPACE);
         }
     }
 
     public static class AuthenticatedAce extends DavAce {
+         private static AcePrincipal principal;
+
+        static {
+            principal = new AcePrincipal();
+            principal.setType(AcePrincipalType.AUTHENTICATED);
+        }
+
+        @Override
+        public AcePrincipal getPrincipal() {
+            return principal;
+        }
+
+
         protected Element principalXml(Document document) {
             return AnyAce.allXml(document);
         }
     }
 
     public static class UnauthenticatedAce extends DavAce {
+        private static AcePrincipal principal;
+
+        static {
+            principal = new AcePrincipal();
+            principal.setType(AcePrincipalType.UNAUTHENTICATED);
+        }
+
+        @Override
+        public AcePrincipal getPrincipal() {
+            return principal;
+        }
+
         protected Element principalXml(Document document) {
             return AnyAce.unauthenticatedXml(document);
         }
     }
 
     public static class PropertyAce extends DavAce {
-        private DavPropertyName property = null;
+        private DavPropertyName property;
+        private AcePrincipal principal;
 
         public PropertyAce(DavPropertyName property) {
             this.property = property;
+            this.principal = new AcePrincipal();
+            principal.setPropertyName(property);
+        }
+
+        @Override
+        public AcePrincipal getPrincipal() {
+            return principal;
         }
 
         public DavPropertyName getProperty() {
@@ -202,6 +256,19 @@ public abstract class DavAce
     }
 
     public static class SelfAce extends DavAce {
+        private static AcePrincipal principal;
+
+        static {
+            principal = new AcePrincipal();
+            principal.setType(AcePrincipalType.SELF);
+        }
+
+        @Override
+        public AcePrincipal getPrincipal() {
+            return principal;
+        }
+
+
         protected Element principalXml(Document document) {
             return DomUtil.createElement(document, "self", NAMESPACE);
         }

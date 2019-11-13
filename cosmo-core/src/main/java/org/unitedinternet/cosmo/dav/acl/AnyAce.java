@@ -3,13 +3,8 @@ package org.unitedinternet.cosmo.dav.acl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
-import org.apache.jackrabbit.webdav.property.DavPropertySet;
-import org.apache.jackrabbit.webdav.security.Principal;
-import org.apache.jackrabbit.webdav.security.Privilege;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoException;
@@ -17,15 +12,10 @@ import org.unitedinternet.cosmo.dav.*;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.model.Ace;
-import org.unitedinternet.cosmo.model.Group;
-import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.security.Permission;
-import org.unitedinternet.cosmo.service.UserService;
-import org.unitedinternet.cosmo.util.UriTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static org.unitedinternet.cosmo.dav.acl.PermissionPrivilegeConstants.PERMISSION_TO_PRIVILEGE;
@@ -78,7 +68,7 @@ public class AnyAce extends DavAce {
 
     private AcePrincipal acePrincipal;
 
-    public AcePrincipal getAcePrincipal() {
+    public AcePrincipal getPrincipal() {
         return acePrincipal;
     }
 
@@ -188,7 +178,7 @@ public class AnyAce extends DavAce {
 
     public void toAce(Ace destination, DavResourceLocator locator, DavResourceFactory factory) throws NotAllowedPrincipalException, NotRecognizedPrincipalException {
         LOG.debug("Converting AnyAce object " + this + "to Ace (DB-stored) object");
-        if (getAcePrincipal() == null) {
+        if (getPrincipal() == null) {
             throw  new IllegalArgumentException("This object does not have an acePrincipal filled properly");
         }
         // Clear privileges
@@ -201,20 +191,20 @@ public class AnyAce extends DavAce {
                 LOG.debug("Skipping PRIVILEGE: " + privilege);
             }
         }
-        switch (getAcePrincipal().getType()) {
+        switch (getPrincipal().getType()) {
             case AUTHENTICATED:
                 destination.setType(Ace.Type.AUTHENTICATED);
                 destination.setUser(null);
                 break;
             case HREF:
                 destination.setType(Ace.Type.USER);
-                LOG.debug("Finding user: " + getAcePrincipal().getValue());
+                LOG.debug("Finding user: " + getPrincipal().getValue());
                 // Match user
-                DavUserPrincipal principal = PrincipalUtils.findUserPrincipal(getAcePrincipal().getValue(), locator, factory);
+                DavUserPrincipal principal = PrincipalUtils.findUserPrincipal(getPrincipal().getValue(), locator, factory);
                 destination.setUser(principal.getUser());
                 break;
             default:
-                throw new NotAllowedPrincipalException("Principal with type " + getAcePrincipal().getType() + " is not allowed in unprotected ACEs");
+                throw new NotAllowedPrincipalException("Principal with type " + getPrincipal().getType() + " is not allowed in unprotected ACEs");
         }
 
 

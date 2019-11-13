@@ -92,6 +92,7 @@ public class DavPrivilege
         map.put(WRITE.getQName().toString(), WRITE);
         map.put(READ_CURRENT_USER_PRIVILEGE_SET.getQName().toString(), READ_CURRENT_USER_PRIVILEGE_SET);
         map.put(READ_FREE_BUSY.getQName().toString(), READ_FREE_BUSY);
+        map.put(ALL.getQName().toString(), ALL);
         //Abstract privileges could not be added in an ACL method and therefore are not added
         NONABSTRACT_PRIVILEGE_MAP = Collections.unmodifiableMap(map);
     }

@@ -38,32 +38,23 @@ import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
-import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
 import org.unitedinternet.cosmo.dav.ExistsException;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
-import org.unitedinternet.cosmo.dav.acl.AnyAce;
-import org.unitedinternet.cosmo.dav.acl.DavAce;
-import org.unitedinternet.cosmo.dav.acl.DavAcl;
-import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
+import org.unitedinternet.cosmo.dav.acl.*;
 import org.unitedinternet.cosmo.dav.acl.property.Owner;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalCollectionSet;
-import org.unitedinternet.cosmo.dav.property.CreationDate;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.dav.property.DisplayName;
-import org.unitedinternet.cosmo.dav.property.Etag;
-import org.unitedinternet.cosmo.dav.property.IsCollection;
-import org.unitedinternet.cosmo.dav.property.LastModified;
-import org.unitedinternet.cosmo.dav.property.ResourceType;
-import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
-import org.unitedinternet.cosmo.dav.property.Uuid;
+import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
+import org.unitedinternet.cosmo.dav.property.*;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.*;
+import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
+import org.unitedinternet.cosmo.security.util.SecurityHelperUtils;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.util.PathUtil;
 import org.w3c.dom.Element;
@@ -92,7 +83,7 @@ import org.w3c.dom.Element;
  */
 public abstract class DavItemResourceBase extends DavResourceBase implements
     DavItemResource, TicketConstants {
-    private static final Log log = LogFactory.getLog(DavItemResourceBase.class);
+    private static final Log LOG = LogFactory.getLog(DavItemResourceBase.class);
 
     private Item item;
     private DavCollection parent;
@@ -110,7 +101,6 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
         registerLiveProperty(PRINCIPALCOLLECTIONSET);
         registerLiveProperty(UUID);
     }
-
     public DavItemResourceBase(Item item, DavResourceLocator locator,
             DavResourceFactory factory, EntityFactory entityFactory)
             throws CosmoDavException {
@@ -175,8 +165,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             throw new NotFoundException();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("moving resource " + getResourcePath() + " to "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("moving resource " + getResourcePath() + " to "
                     + destination.getResourcePath());
         }
 
@@ -230,8 +220,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             throw new NotFoundException();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("copying resource " + getResourcePath() + " to "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("copying resource " + getResourcePath() + " to "
                     + destination.getResourcePath());
         }
 
@@ -298,7 +288,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
     @Override
     public void updateAcl(Set<AnyAce> aces) throws CosmoDavException {
-        log.debug("Updating ACL for " + item.getName());
+        LOG.debug("Updating ACL for " + item.getName());
         List<Ace> newAces = new ArrayList<>();
         for (AnyAce davAce : aces) {
             //Get a real Ace
@@ -321,8 +311,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     }
 
     public void saveTicket(Ticket ticket) throws CosmoDavException {
-        if (log.isDebugEnabled())
-            log.debug("adding ticket for " + item.getName());
+        if (LOG.isDebugEnabled())
+            LOG.debug("adding ticket for " + item.getName());
 
         // automatically add freebusy privilege along with read
         if (ticket.getPermissions().contains(Permission.READ))
@@ -332,8 +322,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     }
 
     public void removeTicket(Ticket ticket) throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("removing ticket " + ticket.getKey() + " on "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("removing ticket " + ticket.getKey() + " on "
                     + item.getName());
         }
 
@@ -378,8 +368,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
      */
     protected void populateItem(InputContext inputContext)
             throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("populating item for " + getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("populating item for " + getResourcePath());
         }
 
         if (item.getUid() == null) {
@@ -483,8 +473,12 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
                 }
             }
         } catch (CosmoDavException e) {
-            log.warn("Unable to fetch inherited aces from parent by " + this + ": " + e.getMessage());
+            LOG.warn("Unable to fetch inherited aces from parent by " + this + ": " + e.getMessage());
         }
+        catch (ItemSecurityException e) {
+            LOG.debug("Caught ItemSecurityException on one of the parents: " + e.getItem() +  ": it's OK");
+        }
+
 
 
         //Get all unprotected aces from the Item
@@ -519,14 +513,54 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             return privileges;
         }
 
-        // XXX eventually we will want to find the aces for the user and
-        // add each of their granted privileges
         User user = getSecurityManager().getSecurityContext().getUser();
         if (user != null) {
-            privileges.add(DavPrivilege.READ);
-            privileges.add(DavPrivilege.WRITE);
+           DavAcl acl = getAcl();
+            for (DavAce davAce : acl.getAces()) {
+                if (davAce.isDenied()) {
+                    continue;
+                }
+                if (privileges.containsAll(davAce.getPrivileges())) {
+                    continue;
+                }
+                AcePrincipal principal = davAce.getPrincipal();
+                switch (principal.getType()) {
+                    // Break from there and then the privileges are added.
+                    // Continue from there otherwise.
+                    case AUTHENTICATED:
+                    case ALL:
+                        break;
+                    case PROPERTY:
+                        DavPropertyName prop = principal.getPropertyName();
+                        if (!prop.equals(OWNER)) { // We don't support unprotected property ACEs
+                            continue;
+                        }
+                        // Check if we're indeed the owner
+                        UserBase owner = getItem().getOwner();
+                        if (user.equals(owner) ||
+                                (owner instanceof Group && user.isMemberOf((Group) owner))) {
+                            break;
+                        }
+                        continue;
+                    case HREF:
+                        try {
+                            DavUserPrincipal userPrincipal = PrincipalUtils.findUserPrincipal(principal.getValue(), getResourceLocator(), getResourceFactory());
+                            if (user.equals(userPrincipal.getUser()) || (
+                                    userPrincipal.getUser() instanceof  Group && user.isMemberOf((Group) userPrincipal.getUser()))) {
+                                break;
+                            }
+                        } catch (NotRecognizedPrincipalException e) {
+                            LOG.error("getCurrentPrincipalPrivileges: while parsing ACEs: " + e );
+                            continue;
+                        }
+                        continue;
+                    default:
+                        continue;
+                }
+                // if we're here, add the privilege
+                privileges.addAll(davAce.getPrivileges());
+            }
             privileges.add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
-            privileges.add(DavPrivilege.READ_FREE_BUSY);
             return privileges;
         }
 
@@ -645,8 +679,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
     protected void setDeadProperty(WebDavProperty property)
             throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("setting dead property " + property.getName() + " on "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("setting dead property " + property.getName() + " on "
                     + getResourcePath() + " to " + property.getValue());
         }
 
@@ -674,8 +708,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
     protected void removeDeadProperty(DavPropertyName name)
             throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("removing property " + name + " on " + getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("removing property " + name + " on " + getResourcePath());
         }
 
         item.removeAttribute(propNameToQName(name));

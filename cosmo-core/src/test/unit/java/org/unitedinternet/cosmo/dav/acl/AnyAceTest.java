@@ -41,9 +41,9 @@ public class AnyAceTest {
     public void fromAceTypeUser() {
         Ace ace = createDummyUserReadAce();
         AnyAce actual = AnyAce.fromAce(ace, helper.getHomeLocator());
-        Assert.assertNotNull(actual.getAcePrincipal());
-        Assert.assertEquals(AcePrincipalType.HREF, actual.getAcePrincipal().getType());
-        Assert.assertEquals(PrincipalUtils.href(helper.getHomeLocator(), ace.getUser()), actual.getAcePrincipal().getValue());
+        Assert.assertNotNull(actual.getPrincipal());
+        Assert.assertEquals(AcePrincipalType.HREF, actual.getPrincipal().getType());
+        Assert.assertEquals(PrincipalUtils.href(helper.getHomeLocator(), ace.getUser()), actual.getPrincipal().getValue());
         Assert.assertTrue(actual.getPrivileges().containsRecursive(DavPrivilege.READ));
         Assert.assertFalse(actual.getPrivileges().containsRecursive(DavPrivilege.WRITE));
         Assert.assertFalse(actual.getPrivileges().containsRecursive(DavPrivilege.READ_FREE_BUSY));
@@ -55,8 +55,8 @@ public class AnyAceTest {
         public void fromAceTypeAuthenticated() {
             Ace ace = createDummyAuthenticatedReadAce();
             AnyAce actual = AnyAce.fromAce(ace, helper.getHomeLocator());
-            Assert.assertNotNull(actual.getAcePrincipal());
-            Assert.assertEquals(AcePrincipalType.AUTHENTICATED, actual.getAcePrincipal().getType());
+            Assert.assertNotNull(actual.getPrincipal());
+            Assert.assertEquals(AcePrincipalType.AUTHENTICATED, actual.getPrincipal().getType());
             Assert.assertTrue(actual.getPrivileges().containsRecursive(DavPrivilege.READ));
             Assert.assertFalse(actual.getPrivileges().containsRecursive(DavPrivilege.WRITE));
             Assert.assertFalse(actual.getPrivileges().containsRecursive(DavPrivilege.READ_FREE_BUSY));
