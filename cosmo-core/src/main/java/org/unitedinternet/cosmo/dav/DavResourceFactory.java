@@ -17,7 +17,7 @@ package org.unitedinternet.cosmo.dav;
 
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
-import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.UserService;
@@ -77,4 +77,17 @@ public interface DavResourceFactory {
     UserService getUserService();
 
     CosmoSecurityManager getSecurityManager();
+
+    /**
+     * Instantiates a user principal at this location.
+     *
+     * If you don't know the location but possess an UserBase object, use
+     * PrincipalUtils.createUserPrincipalResource
+     * @param locator
+     * @param user
+     * @return
+     * @throws CosmoDavException
+     */
+    WebDavResource createUserPrincipalResource(DavResourceLocator locator,  UserBase user) throws CosmoDavException;
+
 }

@@ -23,8 +23,8 @@ import java.util.HashSet;
  */
 public class CaldavMethodType  {
 
-    private static final HashSet<String> READ = new HashSet<String>();
-    private static final HashSet<String> WRITE = new HashSet<String>();
+    private static final HashSet<String> READ = new HashSet<>();
+    private static final HashSet<String> WRITE = new HashSet<>();
 
     static {
         // HTTP methods
@@ -32,11 +32,13 @@ public class CaldavMethodType  {
         READ.add("GET");
         READ.add("HEAD");
 
+
         // WebDAV methods
         WRITE.add("POST");
         WRITE.add("PUT");
         WRITE.add("DELETE");
         READ.add("PROPFIND");
+        READ.add("REPORT");
         WRITE.add("PROPPATCH");
         WRITE.add("MKCOL");
         WRITE.add("COPY");

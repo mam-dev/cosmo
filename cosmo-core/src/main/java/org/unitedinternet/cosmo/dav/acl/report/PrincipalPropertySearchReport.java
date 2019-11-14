@@ -37,7 +37,7 @@ import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalCollectionSet;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
-import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
+import org.unitedinternet.cosmo.dav.acl.resource.DavAbstractPrincipalCollection;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
 
@@ -143,7 +143,7 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
                 collection.getResourceLocator().getFactory().
                     createResourceLocatorByUri(collection.getResourceLocator().getContext(),
                                                href);
-            DavUserPrincipalCollection pc = (DavUserPrincipalCollection)
+            DavAbstractPrincipalCollection pc = (DavAbstractPrincipalCollection)
                 collection.getResourceFactory().resolve(locator);
             if (pc == null) {
                 throw new CosmoDavException("Principal collection " + href + " not resolved");

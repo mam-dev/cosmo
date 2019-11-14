@@ -40,7 +40,6 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.PropEntry;
-import org.apache.jackrabbit.webdav.security.AclResource;
 import org.apache.jackrabbit.webdav.version.DeltaVResource;
 import org.apache.jackrabbit.webdav.version.OptionsInfo;
 import org.apache.jackrabbit.webdav.version.OptionsResponse;
@@ -65,7 +64,6 @@ import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
 import org.unitedinternet.cosmo.dav.property.SupportedReportSet;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.model.Group;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
@@ -107,7 +105,7 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
     private boolean initialized;
 
     @Nullable
-    private Set<DavPrivilege> privileges = null;
+    private DavPrivilegeSet privileges = null;
 
     public DavResourceBase(DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
         this.locator = locator;
@@ -387,9 +385,9 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
      * Subclasses should reimplement matchProperty and matchSelf for
      * D:owner and D:self ACEs to be returned correctly.
      */
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
+    public DavPrivilegeSet getCurrentPrincipalPrivileges() {
         if (privileges == null) {
-            privileges = new HashSet<>();
+            privileges = new DavPrivilegeSet();
             User user = getSecurityManager().getSecurityContext().getUser();
             if (user != null) {
                 DavAcl acl = getAcl();
@@ -415,7 +413,7 @@ public abstract class DavResourceBase implements ExtendedDavConstants, AclConsta
                             }
                         case HREF:
                             try {
-                                DavUserPrincipal userPrincipal = PrincipalUtils.findUserPrincipal(principal.getValue(), getResourceLocator(), getResourceFactory());
+                                DavUserPrincipal userPrincipal = PrincipalUtils.findUserPrincipalResource(principal.getValue(), getResourceLocator(), getResourceFactory());
                                 if (PrincipalUtils.matchUser(user, userPrincipal.getUser()))
                                     break;
                                 else

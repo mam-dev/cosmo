@@ -41,6 +41,7 @@ import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
+import org.unitedinternet.cosmo.dav.acl.DavPrivilegeSet;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarLocationException;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarResourceException;
@@ -454,11 +455,11 @@ public class DavCalendarCollection extends DavCollectionBase implements CaldavCo
     }
 
     @Override
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
+    public DavPrivilegeSet getCurrentPrincipalPrivileges() {
         if (!isGeneratedUid(getItem())) {
             return super.getCurrentPrincipalPrivileges();
         }
-        Set<DavPrivilege> privileges = new HashSet<>();
+        DavPrivilegeSet privileges = new DavPrivilegeSet();
         privileges.add(DavPrivilege.READ);
         Item item = this.getItem();
         if (item instanceof HibCollectionSubscriptionItem) {

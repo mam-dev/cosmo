@@ -17,8 +17,6 @@ package org.unitedinternet.cosmo.dav;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.webdav.DavConstants;
-import org.apache.jackrabbit.webdav.property.DavProperty;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
@@ -27,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
+import org.unitedinternet.cosmo.dav.acl.resource.DavGroupPrincipalCollection;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
@@ -34,7 +33,6 @@ import org.unitedinternet.cosmo.dav.carddav.CarddavConstants;
 import org.unitedinternet.cosmo.dav.impl.*;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
-import org.unitedinternet.cosmo.dav.util.DavRequestUtils;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
@@ -43,7 +41,6 @@ import org.unitedinternet.cosmo.service.UserService;
 import org.unitedinternet.cosmo.util.UriTemplate;
 import org.w3c.dom.Element;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -213,6 +210,11 @@ public class StandardResourceFactory implements DavResourceFactory {
             return new DavUserPrincipalCollection(locator, this);
         }
 
+        match = TEMPLATE_GROUPS.match(uri);
+        if (match != null) {
+            return new DavGroupPrincipalCollection(locator, this);
+        }
+
         match = TEMPLATE_USER.match(uri);
         if (match != null) {
             return createUserPrincipalResource(locator, match);
@@ -297,14 +299,23 @@ public class StandardResourceFactory implements DavResourceFactory {
     protected WebDavResource createUserPrincipalResource(DavResourceLocator locator, UriTemplate.Match match)
             throws CosmoDavException {
         User user = userService.getUser(match.get("username"));
-        return user != null ? new DavUserPrincipal(user, locator, this, userIdentitySupplier) : null;
+        return createUserPrincipalResource(locator, user);
     }
 
     protected WebDavResource createGroupPrincipalResource(DavResourceLocator locator, UriTemplate.Match match)
             throws CosmoDavException {
         Group group = userService.getGroup(match.get("groupname"));
-        return group != null ? new DavUserPrincipal(group, locator, this, userIdentitySupplier) : null;
+        return createUserPrincipalResource(locator, group);
     }
+
+    @Override
+    public WebDavResource createUserPrincipalResource(DavResourceLocator locator, UserBase user) throws CosmoDavException {
+        return user != null ? new DavUserPrincipal(user, locator, this, userIdentitySupplier) : null;
+    }
+
+
+
+
 
     protected WebDavResource createUnknownResource(DavResourceLocator locator, String uri) throws CosmoDavException {
         Item item = contentService.findItemByPath(uri);
@@ -326,6 +337,9 @@ public class StandardResourceFactory implements DavResourceFactory {
     public CosmoSecurityManager getSecurityManager() {
         return securityManager;
     }
+
+
+
 
     public ICalendarClientFilterManager getClientFilterManager() {
         return clientFilterManager;

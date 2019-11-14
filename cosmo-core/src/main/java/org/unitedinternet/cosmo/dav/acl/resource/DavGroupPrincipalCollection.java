@@ -1,32 +1,26 @@
 package org.unitedinternet.cosmo.dav.acl.resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavResource;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.property.PrincipalUtils;
-import org.unitedinternet.cosmo.model.UserIterator;
+import org.unitedinternet.cosmo.model.GroupIterator;
 
-public class DavUserPrincipalCollection extends DavAbstractPrincipalCollection {
-
-    //private static final Log LOG = LogFactory.getLog(DavUserPrincipalCollection.class);
-
-    public DavUserPrincipalCollection(DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
+public class DavGroupPrincipalCollection extends DavAbstractPrincipalCollection {
+    public DavGroupPrincipalCollection(DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
         super(locator, factory);
     }
 
     @Override
     public String getDisplayName() {
-        return "User Principals";
+        return "Group Principals";
     }
 
     @Override
     public DavResourceIterator getMembers() {
-
-        UserIterator it = getResourceFactory().getUserService().users();
+        GroupIterator it = getResourceFactory().getUserService().groups();
         return new DavResourceIterator() {
             @Override
             public DavResource nextResource()  {
@@ -49,5 +43,4 @@ public class DavUserPrincipalCollection extends DavAbstractPrincipalCollection {
             }
         };
     }
-
 }

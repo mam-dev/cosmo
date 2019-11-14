@@ -109,9 +109,4 @@ public class DavEvent extends DavCalendarResource {
         updateItem();
     }
 
-    @Override
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        // Do not handle privileges at event level but at collection level.
-        return Collections.emptySet();
-    }
 }

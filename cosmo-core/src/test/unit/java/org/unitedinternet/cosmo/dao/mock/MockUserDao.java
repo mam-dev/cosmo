@@ -15,18 +15,10 @@
  */
 package org.unitedinternet.cosmo.dao.mock;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.springframework.lang.NonNull;
-import org.unitedinternet.cosmo.dao.DuplicateEmailException;
-import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
-import org.unitedinternet.cosmo.dao.UserDao;
+import org.unitedinternet.cosmo.dao.*;
 import org.unitedinternet.cosmo.model.*;
-import org.unitedinternet.cosmo.model.mock.MockAuditableObject;
 import org.unitedinternet.cosmo.model.mock.MockGroup;
 import org.unitedinternet.cosmo.model.mock.MockUser;
 import org.unitedinternet.cosmo.util.VersionFourGenerator;
@@ -115,6 +107,38 @@ public class MockUserDao implements UserDao {
             return null;
         }
         return (Group) groupUsernameIdx.get(name);
+    }
+
+    @Override
+    public UserIterator users() {
+        Iterator iterator = usernameIdx.values().iterator();
+        return new UserIterator() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public User next() {
+                return (User) iterator.next();
+            }
+        };
+    }
+
+    @Override
+    public GroupIterator groups() {
+        Iterator iterator = groupUsernameIdx.values().iterator();
+        return new GroupIterator() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public Group next() {
+                return (Group) iterator.next();
+            }
+        };
     }
 
     /**

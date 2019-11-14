@@ -33,10 +33,7 @@ import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.Group;
-import org.unitedinternet.cosmo.model.HomeCollectionItem;
-import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.UserBase;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.service.OverlordDeletionException;
 import org.unitedinternet.cosmo.service.ServiceEvent;
 import org.unitedinternet.cosmo.service.ServiceListener;
@@ -94,6 +91,17 @@ public class StandardUserService extends BaseService implements UserService {
         return  userDao.getGroup(name);
     }
 
+    @Override
+    public UserIterator users() {
+        LOG.debug("getting iterator for all users");
+        return userDao.users();
+    }
+
+    @Override
+    public GroupIterator groups() {
+        LOG.debug("getting iterator for all groups");
+        return userDao.groups();
+    }
     /**
      * Returns the user account identified by the given email address.
      *

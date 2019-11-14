@@ -15,7 +15,9 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -27,12 +29,8 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
-import org.unitedinternet.cosmo.dao.DuplicateEmailException;
-import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
-import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.Group;
-import org.unitedinternet.cosmo.model.User;
-import org.unitedinternet.cosmo.model.UserBase;
+import org.unitedinternet.cosmo.dao.*;
+import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.model.hibernate.BaseModelObject;
 import org.unitedinternet.cosmo.model.hibernate.HibGroup;
 import org.unitedinternet.cosmo.model.hibernate.HibUser;
@@ -112,6 +110,51 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Group getGroup(String name) {
         return findGroupByName(name);
+    }
+
+    @Override
+    public UserIterator users() {
+        Stream<HibUser> stream = getUserStream();
+        Iterator<HibUser> iterator = stream.iterator();
+        return new UserIterator() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public User next() {
+                return iterator.next();
+            }
+        };
+    }
+
+    @Override
+    public GroupIterator groups() {
+        Iterator<HibGroup> iterator = getGroupStream().iterator();
+        return new GroupIterator() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public Group next() {
+                return iterator.next();
+            }
+        };
+    }
+
+    private Stream<HibUser> getUserStream() {
+        TypedQuery<HibUser> query = this.em.createNamedQuery("user.all", HibUser.class);
+        Stream<HibUser> stream = query.getResultStream();
+        return stream;
+    }
+    
+    private Stream<HibGroup> getGroupStream() {
+        TypedQuery<HibGroup> query = this.em.createNamedQuery("group.all", HibGroup.class);
+        Stream<HibGroup> stream = query.getResultStream();
+        return stream;    
     }
 
     @Override

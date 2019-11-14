@@ -18,7 +18,9 @@ package org.unitedinternet.cosmo.service;
 import java.util.Set;
 
 import org.unitedinternet.cosmo.model.Group;
+import org.unitedinternet.cosmo.model.GroupIterator;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserIterator;
 
 /**
  * Interface for services that manage user accounts.
@@ -37,6 +39,10 @@ public interface UserService extends Service {
     public User getUser(String username);
 
     public Group getGroup(String name);
+
+    public UserIterator users();
+
+    public GroupIterator groups();
 
     /**
      * Returns the user account identified by the given email address.

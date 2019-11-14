@@ -200,7 +200,7 @@ public class AnyAce extends DavAce {
                 destination.setType(Ace.Type.USER);
                 LOG.debug("Finding user: " + getPrincipal().getValue());
                 // Match user
-                DavUserPrincipal principal = PrincipalUtils.findUserPrincipal(getPrincipal().getValue(), locator, factory);
+                DavUserPrincipal principal = PrincipalUtils.findUserPrincipalResource(getPrincipal().getValue(), locator, factory);
                 destination.setUser(principal.getUser());
                 break;
             default:

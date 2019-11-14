@@ -16,7 +16,9 @@
 package org.unitedinternet.cosmo.dao;
 
 import org.unitedinternet.cosmo.model.Group;
+import org.unitedinternet.cosmo.model.GroupIterator;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.model.UserIterator;
 
 /**
  * Interface for DAOs that manage user resources.
@@ -37,6 +39,10 @@ public interface UserDao extends Dao {
     public User getUser(String username);
 
     public Group getGroup(String name);
+
+    public UserIterator users();
+
+    public GroupIterator groups();
 
     
     

@@ -33,7 +33,6 @@ import org.unitedinternet.cosmo.dav.property.*;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
-import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
@@ -72,13 +71,12 @@ import org.w3c.dom.Element;
  * @see DavResourceBase
  * @see DavCollection
  */
-public class DavOutboxCollection extends DavResourceBase
+public class DavOutboxCollection extends DavReadOnlyCollection
     implements DavCollection, CaldavConstants
 {
     private static final Log LOG = LogFactory.getLog(DavOutboxCollection.class);
     private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 
-    private DavAcl acl;
     private DavHomeCollection parent;
 
     static {
@@ -92,7 +90,6 @@ public class DavOutboxCollection extends DavResourceBase
                                       DavResourceFactory factory)
         throws CosmoDavException {
         super(locator, factory);
-        acl = makeAcl();
     }
 
     // Jackrabbit WebDavResource
@@ -189,7 +186,7 @@ public class DavOutboxCollection extends DavResourceBase
 
     public DavUserPrincipal findMember(String uri)
         throws CosmoDavException {
-        return PrincipalUtils.findUserPrincipal(uri, getResourceLocator(), getResourceFactory());
+        return PrincipalUtils.findUserPrincipalResource(uri, getResourceLocator(), getResourceFactory());
     }
 
     // our methods
@@ -216,33 +213,7 @@ public class DavOutboxCollection extends DavResourceBase
      * <li> <code>DAV:all</code>: deny <code>DAV:all</code> </li>
      * </ol>
      */
-    protected DavAcl getAcl() {
-        return acl;
-    }
 
-    private DavAcl makeAcl() {
-        DavAcl acl = new DavAcl();
-
-        DavAce unauthenticated = new DavAce.UnauthenticatedAce();
-        unauthenticated.setDenied(true);
-        unauthenticated.getPrivileges().add(DavPrivilege.ALL);
-        unauthenticated.setProtected(true);
-        acl.getAces().add(unauthenticated);
-
-        DavAce allAllow = new DavAce.AllAce();
-        allAllow.getPrivileges().add(DavPrivilege.READ);
-        allAllow.getPrivileges().add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
-        allAllow.setProtected(true);
-        acl.getAces().add(allAllow);
-
-        DavAce allDeny = new DavAce.AllAce();
-        allDeny.setDenied(true);
-        allDeny.getPrivileges().add(DavPrivilege.ALL);
-        allDeny.setProtected(true);
-        acl.getAces().add(allDeny);
-
-        return acl;
-    }
 
     protected void loadLiveProperties(DavPropertySet properties) {
         properties.add(new DisplayName(getDisplayName()));

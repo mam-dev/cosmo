@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.unitedinternet.cosmo.dav.acl.DavPrivilegeSet;
 import org.unitedinternet.cosmo.dav.acl.property.GroupMemberSet;
 import org.unitedinternet.cosmo.model.*;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
@@ -272,27 +273,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
         return acl;
     }
 
-    /**
-     * <p>
-     * Extends the superclass method to return {@link DavPrivilege#READ} if
-     * the the current principal is the non-admin user represented by this
-     * resource.
-     * </p>
-     */
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
-        if (! privileges.isEmpty()) {
-            return privileges;
-        }
 
-        User user = getSecurityManager().getSecurityContext().getUser();
-        if (user != null && user.equals(this.user)) {
-            privileges.add(DavPrivilege.READ);
-        }
-
-        return privileges;
-    }
-    
     protected void loadLiveProperties(DavPropertySet properties) {
         properties.add(new CreationDate(user.getCreationDate()));
         properties.add(new DisplayName(getDisplayName()));

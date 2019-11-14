@@ -73,13 +73,11 @@ import org.w3c.dom.Element;
  * @see DavResourceBase
  * @see DavCollection
  */
-public class DavInboxCollection extends DavResourceBase
-    implements DavCollection, CaldavConstants {
+public class DavInboxCollection extends DavReadOnlyCollection
+    implements CaldavConstants {
     private static final Log LOG = LogFactory.getLog(DavInboxCollection.class);
     private static final Set<ReportType> REPORT_TYPES =
         new HashSet<ReportType>();
-
-    private DavAcl acl;
 
     static {
         registerLiveProperty(DavPropertyName.DISPLAYNAME);
@@ -92,7 +90,6 @@ public class DavInboxCollection extends DavResourceBase
                                       DavResourceFactory factory)
         throws CosmoDavException {
         super(locator, factory);
-        acl = makeAcl();
     }
 
     // Jackrabbit WebDavResource
@@ -219,53 +216,7 @@ public class DavInboxCollection extends DavResourceBase
      * <li> <code>DAV:all</code>: deny <code>DAV:all</code> </li>
      * </ol>
      */
-    protected DavAcl getAcl() {
-        return acl;
-    }
 
-    private DavAcl makeAcl() {
-        DavAcl acl = new DavAcl();
-
-        DavAce unauthenticated = new DavAce.UnauthenticatedAce();
-        unauthenticated.setDenied(true);
-        unauthenticated.getPrivileges().add(DavPrivilege.ALL);
-        unauthenticated.setProtected(true);
-        acl.getAces().add(unauthenticated);
-
-        DavAce allAllow = new DavAce.AllAce();
-        allAllow.getPrivileges().add(DavPrivilege.READ);
-        allAllow.getPrivileges().add(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET);
-        allAllow.setProtected(true);
-        acl.getAces().add(allAllow);
-
-        DavAce allDeny = new DavAce.AllAce();
-        allDeny.setDenied(true);
-        allDeny.getPrivileges().add(DavPrivilege.ALL);
-        allDeny.setProtected(true);
-        acl.getAces().add(allDeny);
-
-        return acl;
-    }
-
-    /**
-     * <p>
-     * Extends the superclass method to return {@link DavPrivilege#READ} if
-     * the the current principal is a non-admin user.
-     * </p>
-     */
-    protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
-        Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
-        if (! privileges.isEmpty()) {
-            return privileges;
-        }
-
-        User user = getSecurityManager().getSecurityContext().getUser();
-        if (user != null) {
-            privileges.add(DavPrivilege.READ);
-        }
-
-        return privileges;
-    }
 
     protected void loadLiveProperties(DavPropertySet properties) {
         properties.add(new DisplayName(getDisplayName()));

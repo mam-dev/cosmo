@@ -1,5 +1,7 @@
 package org.unitedinternet.cosmo.dav.property;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.lang.NonNull;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.*;
@@ -10,6 +12,7 @@ import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserBase;
 
 public  class PrincipalUtils implements ExtendedDavConstants {
+    private static final Log LOG = LogFactory.getLog(PrincipalUtils.class);
     /**
      * Returns full path to the user OR group URL. Used by properties DAV:owner and DAV:principal-url
      * @param locator
@@ -49,7 +52,7 @@ public  class PrincipalUtils implements ExtendedDavConstants {
         }
     }
 
-    public static DavUserPrincipal findUserPrincipal(String uri, DavResourceLocator currentLocator, DavResourceFactory resourceFactory) throws NotRecognizedPrincipalException {
+    public static DavUserPrincipal findUserPrincipalResource(String uri, DavResourceLocator currentLocator, DavResourceFactory resourceFactory) throws NotRecognizedPrincipalException {
         try {
             DavResourceLocator locator = currentLocator.getFactory().
                 createResourceLocatorByUri(currentLocator.getContext(),
@@ -59,6 +62,16 @@ public  class PrincipalUtils implements ExtendedDavConstants {
             throw new NotRecognizedPrincipalException("uri " + uri + " does not represent a principal");
         } catch (CosmoDavException e) {
             throw new NotRecognizedPrincipalException("uri " + uri + " does not represent a principal:" + e.getMessage());
+        }
+    }
+
+    public static DavUserPrincipal createUserPrincipalResource(UserBase user, DavResourceLocator currentLocator, DavResourceFactory factory)  {
+        try {
+            DavResourceLocator locator = currentLocator.getFactory().createPrincipalLocator(currentLocator.getContext(), user);
+            return (DavUserPrincipal) factory.createUserPrincipalResource(locator, user);
+        } catch (CosmoDavException e) {
+            LOG.error("Shouldn't throw this Exception there: " + e + "; User: " + user);
+            throw new CosmoException();
         }
     }
 }

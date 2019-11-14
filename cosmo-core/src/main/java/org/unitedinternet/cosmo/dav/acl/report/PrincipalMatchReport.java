@@ -161,6 +161,7 @@ public class PrincipalMatchReport extends MultiStatusReport
      * report by definition always uses depth 0.
      * </p>
      */
+    @Override
     protected void runQuery()
         throws CosmoDavException {
         doQuerySelf(getResource());
@@ -179,7 +180,7 @@ public class PrincipalMatchReport extends MultiStatusReport
     protected void doQuerySelf(WebDavResource resource)
         throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Querying " + resource.getResourcePath());
+            LOG.debug("Querying " + resource.getResourcePath() + "; self = " + self );
         }
         if (self && matchesUserPrincipal(resource)) {
             getResults().add(resource);

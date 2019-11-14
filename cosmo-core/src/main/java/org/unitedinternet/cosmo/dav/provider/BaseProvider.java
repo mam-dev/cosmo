@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -48,12 +47,9 @@ import org.unitedinternet.cosmo.dav.UnsupportedMediaTypeException;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.*;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
-import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
+import org.unitedinternet.cosmo.dav.acl.resource.DavAbstractPrincipalCollection;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
-import org.unitedinternet.cosmo.dav.impl.DavFile;
-import org.unitedinternet.cosmo.dav.impl.DavInboxCollection;
-import org.unitedinternet.cosmo.dav.impl.DavItemResource;
-import org.unitedinternet.cosmo.dav.impl.DavOutboxCollection;
+import org.unitedinternet.cosmo.dav.impl.*;
 import org.unitedinternet.cosmo.dav.io.DavInputContext;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
@@ -540,25 +536,16 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
      * @return boolean
      */
     protected boolean hasPrivilege(WebDavResource resource, AclEvaluator evaluator, DavPrivilege privilege) {
-        boolean hasPrivilege = false;
-        if (resource instanceof DavItemResource) {
-            Item item = ((DavItemResource) resource).getItem();
-            hasPrivilege = evaluator.evaluate(item, privilege);
-        } else {
-            if (evaluator instanceof TicketAclEvaluator) {
-                throw new IllegalStateException(
-                        "A ticket may not be used to access a user principal collection or resource");
-            }
-            UserAclEvaluator uae = (UserAclEvaluator) evaluator;
 
-            if (resource instanceof DavUserPrincipalCollection || resource instanceof DavInboxCollection
-                    || resource instanceof DavOutboxCollection) {
-                hasPrivilege = uae.evaluateUserPrincipalCollection(privilege);
-            } else {
-                UserBase user = ((DavUserPrincipal) resource).getUser();
-                hasPrivilege = uae.evaluateUserPrincipal(user, privilege);
-            }
+        boolean hasPrivilege = false;
+        DavResourceBase rb;
+        try {
+            rb = (DavResourceBase) resource;
+        } catch (ClassCastException e) {
+            LOG.error("hasPrivilege called for non-ACL resource" + resource);
+            return false;
         }
+        hasPrivilege = rb.getCurrentPrincipalPrivileges().containsRecursive(privilege);
 
         if (hasPrivilege) {
             if (LOG.isDebugEnabled()) {
