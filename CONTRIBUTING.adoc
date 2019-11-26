@@ -1,0 +1,26 @@
+= Contributing to Cosmo
+
+Spring Boot is released under the Apache 2.0 license. If you would like to contribute
+something this document should help you get started.
+
+== Code Conventions 
+
+* We use "Java Conventions [built-in] - no tabs". If using Eclipse or SpringToolSuite 
+it should be fairly easy to find the formatter and apply it.
+
+* Make sure all new `*.java` files to have simple Javadoc class comment with `@author` and
+a short description on what the class is for.
+
+* Add self explanatory/comprehensive tests 
+
+* When writing a commit message please follow https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
+  if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
+  message (where `XXXX` is the issue number).
+  
+ == Working with the Code
+ 
+ * Make sure maven is installed and enough memory is set. To build the project run
+ `mvn clean install`
+ 
+ == TODO-Wip 
+  
