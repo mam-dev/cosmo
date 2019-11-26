@@ -1,7 +1,7 @@
 = Contributing to Cosmo
 
-Spring Boot is released under the Apache 2.0 license. If you would like to contribute
-something this document should help you get started.
+Cosmo is released under the https://github.com/1and1/cosmo/blob/master/LICENSE[Apache 2.0 license].
+If you would like to contribute something this document should help you get started.
 
 == Code Conventions 
 
@@ -19,8 +19,11 @@ a short description on what the class is for.
   
 == Working with the Code
  
-* Make sure maven is installed and enough memory is set. To build the project run
+* Make sure maven is installed and enough memory is set. To build the project run:
+[indent=0]
+----
 `mvn clean install`
- 
+---- 
+
 == TODO-Wip 
   
