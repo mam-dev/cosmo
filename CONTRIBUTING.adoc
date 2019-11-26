@@ -17,10 +17,10 @@ a short description on what the class is for.
   if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
   message (where `XXXX` is the issue number).
   
- == Working with the Code
+== Working with the Code
  
- * Make sure maven is installed and enough memory is set. To build the project run
- `mvn clean install`
+* Make sure maven is installed and enough memory is set. To build the project run
+`mvn clean install`
  
- == TODO-Wip 
+== TODO-Wip 
   
