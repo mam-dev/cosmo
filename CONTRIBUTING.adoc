@@ -3,6 +3,20 @@
 Cosmo is released under the https://github.com/1and1/cosmo/blob/master/LICENSE[Apache 2.0 license].
 If you would like to contribute something this document should help you get started.
 
+
+== Using GitHub Issues
+We use GitHub issues to track bugs and enhancements.
+
+* If you are reporting a bug, please help to speed up problem diagnosis by providing as
+much information as possible. Ideally, that would include a small piece of code.
+
+* For enhancements please first create a GitHub issue and then link it to the pull request.
+Please provide short self explanatory pull requests that include unit tests.
+Different features should be contained in different pull requests.
+This way the review process will be faster and it will help the reviewer to decide easier.
+
+* Before creating a pull request make sure that the tests are passing.
+
 == Code Conventions 
 
 * We use "Java Conventions [built-in] - no tabs". If using Eclipse or SpringToolSuite 
@@ -19,11 +33,8 @@ a short description on what the class is for.
   
 == Working with the Code
  
-* Make sure maven is installed and enough memory is set. To build the project run:
+Make sure maven is installed and enough memory is set. To build the project run:
 [indent=0]
 ----
-`mvn clean install`
----- 
-
-== TODO-Wip 
-  
+$ mvn clean install
+----   
