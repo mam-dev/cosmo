@@ -10,6 +10,10 @@ We use GitHub issues to track bugs and enhancements.
 much information as possible. Ideally, that would include a small piece of code.
 * For enhancements please first create a GitHub issue and then link it to the pull request.
 
+== Reporting Security Vulnerabilities
+If you think you have found a security vulnerability in Cosmo please DO NOT disclose it publicly until we’ve had a chance to fix it.
+Please don’t report security vulnerabilities using GitHub issues, instead send an email to mailto:caldavsupport@1und1.de to disclose them responsibly.
+
 == Handling Pull Requests
 
 * Please provide short self explanatory pull requests that include unit tests.
