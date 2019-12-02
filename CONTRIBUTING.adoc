@@ -1,0 +1,44 @@
+= Contributing to Cosmo
+
+Cosmo is released under the https://github.com/1and1/cosmo/blob/master/LICENSE[Apache 2.0 license].
+If you would like to contribute something this document should help you get started.
+
+== Using GitHub Issues
+We use GitHub issues to track bugs and enhancements.
+
+* If you are reporting a bug, please help to speed up problem diagnosis by providing as
+much information as possible. Ideally, that would include a small piece of code.
+* For enhancements please first create a GitHub issue and then link it to the pull request.
+
+== Reporting Security Vulnerabilities
+If you think you have found a security vulnerability in Cosmo please DO NOT disclose it publicly until we’ve had a chance to fix it.
+Please don’t report security vulnerabilities using GitHub issues, instead send an email to <caldavsupport@1und1.de> to disclose them responsibly.
+
+== Handling Pull Requests
+
+* Please provide short self explanatory pull requests that include unit tests.
+* Different features should be contained in different pull requests. This way the review 
+process will be faster and it will help the reviewer to decide easier. 
+* Before creating a pull request make sure that the tests are passing.
+ 
+== Code Conventions 
+
+* We use "Java Conventions [built-in] - no tabs". If using Eclipse or SpringToolSuite 
+it should be fairly easy to find the formatter and apply it.
+
+* Make sure all new `*.java` files to have simple Javadoc class comment with `@author` and
+a short description on what the class is for.
+
+* Add self explanatory/comprehensive tests 
+
+* When writing a commit message please follow https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html[these conventions],
+  if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
+  message (where `XXXX` is the issue number).
+  
+== Working with the Code
+ 
+Make sure maven is installed and enough memory is set. To build the project run:
+[indent=0]
+----
+$ mvn clean install
+----   
