@@ -22,7 +22,6 @@ import org.mockito.Mockito;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
-import org.unitedinternet.cosmo.dao.mock.MockCalendarDao;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -297,15 +296,12 @@ public class ContextServiceExtensionsAdviceTest {
         testHelper = new TestHelper();
         storage = new MockDaoStorage();        
         contentDao = new MockContentDao(storage);
-        service = new StandardContentService();
         lockManager = new SingleVMLockManager();
+        service = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());
+        
         simpleCheckCallExpectedHandler = new SimpleCheckCallExpected();
-        checkManyAttendeesCallExpected = new CheckManyAttendeesCallExpected();
-        service.setContentDao(contentDao);
-        service.setLockManager(lockManager);
-        service.setTriageStatusQueryProcessor(new StandardTriageStatusQueryProcessor());
-        service.init();
-        //each test creates the advice with expected asserts
+        checkManyAttendeesCallExpected = new CheckManyAttendeesCallExpected();        
+        //Each test creates the advice with expected asserts
     }
     
     /**

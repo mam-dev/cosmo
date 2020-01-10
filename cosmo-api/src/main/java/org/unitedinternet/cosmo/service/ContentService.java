@@ -33,7 +33,7 @@ import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
 /**
  * Interface for services that manage access to user content.
  */
-public interface ContentService extends Service {
+public interface ContentService {
 
     /**
      * Get the root item for a user

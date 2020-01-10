@@ -67,21 +67,26 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
  * @see ContentDao
  */
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class StandardContentService implements ContentService {
-    private static final Log LOG =
-        LogFactory.getLog(StandardContentService.class);
-
-    @Autowired
-    private ContentDao contentDao;
     
-    @Autowired
-    private LockManager lockManager;
-    
-    @Autowired
-    private TriageStatusQueryProcessor triageStatusQueryProcessor;
+    private static final Log LOG = LogFactory.getLog(StandardContentService.class);        
+   
+    private final ContentDao contentDao;
+        
+    private final LockManager lockManager;
+        
+    private final TriageStatusQueryProcessor triageStatusQueryProcessor;
   
     private long lockTimeout = 100;
+    
+    public StandardContentService( @Autowired ContentDao contentDao,  @Autowired LockManager lockManager,
+            @Autowired TriageStatusQueryProcessor triageStatusQueryProcessor) {
+        super();
+        this.contentDao = contentDao;
+        this.lockManager = lockManager;
+        this.triageStatusQueryProcessor = triageStatusQueryProcessor;
+    }
 
     // ContentService methods
 
@@ -90,12 +95,10 @@ public class StandardContentService implements ContentService {
      *
      * @param user
      */
+    @Transactional(readOnly = true)
     public HomeCollectionItem getRootItem(User user, boolean forceReload) {
         if (LOG.isDebugEnabled()) {
-            //Fix Log Forging - fortify
-            //Writing unvalidated user input to log files can allow an attacker to forge log entries
-            //or inject malicious content into the logs.
-            LOG.debug("getting root item for " + user.getUsername());
+            LOG.debug("Getting root item for " + user.getUsername());
         }
         return contentDao.getRootItem(user, forceReload);
     }
@@ -105,25 +108,25 @@ public class StandardContentService implements ContentService {
      *
      * @param user
      */
+    @Transactional(readOnly = true)
     public HomeCollectionItem getRootItem(User user) {
         if (LOG.isDebugEnabled()) {
-        	//Fix Log Forging - fortify
-        	//Writing unvalidated user input to log files can allow an attacker to forge log entries
-        	//or inject malicious content into the logs.
-            LOG.debug("getting root item for " + user.getUsername());
+            LOG.debug("Getting root item for " + user.getUsername());
         }
         return contentDao.getRootItem(user);
     }
 
     /**
      * Searches for an item stamp by item uid. The implementation will hit directly the the DB. 
+     * 
      * @param internalItemUid item internal uid
      * @param clazz stamp type
      * @return the item's stamp from the db
      */
+    @Transactional(readOnly = true)
     public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz){
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding item with uid " + internalItemUid);
+            LOG.debug("Finding item with uid " + internalItemUid);
         }
         return contentDao.findStampByInternalItemUid(internalItemUid, clazz);
         
@@ -138,9 +141,10 @@ public class StandardContentService implements ContentService {
      *            uid of item to find
      * @return item represented by uid
      */
+    @Transactional(readOnly = true)
     public Item findItemByUid(String uid) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding item with uid " + uid);
+            LOG.debug("Finding item with uid " + uid);
         }
         Item item = contentDao.findItemByUid(uid);
         
@@ -149,8 +153,7 @@ public class StandardContentService implements ContentService {
             return item;
         }
         
-        // Handle case where uid represents an occurence of a
-        // recurring item.
+        // Handle case where uid represents an occurrence of a recurring item.
         if(uid.indexOf(ModificationUid.RECURRENCEID_DELIMITER)!=-1) {
             ModificationUidImpl modUid;
             
@@ -160,8 +163,7 @@ public class StandardContentService implements ContentService {
                 // If ModificationUid is invalid, item isn't present
                 return null;
             }
-            // Find the parent, and then verify that the recurrenceId is a valid
-            // occurrence date for the recurring item.
+            // Find the parent, and then verify that the recurrenceId is a valid occurrence date for the recurring item.
             NoteItem parent = (NoteItem) contentDao.findItemByUid(modUid.getParentUid());
             if(parent==null) {
                 return null;
@@ -178,9 +180,10 @@ public class StandardContentService implements ContentService {
      * Find content item by path. Path is of the format:
      * /username/parent1/parent2/itemname.
      */
+    @Transactional(readOnly = true)
     public Item findItemByPath(String path) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding item at path " + path);
+            LOG.debug("Finding item at path " + path);
         }
         return contentDao.findItemByPath(path);
     }
@@ -189,13 +192,13 @@ public class StandardContentService implements ContentService {
      * Find content item by path relative to the identified parent
      * item.
      *
-     * @throws NoSuchItemException if a item does not exist at
-     * the specified path
+     * @throws NoSuchItemException if a item does not exist at the specified path
+     * 
      */
-    public Item findItemByPath(String path,
-                               String parentUid) {
+    @Transactional(readOnly = true)
+    public Item findItemByPath(String path, String parentUid) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding item at path " + path + " below parent " +
+            LOG.debug("Finding item at path " + path + " below parent " +
                       parentUid);
         }
         return contentDao.findItemByPath(path, parentUid);
@@ -206,9 +209,10 @@ public class StandardContentService implements ContentService {
      * /username/parent1/parent2/itemname.  In this example,
      * the item at /username/parent1/parent2 would be returned.
      */
+    @Transactional(readOnly = true)
     public Item findItemParentByPath(String path) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("finding item's parent at path " + path);
+            LOG.debug("Finding item's parent at path " + path);
         }
         return contentDao.findItemParentByPath(path);
     }
@@ -239,11 +243,11 @@ public class StandardContentService implements ContentService {
      * @throws org.unitedinternet.cosmo.model.CollectionLockedException
      *         if Item is a ContentItem and destination CollectionItem
      *         is lockecd.
-     */
+     */    
     public void copyItem(Item item, CollectionItem targetParent, 
             String path, boolean deepCopy) {
 
-        // prevent HomeCollection from being copied
+        // Prevent HomeCollection from being copied
         if(item instanceof HomeCollectionItem) {
             throw new IllegalArgumentException("cannot copy home collection");
         }
@@ -253,10 +257,10 @@ public class StandardContentService implements ContentService {
             throw new DuplicateItemNameException(null, path + " exists");
         }
         
-        // handle case of copying ContentItem (need to sync on dest collection)
+        // Handle case of copying ContentItem (need to sync on dest collection)
         if(item != null && item instanceof ContentItem) {
             
-            // need to get exclusive lock to destination collection
+            // Need to get exclusive lock to destination collection
             CollectionItem parent = 
                 (CollectionItem) contentDao.findItemParentByPath(path);
             
@@ -295,10 +299,10 @@ public class StandardContentService implements ContentService {
      * @throws org.unitedinternet.cosmo.model.CollectionLockedException
      *         if Item is a ContentItem and source or destination 
      *         CollectionItem is lockecd.
-     */
+     */    
     public void moveItem(Item item, CollectionItem oldParent, CollectionItem newParent) {
         
-        // prevent HomeCollection from being moved
+        // Prevent HomeCollection from being moved
         if(item instanceof HomeCollectionItem) {
             throw new IllegalArgumentException("cannot move home collection");
         }
@@ -339,7 +343,7 @@ public class StandardContentService implements ContentService {
      */
     public void removeItem(Item item) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing item " + item.getUid());
+            LOG.debug("Removing item " + item.getUid());
         }
         
         // Let service handle ContentItems (for sync purposes)
@@ -382,6 +386,7 @@ public class StandardContentService implements ContentService {
      * @return children of collection that have been updated since timestamp, or
      *         all children if timestamp is null
      */
+    @Transactional(readOnly = true)
     public Set<ContentItem> loadChildren(CollectionItem collection, java.util.Date timestamp) {
         return contentDao.loadChildren(collection, timestamp);
     }
@@ -490,10 +495,6 @@ public class StandardContentService implements ContentService {
      *         if CollectionItem is locked
      */
     public CollectionItem updateCollection(CollectionItem collection) {
-
-       /* if(collection instanceof HomeCollectionItem) {
-            throw new IllegalArgumentException("cannot update home collection");
-        }*///ical adds default alarms in home collection, so we must allow the update
         
         if (! lockManager.lockCollection(collection, lockTimeout)) {
             throw new CollectionLockedException("unable to obtain collection lock");
@@ -599,9 +600,7 @@ public class StandardContentService implements ContentService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("removing collection " + collection.getUid());
         }
-
-        // prevent HomeCollection from being removed (should only be removed
-        // when user is removed)
+        // Prevent HomeCollection from being removed (should only be removed when user is removed)
         if(collection instanceof HomeCollectionItem) {
             throw new IllegalArgumentException("cannot remove home collection");
         }
@@ -701,6 +700,7 @@ public class StandardContentService implements ContentService {
      * @throws org.unitedinternet.cosmo.model.CollectionLockedException
      *         if parent CollectionItem is locked
      */
+    @Override
     public void createContentItems(CollectionItem parent,
                                      Set<ContentItem> contentItems) {
         if (LOG.isDebugEnabled()) {
@@ -901,6 +901,7 @@ public class StandardContentService implements ContentService {
      * @return set of notes that match the specified triage status label and
      *         belong to the specified collection
      */
+    @Transactional(readOnly = true)
     public SortedSet<NoteItem> findNotesByTriageStatus(CollectionItem collection,
             TriageStatusQueryContext context) {
         return triageStatusQueryProcessor.processTriageStatusQuery(collection,
@@ -914,6 +915,7 @@ public class StandardContentService implements ContentService {
      * @return set of notes that match the specified triage status label and belong
      *         to the specified recurring note series
      */
+    @Transactional(readOnly = true)
     public SortedSet<NoteItem> findNotesByTriageStatus(NoteItem note,
             TriageStatusQueryContext context) {
         return triageStatusQueryProcessor.processTriageStatusQuery(note,
@@ -927,6 +929,7 @@ public class StandardContentService implements ContentService {
      * @param collectionItem parent collection item
      * @return set of children collection items or empty list of parent collection has no children
      */
+    @Transactional(readOnly = true)
     public Set<CollectionItem> findCollectionItems(CollectionItem collectionItem) {
         return contentDao.findCollectionItems(collectionItem);
     }
@@ -939,6 +942,7 @@ public class StandardContentService implements ContentService {
      * @return set items matching specified
      *         filter.
      */
+    @Transactional(readOnly = true)
     public Set<Item> findItems(ItemFilter filter) {
         return contentDao.findItems(filter);
     }
@@ -984,6 +988,7 @@ public class StandardContentService implements ContentService {
      * @param item the ticketed item
      * @param key the ticket to return
      */
+    @Transactional(readOnly = true)
     public Ticket getTicket(Item item,
                             String key) {
         if (LOG.isDebugEnabled()) {
@@ -997,7 +1002,7 @@ public class StandardContentService implements ContentService {
      *
      * @param item the item to be de-ticketed
      * @param ticket the ticket to remove
-     */
+     */    
     public void removeTicket(Item item,
                              Ticket ticket) {
         if (LOG.isDebugEnabled()) {
@@ -1031,68 +1036,7 @@ public class StandardContentService implements ContentService {
         contentDao.removeTicket(item, ticket);
     }
 
-    // Service methods
 
-    /**
-     * Initializes the service, sanity checking required properties
-     * and defaulting optional properties.
-     */
-    public void init() {
-
-        if (contentDao == null) {
-            throw new IllegalStateException("contentDao must not be null");
-        }
-        if (lockManager == null) {
-            throw new IllegalStateException("lockManager must not be null");
-        }
-        if(triageStatusQueryProcessor == null) {
-            throw new IllegalStateException("triageStatusQueryProcessor must not be null");
-        }
-    }
-
-    /**
-     * Readies the service for garbage collection, shutting down any
-     * resources used.
-     */
-    public void destroy() {
-        // does nothing
-    }
-
-    /** */
-    public ContentDao getContentDao() {
-        return contentDao;
-    }
-
-    /** */
-    public void setContentDao(ContentDao dao) {
-        contentDao = dao;
-    }
-
-    public void setTriageStatusQueryProcessor(
-            TriageStatusQueryProcessor triageStatusQueryProcessor) {
-        this.triageStatusQueryProcessor = triageStatusQueryProcessor;
-    }
-    
-    /** */
-    public LockManager getLockManager() {
-        return lockManager;
-    }
-
-    /** */
-    public void setLockManager(LockManager lockManager) {
-        this.lockManager = lockManager;
-    }
-    
-    
-    /**
-     * Sets the maximum ammount of time (in millisecondes) that the
-     * service will wait on acquiring an exclusive lock on a CollectionItem.
-     * @param lockTimeout
-     */
-    public void setLockTimeout(long lockTimeout) {
-        this.lockTimeout = lockTimeout;
-    }
-    
     /**
      * Given a set of items, aquire a lock on all parents
      */
@@ -1171,8 +1115,10 @@ public class StandardContentService implements ContentService {
             locks.add(parent);
         }
         
-        // Acquire locks on master item's parents, as an addition/deletion
-        // of a modifications item affects all the parents of the master item.
+        /*
+         * Acquire locks on master item's parents, as an addition/deletion of a modifications item affects all the
+         * parents of the master item.
+         */ 
         if(item instanceof NoteItem) {
             NoteItem note = (NoteItem) item;
             if(note.getModifies()!=null) {
@@ -1190,7 +1136,7 @@ public class StandardContentService implements ContentService {
     private NoteOccurrence getNoteOccurrence(NoteItem parent, net.fortuna.ical4j.model.Date recurrenceId) {
         EventStamp eventStamp = StampUtils.getEventStamp(parent);
         
-        // parent must be a recurring event
+        // Parent must be a recurring event
         if(eventStamp==null || !eventStamp.isRecurring()) {
             return null;
         }
@@ -1210,7 +1156,7 @@ public class StandardContentService implements ContentService {
 			}
         }
         net.fortuna.ical4j.model.Date recurrenceIdToUse = rid == null ? recurrenceId : rid.getDate();
-        // verify that occurrence date is valid
+        // Verify that occurrence date is valid
         RecurrenceExpander expander = new RecurrenceExpander();
         if(expander.isOccurrence(eventStamp.getEventCalendar(), recurrenceIdToUse)) {
             return NoteOccurrenceUtil.createNoteOccurrence(recurrenceIdToUse, parent);
@@ -1224,7 +1170,7 @@ public class StandardContentService implements ContentService {
         if(collection instanceof HomeCollectionItem) {
             throw new IllegalArgumentException("cannot remove home collection");
         }
-	    contentDao.removeItemsFromCollection(collection);
-	    contentDao.updateCollectionTimestamp(collection);
+        contentDao.removeItemsFromCollection(collection);
+	contentDao.updateCollectionTimestamp(collection);
     }
 }

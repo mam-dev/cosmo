@@ -82,12 +82,8 @@ public class StandardContentServiceTest {
         testHelper = new TestHelper();
         storage = new MockDaoStorage();        
         contentDao = new MockContentDao(storage);
-        service = new StandardContentService();
         lockManager = new SingleVMLockManager();
-        service.setContentDao(contentDao);
-        service.setLockManager(lockManager);
-        service.setTriageStatusQueryProcessor(new StandardTriageStatusQueryProcessor());
-        service.init();
+        service = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());                
     }
 
     /**
@@ -535,22 +531,6 @@ public class StandardContentServiceTest {
         Assert.assertNull(getEvent("20060107T140000", fullCal));
         Assert.assertNotNull(getEvent("20060108T140000", fullCal));
         Assert.assertNotNull(getEvent("20060109T140000", fullCal));
-    }
-    
-    
-    /**
-     * Tests null content dao.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    @Test
-    public void testNullContentDao() throws Exception {
-        service.setContentDao(null);
-        try {
-            service.init();
-            Assert.fail("Should not be able to initialize service without contentDao");
-        } catch (IllegalStateException e) {
-            // expected
-        }
     }
     
     /**

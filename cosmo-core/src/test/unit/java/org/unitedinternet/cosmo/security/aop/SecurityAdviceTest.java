@@ -73,12 +73,8 @@ public class SecurityAdviceTest {
         contentDao = new MockContentDao(storage);
         userDao = new MockUserDao(storage);
         this.sa = new SecurityAdvice(securityManager, contentDao, userDao);
-        service = new StandardContentService();
         lockManager = new SingleVMLockManager();
-        service.setContentDao(contentDao);
-        service.setLockManager(lockManager);
-        service.setTriageStatusQueryProcessor(new StandardTriageStatusQueryProcessor());
-        service.init();
+        service = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());
         
         // create a factory that can generate a proxy for the given target object
         AspectJProxyFactory factory = new AspectJProxyFactory(service); 

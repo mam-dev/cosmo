@@ -58,6 +58,7 @@ public class MockHelper extends TestHelper {
     private MockEntityFactory entityFactory;
     private MockSecurityManager securityManager;
     private ServiceLocatorFactory serviceLocatorFactory;
+    private SingleVMLockManager lockManager; 
     private StandardContentService contentService;
     private StandardUserService userService;
     private ICalendarClientFilterManager clientFilterManager;
@@ -84,16 +85,11 @@ public class MockHelper extends TestHelper {
         MockCalendarDao calendarDao = new MockCalendarDao(storage);
         MockContentDao contentDao = new MockContentDao(storage);
         MockUserDao userDao = new MockUserDao(storage);
-        SingleVMLockManager lockManager = new SingleVMLockManager();
+        lockManager = new SingleVMLockManager();
         
         entityFactory = new MockEntityFactory();
         
-        contentService = new StandardContentService();
-        contentService.setContentDao(contentDao);
-        contentService.setLockManager(lockManager);
-        contentService.setTriageStatusQueryProcessor(new StandardTriageStatusQueryProcessor());
-        
-        contentService.init();
+        contentService = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());        
 
         clientFilterManager = new ICalendarClientFilterManager();
         
@@ -267,7 +263,7 @@ public class MockHelper extends TestHelper {
      * @param collection The collection.
      */
     public void lockCollection(CollectionItem collection) {
-        contentService.getLockManager().lockCollection(collection);
+        lockManager.lockCollection(collection);
     }
 
     /**
