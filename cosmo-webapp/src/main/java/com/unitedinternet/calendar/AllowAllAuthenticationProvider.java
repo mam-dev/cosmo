@@ -59,7 +59,7 @@ public class AllowAllAuthenticationProvider implements AuthenticationProvider {
         user.setEmail(userName);
         user.setFirstName(userName);
         user.setLastName(userName);
-        user.setPassword("NOT_NULL");
+        user.setPassword((authentication.getCredentials() != null) ? (String) authentication.getCredentials() : "NOT_NULL");
         user = this.userService.createUser(user);
         return user;
     }

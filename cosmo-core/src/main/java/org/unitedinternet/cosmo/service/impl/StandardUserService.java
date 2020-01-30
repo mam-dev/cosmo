@@ -23,6 +23,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.token.TokenService;
@@ -32,6 +33,7 @@ import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
+import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.service.OverlordDeletionException;
@@ -46,6 +48,9 @@ import org.unitedinternet.cosmo.service.UserService;
 public class StandardUserService extends BaseService implements UserService {
 
     private static final Log LOG = LogFactory.getLog(StandardUserService.class);
+
+    private static final int PASSWORD_DEFAULT_LEN_MIN = 5;
+    private static final int PASSWORD_DEFAULT_LEN_MAX = 25;
 
     /**
      * The service uses MD5 if no digest algorithm is explicitly set.
@@ -62,6 +67,12 @@ public class StandardUserService extends BaseService implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Value("${cosmo.user.password.min.length:5}")
+    private int passwordLengthMin;
+
+    @Value("${cosmo.user.password.max.length:25}")
+    private int passwordLengthMax;
 
     // UserService methods
 
@@ -133,8 +144,7 @@ public class StandardUserService extends BaseService implements UserService {
             LOG.debug("creating user " + user.getUsername());
         }
 
-        user.validateRawPassword();
-
+        validateRawPassword(user);
         user.setPassword(digestPassword(user.getPassword()));
 
         fireBeforeEvent(new ServiceEvent("CREATE_USER", user), listeners);
@@ -192,15 +202,13 @@ public class StandardUserService extends BaseService implements UserService {
             }
         }
 
-        if (user.getPassword().length() < 32) {
-            user.validateRawPassword();
-            user.setPassword(digestPassword(user.getPassword()));
-        }
+        // validate and compute password hash
+        validateRawPassword(user);
+        user.setPassword(digestPassword(user.getPassword()));
 
         userDao.updateUser(user);
 
         User newUser = userDao.getUser(user.getUsername());
-
         if (isUsernameChanged) {
             if (LOG.isDebugEnabled()) {
                 // Fix Log Forging - fortify
@@ -302,7 +310,24 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public String generatePassword() {
         String password = passwordGenerator.allocateToken("").getKey();
-        return password.length() <= User.PASSWORD_LEN_MAX ? password : password.substring(0, User.PASSWORD_LEN_MAX - 1);
+        return (password.length() <= this.passwordLengthMax) ? password : password.substring(0, this.passwordLengthMax - 1);
+    }
+
+    /**
+     * Validates raw password before user creation. Raw password should not be null and should have a length between
+     * {@link #passwordLengthMin} and {@link #passwordLengthMax}.
+     */
+    public void validateRawPassword(User user) {
+        String rawPassword = user.getPassword();
+        if (rawPassword == null) {
+            throw new ModelValidationException("UserName" + user.getUsername() + " UID" + user.getUid(),
+                "Password not specified");
+        }
+        if (rawPassword.length() < this.passwordLengthMin || rawPassword.length() > this.passwordLengthMax) {
+
+            throw new ModelValidationException("UserName" + user.getUsername() + " UID" + user.getUid(),
+                "Password must be " + this.passwordLengthMin + " to " + this.passwordLengthMax + " characters in length");
+        }
     }
 
     // Service methods
@@ -322,6 +347,12 @@ public class StandardUserService extends BaseService implements UserService {
         }
         if (digestAlgorithm == null) {
             digestAlgorithm = DEFAULT_DIGEST_ALGORITHM;
+        }
+        if (passwordLengthMin == 0) {
+            this.passwordLengthMin = PASSWORD_DEFAULT_LEN_MIN;
+        }
+        if (passwordLengthMax == 0) {
+            this.passwordLengthMax = PASSWORD_DEFAULT_LEN_MAX;
         }
     }
 
@@ -397,6 +428,23 @@ public class StandardUserService extends BaseService implements UserService {
         this.userDao = userDao;
     }
 
+
+    public int getPasswordLengthMin() {
+        return this.passwordLengthMin;
+    }
+
+    public void setPasswordLengthMin(int passwordLengthMin) {
+        this.passwordLengthMin = passwordLengthMin;
+    }
+
+    public int getPasswordLengthMax() {
+        return this.passwordLengthMax;
+    }
+
+    public void setPasswordLengthMax(int passwordLengthMax) {
+        this.passwordLengthMax = passwordLengthMax;
+    }
+
     /**
      * Remove all Items associated to User. This is done by removing the HomeCollectionItem, which is the root
      * collection of all the user's items.
@@ -413,4 +461,6 @@ public class StandardUserService extends BaseService implements UserService {
         contentDao.removeUserContent(user);
         userDao.removeUser(user);
     }
+
+
 }

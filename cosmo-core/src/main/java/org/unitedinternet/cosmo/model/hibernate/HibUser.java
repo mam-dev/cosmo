@@ -35,7 +35,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.User;
@@ -312,19 +311,6 @@ public class HibUser extends HibAuditableObject implements User {
                 .append("firstName", firstName).append("lastName", lastName).append("email", email)
                 .append("admin", admin).append("activationId", activationId).append("locked", locked).append("uid", uid)
                 .toString();
-    }
-
-    @Override
-    public void validateRawPassword() {
-        if (password == null) {
-            throw new ModelValidationException("UserName" + this.getUsername() + " UID" + this.getUid(),
-                    "Password not specified");
-        }
-        if (password.length() < PASSWORD_LEN_MIN || password.length() > PASSWORD_LEN_MAX) {
-
-            throw new ModelValidationException("UserName" + this.getUsername() + " UID" + this.getUid(),
-                    "Password must be " + PASSWORD_LEN_MIN + " to " + PASSWORD_LEN_MAX + " characters in length");
-        }
     }
 
     @Override

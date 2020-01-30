@@ -217,8 +217,8 @@ public class StandardUserServiceTest {
     public void testGeneratePassword() throws Exception {
         String pwd = service.generatePassword();
 
-        Assert.assertTrue("Password too long", pwd.length() <= User.PASSWORD_LEN_MAX);
-        Assert.assertTrue("Password too short", pwd.length() >= User.PASSWORD_LEN_MIN);
+        Assert.assertTrue("Password too long", pwd.length() <= service.getPasswordLengthMax());
+        Assert.assertTrue("Password too short", pwd.length() >= service.getPasswordLengthMin());
     }
 
     /**
