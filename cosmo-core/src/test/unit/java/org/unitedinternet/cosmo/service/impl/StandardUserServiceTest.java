@@ -163,8 +163,11 @@ public class StandardUserServiceTest {
         Assert.assertTrue("Created and modified dates are the same",
                 !user.getCreationDate().equals(user.getModifiedDate()));
 
-        // leave password
+
         Thread.sleep(1000); // let modified date change
+
+        // leave raw password
+        u1.setPassword("changedpwd");
         User user2 = service.updateUser(u1);
         try {
             userDao.getUser(user.getUsername());
