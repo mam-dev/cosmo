@@ -75,13 +75,6 @@ public interface User extends AuditableObject{
     public static final String ACTIVATED_URL_STRING = "activated";
     public static final String LOCKED_URL_STRING = "locked";
     
-    /**
-     */
-    public static final int PASSWORD_LEN_MIN = 5;
-    /**
-     */
-    public static final int PASSWORD_LEN_MAX = 16;
-    
     /*
      * I'm not sure about putting this enum here, but it seems weird in other
      * places too. Since sort information is already here, in the *_SORT_STRING
@@ -240,10 +233,6 @@ public interface User extends AuditableObject{
     public Boolean isLocked();
 
     public void setLocked(Boolean locked);
-
-    /**
-     */
-    public void validateRawPassword();
 
     public Set<Preference> getPreferences();
 

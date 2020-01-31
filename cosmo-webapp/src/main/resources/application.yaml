@@ -26,7 +26,13 @@ cosmo:
         length: 2137483647
       attendees:
          max:
-           length: 100   
+           length: 100
+  user:
+    password:
+      min:
+        length: 5
+      max:
+        length: 25
 
 # Connection timeout for reaching external content when validation is performed (in millis) 
 external:

@@ -568,24 +568,6 @@ public class MockUser extends MockAuditableObject implements User {
     /*
      * (non-Javadoc)
      * 
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#validateRawPassword()
-     */
-    /**
-     * Validate raw password.
-     */
-    public final void validateRawPassword() {
-        if (password == null) {
-            throw new ModelValidationException(this, "Password not specified");
-        }
-        if (password.length() < PASSWORD_LEN_MIN || password.length() > PASSWORD_LEN_MAX) {
-            throw new ModelValidationException(this,
-                    "Password must be " + PASSWORD_LEN_MIN + " to " + PASSWORD_LEN_MAX + " characters in length");
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.unitedinternet.cosmo.model.copy.InterfaceUser#validateFirstName()
      */
     /**

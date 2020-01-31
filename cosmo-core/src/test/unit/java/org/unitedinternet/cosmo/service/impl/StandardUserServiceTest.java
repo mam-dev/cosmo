@@ -163,8 +163,11 @@ public class StandardUserServiceTest {
         Assert.assertTrue("Created and modified dates are the same",
                 !user.getCreationDate().equals(user.getModifiedDate()));
 
-        // leave password
+
         Thread.sleep(1000); // let modified date change
+
+        // leave raw password
+        u1.setPassword("changedpwd");
         User user2 = service.updateUser(u1);
         try {
             userDao.getUser(user.getUsername());
@@ -217,8 +220,8 @@ public class StandardUserServiceTest {
     public void testGeneratePassword() throws Exception {
         String pwd = service.generatePassword();
 
-        Assert.assertTrue("Password too long", pwd.length() <= User.PASSWORD_LEN_MAX);
-        Assert.assertTrue("Password too short", pwd.length() >= User.PASSWORD_LEN_MIN);
+        Assert.assertTrue("Password too long", pwd.length() <= service.getPasswordLengthMax());
+        Assert.assertTrue("Password too short", pwd.length() >= service.getPasswordLengthMin());
     }
 
     /**
