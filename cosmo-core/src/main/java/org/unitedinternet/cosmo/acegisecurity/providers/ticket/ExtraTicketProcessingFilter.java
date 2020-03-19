@@ -28,8 +28,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.model.Ticket;
@@ -40,7 +40,7 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
  */
 @Component
 public class ExtraTicketProcessingFilter implements Filter {
-    private static final Log LOG = LogFactory.getLog(ExtraTicketProcessingFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExtraTicketProcessingFilter.class);
 
     public static final String TICKET_HEADER = "X-Cosmo-Ticket";
     public static final String MORSE_CODE_TICKET_HEADER = "X-MorseCode-Ticket";

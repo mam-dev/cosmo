@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
@@ -58,9 +58,10 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 /**
  * Abstract calendar resource.
  */
-public abstract class DavCalendarResource extends DavContentBase
-    implements ICalendarConstants {
-    private static final Log LOG = LogFactory.getLog(DavCalendarResource.class);
+public abstract class DavCalendarResource extends DavContentBase implements ICalendarConstants {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavCalendarResource.class);
+    
     private static final Set<ReportType> REPORT_TYPES =
         new HashSet<ReportType>();
     
@@ -163,7 +164,7 @@ public abstract class DavCalendarResource extends DavContentBase
     private void validateDestination(org.apache.jackrabbit.webdav.DavResource destination)
         throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("validating destination " + destination.getResourcePath());
+            LOG.debug("Validating destination {}", destination.getResourcePath());
         }
 
         // XXX: we should allow items to be moved/copied out of
@@ -182,7 +183,7 @@ public abstract class DavCalendarResource extends DavContentBase
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("spooling file " + getResourcePath());
+            LOG.debug("Spooling file {}", getResourcePath());
         }
 
         String contentType =

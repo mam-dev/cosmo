@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 
 import org.apache.abdera.util.EntityTag;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
@@ -79,10 +79,9 @@ import org.unitedinternet.cosmo.server.ServerConstants;
  * </p>
  */
 @Component("davRequestHandler")
-public class StandardRequestHandler
-    implements HttpRequestHandler, ServerConstants {
-    private static final Log LOG =
-        LogFactory.getLog(StandardRequestHandler.class);
+public class StandardRequestHandler implements HttpRequestHandler, ServerConstants {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(StandardRequestHandler.class);
 
     private DavResourceLocatorFactory locatorFactory;
     
@@ -220,7 +219,7 @@ public class StandardRequestHandler
                 sb.append("  ").append(key).append(" = \"").append(val).append("\"").append("\n");
             }
         } catch (Exception e) {
-            LOG.error("Error on dumpRequest class StandardRequestHandler "+ e);
+            LOG.error("Error on dumpRequest class StandardRequestHandler ", e);
         }
         sb.append("------------------------ End dump of request -------------------");
         //Fix Log Forging - java fortify

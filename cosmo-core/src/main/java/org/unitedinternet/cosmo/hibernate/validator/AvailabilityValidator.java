@@ -20,23 +20,23 @@ import java.io.IOException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
+
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.validate.ValidationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
-
 /**
  * Check if a Calendar object contains a valid VAVAILABILITY
  */
 public class AvailabilityValidator implements ConstraintValidator<Availability, Calendar>  {
 
-    private static final Log LOG = LogFactory.getLog(AvailabilityValidator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AvailabilityValidator.class);
     
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
         if(value==null)
@@ -55,26 +55,26 @@ public class AvailabilityValidator implements ConstraintValidator<Availability, 
             // make sure we have a VAVAILABILITY
             ComponentList<CalendarComponent> comps = calendar.getComponents();
             if(comps==null) {
-                LOG.warn("error validating availability: " + calendar.toString());
+                LOG.warn("Error validating availability: {}", calendar.toString());
                 return false;
             }
             
             comps = comps.getComponents(ICalendarConstants.COMPONENT_VAVAILABLITY);
             if(comps==null || comps.size()==0) {
-                LOG.warn("error validating availability: " + calendar.toString());
+                LOG.warn("Error validating availability: {}", calendar.toString());
                 return false;
             }
             
             return true;
             
         } catch(ValidationException ve) {
-            LOG.warn("availability validation error", ve );
-            LOG.warn("error validating availability: " + calendar.toString() );
+            LOG.warn("Availability validation error", ve );
+            LOG.warn("Error validating availability: {}", calendar.toString() );
         } catch(ParserException e) {
-            LOG.warn("parse error", e);
-            LOG.warn("error parsing availability: " + calendar.toString() );
+            LOG.warn("Parse error", e);
+            LOG.warn("Error parsing availability: {}", calendar.toString() );
         } catch (IOException | RuntimeException e) {
-            LOG.warn(e);
+            LOG.warn("", e);
         }
         return false;
     }

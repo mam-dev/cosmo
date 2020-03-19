@@ -22,8 +22,8 @@ import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USERS;
 import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_INBOX;
 import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_OUTBOX;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +68,7 @@ import org.unitedinternet.cosmo.util.UriTemplate;
 @Transactional(readOnly = true)
 public class StandardResourceFactory implements DavResourceFactory {
 
-    private static final Log LOG = LogFactory.getLog(StandardResourceFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StandardResourceFactory.class);
 
     private ContentService contentService;
     private UserService userService;

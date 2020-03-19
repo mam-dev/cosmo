@@ -29,14 +29,14 @@ import java.util.Scanner;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -45,7 +45,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class DbInitializer {
 
-    private static final Log LOG = LogFactory.getLog(DbInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DbInitializer.class);
 
     private static final String PATH_SCHEMA = "/db/cosmo-schema.sql";
 
@@ -133,21 +133,21 @@ public class DbInitializer {
                     rs.close();
                 }
             } catch (SQLException e) {
-                LOG.error(e);
+                LOG.error("", e);
             }
             try {
                 if (ps != null) {
                     ps.close();
                 }
             } catch (SQLException e) {
-                LOG.error(e);
+                LOG.error("", e);
             }
             try {
                 if (conn != null) {
                     conn.close();
                 }
             } catch (SQLException e) {
-                LOG.error(e);
+                LOG.error("", e);
             }
         }
     }
@@ -164,7 +164,7 @@ public class DbInitializer {
             sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
             Metadata metadata = sources.buildMetadata(registry);
             new SchemaValidator().validate(metadata);
-            LOG.info("schema validation passed");
+            LOG.info("Schema validation passed");
         } catch (HibernateException e) {
             LOG.error("error validating schema", e);
             throw e;

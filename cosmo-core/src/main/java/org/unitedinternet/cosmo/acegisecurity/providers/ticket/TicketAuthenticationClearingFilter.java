@@ -24,8 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -35,7 +35,8 @@ import org.springframework.security.core.context.SecurityContextImpl;
  * the current context and clears the context.
  */
 public class TicketAuthenticationClearingFilter implements Filter {
-    private static final Log LOG = LogFactory.getLog(TicketAuthenticationClearingFilter.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(TicketAuthenticationClearingFilter.class);
 
     // Filter methods
 

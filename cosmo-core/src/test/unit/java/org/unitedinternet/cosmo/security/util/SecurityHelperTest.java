@@ -18,8 +18,6 @@ package org.unitedinternet.cosmo.security.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +41,6 @@ import org.unitedinternet.cosmo.security.mock.MockUserPrincipal;
  * model objects.
  */
 public class SecurityHelperTest {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(SecurityHelperTest.class);
     
     private TestHelper testHelper;
  

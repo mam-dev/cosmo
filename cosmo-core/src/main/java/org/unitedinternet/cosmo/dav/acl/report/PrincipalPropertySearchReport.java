@@ -19,28 +19,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalCollectionSet;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipalCollection;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.report.MultiStatusReport;
-
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -72,7 +69,8 @@ import org.w3c.dom.NodeList;
  */
 public class PrincipalPropertySearchReport extends MultiStatusReport
     implements AclConstants {
-    private static final Log LOG = LogFactory.getLog(PrincipalPropertySearchReport.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(PrincipalPropertySearchReport.class);
 
     public static final ReportType REPORT_TYPE_PRINCIPAL_PROPERTY_SEARCH =
         ReportType.register(ELEMENT_ACL_PRINCIPAL_PROPERTY_SEARCH, NAMESPACE,
@@ -167,11 +165,11 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
             WebDavResource member = (WebDavResource) i.nextResource();
             if (member instanceof DavUserPrincipal) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Testing " + member.getResourcePath());
+                    LOG.debug("Testing {}" , member.getResourcePath());
                 }
                 if (matchPrincipal((DavUserPrincipal)member)) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Matched " + member.getResourcePath());
+                        LOG.debug("Matched {}", member.getResourcePath());
                     }
                     getResults().add(member);
                 }
@@ -241,7 +239,7 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
             return false;
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Matching " + prop.getName().toString() + " against " + match);
+            LOG.debug("Matching {} against {}", prop.getName().toString() , match);
         }
         Object value = prop.getValue();
         if (value instanceof Element) {
@@ -274,7 +272,7 @@ public class PrincipalPropertySearchReport extends MultiStatusReport
     private boolean matchText(String test,
                               String match) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Matching " + test + " against " + match);
+            LOG.debug("Matching {} against {}", test,  match);
         }
         return StringUtils.containsIgnoreCase(test, match);
     }

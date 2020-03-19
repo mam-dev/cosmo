@@ -20,6 +20,10 @@ import java.io.IOException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
@@ -27,51 +31,47 @@ import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.validate.ValidationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
-
 /**
  * Check if a Calendar object contains a valid VFREEBUSY
  */
 public class FreeBusyValidator implements ConstraintValidator<FreeBusy, Calendar> {
 
-    private static final Log LOG = LogFactory.getLog(FreeBusyValidator.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(FreeBusyValidator.class);
+
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
-        if(value==null)
+        if (value == null)
             return true;
-        
+
         Calendar calendar = null;
         try {
             calendar = (Calendar) value;
-            
+
             // validate entire icalendar object
             calendar.validate(true);
-            
+
             // additional check to prevent bad .ics
             CalendarUtils.parseCalendar(calendar.toString());
-            
+
             // make sure we have a VFREEBUSY
-                        
+
             ComponentList<CalendarComponent> comps = calendar.getComponents(Component.VFREEBUSY);
             if (comps == null || comps.size() == 0) {
-                LOG.warn("error validating freebusy: " + calendar.toString());
+                LOG.warn("Error validating freebusy: {}", calendar.toString());
                 return false;
             }
-            
+
             return true;
-            
-        } catch(ValidationException ve) {
-            LOG.warn("freebusy validation error", ve);
-            LOG.warn("error validating freebusy: " + calendar.toString() );
-        } catch(ParserException e) {
-            LOG.warn("parse error", e);
-            LOG.warn("error parsing freebusy: " + calendar.toString() );
+
+        } catch (ValidationException ve) {
+            LOG.warn("Freebusy validation error", ve);
+            LOG.warn("Error validating freebusy: {}", calendar.toString());
+        } catch (ParserException e) {
+            LOG.warn("Parse error", e);
+            LOG.warn("Error parsing freebusy: {}", calendar.toString());
         } catch (IOException | RuntimeException e) {
-            LOG.warn(e);
+            LOG.warn("", e);
         }
-        
+
         return false;
     }
 
@@ -80,4 +80,3 @@ public class FreeBusyValidator implements ConstraintValidator<FreeBusy, Calendar
     }
 
 }
-

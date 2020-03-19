@@ -23,9 +23,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
@@ -59,7 +59,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 @Repository
 public class CalendarDaoImpl implements CalendarDao {
 
-    private static final Log LOG = LogFactory.getLog(CalendarDaoImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarDaoImpl.class);
 
     @Autowired
     private EntityFactory entityFactory;

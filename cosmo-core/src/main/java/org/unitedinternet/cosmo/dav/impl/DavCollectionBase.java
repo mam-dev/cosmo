@@ -29,9 +29,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -41,6 +38,8 @@ import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -63,6 +62,7 @@ import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
 
@@ -80,9 +80,10 @@ import org.w3c.dom.Element;
  * @see DavResourceBase
  * @see CollectionItem
  */
-public class DavCollectionBase extends DavItemResourceBase implements
-        DavItemCollection {
-    private static final Log LOG = LogFactory.getLog(DavCollectionBase.class);
+public class DavCollectionBase extends DavItemResourceBase implements DavItemCollection {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavCollectionBase.class);
+    
     private static final Set<String> DEAD_PROPERTY_FILTER = new HashSet<String>();
     private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 
@@ -172,8 +173,7 @@ public class DavCollectionBase extends DavItemResourceBase implements
     public void removeMember(org.apache.jackrabbit.webdav.DavResource member)
             throws org.apache.jackrabbit.webdav.DavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing resource '" + member.getDisplayName()
-                    + "' from '" + getDisplayName() + "'");
+            LOG.debug("removing resource{} from {}", member.getDisplayName(), getDisplayName());
         }
         if(!(member instanceof DavItemResource)){
             throw new IllegalArgumentException("Expected 'member' as instance of: [" + DavItemResource.class.getName() +"]");
@@ -322,7 +322,7 @@ public class DavCollectionBase extends DavItemResourceBase implements
         CollectionItem subcollection = (CollectionItem) member.getItem();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating collection " + member.getResourcePath());
+            LOG.debug("Creating collection {}", member.getResourcePath());
         }
 
         try {
@@ -344,13 +344,13 @@ public class DavCollectionBase extends DavItemResourceBase implements
         try {
             if (content.getCreationDate() != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("updating member " + member.getResourcePath());
+                    LOG.debug("Updating member {} ", member.getResourcePath());
                 }
 
                 content = getContentService().updateContent(content);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("creating member " + member.getResourcePath());
+                    LOG.debug("Creating member {}", member.getResourcePath());
                 }
 
                 content = getContentService()
@@ -386,7 +386,7 @@ public class DavCollectionBase extends DavItemResourceBase implements
     private void writeHtmlDirectoryIndex(OutputContext context)
             throws CosmoDavException, IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("writing html directory index for  " + getDisplayName());
+            LOG.debug("Writing html directory index for {}", getDisplayName());
         }
 
         context.setContentType(ContentTypeUtil.buildContentType("text/html", "UTF-8"));

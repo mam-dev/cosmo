@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.PathSegments;
@@ -39,8 +38,6 @@ import org.unitedinternet.cosmo.model.filter.NoteItemFilter;
 import org.unitedinternet.cosmo.model.filter.StampFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 
-import com.google.common.base.Strings;
-
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.component.VEvent;
 
@@ -53,7 +50,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 @Repository
 public class ContentDaoExternal implements ContentDao {
 
-    private static final Log LOG = LogFactory.getLog(ContentDaoExternal.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContentDaoExternal.class);
 
     private final ContentSource contentSource;
 
@@ -96,7 +93,7 @@ public class ContentDaoExternal implements ContentDao {
         Set<NoteItem> itemsFromUri = this.getContent(targetUri, collectionItem);
         if (itemsFromUri != null) {
             String eventUid = extPath.getEventUid();
-            if (Strings.isNullOrEmpty(eventUid)) {
+            if (eventUid == null || eventUid.trim().isEmpty()) {
                 return new ExternalCollectionItem(collectionItem, itemsFromUri);
             }
             for (NoteItem noteItem : itemsFromUri) {
@@ -128,7 +125,6 @@ public class ContentDaoExternal implements ContentDao {
 
     @Override
     public Item findItemByPath(String path, String parentUid) {
-        LOG.debug("EXTERNAL Delegating call to internal for parentUid: " + parentUid + " and path: " + path);
         return this.contentDaoInternal.findItemByPath(path, parentUid);
     }
 

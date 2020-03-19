@@ -22,37 +22,26 @@ import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.validate.ValidationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
- * A class that writes Cosmo calendar model objects to output streams
- * formatted according to the iCalendar specification (RFC 2445).
+ * A class that writes Cosmo calendar model objects to output streams formatted according to the iCalendar specification
+ * (RFC 2445).
  */
 public class ICalendarOutputter {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(ICalendarOutputter.class);
 
     /**
-     * Writes an iCalendar string representing the calendar items
-     * contained within the given calendar collection to the given
-     * output stream.
+     * Writes an iCalendar string representing the calendar items contained within the given calendar collection to the
+     * given output stream.
      *
-     * Since the calendar content stored with each calendar items
-     * is parsed and validated when the item is created, these
-     * errors should not reoccur when the calendar is being
-     * outputted.
+     * Since the calendar content stored with each calendar items is parsed and validated when the item is created,
+     * these errors should not reoccur when the calendar is being outputted.
      *
      * @param collection the <code>CollectionItem</code> to format
      *
-     * @throws IllegalArgumentException if the collection is not
-     * stamped as a calendar collection
+     * @throws IllegalArgumentException if the collection is not stamped as a calendar collection
      * @throws IOException
      */
-    public static void output(Calendar calendar,
-                              OutputStream out)
-        throws IOException {
-       
+    public static void output(Calendar calendar, OutputStream out) throws IOException {
+
         CalendarOutputter outputter = new CalendarOutputter();
         outputter.setValidating(false);
         try {

@@ -18,6 +18,11 @@ package org.unitedinternet.cosmo.calendar;
 import java.text.ParseException;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
+
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
@@ -26,17 +31,13 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.parameter.Value;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
-
 /**
  * Represents an iCalendar date or datetime property value, or a list
  * of them, with associated parameters like timezone and anytime.
  */
 public class ICalDate implements ICalendarConstants {
-    private static final Log LOG = LogFactory.getLog(ICalDate.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ICalDate.class);
 
     private static TimeZoneTranslator tzTranslator = TimeZoneTranslator.getInstance();
 

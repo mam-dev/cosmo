@@ -20,8 +20,8 @@ import java.security.MessageDigest;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,8 +32,8 @@ import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
-import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
+import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.service.OverlordDeletionException;
@@ -47,7 +47,7 @@ import org.unitedinternet.cosmo.service.UserService;
 @Service
 public class StandardUserService extends BaseService implements UserService {
 
-    private static final Log LOG = LogFactory.getLog(StandardUserService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StandardUserService.class);
 
     private static final int PASSWORD_DEFAULT_LEN_MIN = 5;
     private static final int PASSWORD_DEFAULT_LEN_MAX = 25;
@@ -87,10 +87,7 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public User getUser(String username) {
         if (LOG.isDebugEnabled()) {
-            // Fix Log Forging - fortify
-            // Writing unvalidated user input to log files can allow an attacker to forge log entries
-            // or inject malicious content into the logs.
-            LOG.debug("getting user " + username);
+            LOG.debug("getting user {}", username);
         }
         return userDao.getUser(username);
     }
@@ -106,10 +103,7 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public User getUserByEmail(String email) {
         if (LOG.isDebugEnabled()) {
-            // Fix Log Forging - fortify
-            // Writing unvalidated user input to log files can allow an attacker to forge log entries
-            // or inject malicious content into the logs.
-            LOG.debug("getting user with email address " + email);
+            LOG.debug("getting user with email address {}", email);
         }
         return userDao.getUserByEmail(email);
     }
@@ -141,7 +135,7 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public User createUser(User user, ServiceListener[] listeners) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating user " + user.getUsername());
+            LOG.debug("creating user {}", user.getUsername());
         }
 
         validateRawPassword(user);
@@ -190,15 +184,9 @@ public class StandardUserService extends BaseService implements UserService {
     public User updateUser(User user) {
         boolean isUsernameChanged = user.isUsernameChanged();
         if (LOG.isDebugEnabled()) {
-            // Fix Log Forging - fortify
-            // Writing unvalidated user input to log files can allow an attacker to forge
-            // log entries or inject malicious content into the logs.
-            LOG.debug("updating user " + user.getOldUsername());
+            LOG.debug("updating user {}", user.getOldUsername());
             if (isUsernameChanged) {
-                // Fix Log Forging - fortify
-                // Writing unvalidated user input to log files can allow an attacker to forge log entries
-                // or inject malicious content into the logs.
-                LOG.debug("... changing username to " + user.getUsername());
+                LOG.debug("... changing username to {}", user.getUsername());
             }
         }
 
@@ -211,10 +199,7 @@ public class StandardUserService extends BaseService implements UserService {
         User newUser = userDao.getUser(user.getUsername());
         if (isUsernameChanged) {
             if (LOG.isDebugEnabled()) {
-                // Fix Log Forging - fortify
-                // Writing unvalidated user input to log files can allow an attacker to forge log entries
-                // or inject malicious content into the logs.
-                LOG.debug("renaming root item for user " + newUser.getUsername());
+                LOG.debug("renaming root item for user {}", newUser.getUsername());
             }
             HomeCollectionItem rootCollection = contentDao.getRootItem(newUser);
             rootCollection.setName(newUser.getUsername());
@@ -232,10 +217,7 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public void removeUser(String username) {
         if (LOG.isDebugEnabled()) {
-            // Fix Log Forging - fortify
-            // Writing unvalidated user input to log files can allow an attacker to
-            // forge log entries or inject malicious content into the logs.
-            LOG.debug("removing user " + username);
+            LOG.debug("removing user {}", username);
         }
         User user = userDao.getUser(username);
         removeUserAndItems(user);
@@ -249,10 +231,7 @@ public class StandardUserService extends BaseService implements UserService {
      */
     public void removeUser(User user) {
         if (LOG.isDebugEnabled()) {
-            // Fix Log Forging - fortify
-            // Writing unvalidated user input to log files can allow an attacker to forge log entries
-            // or inject malicious content into the logs.
-            LOG.debug("removing user " + user.getUsername());
+            LOG.debug("removing user {}", user.getUsername());
         }
         removeUserAndItems(user);
     }
@@ -272,10 +251,7 @@ public class StandardUserService extends BaseService implements UserService {
         // Only log if all removes were successful
         if (LOG.isDebugEnabled()) {
             for (User user : users) {
-                // Fix Log Forging - fortify
-                // Writing unvalidated user input to log files can allow an attacker to forge log entries
-                // or inject malicious content into the logs.
-                LOG.debug("removing user " + user.getUsername());
+               LOG.debug("removing user {}", user.getUsername());
             }
         }
 
@@ -297,10 +273,7 @@ public class StandardUserService extends BaseService implements UserService {
         // Only log if all removes were successful
         if (LOG.isDebugEnabled()) {
             for (String username : usernames) {
-                // Fix Log Forging - fortify
-                // Writing unvalidated user input to log files can allow an attacker
-                // to forge log entries or inject malicious content into the logs.
-                LOG.debug("removing user " + username);
+                LOG.debug("removing user {}", username);
             }
         }
     }

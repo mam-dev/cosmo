@@ -17,8 +17,6 @@ package org.unitedinternet.cosmo.dav.report;
 
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavServletResponse;
 import org.springframework.util.FileCopyUtils;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -27,8 +25,6 @@ import org.unitedinternet.cosmo.dav.CosmoDavException;
  * Base class for reports that return simple single-entity responses.
  */
 public abstract class SimpleReport extends ReportBase {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(SimpleReport.class);
 
     private String contentType;
     private String encoding;

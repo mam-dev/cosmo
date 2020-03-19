@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -63,7 +63,7 @@ import net.fortuna.ical4j.model.property.Version;
  */
 public class CalendarCollectionProvider extends CollectionProvider {
 
-    private static final Log LOG = LogFactory.getLog(CalendarCollectionProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarCollectionProvider.class);
 
     private static final String CHARSET_UTF8 = "UTF-8";
 
@@ -94,7 +94,7 @@ public class CalendarCollectionProvider extends CollectionProvider {
         // XXX DAV:needs-privilege DAV:bind on parent collection
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("MKCALENDAR at " + collection.getResourcePath());
+            LOG.debug("MKCALENDAR at {}", collection.getResourcePath());
         }
         DavPropertySet properties = request.getMkCalendarSetProperties();
         MultiStatusResponse msr = collection.getParent().addCollection(collection, properties);

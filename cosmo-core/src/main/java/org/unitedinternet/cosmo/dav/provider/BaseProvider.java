@@ -18,8 +18,6 @@ package org.unitedinternet.cosmo.dav.provider;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.MultiStatus;
@@ -31,6 +29,8 @@ import org.apache.jackrabbit.webdav.io.OutputContextImpl;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -75,7 +75,8 @@ import org.unitedinternet.cosmo.security.CosmoSecurityContext;
  * @see DavProvider
  */
 public abstract class BaseProvider implements DavProvider, DavConstants, AclConstants, TicketConstants {
-    private static final Log LOG = LogFactory.getLog(BaseProvider.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(BaseProvider.class);
 
     private DavResourceFactory resourceFactory;
     private EntityFactory entityFactory;
@@ -311,7 +312,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         DavItemResource dir = (DavItemResource) resource;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("MKTICKET for " + resource.getResourcePath());
+            LOG.debug("MKTICKET for {}", resource.getResourcePath());
         }
 
         Ticket ticket = request.getTicketInfo();
@@ -339,7 +340,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         DavItemResource dir = (DavItemResource) resource;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DELTICKET for " + resource.getResourcePath());
+            LOG.debug("DELTICKET for {}", resource.getResourcePath());
         }
 
         String key = request.getTicketKey();
@@ -362,7 +363,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
             throw new NotFoundException();
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ACL for " + resource.getResourcePath());
+            LOG.debug("ACL for {}", resource.getResourcePath());
         }
         throw new UnsupportedPrivilegeException("No unprotected ACEs are supported on this resource");
     }
@@ -385,7 +386,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         checkNoRequestBody(request);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("spooling resource " + resource.getResourcePath());
+            LOG.debug("Spooling resource {}", resource.getResourcePath());
         }
         resource.writeTo(createOutputContext(response, withEntity));
         response.flushBuffer();
@@ -566,7 +567,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
 
         if (hasPrivilege) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Principal has privilege " + privilege);
+                LOG.debug("Principal has privilege {}", privilege);
             }
             return true;
         }
@@ -581,7 +582,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
             throws CosmoDavException {
         AclEvaluator evaluator = createAclEvaluator();
 
-        // if the principal has DAV:read, then the propfind can continue
+        // If the principal has DAV:read, then the propfind can continue
         if (hasPrivilege(resource, evaluator, DavPrivilege.READ)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Allowing PROPFIND");
@@ -589,15 +590,15 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
             return;
         }
 
-        // if there is at least one property that can be viewed with
-        // DAV:read-current-user-privilege-set, then check for that
-        // privilege as well.
+        /*
+         * If there is at least one property that can be viewed with DAV:read-current-user-privilege-set, then check for
+         * that privilege as well.
+         */
         int unprotected = 0;
         if (props.contains(CURRENTUSERPRIVILEGESET)) {
             unprotected++;
         }
-        // ticketdiscovery is only unprotected when the principal is a
-        // ticket
+        // Ticket discovery is only unprotected when the principal is a ticket
         if (props.contains(TICKETDISCOVERY) && evaluator instanceof TicketAclEvaluator) {
             unprotected++;
         }
@@ -605,8 +606,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         if (unprotected > 0 && hasPrivilege(resource, evaluator, DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
 
             if (props.getContentSize() > unprotected) {
-                // XXX: if they don't have DAV:read, they shouldn't be
-                // able to access any other properties
+                // XXX: if they don't have DAV:read, they shouldn't be able to access any other properties
                 LOG.warn("Exposing secured properties to ticket without DAV:read");
             }
             if (LOG.isDebugEnabled()) {
@@ -615,8 +615,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
             return;
         }
 
-        // don't allow the client to know that this resource actually
-        // exists
+        // Don't allow the client to know that this resource actually exists
         if (LOG.isDebugEnabled()) {
             LOG.debug("Denying PROPFIND");
         }
@@ -634,8 +633,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
             return;
         }
 
-        // if this is a free-busy report, then check CALDAV:read-free-busy
-        // also
+        // If this is a free-busy report, then check CALDAV:read-free-busy also
         if (isFreeBusyReport(info) && hasPrivilege(resource, evaluator, DavPrivilege.READ_FREE_BUSY)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Allowing REPORT");
@@ -643,8 +641,7 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
             return;
         }
 
-        // don't allow the client to know that this resource actually
-        // exists
+        // Don't allow the client to know that this resource actually exists
         if (LOG.isDebugEnabled()) {
             LOG.debug("Denying PROPFIND");
         }

@@ -21,8 +21,8 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
 import net.fortuna.ical4j.data.ParserException;
@@ -41,22 +41,22 @@ import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.validate.ValidationException;
 
 /**
- * Check if a Calendar object contains a valid VEvent
- * TODO Use instance methods instead of static ones.
+ * Check if a Calendar object contains a valid VEvent TODO Use instance methods instead of static ones.
+ * 
  * @author randy
  *
  */
 public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
-    private static final Log LOG = LogFactory.getLog(EventValidator.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(EventValidator.class);
+
     private static volatile ValidationConfig validationConfig;
-    
+
     /**
      * Default constructor.
      */
     public EventValidator() {
-        
+
     }
 
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
@@ -74,7 +74,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                 // make sure we have a VEVENT
                 comps = calendar.getComponents();
                 if (comps == null) {
-                    LOG.warn("error validating event: " + calendar.toString());
+                    LOG.warn("Error validating event: {}", calendar.toString());
                     return false;
                 }
             }
@@ -82,25 +82,25 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                 comps = comps.getComponents(Component.VEVENT);
             }
             if (comps == null || comps.size() == 0) {
-                LOG.warn("error validating event: " + calendar.toString());
+                LOG.warn("Error validating event: {}", calendar.toString());
                 return false;
             }
 
             VEvent event = (VEvent) comps.get(0);
 
             if (event == null || !PropertyValidator.isEventValid(event, validationConfig)) {
-                LOG.warn("error validating event: " + calendar.toString());
+                LOG.warn("Error validating event: {}", calendar.toString());
                 return false;
             }
 
             return true;
 
         } catch (ValidationException ve) {
-            LOG.warn("event validation error", ve);
-            LOG.warn("error validating event: " + calendar.toString());
+            LOG.warn("Event validation error", ve);
+            LOG.warn("Error validating event: {}", calendar.toString());
         } catch (ParserException e) {
-            LOG.warn("parse error", e);
-            LOG.warn("error parsing event: " + calendar.toString());
+            LOG.warn("Parse error", e);
+            LOG.warn("Error parsing event: {}", calendar.toString());
         } catch (IOException | RuntimeException e) {
             LOG.warn("Exception occured while parsing calendar", e);
         }
@@ -119,7 +119,8 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
             @Override
             protected boolean isValid(VEvent event, ValidationConfig config) {
 
-                return isTextPropertyValid(event.getProperty(prop), config.getSummaryMinLength(), config.getSummaryMaxLength());
+                return isTextPropertyValid(event.getProperty(prop), config.getSummaryMinLength(),
+                        config.getSummaryMaxLength());
             }
 
         },
@@ -136,7 +137,8 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
             @Override
             protected boolean isValid(VEvent event, ValidationConfig config) {
-                return isTextPropertyValid(event.getProperty(prop), config.getLocationMinLength(), config.getLocationMaxLength());
+                return isTextPropertyValid(event.getProperty(prop), config.getLocationMinLength(),
+                        config.getLocationMaxLength());
             }
 
         },
@@ -188,6 +190,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
             }
 
         };
+
         private static final String[] PROPERTIES_WITH_TIMEZONES = { Property.DTSTART, Property.DTEND, Property.EXDATE,
                 Property.RDATE, Property.RECURRENCE_ID };
         private static TimeZoneRegistry timeZoneRegistry = TimeZoneRegistryFactory.getInstance().createRegistry();

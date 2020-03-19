@@ -16,8 +16,6 @@
 package org.unitedinternet.cosmo.dav.provider;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,9 +32,6 @@ import org.unitedinternet.cosmo.dav.impl.DavCollectionBase;
  * Test case for <code>MKCOL</code>.
  */
 public class CreateCollectionTest extends BaseDavTestCase {
-    @SuppressWarnings("unused")
-    private static final Log LOG =
-        LogFactory.getLog(CreateCollectionTest.class);
 
     /**
      * <blockquote>

@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -35,22 +35,18 @@ import org.unitedinternet.cosmo.model.HomeCollectionItem;
 import org.unitedinternet.cosmo.model.Item;
 
 /**
- * Extends <code>DavCollection</code> to adapt the Cosmo
- * <code>HomeCollectionItem</code> to the DAV resource model.
+ * Extends <code>DavCollection</code> to adapt the Cosmo <code>HomeCollectionItem</code> to the DAV resource model.
  *
  * @see DavCollection
  * @see HomeCollectionItem
  */
 public class DavHomeCollection extends DavCollectionBase {
-    private static final Log LOG =
-            LogFactory.getLog(DavHomeCollection.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(DavHomeCollection.class);
 
     /** */
-    public DavHomeCollection(HomeCollectionItem collection,
-                             DavResourceLocator locator,
-                             DavResourceFactory factory,
-                             EntityFactory entityFactory)
-            throws CosmoDavException {
+    public DavHomeCollection(HomeCollectionItem collection, DavResourceLocator locator, DavResourceFactory factory,
+            EntityFactory entityFactory) throws CosmoDavException {
         super(collection, locator, factory, entityFactory);
     }
 
@@ -80,22 +76,21 @@ public class DavHomeCollection extends DavCollectionBase {
 
             // for now scheduling is an option
             if (isSchedulingEnabled()) {
-                members.add(memberToResource(TEMPLATE_USER_INBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
-                members.add(memberToResource(TEMPLATE_USER_OUTBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
+                members.add(memberToResource(
+                        TEMPLATE_USER_INBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
+                members.add(memberToResource(
+                        TEMPLATE_USER_OUTBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
             }
 
             if (LOG.isTraceEnabled()) {
-                //Fix Log Forging - fortify
-                //Writing unvalidated user input to log files can allow an attacker to forge log entries or
-                //inject malicious content into the logs.
-                LOG.trace("Members of Home Collection: " + members.toString());
+                LOG.trace("Members of Home Collection: {}", members.toString());
             }
             return new DavResourceIteratorImpl(members);
         } catch (CosmoDavException e) {
             throw new CosmoException(e);
         }
     }
-    
+
     @Override
     public DavResourceIterator getCollectionMembers() {
         List<org.apache.jackrabbit.webdav.DavResource> members = new ArrayList<org.apache.jackrabbit.webdav.DavResource>();
@@ -107,17 +102,19 @@ public class DavHomeCollection extends DavCollectionBase {
                     members.add(resource);
                 }
             }
-            
+
             // for now scheduling is an option
             if (isSchedulingEnabled()) {
-                members.add(memberToResource(TEMPLATE_USER_INBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
-                members.add(memberToResource(TEMPLATE_USER_OUTBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
+                members.add(memberToResource(
+                        TEMPLATE_USER_INBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
+                members.add(memberToResource(
+                        TEMPLATE_USER_OUTBOX.bindAbsolute(getResourceLocator().getBaseHref(), getResourcePath())));
             }
-            
+
         } catch (CosmoDavException e) {
             throw new CosmoException(e);
         }
         return new DavResourceIteratorImpl(members);
     }
-    
+
 }

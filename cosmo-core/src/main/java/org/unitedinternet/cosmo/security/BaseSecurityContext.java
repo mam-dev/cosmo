@@ -19,22 +19,17 @@ import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Base class for implementations of {@link CosmoSecurityContext}.
  */
 public abstract class BaseSecurityContext implements CosmoSecurityContext {
-    @SuppressWarnings("unused")
-    private static final Log LOG =
-        LogFactory.getLog(BaseSecurityContext.class);
+   
 
     private boolean admin;
     private boolean anonymous;

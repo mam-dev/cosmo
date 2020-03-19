@@ -15,20 +15,20 @@
  */
 package org.unitedinternet.cosmo.dav.acl.report;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
@@ -75,7 +75,8 @@ import org.w3c.dom.Element;
  */
 public class PrincipalMatchReport extends MultiStatusReport
     implements AclConstants {
-    private static final Log LOG = LogFactory.getLog(PrincipalMatchReport.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(PrincipalMatchReport.class);
 
     public static final ReportType REPORT_TYPE_PRINCIPAL_MATCH =
         ReportType.register(ELEMENT_ACL_PRINCIPAL_MATCH, NAMESPACE,
@@ -158,17 +159,20 @@ public class PrincipalMatchReport extends MultiStatusReport
         }
         DavCollection collection = (DavCollection) getResource();
         doQueryChildren(collection);
-        // don't use doQueryDescendents, because that would cause us to have
-        // to iterate through the members twice. instead, we implement
-        // doQueryChildren to call itself recursively.
-        // XXX: refactor ReportBase.runQuery() to use a helper object rather
-        // than specifying doQuerySelf etc interface methods.
+        /*
+         * Don't use doQueryDescendents, because that would cause us to have to iterate through the members twice.
+         * instead, we implement doQueryChildren to call itself recursively.
+         */
+        /*
+         * XXX: refactor ReportBase.runQuery() to use a helper object rather than specifying doQuerySelf etc interface
+         * methods.
+         */
     }
 
     protected void doQuerySelf(WebDavResource resource)
         throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Querying " + resource.getResourcePath());
+            LOG.debug("Querying {}", resource.getResourcePath());
         }
         if (self && matchesUserPrincipal(resource)) {
             getResults().add(resource);
@@ -211,7 +215,9 @@ public class PrincipalMatchReport extends MultiStatusReport
         if (! currentUser.equals(principal)) {
             return false;
         }
-        LOG.debug("Matched " + resource.getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Matched {}", resource.getResourcePath());
+        }
         return true;
     }
 
@@ -226,12 +232,14 @@ public class PrincipalMatchReport extends MultiStatusReport
         if (value == null) {
             return false;
         }
-        // we assume that the DAV:href is the only child element of the
-        // property and that the url itself has been set as the
-        // property value so that the DAV:href is reconstructed when the
-        // property is serialized.
+        /*
+         * We assume that the DAV:href is the only child element of the property and that the url itself has been set
+         * as the property value so that the DAV:href is reconstructed when the property is serialized.
+         */
         if (value.toString().equals(currentUserPrincipalUrl)) {
-            LOG.debug("Matched " + resource.getResourcePath());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Matched {}", resource.getResourcePath());
+            }
             return true;
         }
         return false;

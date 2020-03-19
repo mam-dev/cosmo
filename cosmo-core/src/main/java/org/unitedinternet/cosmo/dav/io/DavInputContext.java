@@ -20,17 +20,9 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.validate.ValidationException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.io.InputContextImpl;
-import org.unitedinternet.cosmo.util.ContentTypeUtil;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -39,6 +31,12 @@ import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarDataException;
 import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarResourceException;
 import org.unitedinternet.cosmo.dav.caldav.SupportedCalendarComponentException;
 import org.unitedinternet.cosmo.dav.caldav.UnsupportedCalendarDataException;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
+
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * An <code>InputContext</code> that supports the semantics of DAV
@@ -46,9 +44,9 @@ import org.unitedinternet.cosmo.dav.caldav.UnsupportedCalendarDataException;
  *
  * @see org.apache.jackrabbit.webdav.io.InputContext
  */
-public class DavInputContext extends InputContextImpl
-    implements CaldavConstants {
-    private static final Log LOG = LogFactory.getLog(DavInputContext.class);
+public class DavInputContext extends InputContextImpl implements CaldavConstants {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavInputContext.class);
 
     private String contentType;
     private Calendar calendar;
@@ -140,7 +138,7 @@ public class DavInputContext extends InputContextImpl
             StringBuilder sb = new StringBuilder("\n------------ Begin Calendar from request ------------\n");
             sb.append(calendar);
             sb.append("\n------------ End Calendar from request ------------");
-            LOG.trace(sb);
+            LOG.trace(sb.toString());
         }
         return calendar;
     }

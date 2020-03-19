@@ -15,21 +15,16 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 
 /**
  * Test case for <code>StandardDavRequest</code>.
  */
 public class StandardDavRequestTest extends BaseDavTestCase {
-    @SuppressWarnings("unused")
-    private static final Log LOG =
-        LogFactory.getLog(StandardDavRequestTest.class);
-
+    
     /**
      * Tests no depth.
      * @throws Exception - if something is wrong this exception is thrown.

@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.Instance;
 import org.unitedinternet.cosmo.calendar.InstanceList;
@@ -70,7 +70,7 @@ import net.fortuna.ical4j.model.property.Uid;
 @Transactional(readOnly = true)
 public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
 
-    private static final Log LOG = LogFactory.getLog(StandardCalendarQueryProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StandardCalendarQueryProcessor.class);
 
     protected static final VersionFourGenerator UUID_GENERATOR = new VersionFourGenerator();
     

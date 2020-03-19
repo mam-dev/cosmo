@@ -21,8 +21,6 @@ import java.io.StringReader;
 import java.text.ParseException;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.CosmoIOException;
 
 /**
@@ -56,9 +54,7 @@ import org.unitedinternet.cosmo.CosmoIOException;
  * </dl>
  */
 public class ICalValueParser {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(ICalValueParser.class);
-
+    
     private StreamTokenizer tokenizer;
     private String value;
     private HashMap<String, String> params;

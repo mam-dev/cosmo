@@ -8,8 +8,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CosmoExceptionLoggerFilter extends ExceptionTranslationFilter {
     
-    private static final Log LOGGER = LogFactory.getLog(CosmoExceptionLoggerFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CosmoExceptionLoggerFilter.class);
     
     public CosmoExceptionLoggerFilter(AuthenticationEntryPoint authenticationEntryPoint) {
         super(authenticationEntryPoint);

@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dao.ItemDao;
 import org.unitedinternet.cosmo.dao.ItemNotFoundException;
@@ -51,7 +51,8 @@ import org.unitedinternet.cosmo.util.PathUtil;
  * @see Item
  */
 public class MockItemDao implements ItemDao {
-    private static final Log LOG = LogFactory.getLog(MockItemDao.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(MockItemDao.class);
 
     private MockDaoStorage storage;
 
@@ -109,8 +110,7 @@ public class MockItemDao implements ItemDao {
      * @param path
      *            path of item
      * @return parent item of item represented by path
-     */
-    @SuppressWarnings("deprecation")
+     */  
     public Item findItemParentByPath(String path) {
         return storage.getItemByPath(path).getParent();
     }
@@ -156,7 +156,7 @@ public class MockItemDao implements ItemDao {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("getting root item for user " + user.getUsername());
+            LOG.debug("getting root item for user {}", user.getUsername());
         }
 
         return getStorage().getRootItem(user.getUsername());
@@ -173,13 +173,13 @@ public class MockItemDao implements ItemDao {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating root item for user " + user.getUsername());
+            LOG.debug("creating root item for user {}", user.getUsername());
         }
 
         HomeCollectionItem rootCollection = storage.createRootItem(user);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("root item uid is " + rootCollection.getUid());
+            LOG.debug("root item uid is {}", rootCollection.getUid());
         }
 
         return rootCollection;
@@ -267,7 +267,6 @@ public class MockItemDao implements ItemDao {
      * @param item
      *            item to remove
      */
-    @SuppressWarnings("deprecation")
     public void removeItem(Item item) {
         if (item.getParent()!=null) {
             ((MockCollectionItem) item.getParent()).removeChild(item);
@@ -333,7 +332,6 @@ public class MockItemDao implements ItemDao {
      * @param key the ticket to return
      * @return The tickets.
      */
-    @SuppressWarnings("deprecation")
     public Ticket getTicket(Item item,  String key) {
         for(Ticket t : storage.findItemTickets(item)) {
             if (t.getKey().equals(key)) {
@@ -356,7 +354,6 @@ public class MockItemDao implements ItemDao {
      * @param item the item to be de-ticketed
      * @param ticket the ticket to remove
      */
-    @SuppressWarnings("deprecation")
     public void removeTicket(Item item, Ticket ticket) {
         @SuppressWarnings("rawtypes")
         Set itemTickets = storage.findItemTickets(item);

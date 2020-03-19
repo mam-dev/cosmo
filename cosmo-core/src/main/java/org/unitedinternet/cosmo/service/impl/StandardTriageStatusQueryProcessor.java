@@ -26,13 +26,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.Recur;
-import net.fortuna.ical4j.model.TimeZone;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.Instance;
@@ -58,21 +53,27 @@ import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
 import org.unitedinternet.cosmo.service.triage.TriageStatusQueryProcessor;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
 
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Dur;
+import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.TimeZone;
+
 /**
  * Standard implementation of TriageStatusQueryProcessor that
  * uses NoteItemFilters and custom logic to process a 
  * TriageStatus query.
  */
 @Component
-public class StandardTriageStatusQueryProcessor implements
-        TriageStatusQueryProcessor {
-
-	@Autowired
-    private ContentDao contentDao;
+public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProcessor {
     
-    private static final Log LOG = LogFactory.getLog(StandardTriageStatusQueryProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StandardTriageStatusQueryProcessor.class);
+    
     private static final Comparator<NoteItem> COMPARE_ASC = new NoteItemTriageStatusComparator(false);
     private static final Comparator<NoteItem> COMPARE_DESC = new NoteItemTriageStatusComparator(true);
+    
+    @Autowired
+    private ContentDao contentDao;
+    
     
     // Durations used to search forward/backward for recurring events
     // and used to determine time periods that events will be expanded
@@ -589,7 +590,7 @@ public class StandardTriageStatusQueryProcessor implements
                     NoteItem mod = (NoteItem) contentDao.findItemByUid(modUid.toString());
                     // shouldn't happen, but log and continue if it does
                     if(mod==null) {
-                        LOG.error("no modification found for uid: " + modUid.toString());
+                        LOG.error("no modification found for uid: {}", modUid.toString());
                         continue;
                     }
                     TriageStatus status = mod.getTriageStatus();
@@ -637,7 +638,7 @@ public class StandardTriageStatusQueryProcessor implements
                     NoteItem mod = (NoteItem) contentDao.findItemByUid(modUid.toString());
                     // shouldn't happen, but log and continue if it does
                     if(mod==null) {
-                        LOG.error("no modification found for uid: " + modUid.toString());
+                        LOG.error("no modification found for uid: {}", modUid.toString());
                         continue;
                     }
                     TriageStatus status = mod.getTriageStatus();

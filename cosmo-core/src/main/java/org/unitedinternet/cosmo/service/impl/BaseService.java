@@ -15,9 +15,6 @@
  */
 package org.unitedinternet.cosmo.service.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.unitedinternet.cosmo.service.ServiceEvent;
 import org.unitedinternet.cosmo.service.ServiceListener;
 
@@ -25,8 +22,6 @@ import org.unitedinternet.cosmo.service.ServiceListener;
  * Base class for implementations of <code>Service</code>.
  */
 public abstract class BaseService {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(BaseService.class);
 
     protected void fireBeforeEvent(ServiceEvent event,
                                    ServiceListener[] listeners) {

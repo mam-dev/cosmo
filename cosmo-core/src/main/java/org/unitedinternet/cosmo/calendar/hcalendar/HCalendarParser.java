@@ -33,20 +33,9 @@ import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import net.fortuna.ical4j.data.CalendarParser;
-import net.fortuna.ical4j.data.ContentHandler;
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.parameter.Value;
-import net.fortuna.ical4j.model.property.Version;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.CosmoIOException;
 import org.unitedinternet.cosmo.CosmoParseException;
@@ -59,6 +48,17 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import net.fortuna.ical4j.data.CalendarParser;
+import net.fortuna.ical4j.data.ContentHandler;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.model.property.Version;
 
 /**
  * A {@link CalendarParser} that parses XHTML documents that include
@@ -131,7 +131,9 @@ import org.xml.sax.SAXParseException;
  * </p>
  */
 public class HCalendarParser implements CalendarParser {
-    private static final Log LOG = LogFactory.getLog(HCalendarParser.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(HCalendarParser.class);
+    
     private static final DocumentBuilderFactory BUILDER_FACTORY =
         DocumentBuilderFactory.newInstance();
     private static final XPath XPATH = XPathFactory.newInstance().newXPath();

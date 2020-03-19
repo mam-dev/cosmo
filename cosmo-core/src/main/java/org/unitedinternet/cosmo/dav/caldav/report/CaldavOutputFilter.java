@@ -17,32 +17,29 @@ package org.unitedinternet.cosmo.dav.caldav.report;
 
 import java.text.ParseException;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
-
 import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.data.OutputFilter;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.UnsupportedCalendarDataException;
-
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.w3c.dom.Element;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Period;
 
 /**
  * A utility for parsing an {@link OutputFilter} from XML.
  */
-public class CaldavOutputFilter
-    implements DavConstants, CaldavConstants, ICalendarConstants {
-    private static final Log LOG = LogFactory.getLog(CaldavOutputFilter.class);
+public class CaldavOutputFilter implements DavConstants, CaldavConstants, ICalendarConstants {
+   
+    private static final Logger LOG = LoggerFactory.getLogger(CaldavOutputFilter.class);
 
     /**
      * Returns an <code>OutputFilter</code> representing the given
@@ -104,7 +101,7 @@ public class CaldavOutputFilter
                        equals(child.getLocalName())) {
                 limitfb = parsePeriod(child, true);
             } else {
-                LOG.warn("Ignoring child " + child.getTagName() + " of " + cdata.getTagName());
+                LOG.warn("Ignoring child {} of {}", child.getTagName(), cdata.getTagName());
             }
         }
 

@@ -25,9 +25,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -37,25 +34,28 @@ import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.Etag;
 import org.unitedinternet.cosmo.dav.property.IsCollection;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
+import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
 
@@ -74,10 +74,10 @@ import org.w3c.dom.Element;
  * @see DavResourceBase
  * @see DavCollection
  */
-public class DavOutboxCollection extends DavResourceBase
-    implements DavCollection, CaldavConstants
-{
-    private static final Log LOG = LogFactory.getLog(DavOutboxCollection.class);
+public class DavOutboxCollection extends DavResourceBase implements DavCollection, CaldavConstants {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavOutboxCollection.class);
+    
     private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 
     private DavAcl acl;
@@ -301,8 +301,7 @@ public class DavOutboxCollection extends DavResourceBase
     private void writeHtmlDirectoryIndex(OutputContext context)
         throws CosmoDavException, IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("writing html directory index for  " +
-                      getDisplayName());
+            LOG.debug("Writing html directory index for {}", getDisplayName());
         }
         context.setContentType(ContentTypeUtil.buildContentType("text/html", "UTF-8"));
         // no modification time or etag

@@ -17,15 +17,12 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
@@ -39,8 +36,6 @@ import org.unitedinternet.cosmo.model.EntityFactory;
  * @see DavHomeCollection
  */
 public class HomeCollectionProvider extends CollectionProvider {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(HomeCollectionProvider.class);
 
     public HomeCollectionProvider(DavResourceFactory resourceFactory,
             EntityFactory entityFactory) {

@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -57,7 +57,7 @@ import org.unitedinternet.cosmo.util.ContentTypeUtil;
  * @see FileItem
  */
 public class DavFile extends DavContentBase {
-    private static final Log LOG = LogFactory.getLog(DavFile.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DavFile.class);
 
     static {
         registerLiveProperty(DavPropertyName.GETCONTENTLANGUAGE);
@@ -91,7 +91,7 @@ public class DavFile extends DavContentBase {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("spooling file " + getResourcePath());
+            LOG.debug("Spooling file {}", getResourcePath());
         }
 
         FileItem content = (FileItem) getItem();

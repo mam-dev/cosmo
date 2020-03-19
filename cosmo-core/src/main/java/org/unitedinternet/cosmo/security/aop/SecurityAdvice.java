@@ -18,11 +18,11 @@ package org.unitedinternet.cosmo.security.aop;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.aop.OrderedAdvice;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -51,7 +51,7 @@ import org.unitedinternet.cosmo.service.triage.TriageStatusQueryContext;
 @Configuration
 public class SecurityAdvice extends OrderedAdvice {
 
-    private static final Log LOG = LogFactory.getLog(SecurityAdvice.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityAdvice.class);
 
     private final CosmoSecurityManager securityManager;    
     private SecurityHelper securityHelper;

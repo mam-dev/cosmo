@@ -18,9 +18,6 @@ package org.unitedinternet.cosmo.server;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * This class represents a URL that addresses a user by username.
  * <p>
@@ -36,9 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * specified username.
  */
 public class UserPath {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(UserPath.class);
-
+    
     private static final Pattern PATTERN_USER_USERNAME =
         Pattern.compile("^/user/([^/]+)(/.*)?$");
 

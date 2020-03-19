@@ -16,8 +16,6 @@
 package org.unitedinternet.cosmo.dav.impl;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.property.DavProperty;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,11 +31,8 @@ import org.unitedinternet.cosmo.model.CollectionItem;
 /**
  * Test case for <code>DavCollectionBase</code>.
  */
-public class DavCollectionBaseTest extends BaseDavTestCase
-    implements ExtendedDavConstants {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(DavCollectionBaseTest.class);
-
+public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedDavConstants {
+   
     /**
      * Tests deaf freeBusy rollup property.
      * @throws Exception - if something is wrong this exception is thrown.

@@ -20,21 +20,18 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavServletResponse;
 import org.apache.jackrabbit.webdav.version.report.Report;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
-
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -44,7 +41,7 @@ import org.w3c.dom.Element;
  * </p>
  */
 public abstract class ReportBase implements Report, ExtendedDavConstants {
-    private static final Log LOG = LogFactory.getLog(ReportBase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReportBase.class);
 
     private WebDavResource resource;
     private ReportInfo info;
@@ -73,8 +70,7 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
     public void run(DavServletResponse response)
             throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("running report " + getType().getReportName() +
-                    " against " + resource.getResourcePath());
+            LOG.debug("Running report {} against {} ", getType().getReportName(), resource.getResourcePath());
         }
         runQuery();
         output(response);
@@ -152,8 +148,7 @@ public abstract class ReportBase implements Report, ExtendedDavConstants {
     protected void doQueryDescendents(DavCollection collection)
             throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("querying descendents of " +
-                    collection.getResourcePath());
+            LOG.debug("Querying descendents of {}", collection.getResourcePath());
         }
         for (DavResourceIterator i = collection.getCollectionMembers(); i.hasNext(); ) {
             WebDavResource member = (WebDavResource) i.nextResource();

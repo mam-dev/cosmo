@@ -12,13 +12,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,8 @@ import org.unitedinternet.cosmo.service.interceptors.EventUpdateHandler;
 @Configuration
 @Transactional
 public class ContextServiceExtensionsAdvice {
-    private static final Log LOG = LogFactory.getLog(ContextServiceExtensionsAdvice.class);
+   
+    private static final Logger LOG = LoggerFactory.getLogger(ContextServiceExtensionsAdvice.class);
 
     @Autowired(required = false)
     private List<EventAddHandler> addHandlers = new ArrayList<>();
@@ -313,7 +314,7 @@ public class ContextServiceExtensionsAdvice {
     public CollectionItem removeCollection(ProceedingJoinPoint pjp, CollectionItem collection) throws Throwable {
         Object returnVal = null;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("In  ContextServiceExtensionsAdvice: removeCollection(item) " + collection.getUid());
+            LOG.debug("In  ContextServiceExtensionsAdvice: removeCollection(item) {}", collection.getUid());
         }
 
         for (CollectionDeleteHandler collectionDelete : deleteHandlers) {
@@ -333,7 +334,7 @@ public class ContextServiceExtensionsAdvice {
     public CollectionItem updateCollection(ProceedingJoinPoint pjp, CollectionItem collection) throws Throwable {
         Object returnVal = null;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("In  ContextServiceExtensionsAdvice: removeCollection(item) " + collection.getUid());
+            LOG.debug("In  ContextServiceExtensionsAdvice: removeCollection(item) {}", collection.getUid());
         }
 
         for (CollectionUpdateHandler collectionUpdate : updateCollectionHandlers) {

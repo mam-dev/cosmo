@@ -17,8 +17,6 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -40,9 +38,7 @@ import org.unitedinternet.cosmo.model.EntityFactory;
  * @see DavCollection
  */
 public class CollectionProvider extends BaseProvider {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(CollectionProvider.class);
-
+    
     public CollectionProvider(DavResourceFactory resourceFactory,
             EntityFactory entityFactory) {
         super(resourceFactory, entityFactory);

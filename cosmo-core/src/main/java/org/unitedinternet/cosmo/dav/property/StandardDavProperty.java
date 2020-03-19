@@ -19,13 +19,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,11 +37,8 @@ import org.w3c.dom.Node;
  * is included in "allprop" <code>PROFIND</code> responses.
  * </p>
  */
-public class StandardDavProperty
-    implements WebDavProperty, XmlSerializable {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(StandardDavProperty.class);
-
+public class StandardDavProperty implements WebDavProperty, XmlSerializable {
+    
     private DavPropertyName name;
     private Object value;
     private String lang;

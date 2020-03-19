@@ -18,9 +18,6 @@ package org.unitedinternet.cosmo.server;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * This class represents a URL that addresses a item by uid.
  * <p>
@@ -36,9 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * specified uid.
  */
 public class ItemPath {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(ItemPath.class);
-
+   
     private static final Pattern PATTERN_ITEM_UID =
         Pattern.compile("^/(item|expanded|detached)/([^/]+)(/.*)?$");
 

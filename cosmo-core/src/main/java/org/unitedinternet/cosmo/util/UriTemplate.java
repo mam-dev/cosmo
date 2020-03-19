@@ -23,30 +23,28 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.text.StrTokenizer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoException;
 
 /**
  * <p>
- * Models a URI pattern such that candidate URIs can be matched
- * against the template to extract interesting information from them.
+ * Models a URI pattern such that candidate URIs can be matched against the template to extract interesting information
+ * from them.
  * </p>
  * <p>
- * A URI pattern looks like
- * <code>/collection/{uid}/{projection}?/{format}?/*</code>. Each path
- * segment can be either a literal or a variable (the latter enclosed
- * in curly braces}. A segment can be further denoted as optional, in
- * which case the segment is trailed by a question mark. A final segment of
- * <code>*</code> indicates that the remainder of the candidate URI after the
- * previous segment is matched.
+ * A URI pattern looks like <code>/collection/{uid}/{projection}?/{format}?/*</code>. Each path segment can be either a
+ * literal or a variable (the latter enclosed in curly braces}. A segment can be further denoted as optional, in which
+ * case the segment is trailed by a question mark. A final segment of <code>*</code> indicates that the remainder of the
+ * candidate URI after the previous segment is matched.
  * </p>
  * <p>
  * Inspired by the .NET UriTemplate class.
  * </p>
  */
 public class UriTemplate {
-    private static final Log LOG = LogFactory.getLog(UriTemplate.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(UriTemplate.class);
 
     private String pattern;
     private ArrayList<Segment> segments;
@@ -63,14 +61,12 @@ public class UriTemplate {
 
     /**
      * Generates an absolute-path relative URI using the same algorithm as
-     * {@link #bindAbsolute(boolean, String, String...)}. Bound values are
-     * escaped.
+     * {@link #bindAbsolute(boolean, String, String...)}. Bound values are escaped.
      *
      * @param values the unescaped values to be bound
      * @return a URI with variables replaced by bound values
-     * @throws IllegalArgumentException if more or fewer values are
-     * provided than are needed by the template or if a null value is
-     * provided for a mandatory variable
+     * @throws IllegalArgumentException if more or fewer values are provided than are needed by the template or if a
+     *                                  null value is provided for a mandatory variable
      */
     public String bind(String... values) {
         return bind(true, values);
@@ -78,62 +74,47 @@ public class UriTemplate {
 
     /**
      * Generates an absolute-path relative URI using the same algorithm as
-     * {@link #bindAbsolute(boolean, String, String...)}. Bound values are
-     * optionally escaped.
+     * {@link #bindAbsolute(boolean, String, String...)}. Bound values are optionally escaped.
      *
-     * @param escape a flag determining whether or not bound variables are to
-     * be escaped
+     * @param escape a flag determining whether or not bound variables are to be escaped
      * @param values the unescaped values to be bound
      * @return a URI with variables replaced by bound values
-     * @throws IllegalArgumentException if more or fewer values are
-     * provided than are needed by the template or if a null value is
-     * provided for a mandatory variable
+     * @throws IllegalArgumentException if more or fewer values are provided than are needed by the template or if a
+     *                                  null value is provided for a mandatory variable
      */
     public String bind(boolean escape, String... values) {
         return bindAbsolute(escape, "", values);
     }
 
     /**
-     * Generates a absolute URI relative to <code>base</code> using the same
-     * algorithm as {@link #bindAbsolute(boolean, String, String...)}. Bound 
-     * values are escaped.
+     * Generates a absolute URI relative to <code>base</code> using the same algorithm as
+     * {@link #bindAbsolute(boolean, String, String...)}. Bound values are escaped.
      *
-     * @param escape a flag determining whether or not bound variables are to
-     * be escaped
-     * @param base the optional escaped base to prepend to the generated
-     * path
+     * @param escape a flag determining whether or not bound variables are to be escaped
+     * @param base   the optional escaped base to prepend to the generated path
      * @param values the unescaped values to be bound
      * @return a URI with variables replaced by bound values
-     * @throws IllegalArgumentException if more or fewer values are
-     * provided than are needed by the template or if a null value is
-     * provided for a mandatory variable
+     * @throws IllegalArgumentException if more or fewer values are provided than are needed by the template or if a
+     *                                  null value is provided for a mandatory variable
      */
-    public String bindAbsolute(String base,
-                               String... values) {
+    public String bindAbsolute(String base, String... values) {
         return bindAbsolute(true, base, values);
     }
 
     /**
-     * Generates a absolute URI relative to <code>base</code> by replacing
-     * the variable segments of the template with the provided values. All
-     * literal segments, optional or no, are always included.
-     * Values are bound into the template in the order in which they are
-     * provided. If a value is not provided for an optional variable segment,
+     * Generates a absolute URI relative to <code>base</code> by replacing the variable segments of the template with
+     * the provided values. All literal segments, optional or no, are always included. Values are bound into the
+     * template in the order in which they are provided. If a value is not provided for an optional variable segment,
      * the segment is not included. Bound values are optionally escaped.
      *
-     * @param escape a flag determining whether or not bound variables are to
-     * be escaped
-     * @param base the optional escaped base to prepend to the generated
-     * path
+     * @param escape a flag determining whether or not bound variables are to be escaped
+     * @param base   the optional escaped base to prepend to the generated path
      * @param values the unescaped values to be bound
      * @return a URI with variables replaced by bound values
-     * @throws IllegalArgumentException if more or fewer values are
-     * provided than are needed by the template or if a null value is
-     * provided for a mandatory variable
+     * @throws IllegalArgumentException if more or fewer values are provided than are needed by the template or if a
+     *                                  null value is provided for a mandatory variable
      */
-    public String bindAbsolute(boolean escape,
-                               String base,
-                               String... values) {
+    public String bindAbsolute(boolean escape, String base, String... values) {
         if (base == null) {
             throw new IllegalArgumentException("Base cannot be null");
         }
@@ -160,7 +141,7 @@ public class UriTemplate {
                     throw new IllegalArgumentException("Not enough values");
                 }
                 buf.append(escape ? escapeSegment(value) : value);
-            } else if (! segment.isAll()) {
+            } else if (!segment.isAll()) {
                 buf.append("/").append(segment.getData());
             }
 
@@ -178,22 +159,19 @@ public class UriTemplate {
             }
         }
 
-        //buf.append("/");
+        // buf.append("/");
         return buf.toString().replaceAll("/{2,}", "/");
     }
 
     /**
      * <p>
-     * Matches an escaped candidate uri-path against the template using the
-     * same algorithm as {@link match(boolean, String)}. Returns a
-     * <code>Match</code> instance containing the names and values of
-     * all variables found in the uri-path as specified by the
-     * template.
+     * Matches an escaped candidate uri-path against the template using the same algorithm as {@link match(boolean,
+     * String)}. Returns a <code>Match</code> instance containing the names and values of all variables found in the
+     * uri-path as specified by the template.
      * </p>
      *
      * @param path the candidate uri-path
-     * @return a <code>Match</code>, or <code>null</code> if the path
-     * did not successfully match
+     * @return a <code>Match</code>, or <code>null</code> if the path did not successfully match
      */
     public Match match(String path) {
         return match(true, path);
@@ -201,44 +179,36 @@ public class UriTemplate {
 
     /**
      * <p>
-     * Matches a possibly-escaped candidate uri-path against the template.
-     * Returns a <code>Match</code> instance containing the names and values
-     * of all variables found in the uri-path as specified by the
-     * template.
+     * Matches a possibly-escaped candidate uri-path against the template. Returns a <code>Match</code> instance
+     * containing the names and values of all variables found in the uri-path as specified by the template.
      * </p>
      * <p>
-     * Each literal segment in the template must match the
-     * corresponding segment in the uri-path unless the segment is
-     * optional. For each variable segment in the template, an entry
-     * is added to the <code>Match</code> to be returned; the entry
-     * key is the variable name from the template, and the entry value
-     * is the corresponding (unescaped) token from the uri-path. If the
-     * template includes an "all" segment, a match entry with key
-     * <code>*</code> is also included containing the remainder of the
-     * uri-path after the last matching segment.
+     * Each literal segment in the template must match the corresponding segment in the uri-path unless the segment is
+     * optional. For each variable segment in the template, an entry is added to the <code>Match</code> to be returned;
+     * the entry key is the variable name from the template, and the entry value is the corresponding (unescaped) token
+     * from the uri-path. If the template includes an "all" segment, a match entry with key <code>*</code> is also
+     * included containing the remainder of the uri-path after the last matching segment.
      * </p>
      *
      * @param escaped whether or not the uri-path is escaped
-     * @param path the candidate uri-path
-     * @return a <code>Match</code>, or <code>null</code> if the path
-     * did not successfully match
+     * @param path    the candidate uri-path
+     * @return a <code>Match</code>, or <code>null</code> if the path did not successfully match
      */
-    public Match match(boolean escaped,
-                       String path) {
+    public Match match(boolean escaped, String path) {
         Match match = new Match(path);
 
-        //if (log.isDebugEnabled())
-            //log.debug("matching " + path + " to " + pattern);
+        // if (log.isDebugEnabled())
+        // log.debug("matching " + path + " to " + pattern);
 
         StrTokenizer candidate = new StrTokenizer(path, '/');
         Iterator<Segment> si = segments.iterator();
 
         Segment segment = null;
-        while (si.hasNext() || (segment!=null && segment.isAll())) {
+        while (si.hasNext() || (segment != null && segment.isAll())) {
             if (si.hasNext()) {
                 segment = si.next();
             }
-            if (! candidate.hasNext()) {
+            if (!candidate.hasNext()) {
                 // if the segment is consuming all remaining data, then we're
                 // done, since there is no more data
                 if (segment.isAll()) {
@@ -246,7 +216,7 @@ public class UriTemplate {
                 }
                 // if the segment is optional, the candidate doesn't
                 // have to have a matching segment
-                if (segment.isOptional()) { 
+                if (segment.isOptional()) {
                     continue;
                 }
                 // mandatory segment - not a match
@@ -261,25 +231,23 @@ public class UriTemplate {
                     saved = new StringBuilder();
                 }
                 saved.append("/");
-                saved.append (escaped ? unescapeSegment(token) : token);
+                saved.append(escaped ? unescapeSegment(token) : token);
                 match.put("*", saved.toString());
             } else if (segment.isVariable()) {
-                match.put(segment.getData(),
-                          escaped ? unescapeSegment(token) : token);
-            }
-            else if (! segment.getData().equals(token)) {
+                match.put(segment.getData(), escaped ? unescapeSegment(token) : token);
+            } else if (!segment.getData().equals(token)) {
                 // literal segment doesn't match, so path is not a match
                 return null;
             }
         }
 
-        if (candidate.hasNext() && ! segment.isAll()) {
+        if (candidate.hasNext() && !segment.isAll()) {
             // candidate has more but our pattern is done
             return null;
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("matched " + pattern);
+            LOG.debug("matched {}", pattern);
         }
 
         return match;
@@ -318,19 +286,19 @@ public class UriTemplate {
                 if (data.endsWith("}?")) {
                     variable = true;
                     optional = true;
-                    this.data = data.substring(1, data.length()-2);
+                    this.data = data.substring(1, data.length() - 2);
                 } else if (data.endsWith("}")) {
                     variable = true;
-                    this.data = data.substring(1, data.length()-1);
+                    this.data = data.substring(1, data.length() - 1);
                 }
             } else if (data.endsWith("?")) {
                 optional = true;
-                this.data = data.substring(0, data.length()-1);
+                this.data = data.substring(0, data.length() - 1);
             } else if (data.equals("*")) {
                 all = true;
             }
 
-            if (this.data == null && ! all) {
+            if (this.data == null && !all) {
                 this.data = data;
             }
         }
@@ -363,8 +331,8 @@ public class UriTemplate {
         public String getPath() {
             return path;
         }
-        
-        public String get(String key) {//NOPMD
+
+        public String get(String key) {// NOPMD
             return super.get(key);
         }
     }

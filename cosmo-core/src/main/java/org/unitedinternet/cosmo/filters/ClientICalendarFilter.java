@@ -28,8 +28,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 
 /**
@@ -42,7 +42,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
  */
 public class ClientICalendarFilter implements Filter {
 
-    private static final Log LOG = LogFactory.getLog(ClientICalendarFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClientICalendarFilter.class);
 
     private ICalendarClientFilterManager filterManager;
     private Map<String, String> clientKeyMap = new HashMap<String, String>();
@@ -58,11 +58,8 @@ public class ClientICalendarFilter implements Filter {
         String userAgent = translateUserAgent(request);
         
         try {
-            if(LOG.isDebugEnabled()) {
-                //Fix Log Forging - fortify
-                //Writing unvalidated user input to log files can allow an attacker to forge
-                //log entries or inject malicious content into the logs.
-                LOG.debug("setting client to: " + userAgent);
+            if(LOG.isDebugEnabled()) { 
+                LOG.debug("Setting client to: {}", userAgent);
             }
             filterManager.setClient(userAgent);
             chain.doFilter(request, response);
@@ -73,7 +70,6 @@ public class ClientICalendarFilter implements Filter {
     }
     
     private String translateUserAgent(ServletRequest request) {
-        
         if( ! (request instanceof HttpServletRequest) 
             || ((HttpServletRequest)request).getHeader("User-Agent") == null) {
             return null;
@@ -81,8 +77,7 @@ public class ClientICalendarFilter implements Filter {
         
         String agent = ((HttpServletRequest)request).getHeader("User-Agent");
         
-        // Translate User-Agent header into client key by
-        // finding match using rules in clientKeyMap.
+        // Translate User-Agent header into client key by finding match using rules in clientKeyMap.
         for(Entry<String, String> entry :clientKeyMap.entrySet()) {
             if(agent.matches(entry.getKey())) {
                 return entry.getValue();

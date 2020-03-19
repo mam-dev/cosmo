@@ -18,17 +18,12 @@ package org.unitedinternet.cosmo.model;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Compares instances of {@link AuditableObject} based on their
  * created or modified dates.
  */
 public class AuditableComparator implements Comparator<AuditableObject> {
-    @SuppressWarnings("unused")
-    private static Log log = LogFactory.getLog(AuditableComparator.class);
-
+    
     public static final int ATTRIBUTE_CREATED = 0;
     public static final int ATTRIBUTE_MODIFIED = 1;
 

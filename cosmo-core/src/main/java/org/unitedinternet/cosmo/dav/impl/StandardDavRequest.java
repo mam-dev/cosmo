@@ -41,8 +41,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.abdera.util.EntityTag;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.WebdavRequestImpl;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
@@ -51,6 +49,8 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavRequest;
@@ -73,10 +73,11 @@ import org.w3c.dom.Element;
 
 /**
  */
-public class StandardDavRequest extends WebdavRequestImpl implements
-        DavRequest, ExtendedDavConstants, AclConstants, CaldavConstants,
+public class StandardDavRequest extends WebdavRequestImpl implements DavRequest, ExtendedDavConstants, AclConstants, CaldavConstants,
         TicketConstants {
-    private static final Log LOG = LogFactory.getLog(StandardDavRequest.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(StandardDavRequest.class);
+    
     private static final MimeType APPLICATION_XML = registerMimeType("application/xml");
     private static final MimeType TEXT_XML = registerMimeType("text/xml");
     
@@ -457,7 +458,7 @@ public class StandardDavRequest extends WebdavRequestImpl implements
             LOG.warn("", e);
         }
         sb.append("------------------------ End dump of propFind request -------------------");
-        LOG.trace(sb);
+        LOG.trace(sb.toString());
     }
     
     /**
@@ -643,7 +644,9 @@ public class StandardDavRequest extends WebdavRequestImpl implements
         if (timeout != null && !timeout.equals(TIMEOUT_INFINITE)) {
             try {
                 int seconds = Integer.parseInt(timeout.substring(7));
-                LOG.trace("Timeout seconds: " + seconds);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Timeout seconds: " + seconds);
+                }
             } catch (NumberFormatException e) {
                 throw new BadRequestException("Malformed " + QN_TICKET_TIMEOUT
                         + " value " + timeout);
