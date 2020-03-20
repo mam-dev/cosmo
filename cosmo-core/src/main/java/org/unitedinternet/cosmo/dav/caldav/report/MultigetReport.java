@@ -26,8 +26,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
@@ -57,8 +55,6 @@ public class MultigetReport extends CaldavMultiStatusReport {
     private static final Pattern RESOURCE_UUID_PATTERN = Pattern.compile("/\\{?\\p{XDigit}{8}-\\p{XDigit}" +
             "{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}\\}?");
     
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(MultigetReport.class);
     public static final ReportType REPORT_TYPE_CALDAV_MULTIGET =
         ReportType.register(ELEMENT_CALDAV_CALENDAR_MULTIGET,
                             NAMESPACE_CALDAV, MultigetReport.class);

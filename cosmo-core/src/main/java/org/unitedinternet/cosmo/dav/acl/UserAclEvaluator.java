@@ -15,9 +15,8 @@
  */
 package org.unitedinternet.cosmo.dav.acl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.User;
 
@@ -27,7 +26,7 @@ import org.unitedinternet.cosmo.model.User;
  * </p>
  */
 public class UserAclEvaluator implements AclEvaluator {
-    private static final Log LOG = LogFactory.getLog(UserAclEvaluator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserAclEvaluator.class);
 
     private User principal;
 
@@ -54,12 +53,11 @@ public class UserAclEvaluator implements AclEvaluator {
      * any user principal has all permissions on any item he owns </li>
      * </ul>
      */
-    public boolean evaluate(Item item,
-                            DavPrivilege privilege) {
+    public boolean evaluate(Item item, DavPrivilege privilege) {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluating privilege " + privilege +  " against item '" + item.getName() + 
-                    "' owned by " + item.getOwner().getUsername() + " for principal " + principal.getUsername());
+            LOG.debug("Evaluating privilege {} against item {} owned by {} for principal {}", privilege, item.getName(),
+                    item.getOwner().getUsername(), principal.getUsername());
         }
         if (principal.getAdmin()) {
             return true;

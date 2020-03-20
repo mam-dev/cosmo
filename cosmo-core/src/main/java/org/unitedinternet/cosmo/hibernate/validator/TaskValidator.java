@@ -20,8 +20,8 @@ import java.io.IOException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
 import net.fortuna.ical4j.data.ParserException;
@@ -36,39 +36,39 @@ import net.fortuna.ical4j.validate.ValidationException;
  */
 public class TaskValidator implements ConstraintValidator<Task, Calendar> {
 
-    private static final Log LOG = LogFactory.getLog(TaskValidator.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(TaskValidator.class);
+
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
-        if(value==null)
+        if (value == null)
             return true;
-        
+
         Calendar calendar = null;
         try {
             calendar = (Calendar) value;
-            
+
             // validate entire icalendar object
             calendar.validate(true);
-            
+
             // additional check to prevent bad .ics
             CalendarUtils.parseCalendar(calendar.toString());
-            
+
             // make sure we have a VTODO
-            ComponentList<VToDo> comps = calendar.getComponents(Component.VTODO);                        
+            ComponentList<VToDo> comps = calendar.getComponents(Component.VTODO);
             if (comps == null || comps.size() == 0) {
-                LOG.warn("error validating task: " + calendar.toString());
+                LOG.warn("Error validating task: {}", calendar.toString());
                 return false;
             }
-            
+
             return true;
-            
-        } catch(ValidationException ve) {
-            LOG.warn("task validation error", ve);
-            LOG.warn("error validating task: " + calendar.toString() );
-        }catch(ParserException e) {
-            LOG.warn("parse error", e);
-            LOG.warn("error parsing task: " + calendar.toString() );
+
+        } catch (ValidationException ve) {
+            LOG.warn("Task validation error", ve);
+            LOG.warn("Error validating task: {}", calendar.toString());
+        } catch (ParserException e) {
+            LOG.warn("Parse error", e);
+            LOG.warn("Error parsing task: {}", calendar.toString());
         } catch (IOException | RuntimeException e) {
-            LOG.warn(e);
+            LOG.warn("", e);
         }
         return false;
     }
@@ -76,6 +76,4 @@ public class TaskValidator implements ConstraintValidator<Task, Calendar> {
     public void initialize(Task parameters) {
         // nothing to do
     }
-
 }
-

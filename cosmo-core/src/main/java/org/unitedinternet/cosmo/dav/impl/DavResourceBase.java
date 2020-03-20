@@ -24,8 +24,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.io.OutputContext;
@@ -84,8 +82,7 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
  * @see WebDavResource
  */
 public abstract class DavResourceBase implements ExtendedDavConstants, AclConstants, DeltaVResource {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(DavResourceBase.class);
+    
     private static final HashSet<DavPropertyName> LIVE_PROPERTIES = new HashSet<DavPropertyName>();
     private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>(0);
 

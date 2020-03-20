@@ -26,8 +26,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.io.InputContext;
@@ -36,6 +34,8 @@ import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -83,7 +83,9 @@ import org.w3c.dom.Element;
  * @see User
  */
 public class DavUserPrincipal extends DavResourceBase implements CaldavConstants, DavContent {
-    private static final Log LOG = LogFactory.getLog(DavUserPrincipal.class);    
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavUserPrincipal.class);    
+    
     private static final Set<ReportType> REPORT_TYPES =
         new HashSet<ReportType>();
 
@@ -355,8 +357,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
     private void writeHtmlRepresentation(OutputContext context)
         throws CosmoDavException, IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("writing html representation for user principal " +
-                      getDisplayName());
+            LOG.debug("Writing html representation for user principal {}", getDisplayName());
         }
 
         context.setContentType(ContentTypeUtil.buildContentType("text/html", "UTF-8"));
@@ -389,7 +390,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
                     try {
                         text = DomWriter.write((Element)value);
                     } catch (XMLStreamException e) {
-                        LOG.warn("Error serializing value for property " + prop.getName());
+                        LOG.warn("Error serializing value for property {}", prop.getName());
                     }
                 }
                 if (text == null) {

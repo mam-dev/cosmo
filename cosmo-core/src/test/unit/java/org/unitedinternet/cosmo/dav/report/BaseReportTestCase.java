@@ -15,26 +15,19 @@
  */
 package org.unitedinternet.cosmo.dav.report;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
-
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.model.EntityFactory;
-
 import org.w3c.dom.Document;
 
 /**
  * Base class for report tests.
  */
 public abstract class BaseReportTestCase extends BaseDavTestCase {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(BaseReportTestCase.class);
-
+    
     /**
      * Makes target.
      * @param clazz Class

@@ -17,14 +17,11 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import javax.validation.ConstraintViolationException;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Date;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -43,7 +40,10 @@ import org.unitedinternet.cosmo.model.hibernate.HibMessageStamp;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 import org.unitedinternet.cosmo.model.hibernate.HibQName;
 import org.unitedinternet.cosmo.model.hibernate.HibStringAttribute;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Date;
 
 /**
  * Test for hibernate content dao stamping.
@@ -52,12 +52,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
     
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateContentDaoStampingTest.class);
+    
     @Autowired
     private UserDaoImpl userDao;
     @Autowired
     private ContentDaoImpl contentDao;
 
-    private static final Log LOG = LogFactory.getLog(HibernateContentDaoStampingTest.class);
+    
 
     /**
      * Constructor.

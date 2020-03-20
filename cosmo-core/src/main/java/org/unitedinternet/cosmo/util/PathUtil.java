@@ -15,15 +15,10 @@
  */
 package org.unitedinternet.cosmo.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Provides utility methods for working with URL paths.
  */
 public class PathUtil {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(PathUtil.class);
 
     /**
      * Returns the final segment of the path (the portion after the

@@ -23,26 +23,17 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.fortuna.ical4j.data.CalendarOutputter;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.validate.ValidationException;
-import net.fortuna.ical4j.model.component.VFreeBusy;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.unitedinternet.cosmo.calendar.FreeBusyUtils;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
-import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarResource;
@@ -52,6 +43,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+import net.fortuna.ical4j.validate.ValidationException;
+
 /**
  * <p>
  * Represents the <code>CALDAV:free-busy-query</code> report that
@@ -59,9 +57,7 @@ import org.xml.sax.SAXException;
  * </p>
  */
 public class FreeBusyReport extends SimpleReport implements CaldavConstants {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(FreeBusyReport.class);
-
+    
     private Period freeBusyRange;
     private ArrayList<VFreeBusy> freeBusyResults;
 

@@ -25,9 +25,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -37,46 +34,47 @@ import org.apache.jackrabbit.webdav.property.DavPropertyIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.dav.caldav.report.QueryReport;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.Etag;
 import org.unitedinternet.cosmo.dav.property.IsCollection;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
+import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.util.ContentTypeUtil;
 import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
 
 /**
  * <p>
- * Models a WebDAV Inbox collection 
- * (as described in http://tools.ietf.org/html/draft-desruisseaux-caldav-sched-05) that
- * contains a contains incoming scheduling messages. These may be requests 
- * sent by an "Organizer", or replies sent by an "Attendee" in response to a request. The
- * principal collection itself is not backed by a persistent entity.
+ * Models a WebDAV Inbox collection (as described in http://tools.ietf.org/html/draft-desruisseaux-caldav-sched-05) that
+ * contains a contains incoming scheduling messages. These may be requests sent by an "Organizer", or replies sent by an
+ * "Attendee" in response to a request. The principal collection itself is not backed by a persistent entity.
  * </p>
  *
  * @see DavResourceBase
  * @see DavCollection
  */
-public class DavInboxCollection extends DavResourceBase
-    implements DavCollection, CaldavConstants {
-    private static final Log LOG = LogFactory.getLog(DavInboxCollection.class);
-    private static final Set<ReportType> REPORT_TYPES =
-        new HashSet<ReportType>();
+public class DavInboxCollection extends DavResourceBase implements DavCollection, CaldavConstants {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavInboxCollection.class);
+    
+    private static final Set<ReportType> REPORT_TYPES = new HashSet<ReportType>();
 
     private DavAcl acl;
 
@@ -85,13 +83,11 @@ public class DavInboxCollection extends DavResourceBase
         registerLiveProperty(DavPropertyName.ISCOLLECTION);
         registerLiveProperty(DavPropertyName.RESOURCETYPE);
         registerLiveProperty(DavPropertyName.GETETAG);
-        
+
         REPORT_TYPES.add(QueryReport.REPORT_TYPE_CALDAV_QUERY);
     }
 
-    public DavInboxCollection(DavResourceLocator locator,
-                                      DavResourceFactory factory)
-        throws CosmoDavException {
+    public DavInboxCollection(DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
         super(locator, factory);
         acl = makeAcl();
     }
@@ -122,14 +118,12 @@ public class DavInboxCollection extends DavResourceBase
         return "";
     }
 
-    public void writeTo(OutputContext outputContext)
-        throws CosmoDavException, IOException {
+    public void writeTo(OutputContext outputContext) throws CosmoDavException, IOException {
         writeHtmlDirectoryIndex(outputContext);
     }
 
-    public void addMember(org.apache.jackrabbit.webdav.DavResource member,
-                          InputContext inputContext)
-        throws org.apache.jackrabbit.webdav.DavException {
+    public void addMember(org.apache.jackrabbit.webdav.DavResource member, InputContext inputContext)
+            throws org.apache.jackrabbit.webdav.DavException {
         throw new UnsupportedOperationException();
     }
 
@@ -147,7 +141,7 @@ public class DavInboxCollection extends DavResourceBase
     }
 
     public void removeMember(org.apache.jackrabbit.webdav.DavResource member)
-        throws org.apache.jackrabbit.webdav.DavException {
+            throws org.apache.jackrabbit.webdav.DavException {
         throw new UnsupportedOperationException();
     }
 
@@ -156,42 +150,35 @@ public class DavInboxCollection extends DavResourceBase
     }
 
     public void move(org.apache.jackrabbit.webdav.DavResource destination)
-        throws org.apache.jackrabbit.webdav.DavException {
+            throws org.apache.jackrabbit.webdav.DavException {
         throw new UnsupportedOperationException();
     }
 
-    public void copy(org.apache.jackrabbit.webdav.DavResource destination,
-                     boolean shallow)
-        throws org.apache.jackrabbit.webdav.DavException {
+    public void copy(org.apache.jackrabbit.webdav.DavResource destination, boolean shallow)
+            throws org.apache.jackrabbit.webdav.DavException {
         throw new UnsupportedOperationException();
     }
 
     // WebDavResource
 
-    public DavCollection getParent()
-        throws CosmoDavException {
+    public DavCollection getParent() throws CosmoDavException {
         return null;
     }
 
     // DavCollection
 
-    public void addContent(DavContent content,
-                           InputContext context)
-        throws CosmoDavException {
+    public void addContent(DavContent content, InputContext context) throws CosmoDavException {
         throw new UnsupportedOperationException();
     }
 
-    public MultiStatusResponse addCollection(DavCollection collection,
-                                             DavPropertySet properties)
-        throws CosmoDavException {
+    public MultiStatusResponse addCollection(DavCollection collection, DavPropertySet properties)
+            throws CosmoDavException {
         throw new UnsupportedOperationException();
     }
 
-    public DavUserPrincipal findMember(String uri)
-        throws CosmoDavException {
-        DavResourceLocator locator = getResourceLocator().getFactory().
-            createResourceLocatorByUri(getResourceLocator().getContext(),
-                                       uri);
+    public DavUserPrincipal findMember(String uri) throws CosmoDavException {
+        DavResourceLocator locator = getResourceLocator().getFactory()
+                .createResourceLocatorByUri(getResourceLocator().getContext(), uri);
         return (DavUserPrincipal) getResourceFactory().resolve(locator);
     }
 
@@ -209,14 +196,12 @@ public class DavInboxCollection extends DavResourceBase
     }
 
     /**
-     * Returns the resource's access control list. The list contains the
-     * following ACEs:
+     * Returns the resource's access control list. The list contains the following ACEs:
      *
      * <ol>
-     * <li> <code>DAV:unauthenticated</code>: deny <code>DAV:all</code> </li>
-     * <li> <code>DAV:all</code>: allow
-     * <code>DAV:read, DAV:read-current-user-privilege-set</code> </li>
-     * <li> <code>DAV:all</code>: deny <code>DAV:all</code> </li>
+     * <li><code>DAV:unauthenticated</code>: deny <code>DAV:all</code></li>
+     * <li><code>DAV:all</code>: allow <code>DAV:read, DAV:read-current-user-privilege-set</code></li>
+     * <li><code>DAV:all</code>: deny <code>DAV:all</code></li>
      * </ol>
      */
     protected DavAcl getAcl() {
@@ -249,13 +234,13 @@ public class DavInboxCollection extends DavResourceBase
 
     /**
      * <p>
-     * Extends the superclass method to return {@link DavPrivilege#READ} if
-     * the the current principal is a non-admin user.
+     * Extends the superclass method to return {@link DavPrivilege#READ} if the the current principal is a non-admin
+     * user.
      * </p>
      */
     protected Set<DavPrivilege> getCurrentPrincipalPrivileges() {
         Set<DavPrivilege> privileges = super.getCurrentPrincipalPrivileges();
-        if (! privileges.isEmpty()) {
+        if (!privileges.isEmpty()) {
             return privileges;
         }
 
@@ -274,46 +259,38 @@ public class DavInboxCollection extends DavResourceBase
         properties.add(new Etag(getETag()));
     }
 
-    protected void setLiveProperty(WebDavProperty property, boolean create)
-        throws CosmoDavException {
+    protected void setLiveProperty(WebDavProperty property, boolean create) throws CosmoDavException {
         throw new ProtectedPropertyModificationException(property.getName());
     }
 
-    protected void removeLiveProperty(DavPropertyName name)
-        throws CosmoDavException {
+    protected void removeLiveProperty(DavPropertyName name) throws CosmoDavException {
         throw new ProtectedPropertyModificationException(name);
     }
 
     protected void loadDeadProperties(DavPropertySet properties) {
     }
 
-    protected void setDeadProperty(WebDavProperty property)
-        throws CosmoDavException {
+    protected void setDeadProperty(WebDavProperty property) throws CosmoDavException {
         throw new ForbiddenException("Dead properties are not supported on this collection");
     }
 
-    protected void removeDeadProperty(DavPropertyName name)
-        throws CosmoDavException {
+    protected void removeDeadProperty(DavPropertyName name) throws CosmoDavException {
         throw new ForbiddenException("Dead properties are not supported on this collection");
     }
 
-    private void writeHtmlDirectoryIndex(OutputContext context)
-        throws CosmoDavException, IOException {
+    private void writeHtmlDirectoryIndex(OutputContext context) throws CosmoDavException, IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("writing html directory index for  " +
-                      getDisplayName());
+            LOG.debug("Writing html directory index for {}", getDisplayName());
         }
         context.setContentType(ContentTypeUtil.buildContentType("text/html", "UTF-8"));
         // no modification time or etag
 
-        if (! context.hasStream()) {
+        if (!context.hasStream()) {
             return;
         }
 
-        PrintWriter writer =
-            new PrintWriter(new OutputStreamWriter(context.getOutputStream(),
-                                                   "utf8"));
-        try{
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(context.getOutputStream(), "utf8"));
+        try {
             writer.write("<html>\n<head><title>");
             writer.write(StringEscapeUtils.escapeHtml(getDisplayName()));
             writer.write("</title></head>\n");
@@ -321,18 +298,18 @@ public class DavInboxCollection extends DavResourceBase
             writer.write("<h1>");
             writer.write(StringEscapeUtils.escapeHtml(getDisplayName()));
             writer.write("</h1>\n");
-    
+
             writer.write("<h2>Properties</h2>\n");
             writer.write("<dl>\n");
-            for (DavPropertyIterator i=getProperties().iterator(); i.hasNext();) {
+            for (DavPropertyIterator i = getProperties().iterator(); i.hasNext();) {
                 WebDavProperty prop = (WebDavProperty) i.nextProperty();
                 Object value = prop.getValue();
                 String text = null;
                 if (value instanceof Element) {
                     try {
-                        text = DomWriter.write((Element)value);
+                        text = DomWriter.write((Element) value);
                     } catch (XMLStreamException e) {
-                        LOG.warn("Error serializing value for property " + prop.getName());
+                        LOG.warn("Error serializing value for property {}", prop.getName());
                     }
                 }
                 if (text == null) {
@@ -345,33 +322,30 @@ public class DavInboxCollection extends DavResourceBase
                 writer.write("</dd>\n");
             }
             writer.write("</dl>\n");
-    
+
             User user = getSecurityManager().getSecurityContext().getUser();
             if (user != null) {
                 writer.write("<p>\n");
-                DavResourceLocator homeLocator =
-                    getResourceLocator().getFactory().
-                    createHomeLocator(getResourceLocator().getContext(), user);
+                DavResourceLocator homeLocator = getResourceLocator().getFactory()
+                        .createHomeLocator(getResourceLocator().getContext(), user);
                 writer.write("<a href=\"");
                 writer.write(homeLocator.getHref(true));
                 writer.write("\">");
                 writer.write("Home collection");
                 writer.write("</a><br>\n");
-    
-                DavResourceLocator principalLocator = 
-                    getResourceLocator().getFactory().
-                    createPrincipalLocator(getResourceLocator().getContext(),
-                                           user);
+
+                DavResourceLocator principalLocator = getResourceLocator().getFactory()
+                        .createPrincipalLocator(getResourceLocator().getContext(), user);
                 writer.write("<a href=\"");
                 writer.write(principalLocator.getHref(false));
                 writer.write("\">");
                 writer.write("Principal resource");
                 writer.write("</a><br>\n");
             }
-    
+
             writer.write("</body>");
             writer.write("</html>\n");
-        }finally{
+        } finally {
             writer.close();
         }
     }

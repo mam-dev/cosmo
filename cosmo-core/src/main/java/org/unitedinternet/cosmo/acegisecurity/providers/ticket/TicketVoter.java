@@ -17,15 +17,13 @@ package org.unitedinternet.cosmo.acegisecurity.providers.ticket;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.dav.CaldavMethodType;
-import org.unitedinternet.cosmo.model.Ticket;
-import org.unitedinternet.cosmo.model.TicketType;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.FilterInvocation;
+import org.unitedinternet.cosmo.dav.CaldavMethodType;
+import org.unitedinternet.cosmo.model.Ticket;
+import org.unitedinternet.cosmo.model.TicketType;
 
 /**
  * Votes affirmatively if the authenticated principal is a ticket and
@@ -35,9 +33,7 @@ import org.springframework.security.web.FilterInvocation;
  * This is a temporary approach until a full ACL system is in place.
  */
 public class TicketVoter implements AccessDecisionVoter<Object> {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(TicketVoter.class);
-
+    
     /**
      * @param authentication The authentication.
      * @param object The obj.

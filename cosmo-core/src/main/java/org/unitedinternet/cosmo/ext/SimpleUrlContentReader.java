@@ -14,8 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -23,6 +21,8 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ import net.fortuna.ical4j.model.Calendar;
 @Component
 public class SimpleUrlContentReader implements UrlContentReader {
 
-    private static final Log LOG = LogFactory.getLog(SimpleUrlContentReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleUrlContentReader.class);
 
     private static final int MAX_LINE_LENGTH = 2048;
     private static final int MAX_HEADER_COUNT = 30;

@@ -15,17 +15,12 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Compares instances of {@link ContentItem}.
  */
 public class ContentItemComparator extends AuditableComparator {
     
-    @SuppressWarnings("unused")
-    private static Log log = LogFactory.getLog(ContentItemComparator.class);
-
+    
     public static final int ATTRIBUTE_TRIAGE_RANK = 0;
 
     public ContentItemComparator() {

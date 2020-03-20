@@ -18,12 +18,10 @@ package org.unitedinternet.cosmo.acegisecurity.userdetails;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.unitedinternet.cosmo.model.User;
 
 /**
  * Wraps a Cosmo <code>User</code> to provide Acegi Security with
@@ -41,9 +39,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class CosmoUserDetails implements UserDetails {
     
    private static final long serialVersionUID = 3034617040424768102L;
-   
-   @SuppressWarnings("unused")
-   private static final Log LOG =  LogFactory.getLog(CosmoUserDetails.class);
 
     private User user;
     private List<GrantedAuthority> authorities;

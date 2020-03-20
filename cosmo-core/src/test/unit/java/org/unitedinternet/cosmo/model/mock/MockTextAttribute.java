@@ -21,8 +21,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.CosmoIOException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.Attribute;
@@ -38,8 +36,7 @@ import org.unitedinternet.cosmo.model.TextAttribute;
  */
 public class MockTextAttribute extends MockAttribute implements
         java.io.Serializable, TextAttribute {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(TextAttribute.class);
+    
     
     /**
      * 

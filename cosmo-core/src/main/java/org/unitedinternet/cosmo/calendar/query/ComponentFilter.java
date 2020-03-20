@@ -20,19 +20,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.component.VTimeZone;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.w3c.dom.Element;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.component.VTimeZone;
 
 /**
  * Represents a component filter as defined in the CalDAV spec:
@@ -54,10 +54,7 @@ import org.w3c.dom.Element;
  */
 public class ComponentFilter implements CaldavConstants, ICalendarConstants {
 
-    /**
-     * Logger for this instance.
-     */
-    private static final Log LOG = LogFactory.getLog(ComponentFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentFilter.class);
 
     /**
      * Component filters container.

@@ -20,8 +20,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
 
 import net.fortuna.ical4j.model.DateTime;
@@ -50,7 +50,7 @@ public class EventStampFilter extends StampFilter {
         "cosmo.filter.eventStamp.timeRange.includeMasterItems";
     public static final String PROPERTY_DO_TIMERANGE_SECOND_PASS = 
         "cosmo.filter.eventStamp.timeRange.doSecondPass";
-    private static final Log LOG = LogFactory.getLog(EventStampFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EventStampFilter.class);
     private Period period = null;
     private Boolean isRecurring = null;
     private DateTime dstart;

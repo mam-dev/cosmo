@@ -18,17 +18,11 @@ package org.unitedinternet.cosmo.calendar.util;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Utility methods for dealing with dates.
  *
  */
 public class Dates {
-    @SuppressWarnings("unused")
-    private static final Log LOG =  LogFactory.getLog(Dates.class);
-    
     
     /**
      * Returns a new date instance matching the type and timezone of the other

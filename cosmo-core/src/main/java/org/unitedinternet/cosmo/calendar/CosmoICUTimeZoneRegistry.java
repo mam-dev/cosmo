@@ -15,46 +15,44 @@
  */
 package org.unitedinternet.cosmo.calendar;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.unitedinternet.cosmo.calendar.util.TimeZoneUtils;
+
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.component.VTimeZone;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.util.TimeZoneUtils;
-
 /**
- * Implementation of a <code>TimeZoneRegistry</code>. This implementation will 
- * use VTIMEZONE definitions provided by icu 3.8
+ * Implementation of a <code>TimeZoneRegistry</code>. This implementation will use VTIMEZONE definitions provided by icu
+ * 3.8
  */
 public class CosmoICUTimeZoneRegistry implements TimeZoneRegistry {
 
-    private Log log = LogFactory.getLog(CosmoICUTimeZoneRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CosmoICUTimeZoneRegistry.class);
 
     private static final Map<String, TimeZone> DEFAULT_TIMEZONES = new HashMap<String, TimeZone>();
 
     private static final Properties ALIASES = new Properties();
+    
     static {
-        InputStream is = CosmoICUTimeZoneRegistry.class.getResourceAsStream("/timezone.alias"); 
+        InputStream is = CosmoICUTimeZoneRegistry.class.getResourceAsStream("/timezone.alias");
         try {
             ALIASES.load(is);
-        }
-        catch (IOException ioe) {
-            LogFactory.getLog(CosmoICUTimeZoneRegistry.class).warn(
-                    "Error loading timezone aliases: " + ioe.getMessage());
-        }finally{
-            if(is != null){
+        } catch (IOException ioe) {
+            LOG.warn("Error loading timezone aliases: " + ioe.getMessage());
+        } finally {
+            if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    LogFactory.getLog(CosmoICUTimeZoneRegistry.class).error("Failed to load input stream ", e);
+                    LOG.error("Failed to load input stream ", e);
                 }
             }
         }
@@ -68,13 +66,14 @@ public class CosmoICUTimeZoneRegistry implements TimeZoneRegistry {
     public CosmoICUTimeZoneRegistry() {
     }
 
-    
     /*
      * (non-Javadoc)
+     * 
      * @see net.fortuna.ical4j.model.TimeZoneRegistry#register(net.fortuna.ical4j.model.TimeZone)
      */
     /**
      * Register.
+     * 
      * @param timezone The timezone.
      */
     public final void register(final TimeZone timezone) {
@@ -83,6 +82,7 @@ public class CosmoICUTimeZoneRegistry implements TimeZoneRegistry {
 
     /*
      * (non-Javadoc)
+     * 
      * @see net.fortuna.ical4j.model.TimeZoneRegistry#clear()
      */
     /**
@@ -94,10 +94,12 @@ public class CosmoICUTimeZoneRegistry implements TimeZoneRegistry {
 
     /*
      * (non-Javadoc)
+     * 
      * @see net.fortuna.ical4j.model.TimeZoneRegistry#getTimeZone(java.lang.String)
      */
     /**
      * Gets timezone.
+     * 
      * @param id The id.
      * @return The timezone.
      */
@@ -113,12 +115,11 @@ public class CosmoICUTimeZoneRegistry implements TimeZoneRegistry {
                             timezone = new TimeZone(vTimeZone);
                             DEFAULT_TIMEZONES.put(timezone.getID(), timezone);
                         }
-                    }
-                    catch (Exception e) {
-                        log.warn("Error occurred loading VTimeZone", e);
+                    } catch (Exception e) {
+                        LOG.warn("Error occurred loading VTimeZone", e);
                     }
                 }
-                if(timezone==null) {
+                if (timezone == null) {
                     // if timezone not found with identifier, try loading an alias..
                     String alias = ALIASES.getProperty(id);
                     if (alias != null) {
@@ -132,8 +133,9 @@ public class CosmoICUTimeZoneRegistry implements TimeZoneRegistry {
 
     /**
      * Register.
+     * 
      * @param timezone The timezone.
-     * @param update The boolean for update.
+     * @param update   The boolean for update.
      */
     // @Override
     public void register(TimeZone timezone, boolean update) {

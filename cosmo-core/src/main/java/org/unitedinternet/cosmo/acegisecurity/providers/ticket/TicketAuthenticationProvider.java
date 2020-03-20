@@ -15,8 +15,8 @@
  */
 package org.unitedinternet.cosmo.acegisecurity.providers.ticket;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -35,9 +35,9 @@ import org.unitedinternet.cosmo.server.ItemPath;
  */
 @Component
 @Transactional
-public class TicketAuthenticationProvider
-    implements AuthenticationProvider {
-    private static final Log LOG = LogFactory.getLog(TicketAuthenticationProvider.class);
+public class TicketAuthenticationProvider implements AuthenticationProvider {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(TicketAuthenticationProvider.class);
 
     @Autowired
     private ContentDao contentDao;

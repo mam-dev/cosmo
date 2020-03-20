@@ -4,8 +4,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -29,7 +29,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
 @Component
 public class ContentDaoInvocationHandler implements InvocationHandler, ApplicationContextAware {
 
-    private static final Log LOG = LogFactory.getLog(ContentDaoInvocationHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContentDaoInvocationHandler.class);
 
     private static final int WRAPPED_COUNT = 100;
 

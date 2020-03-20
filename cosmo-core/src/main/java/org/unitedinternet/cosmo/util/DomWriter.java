@@ -22,8 +22,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
@@ -36,27 +36,25 @@ import org.w3c.dom.NodeList;
  * A helper for serializing a DOM structure to a UTF-8 string.
  * </p>
  * <p>
- * Only element, text and character data nodes are serialized. All other
- * nodes are ignored. Whitespaces is significant. Document order is preserved.
- * Element attributes are serialized in document order. Prefixes for elements
- * and attributes are preserved.
+ * Only element, text and character data nodes are serialized. All other nodes are ignored. Whitespaces is significant.
+ * Document order is preserved. Element attributes are serialized in document order. Prefixes for elements and
+ * attributes are preserved.
  * </p>
  */
 public class DomWriter {
-    private static final Log LOG = LogFactory.getLog(DomWriter.class);
-    private static final XMLOutputFactory XML_OUTPUT_FACTORY =
-        XMLOutputFactory.newInstance();
+   
+    private static final Logger LOG = LoggerFactory.getLogger(DomWriter.class);
+    
+    private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
 
-    public static String write(Node n)
-        throws XMLStreamException, IOException {       
+    public static String write(Node n) throws XMLStreamException, IOException {
         XMLStreamWriter writer = null;
         try {
-            if((n.getNamespaceURI() != null && n.getAttributes().getLength() > 0) &&
-                (n.getNamespaceURI().equals(n.getAttributes().item(0).getNodeValue()))){
-                    n.getAttributes().removeNamedItem(n.getAttributes().item(0).getNodeName());
+            if ((n.getNamespaceURI() != null && n.getAttributes().getLength() > 0)
+                    && (n.getNamespaceURI().equals(n.getAttributes().item(0).getNodeValue()))) {
+                n.getAttributes().removeNamedItem(n.getAttributes().item(0).getNodeName());
             }
-            
-            
+
             StringWriter out = new StringWriter();
             writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
             writeNode(n, writer);
@@ -73,32 +71,23 @@ public class DomWriter {
         }
     }
 
-    private static void writeNode(Node n,
-                                  XMLStreamWriter writer)
-        throws XMLStreamException {
+    private static void writeNode(Node n, XMLStreamWriter writer) throws XMLStreamException {
         if (n.getNodeType() == Node.ELEMENT_NODE) {
-            writeElement((Element)n, writer);
-        }
-        else if (n.getNodeType() == Node.CDATA_SECTION_NODE ||
-                 n.getNodeType() == Node.TEXT_NODE) {
-            writeCharacters((CharacterData)n, writer);
-        }
-        else {
+            writeElement((Element) n, writer);
+        } else if (n.getNodeType() == Node.CDATA_SECTION_NODE || n.getNodeType() == Node.TEXT_NODE) {
+            writeCharacters((CharacterData) n, writer);
+        } else {
             LOG.warn("Skipping element " + n.getNodeName());
         }
     }
 
-    private static void writeElement(Element e,
-                                     XMLStreamWriter writer)
-        throws XMLStreamException {
-        //if (log.isDebugEnabled())
-            //log.debug("Writing element " + e.getNodeName());
-
+    private static void writeElement(Element e, XMLStreamWriter writer) throws XMLStreamException {
+        
         String local = e.getLocalName();
-        if(local==null) {
+        if (local == null) {
             local = e.getNodeName();
         }
-        
+
         String ns = e.getNamespaceURI();
         if (ns != null) {
             String prefix = e.getPrefix();
@@ -115,34 +104,25 @@ public class DomWriter {
         }
 
         NamedNodeMap attributes = e.getAttributes();
-        for (int i=0; i<attributes.getLength(); i++) {
-            writeAttribute((Attr)attributes.item(i), writer);
+        for (int i = 0; i < attributes.getLength(); i++) {
+            writeAttribute((Attr) attributes.item(i), writer);
         }
 
         NodeList children = e.getChildNodes();
-        for (int i=0; i<children.getLength(); i++) {
+        for (int i = 0; i < children.getLength(); i++) {
             writeNode(children.item(i), writer);
         }
 
         writer.writeEndElement();
     }
 
-    private static void writeCharacters(CharacterData cd,
-                                        XMLStreamWriter writer)
-        throws XMLStreamException {
-        //if (log.isDebugEnabled())
-            //log.debug("Writing characters: '" + cd.getData() + "'");
+    private static void writeCharacters(CharacterData cd, XMLStreamWriter writer) throws XMLStreamException {
         writer.writeCharacters(cd.getData());
     }
 
-    private static void writeAttribute(Attr a,
-                                       XMLStreamWriter writer)
-        throws XMLStreamException {
-        //if (log.isDebugEnabled())
-            //log.debug("Writing attribute " + a.getNodeName());
-
+    private static void writeAttribute(Attr a, XMLStreamWriter writer) throws XMLStreamException {        
         String local = a.getLocalName();
-        if(local==null) {
+        if (local == null) {
             local = a.getNodeName();
         }
         String ns = a.getNamespaceURI();
@@ -157,8 +137,7 @@ public class DomWriter {
             String prefix = a.getPrefix();
             if (prefix != null) {
                 writer.writeAttribute(prefix, ns, local, value);
-            }
-            else {
+            } else {
                 writer.writeAttribute(ns, local, value);
             }
         } else {

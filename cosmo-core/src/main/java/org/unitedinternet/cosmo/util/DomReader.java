@@ -25,8 +25,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -38,26 +38,23 @@ import org.w3c.dom.Node;
  * A helper for deserializing a UTF-8 string into a DOM structure.
  * </p>
  * <p>
- * Only element, text and character data nodes are serialized. All other
- * nodes are ignored. Whitespaces is significant. Document order is preserved.
- * Element attributes are serialized in document order. Prefixes for elements
- * and attributes are preserved.
+ * Only element, text and character data nodes are serialized. All other nodes are ignored. Whitespaces is significant.
+ * Document order is preserved. Element attributes are serialized in document order. Prefixes for elements and
+ * attributes are preserved.
  * </p>
  */
 public class DomReader {
-    private static final Log LOG = LogFactory.getLog(DomReader.class);
-    private static final XMLInputFactory XML_INPUT_FACTORY =
-        XMLInputFactory.newInstance();
-    private static final DocumentBuilderFactory BUILDER_FACTORY =
-        DocumentBuilderFactory.newInstance();
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DomReader.class);
+    
+    private static final XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory.newInstance();
+    private static final DocumentBuilderFactory BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
-    public static Node read (String in)
-        throws ParserConfigurationException, XMLStreamException, IOException {
+    public static Node read(String in) throws ParserConfigurationException, XMLStreamException, IOException {
         return read(new StringReader(in));
     }
 
-    public static Node read (Reader in)
-        throws ParserConfigurationException, XMLStreamException, IOException {
+    public static Node read(Reader in) throws ParserConfigurationException, XMLStreamException, IOException {
         XMLStreamReader reader = null;
         try {
             Document d = BUILDER_FACTORY.newDocumentBuilder().newDocument();
@@ -74,9 +71,7 @@ public class DomReader {
         }
     }
 
-    private static Node readNode(Document d,
-                                 XMLStreamReader reader)
-        throws XMLStreamException {
+    private static Node readNode(Document d, XMLStreamReader reader) throws XMLStreamException {
         Node root = null;
         Node current = null;
 
@@ -84,33 +79,24 @@ public class DomReader {
             reader.next();
 
             if (reader.isEndElement()) {
-                //log.debug("Finished reading " + current.getNodeName());
-
+                
                 if (current.getParentNode() == null) {
                     break;
                 }
-
-                //log.debug("Setting current to " +
-                          //current.getParentNode().getNodeName());
                 current = current.getParentNode();
             }
 
             if (reader.isStartElement()) {
                 Element e = readElement(d, reader);
                 if (root == null) {
-                    //log.debug("Setting root to " + e.getNodeName());
                     root = e;
                 }
 
                 if (current != null) {
-                    //log.debug("Appending child " + e.getNodeName() + " to " +
-                              //current.getNodeName());
                     current.appendChild(e);
                 }
 
-                //log.debug("Setting current to " + e.getNodeName());
                 current = e;
-
                 continue;
             }
 
@@ -122,9 +108,6 @@ public class DomReader {
                 if (current == null) {
                     return cd;
                 }
-
-                //log.debug("Appending text '" + cd.getData() + "' to " +
-                          //current.getNodeName());
                 current.appendChild(cd);
 
                 continue;
@@ -134,30 +117,24 @@ public class DomReader {
         return root;
     }
 
-    private static Element readElement(Document d,
-                                       XMLStreamReader reader)
-        throws XMLStreamException {
+    private static Element readElement(Document d, XMLStreamReader reader) throws XMLStreamException {
         Element e = null;
-        
+
         String local = reader.getLocalName();
         String ns = reader.getNamespaceURI();
         if (ns != null && !ns.equals("")) {
             String prefix = reader.getPrefix();
-            String qualified = prefix != null && !prefix.isEmpty()? prefix + ":" + local : local;
+            String qualified = prefix != null && !prefix.isEmpty() ? prefix + ":" + local : local;
             e = d.createElementNS(ns, qualified);
         } else {
             e = d.createElement(local);
         }
 
-        //if (log.isDebugEnabled())
-            //log.debug("Reading element " + e.getTagName());
-
-        for (int i=0; i<reader.getAttributeCount(); i++) {
+        for (int i = 0; i < reader.getAttributeCount(); i++) {
             Attr a = readAttribute(i, d, reader);
             if (a.getNamespaceURI() != null) {
                 e.setAttributeNodeNS(a);
-            }
-            else {
+            } else {
                 e.setAttributeNode(a);
             }
         }
@@ -165,10 +142,7 @@ public class DomReader {
         return e;
     }
 
-    private static Attr readAttribute(int i,
-                                      Document d,
-                                      XMLStreamReader reader)
-        throws XMLStreamException {
+    private static Attr readAttribute(int i, Document d, XMLStreamReader reader) throws XMLStreamException {
         Attr a = null;
 
         String local = reader.getAttributeLocalName(i);
@@ -180,10 +154,6 @@ public class DomReader {
         } else {
             a = d.createAttribute(reader.getAttributeLocalName(i));
         }
-
-        //if (log.isDebugEnabled())
-            //log.debug("Reading attribute " + a.getName());
-
         a.setValue(reader.getAttributeValue(i));
 
         return a;

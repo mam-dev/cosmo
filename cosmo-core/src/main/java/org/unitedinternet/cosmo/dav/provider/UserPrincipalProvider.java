@@ -17,17 +17,15 @@ package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.DavContent;
-import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavRequest;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.MethodNotAllowedException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
+import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
@@ -40,8 +38,6 @@ import org.unitedinternet.cosmo.model.EntityFactory;
  * @see DavUserPrincipal
  */
 public class UserPrincipalProvider extends BaseProvider {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(UserPrincipalProvider.class);
 
     public UserPrincipalProvider(DavResourceFactory resourceFactory,
             EntityFactory entityFactory) {

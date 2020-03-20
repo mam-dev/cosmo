@@ -21,8 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -36,9 +34,7 @@ import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketedItemNotFo
  */
 @Component
 public class CosmoAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(CosmoAuthenticationEntryPoint.class);
-
+    
     /**
      * <p>
      * Returns the appropriate servlet response based on the

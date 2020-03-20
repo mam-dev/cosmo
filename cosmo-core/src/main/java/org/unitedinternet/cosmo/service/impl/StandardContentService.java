@@ -23,8 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +70,7 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
 @Transactional
 public class StandardContentService implements ContentService {
     
-    private static final Log LOG = LogFactory.getLog(StandardContentService.class);        
+    private static final Logger LOG = LoggerFactory.getLogger(StandardContentService.class);        
    
     private final ContentDao contentDao;
         
@@ -98,7 +98,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public HomeCollectionItem getRootItem(User user, boolean forceReload) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Getting root item for " + user.getUsername());
+            LOG.debug("Getting root item for {}", user.getUsername());
         }
         return contentDao.getRootItem(user, forceReload);
     }
@@ -111,7 +111,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public HomeCollectionItem getRootItem(User user) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Getting root item for " + user.getUsername());
+            LOG.debug("Getting root item for {}", user.getUsername());
         }
         return contentDao.getRootItem(user);
     }
@@ -126,7 +126,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public <STAMP_TYPE extends Stamp> STAMP_TYPE findStampByInternalItemUid(String internalItemUid, Class<STAMP_TYPE> clazz){
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding item with uid " + internalItemUid);
+            LOG.debug("Finding item with uid {}", internalItemUid);
         }
         return contentDao.findStampByInternalItemUid(internalItemUid, clazz);
         
@@ -144,7 +144,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public Item findItemByUid(String uid) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding item with uid " + uid);
+            LOG.debug("Finding item with uid {}", uid);
         }
         Item item = contentDao.findItemByUid(uid);
         
@@ -183,7 +183,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public Item findItemByPath(String path) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding item at path " + path);
+            LOG.debug("Finding item at path {}", path);
         }
         return contentDao.findItemByPath(path);
     }
@@ -198,8 +198,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public Item findItemByPath(String path, String parentUid) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding item at path " + path + " below parent " +
-                      parentUid);
+            LOG.debug("Finding item at path {} below parent {}", path , parentUid);
         }
         return contentDao.findItemByPath(path, parentUid);
     }
@@ -212,7 +211,7 @@ public class StandardContentService implements ContentService {
     @Transactional(readOnly = true)
     public Item findItemParentByPath(String path) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding item's parent at path " + path);
+            LOG.debug("Finding item's parent at path {}", path);
         }
         return contentDao.findItemParentByPath(path);
     }
@@ -220,8 +219,7 @@ public class StandardContentService implements ContentService {
    
     public void addItemToCollection(Item item, CollectionItem collection) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("adding item " + item.getUid() + " to collection "
-                    + collection.getUid());
+            LOG.debug("Adding item {} to collection {}",item.getUid(),  collection.getUid());
         }
         
         contentDao.addItemToCollection(item, collection);
@@ -343,7 +341,7 @@ public class StandardContentService implements ContentService {
      */
     public void removeItem(Item item) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing item " + item.getUid());
+            LOG.debug("Removing item {}", item.getUid());
         }
         
         // Let service handle ContentItems (for sync purposes)
@@ -366,8 +364,7 @@ public class StandardContentService implements ContentService {
      */
     public void removeItemFromCollection(Item item, CollectionItem collection) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing item " + item.getUid() + " from collection "
-                    + collection.getUid());
+            LOG.debug("removing item {} from collection {}", item.getUid(), collection.getUid());
         }
         
         contentDao.removeItemFromCollection(item, collection);
@@ -403,8 +400,7 @@ public class StandardContentService implements ContentService {
     public CollectionItem createCollection(CollectionItem parent,
                                            CollectionItem collection) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating collection " + collection.getName() +
-                      " in " + parent.getName());
+            LOG.debug("creating collection {} in {}", collection.getName(), parent.getName());
         }
         
         return contentDao.createCollection(parent, collection);
@@ -424,8 +420,7 @@ public class StandardContentService implements ContentService {
     public CollectionItem createCollection(CollectionItem parent,
             CollectionItem collection, Set<Item> children) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating collection " + collection.getName() + " in "
-                    + parent.getName());
+            LOG.debug("creating collection {} in {}", collection.getName(), parent.getName());
         }
 
         // Obtain locks to all collections involved.  A collection is involved
@@ -531,7 +526,7 @@ public class StandardContentService implements ContentService {
     public CollectionItem updateCollection(CollectionItem collection,
                                            Set<Item> updates) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("updating collection " + collection.getUid());
+            LOG.debug("updating collection {}", collection.getUid());
         }
 
         // Obtain locks to all collections involved.  A collection is involved
@@ -598,7 +593,7 @@ public class StandardContentService implements ContentService {
      */
     public void removeCollection(CollectionItem collection) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing collection " + collection.getUid());
+            LOG.debug("removing collection {}", collection.getUid());
         }
         // Prevent HomeCollection from being removed (should only be removed when user is removed)
         if(collection instanceof HomeCollectionItem) {
@@ -623,8 +618,7 @@ public class StandardContentService implements ContentService {
     public ContentItem createContent(CollectionItem parent,
                                      ContentItem content) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating content item " + content.getName() +
-                      " in " + parent.getName());
+            LOG.debug("creating content item {} in {}", content.getName(), parent.getName());
         }
         checkDatesForEvent(content);
         // Obtain locks to all collections involved.
@@ -704,7 +698,7 @@ public class StandardContentService implements ContentService {
     public void createContentItems(CollectionItem parent,
                                      Set<ContentItem> contentItems) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating content items in " + parent.getName());
+            LOG.debug("creating content items in {}", parent.getName());
         }
         
         checkDatesForEvents(contentItems);
@@ -738,7 +732,7 @@ public class StandardContentService implements ContentService {
     @Override
     public void createBatchContentItems(CollectionItem parent, Set<ContentItem> contentItems) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating content items in " + parent.getName());
+            LOG.debug("creating content items in {}", parent.getName());
         }
         
         checkDatesForEvents(contentItems);
@@ -755,7 +749,7 @@ public class StandardContentService implements ContentService {
     @Override
     public void updateBatchContentItems(CollectionItem parent, Set<ContentItem> contentItems) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("updating content items in " + parent.getName());
+            LOG.debug("updating content items in {}", parent.getName());
         }
         
         checkDatesForEvents(contentItems);
@@ -773,7 +767,7 @@ public class StandardContentService implements ContentService {
     @Override
     public void removeBatchContentItems(CollectionItem parent, Set<ContentItem> contentItems) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing content items in " + parent.getName());
+            LOG.debug("removing content items in {}", parent.getName());
         }
         
         checkDatesForEvents(contentItems);
@@ -849,7 +843,7 @@ public class StandardContentService implements ContentService {
      */
     public ContentItem updateContent(ContentItem content) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("updating content item " + content.getUid());
+            LOG.debug("updating content item {}", content.getUid());
         }
         checkDatesForEvent(content);
         Set<CollectionItem> locks = acquireLocks(content);
@@ -878,7 +872,7 @@ public class StandardContentService implements ContentService {
      */
     public void removeContent(ContentItem content) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing content item " + content.getUid());
+            LOG.debug("removing content item {}", content.getUid());
         }
         
         Set<CollectionItem> locks = acquireLocks(content);
@@ -956,7 +950,7 @@ public class StandardContentService implements ContentService {
     public void createTicket(Item item,
                              Ticket ticket) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating ticket on item " + item.getUid());
+            LOG.debug("creating ticket on item {}", item.getUid());
         }
         contentDao.createTicket(item, ticket);
     }
@@ -970,7 +964,7 @@ public class StandardContentService implements ContentService {
     public void createTicket(String path,
                              Ticket ticket) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("creating ticket on item at path " + path);
+            LOG.debug("creating ticket on item at path {}", path);
         }
         Item item = contentDao.findItemByPath(path);
         if (item == null) {
@@ -992,7 +986,7 @@ public class StandardContentService implements ContentService {
     public Ticket getTicket(Item item,
                             String key) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("getting ticket " + key + " for item " + item.getUid());
+            LOG.debug("getting ticket {} for item {}", key, item.getUid());
         }
         return contentDao.getTicket(item, key);
     }
@@ -1006,8 +1000,7 @@ public class StandardContentService implements ContentService {
     public void removeTicket(Item item,
                              Ticket ticket) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing ticket " + ticket.getKey() + " on item " +
-                      item.getUid());
+            LOG.debug("removing ticket {} on item {}",ticket.getKey(), item.getUid());
         }
         contentDao.removeTicket(item, ticket);
     }
@@ -1021,8 +1014,7 @@ public class StandardContentService implements ContentService {
     public void removeTicket(Item item,
                              String key) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing ticket " + key + " on item " +
-                      item.getUid());
+            LOG.debug("removing ticket {} on item {}", key, item.getUid());
         }
        
         if (item == null) {

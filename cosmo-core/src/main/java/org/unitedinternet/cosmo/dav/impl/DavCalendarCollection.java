@@ -21,11 +21,11 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
@@ -102,7 +102,9 @@ import net.fortuna.ical4j.model.component.VTimeZone;
  * @see CalendarCollectionItem
  */
 public class DavCalendarCollection extends DavCollectionBase implements CaldavConstants, ICalendarConstants {
-    private static final Log LOG = LogFactory.getLog(DavCalendarCollection.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DavCalendarCollection.class);
+    
     private static final Set<String> DEAD_PROPERTY_FILTER = new HashSet<String>();
 
     static {

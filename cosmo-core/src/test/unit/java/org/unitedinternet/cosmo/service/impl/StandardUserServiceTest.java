@@ -17,8 +17,6 @@ package org.unitedinternet.cosmo.service.impl;
 
 import java.security.SecureRandom;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +32,6 @@ import org.unitedinternet.cosmo.model.User;
  * Test Case for {@link StandardUserService}.
  */
 public class StandardUserServiceTest {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(StandardUserServiceTest.class);
 
     private StandardUserService service;
     private MockDaoStorage storage;

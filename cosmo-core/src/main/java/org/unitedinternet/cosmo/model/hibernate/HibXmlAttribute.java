@@ -19,16 +19,12 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.XmlAttribute;
-
 import org.w3c.dom.Element;
 
 /**
@@ -36,29 +32,25 @@ import org.w3c.dom.Element;
  */
 @Entity
 @DiscriminatorValue("xml")
-public class HibXmlAttribute extends HibAttribute implements  XmlAttribute {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -6431240722450099152L;
-    
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(XmlAttribute.class);
+public class HibXmlAttribute extends HibAttribute implements XmlAttribute {
 
-    @Column(name = "textvalue", length= 2147483647)
-    @Type(type="xml_clob")
+    private static final long serialVersionUID = -6431240722450099152L;
+
+    @Column(name = "textvalue", length = 2147483647)
+    @Type(type = "xml_clob")
     private Element value;
 
     public HibXmlAttribute() {
     }
 
-    public HibXmlAttribute(QName qname,
-                        Element value) {
+    public HibXmlAttribute(QName qname, Element value) {
         setQName(qname);
         this.value = value;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.Attribute#getValue()
      */
     public Element getValue() {
@@ -68,13 +60,14 @@ public class HibXmlAttribute extends HibAttribute implements  XmlAttribute {
     public Attribute copy() {
         XmlAttribute attr = new HibXmlAttribute();
         attr.setQName(getQName().copy());
-        Element clone = value != null ?
-            (Element) value.cloneNode(true) : null;
+        Element clone = value != null ? (Element) value.cloneNode(true) : null;
         attr.setValue(clone);
         return attr;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.XmlAttribute#setValue(org.w3c.dom.Element)
      */
     public void setValue(Element value) {
@@ -82,40 +75,36 @@ public class HibXmlAttribute extends HibAttribute implements  XmlAttribute {
     }
 
     public void setValue(Object value) {
-        if (value != null && ! (value instanceof Element)) {
+        if (value != null && !(value instanceof Element)) {
             throw new ModelValidationException("attempted to set non-Element value");
         }
         setValue((Element) value);
     }
 
     /**
-     * Convienence method for returning a Element value on an XmlAttribute
-     * with a given QName stored on the given item.
-     * @param item item to fetch XmlAttribute from
+     * Convienence method for returning a Element value on an XmlAttribute with a given QName stored on the given item.
+     * 
+     * @param item  item to fetch XmlAttribute from
      * @param qname QName of attribute
      * @return Long value of XmlAttribute
      */
-    public static Element getValue(Item item,
-                                QName qname) {
+    public static Element getValue(Item item, QName qname) {
         XmlAttribute xa = (XmlAttribute) item.getAttribute(qname);
         if (xa == null) {
             return null;
-        }
-        else {
+        } else {
             return xa.getValue();
         }
     }
 
     /**
-     * Convienence method for setting a Elementvalue on an XmlAttribute
-     * with a given QName stored on the given item.
-     * @param item item to fetch Xmlttribute from
+     * Convienence method for setting a Elementvalue on an XmlAttribute with a given QName stored on the given item.
+     * 
+     * @param item  item to fetch Xmlttribute from
      * @param qname QName of attribute
      * @param value value to set on XmlAttribute
      */
-    public static void setValue(Item item,
-                                QName qname,
-                                Element value) {
+    public static void setValue(Item item, QName qname, Element value) {
         XmlAttribute attr = (XmlAttribute) item.getAttribute(qname);
         if (attr == null && value != null) {
             attr = new HibXmlAttribute(qname, value);
@@ -124,15 +113,14 @@ public class HibXmlAttribute extends HibAttribute implements  XmlAttribute {
         }
         if (value == null) {
             item.removeAttribute(qname);
-        }
-        else {
+        } else {
             attr.setValue(value);
         }
     }
 
     @Override
     public void validate() {
-        
+
     }
 
     @Override

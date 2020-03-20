@@ -28,9 +28,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.query.internal.QueryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.CosmoConstants;
 import org.unitedinternet.cosmo.calendar.Instance;
@@ -68,7 +68,7 @@ import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
 @Component
 public class StandardItemFilterProcessor  implements ItemFilterProcessor {
 
-    private static final Log LOG = LogFactory.getLog(StandardItemFilterProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StandardItemFilterProcessor.class);
     
     @PersistenceContext
     private EntityManager em;

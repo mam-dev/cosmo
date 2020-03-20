@@ -18,8 +18,8 @@ package org.unitedinternet.cosmo.security.mock;
 import java.security.Principal;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
@@ -30,16 +30,14 @@ import org.unitedinternet.cosmo.security.CosmoSecurityManager;
 import org.unitedinternet.cosmo.security.PermissionDeniedException;
 
 /**
- * A mock implementation of the {@link CosmoSecurityManager}
- * interface that provides a dummy {@link CosmoSecurityContext} for
- * unit mocks.
+ * A mock implementation of the {@link CosmoSecurityManager} interface that provides a dummy
+ * {@link CosmoSecurityContext} for unit mocks.
  */
 public class MockSecurityManager implements CosmoSecurityManager {
-   
-    private static final Log LOG = LogFactory.getLog(MockSecurityManager.class);
 
-    @SuppressWarnings("rawtypes")
-    private static ThreadLocal contexts = new ThreadLocal();
+    private static final Logger LOG = LoggerFactory.getLogger(MockSecurityManager.class);
+
+    private static ThreadLocal<CosmoSecurityContext> contexts = new ThreadLocal<>();
 
     private TestHelper testHelper;
 
@@ -53,9 +51,9 @@ public class MockSecurityManager implements CosmoSecurityManager {
     /* ----- CosmoSecurityManager methods ----- */
 
     /**
-     * Provide a <code>CosmoSecurityContext</code> representing a
-     * Cosmo user previously authenticated by the Cosmo security
-     * system.
+     * Provide a <code>CosmoSecurityContext</code> representing a Cosmo user previously authenticated by the Cosmo
+     * security system.
+     * 
      * @return cosmo security context.
      * @throws CosmoSecurityException - if something is wrong this exception is thrown.
      */
@@ -65,77 +63,71 @@ public class MockSecurityManager implements CosmoSecurityManager {
             throw new CosmoSecurityException("security context not set up");
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("getting security context for " + context.getName());
+            LOG.debug("getting security context for {}", context.getName());
         }
         return context;
     }
 
     /**
-     * Authenticate the given Cosmo credentials and register a
-     * <code>CosmoSecurityContext</code> for them. This method is used
-     * when Cosmo components need to programatically log in a user
-     * rather than relying on a security context already being in
-     * place.
+     * Authenticate the given Cosmo credentials and register a <code>CosmoSecurityContext</code> for them. This method
+     * is used when Cosmo components need to programatically log in a user rather than relying on a security context
+     * already being in place.
+     * 
      * @param username The username.
      * @param password The password.
      * @return Cosmo security context.
      * @throws CosmoSecurityException - if something is wrong this exception is thrown.
      */
-    @SuppressWarnings("unchecked")
-    public CosmoSecurityContext initiateSecurityContext(String username, String password) throws CosmoSecurityException {
+    public CosmoSecurityContext initiateSecurityContext(String username, String password)
+            throws CosmoSecurityException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("initiating security context for " + username);
+            LOG.debug("initiating security context for {}", username);
         }
-        Principal principal = testHelper.makeDummyUserPrincipal(username,
-                                                                password);
+        Principal principal = testHelper.makeDummyUserPrincipal(username, password);
         CosmoSecurityContext context = createSecurityContext(principal);
         contexts.set(context);
         return context;
     }
-    
+
     /**
-     * Initiate the current security context with the current user.
-     * This method is used when the server needs to run code as a
-     * specific user.
+     * Initiate the current security context with the current user. This method is used when the server needs to run
+     * code as a specific user.
+     * 
      * @param user The user.
      * @return Cosmo security context.
      * @throws CosmoSecurityException - if something is wrong this exception is thrown.
      */
-    @SuppressWarnings("unchecked")
     public CosmoSecurityContext initiateSecurityContext(User user) throws CosmoSecurityException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("initiating security context for " + user.getUsername());
+            LOG.debug("initiating security context for {}", user.getUsername());
         }
         Principal principal = testHelper.makeDummyUserPrincipal(user);
         CosmoSecurityContext context = createSecurityContext(principal);
         contexts.set(context);
         return context;
     }
-    
+
     // for testing
     /**
      * Initiates security context.
+     * 
      * @param context The cosmo security context.
      */
-    @SuppressWarnings("unchecked")
     public void initiateSecurityContext(CosmoSecurityContext context) {
         contexts.set(context);
     }
 
     /**
-     * Overwrite the existing <code>CosmoSecurityContext</code>. This 
-     * method is used when Cosmo components need to replace the
-     * existing security context with a different one (useful when
-     * executing multiple operations which require different security
-     * contexts).
+     * Overwrite the existing <code>CosmoSecurityContext</code>. This method is used when Cosmo components need to
+     * replace the existing security context with a different one (useful when executing multiple operations which
+     * require different security contexts).
+     * 
      * @param securityContext The security context.
      */
-    @SuppressWarnings("unchecked")
     public void refreshSecurityContext(CosmoSecurityContext securityContext) {
         contexts.set(securityContext);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("refreshing security context for " +
-                      securityContext.getName());
+            LOG.debug("refreshing security context for {}", securityContext.getName());
         }
     }
 
@@ -143,15 +135,15 @@ public class MockSecurityManager implements CosmoSecurityManager {
 
     /**
      * Sets up mock security context.
+     * 
      * @param principal The principal.
      * @return The cosmo security context.
      */
-    @SuppressWarnings("unchecked")
     public CosmoSecurityContext setUpMockSecurityContext(Principal principal) {
         CosmoSecurityContext context = createSecurityContext(principal);
         contexts.set(context);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("setting up security context for " + context.getName());
+            LOG.debug("setting up security context for {}", context.getName());
         }
         return context;
     }
@@ -159,54 +151,52 @@ public class MockSecurityManager implements CosmoSecurityManager {
     /**
      * Tears down mock security context.
      */
-    @SuppressWarnings("unchecked")
     public void tearDownMockSecurityContext() {
         CosmoSecurityContext context = (CosmoSecurityContext) contexts.get();
         if (context == null) {
             return;
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("tearing down security context for " + context.getName());
+            LOG.debug("tearing down security context for {}", context.getName());
         }
         contexts.set(null);
     }
-    
+
     /**
-     * Registers tickets.
-     * {@inheritDoc}
+     * Registers tickets. {@inheritDoc}
+     * 
      * @param tickets The tickets.
      */
     public void registerTickets(Set<Ticket> tickets) {
         // for now nothing
     }
-    
+
     /**
-     * Unregisters tickets.
-     * {@inheritDoc}
+     * Unregisters tickets. {@inheritDoc}
      */
     public void unregisterTickets() {
         // for now nothing
     }
 
     /**
-     * Checks persmission.
-     * {@inheritDoc}
-     * @param item The item.
+     * Checks persmission. {@inheritDoc}
+     * 
+     * @param item       The item.
      * @param permission The permission.
      * @throws PermissionDeniedException - if something is wrong this exception is thrown.
      */
     public void checkPermission(Item item, int permission) throws PermissionDeniedException {
-        return; //TODO does this Mock need more?
+        return; // TODO does this Mock need more?
     }
 
     /**
      * Creates security context.
+     * 
      * @param principal The principal.
      * @return The cosmo security context.
      */
     protected CosmoSecurityContext createSecurityContext(Principal principal) {
         return new MockSecurityContext(principal);
     }
-
 
 }

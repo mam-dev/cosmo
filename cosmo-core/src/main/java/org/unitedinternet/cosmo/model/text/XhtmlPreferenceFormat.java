@@ -24,24 +24,20 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoXMLStreamException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Preference;
 
 /**
- * Parses and formats preferences in XHTML with a custom microformat
- * (yet to be described.)
+ * Parses and formats preferences in XHTML with a custom microformat (yet to be described.)
  */
-public class XhtmlPreferenceFormat extends BaseXhtmlFormat
-    implements PreferenceFormat {
-    private static final Log LOG = LogFactory.getLog(XhtmlPreferenceFormat.class);
+public class XhtmlPreferenceFormat extends BaseXhtmlFormat implements PreferenceFormat {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(XhtmlPreferenceFormat.class);
 
-   
-    public Preference parse(String source, EntityFactory entityFactory)
-        throws ParseException {
+    public Preference parse(String source, EntityFactory entityFactory) throws ParseException {
         Preference pref = entityFactory.createPreference();
 
         try {
@@ -54,13 +50,13 @@ public class XhtmlPreferenceFormat extends BaseXhtmlFormat
             boolean inPreference = false;
             while (reader.hasNext()) {
                 reader.next();
-                if (! reader.isStartElement()) {
+                if (!reader.isStartElement()) {
                     continue;
                 }
 
                 if (hasClass(reader, "preference")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found preference element");
+                        LOG.debug("Found preference element");
                     }
                     inPreference = true;
                     continue;
@@ -68,7 +64,7 @@ public class XhtmlPreferenceFormat extends BaseXhtmlFormat
 
                 if (inPreference && hasClass(reader, "key")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found key element");
+                        LOG.debug("Found key element");
                     }
 
                     String key = reader.getElementText();
@@ -82,7 +78,7 @@ public class XhtmlPreferenceFormat extends BaseXhtmlFormat
 
                 if (inPreference && hasClass(reader, "value")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found value element");
+                        LOG.debug("Found value element");
                     }
 
                     String value = reader.getElementText();

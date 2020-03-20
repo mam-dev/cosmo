@@ -15,9 +15,8 @@
  */
 package org.unitedinternet.cosmo.dav.acl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Ticket;
 
@@ -27,8 +26,8 @@ import org.unitedinternet.cosmo.model.Ticket;
  * </p>
  */
 public class TicketAclEvaluator implements AclEvaluator {
-    private static final Log LOG =
-        LogFactory.getLog(TicketAclEvaluator.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(TicketAclEvaluator.class);
 
     private Ticket principal;
     private DavPrivilegeSet privileges;
@@ -57,10 +56,10 @@ public class TicketAclEvaluator implements AclEvaluator {
      * principal is granted to this resource.
      * </p>
      */
-    public boolean evaluate(Item item,
-                            DavPrivilege privilege) {
+    public boolean evaluate(Item item, DavPrivilege privilege) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluating privilege " + privilege +  " against item '" + item.getName() + "' for ticket " + principal.getKey() + " with privileges " + privileges);
+            LOG.debug("Evaluating privilege {} against item {} for ticket {} with privileges {} ", privilege,
+                    item.getName(), principal.getKey(), privileges);
         }
         if (privilege.equals(DavPrivilege.READ_CURRENT_USER_PRIVILEGE_SET)) {
             return true;

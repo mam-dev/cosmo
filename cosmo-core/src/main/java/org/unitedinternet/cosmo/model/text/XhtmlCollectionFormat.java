@@ -24,26 +24,21 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoXMLStreamException;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.EntityFactory;
 
 /**
- * Parses and formats a simple XHTML representation of a
- * collection. This representation only describes the properties of a
- * collection that are directly settable by a protocol client
- * (e.g. the display name).
+ * Parses and formats a simple XHTML representation of a collection. This representation only describes the properties
+ * of a collection that are directly settable by a protocol client (e.g. the display name).
  */
-public class XhtmlCollectionFormat extends BaseXhtmlFormat
-    implements CollectionFormat {
-    private static final Log LOG =
-        LogFactory.getLog(XhtmlCollectionFormat.class);
+public class XhtmlCollectionFormat extends BaseXhtmlFormat implements CollectionFormat {
 
-    public CollectionItem parse(String source, EntityFactory entityFactory)
-        throws ParseException {
+    private static final Logger LOG = LoggerFactory.getLogger(XhtmlCollectionFormat.class);
+
+    public CollectionItem parse(String source, EntityFactory entityFactory) throws ParseException {
         CollectionItem collection = entityFactory.createCollection();
 
         try {
@@ -56,13 +51,13 @@ public class XhtmlCollectionFormat extends BaseXhtmlFormat
             boolean inCollection = false;
             while (reader.hasNext()) {
                 reader.next();
-                if (! reader.isStartElement()) {
+                if (!reader.isStartElement()) {
                     continue;
                 }
 
                 if (hasClass(reader, "collection")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found collection element");
+                        LOG.debug("Found collection element");
                     }
                     inCollection = true;
                     continue;
@@ -70,7 +65,7 @@ public class XhtmlCollectionFormat extends BaseXhtmlFormat
 
                 if (inCollection && hasClass(reader, "name")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found name element");
+                        LOG.debug("Found name element");
                     }
 
                     String name = reader.getElementText();
@@ -84,7 +79,7 @@ public class XhtmlCollectionFormat extends BaseXhtmlFormat
 
                 if (inCollection && hasClass(reader, "uuid")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found uuid element");
+                        LOG.debug("Found uuid element");
                     }
 
                     String uuid = reader.getElementText();

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
@@ -49,7 +49,7 @@ import net.fortuna.ical4j.util.Dates;
  * expanding recurring components.
  */
 public class RecurrenceExpander {
-    private static final Log LOG = LogFactory.getLog(RecurrenceExpander.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RecurrenceExpander.class);
     private static Date maxExpandDate = null;
    
     static {

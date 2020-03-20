@@ -15,27 +15,20 @@
  */
 package org.unitedinternet.cosmo.security.mock;
 
-import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.security.BaseSecurityContext;
-
 import java.security.Principal;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.User;
+import org.unitedinternet.cosmo.security.BaseSecurityContext;
+import org.unitedinternet.cosmo.security.CosmoSecurityContext;
 
 /**
  * A mock implementation of {@link CosmoSecurityContext} that provides
  * dummy instances for use with unit mocks.
  */
 public class MockSecurityContext extends BaseSecurityContext {
-    @SuppressWarnings("unused")
-    private static final Log LOG =
-        LogFactory.getLog(MockSecurityContext.class);
-
     /**
      * Constructor.
      * @param principal The principal.

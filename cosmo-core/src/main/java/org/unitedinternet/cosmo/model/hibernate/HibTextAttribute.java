@@ -25,8 +25,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.CosmoIOException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
@@ -35,19 +33,17 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.TextAttribute;
 
-
 /**
  * Hibernate persistent TextAttribute.
  */
 @Entity
 @DiscriminatorValue("text")
 public class HibTextAttribute extends HibAttribute implements TextAttribute {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(TextAttribute.class);
+
     private static final long serialVersionUID = 2417093506524504993L;
-    
-    @Column(name="textvalue", length= 2147483647)
-    @Type(type="materialized_clob")
+
+    @Column(name = "textvalue", length = 2147483647)
+    @Type(type = "materialized_clob")
     private String value;
 
     // Constructors
@@ -60,9 +56,10 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
         setQName(qname);
         this.value = value;
     }
-    
+
     /**
      * Construct TextAttribute from Reader
+     * 
      * @param qname
      * @param reader
      */
@@ -72,50 +69,54 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
     }
 
     // Property accessors
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.Attribute#getValue()
      */
     public String getValue() {
         return this.value;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.TextAttribute#setValue(java.lang.String)
      */
     public void setValue(String value) {
         this.value = value;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.TextAttribute#getReader()
      */
     public Reader getReader() {
-        if(value!=null) {
+        if (value != null) {
             return new StringReader(value);
-        }
-        else {
+        } else {
             return null;
         }
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.unitedinternet.cosmo.model.TextAttribute#getLength()
      */
     public int getLength() {
-        if(value!=null) {
+        if (value != null) {
             return value.length();
-        }
-        else {
+        } else {
             return 0;
         }
     }
-    
+
     public void setValue(Object value) {
-        if (value != null && !(value instanceof String) &&
-            !(value instanceof Reader)) {
-            throw new ModelValidationException(
-                    "attempted to set non String or Reader value on attribute");
+        if (value != null && !(value instanceof String) && !(value instanceof Reader)) {
+            throw new ModelValidationException("attempted to set non String or Reader value on attribute");
         }
         if (value instanceof Reader) {
             setValue(read((Reader) value));
@@ -123,7 +124,7 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
             setValue((String) value);
         }
     }
-    
+
     public Attribute copy() {
         TextAttribute attr = new HibTextAttribute();
         attr.setQName(getQName().copy());
@@ -132,7 +133,7 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
     }
 
     private String read(Reader reader) {
-        if(reader==null) {
+        if (reader == null) {
             return null;
         }
         StringWriter writer = new StringWriter();
@@ -143,71 +144,68 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
         }
         return writer.toString();
     }
-    
+
     /**
-     * Convienence method for returning a String value on a TextAttribute
-     * with a given QName stored on the given item.
-     * @param item item to fetch TextAttribute from
+     * Convienence method for returning a String value on a TextAttribute with a given QName stored on the given item.
+     * 
+     * @param item  item to fetch TextAttribute from
      * @param qname QName of attribute
      * @return String value of TextAttribute
      */
     public static String getValue(Item item, QName qname) {
         TextAttribute ta = (TextAttribute) item.getAttribute(qname);
-        if(ta==null) {
+        if (ta == null) {
             return null;
-        }
-        else {
+        } else {
             return ta.getValue();
         }
     }
-    
+
     /**
-     * Convienence method for setting a String value on a TextAttribute
-     * with a given QName stored on the given item.
-     * @param item item to fetch TextAttribute from
+     * Convienence method for setting a String value on a TextAttribute with a given QName stored on the given item.
+     * 
+     * @param item  item to fetch TextAttribute from
      * @param qname QName of attribute
      * @param value value to set on TextAttribute
      */
     public static void setValue(Item item, QName qname, String value) {
         TextAttribute attr = (TextAttribute) item.getAttribute(qname);
-        if(attr==null && value!=null) {
-            attr = new HibTextAttribute(qname,value);
+        if (attr == null && value != null) {
+            attr = new HibTextAttribute(qname, value);
             item.addAttribute(attr);
             return;
         }
-        if(value==null) {
+        if (value == null) {
             item.removeAttribute(qname);
-        }
-        else {
+        } else {
             attr.setValue(value);
         }
     }
-    
+
     /**
-     * Convienence method for setting a Reader value on a TextAttribute
-     * with a given QName stored on the given item.
-     * @param item item to fetch TextAttribute from
+     * Convienence method for setting a Reader value on a TextAttribute with a given QName stored on the given item.
+     * 
+     * @param item  item to fetch TextAttribute from
      * @param qname QName of attribute
      * @param value value to set on TextAttribute
      */
     public static void setValue(Item item, QName qname, Reader value) {
         TextAttribute attr = (TextAttribute) item.getAttribute(qname);
-        if(attr==null && value!=null) {
-            attr = new HibTextAttribute(qname,value);
+        if (attr == null && value != null) {
+            attr = new HibTextAttribute(qname, value);
             item.addAttribute(attr);
             return;
         }
-        if(value==null) {
+        if (value == null) {
             item.removeAttribute(qname);
-        }
-        else {
+        } else {
             attr.setValue(value);
         }
     }
 
     @Override
     public void validate() {
-        
+
     }
 
     @Override

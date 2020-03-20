@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Buffers content into memory or a file depending on the size
@@ -36,6 +36,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BufferedContent {
    
+    private static final Logger LOG = LoggerFactory.getLogger(BufferedContent.class);
+    
     // default to 256K memory buffer
     public static final int DEFAULT_MEM_BUFFER_SIZE = 1024*256;
     
@@ -45,7 +47,6 @@ public class BufferedContent {
     private File file = null;
     private byte[] buffer = null;
     
-    private static final Log LOG = LogFactory.getLog(BufferedContent.class);
     
     /**
      * @param is InputStream to buffer.  The data will be buffered into memory
@@ -132,8 +133,7 @@ public class BufferedContent {
                 file.delete();
             }
         } catch(Exception e) {
-            LOG.error("error deleting temp file: "
-                    + file.getAbsolutePath(), e);
+            LOG.error("error deleting temp file: {}", file.getAbsolutePath(), e);
         }
     }
 }

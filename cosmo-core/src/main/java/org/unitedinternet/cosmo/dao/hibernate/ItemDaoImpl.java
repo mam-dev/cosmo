@@ -25,8 +25,6 @@ import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +60,6 @@ import org.unitedinternet.cosmo.util.VersionFourGenerator;
  */
 @Repository
 public abstract class ItemDaoImpl implements ItemDao {
-
-    private static final Log LOG = LogFactory.getLog(ItemDaoImpl.class);
 
     @Autowired
     private VersionFourGenerator idGenerator = null;
@@ -374,7 +370,6 @@ public abstract class ItemDaoImpl implements ItemDao {
 
     @Override
     public void initializeItem(Item item) {
-        LOG.info("initialize Item : " + item.getUid());
         // Trigger loading by calling size on lazy collections
         item.getAttributes().size();
         item.getStamps().size();

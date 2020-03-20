@@ -28,12 +28,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.WebdavResponseImpl;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
@@ -46,12 +46,11 @@ import org.w3c.dom.Element;
  * Extends {@link org.apache.jackrabbit.webdav.WebdavResponseImpl} and
  * implements methods for the DAV ticket extension.
  */
-public class StandardDavResponse extends WebdavResponseImpl
-    implements DavResponse, DavConstants, TicketConstants {
-    private static final Log LOG =
-        LogFactory.getLog(StandardDavResponse.class);
-    private static final XMLOutputFactory XML_OUTPUT_FACTORY =
-        XMLOutputFactory.newInstance();
+public class StandardDavResponse extends WebdavResponseImpl implements DavResponse, DavConstants, TicketConstants {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(StandardDavResponse.class);
+    
+    private static final XMLOutputFactory XML_OUTPUT_FACTORY =  XMLOutputFactory.newInstance();
 
     private HttpServletResponse originalHttpServletResponse;
 
@@ -235,7 +234,7 @@ public class StandardDavResponse extends WebdavResponseImpl
             sb.append("Status: ").append(status).append("\n");
             sb.append(XmlSerializer.serialize(serializable));
             sb.append("\n------------------------ End dump of response -------------------");
-            LOG.trace(sb);
+            LOG.trace(sb.toString());
         }
     }
 

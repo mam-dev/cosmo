@@ -18,15 +18,13 @@ package org.unitedinternet.cosmo.dav.report.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.DavServletResponse;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
-
-import org.unitedinternet.cosmo.dav.DavCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
+import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
 import org.w3c.dom.Document;
@@ -43,7 +41,8 @@ import org.w3c.dom.Element;
  *
  */
 public class MockReport extends ReportBase { 
-    private static final Log LOG = LogFactory.getLog(MockReport.class);
+    
+    private static final Logger LOG = LoggerFactory.getLogger(MockReport.class);
 
     // keep track of which resource were passed to doQuery()
     public List<String> calls = new ArrayList<String>();
@@ -77,7 +76,7 @@ public class MockReport extends ReportBase {
      */
     protected void doQuerySelf(WebDavResource resource) throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("querying " + resource.getResourcePath());
+            LOG.debug("querying {}", resource.getResourcePath());
         }
         calls.add(resource.getDisplayName());
     }
@@ -89,7 +88,7 @@ public class MockReport extends ReportBase {
      */
      protected void doQueryChildren(DavCollection collection) throws CosmoDavException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("querying children of " + collection.getResourcePath());
+            LOG.debug("querying children of {}", collection.getResourcePath());
         }
     }
 

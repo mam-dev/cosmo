@@ -26,8 +26,6 @@ import java.util.Set;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.Status;
 import org.apache.jackrabbit.webdav.io.InputContext;
@@ -36,13 +34,14 @@ import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.xml.Namespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.dao.ItemNotFoundException;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavCollection;
-import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
 import org.unitedinternet.cosmo.dav.DavResourceLocator;
 import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
@@ -52,13 +51,13 @@ import org.unitedinternet.cosmo.dav.LockedException;
 import org.unitedinternet.cosmo.dav.NotFoundException;
 import org.unitedinternet.cosmo.dav.ProtectedPropertyModificationException;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
+import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavAce;
 import org.unitedinternet.cosmo.dav.acl.DavAcl;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.property.Owner;
 import org.unitedinternet.cosmo.dav.acl.property.PrincipalCollectionSet;
 import org.unitedinternet.cosmo.dav.property.CreationDate;
-import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.property.DisplayName;
 import org.unitedinternet.cosmo.dav.property.Etag;
 import org.unitedinternet.cosmo.dav.property.IsCollection;
@@ -66,6 +65,7 @@ import org.unitedinternet.cosmo.dav.property.LastModified;
 import org.unitedinternet.cosmo.dav.property.ResourceType;
 import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 import org.unitedinternet.cosmo.dav.property.Uuid;
+import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.dav.ticket.TicketConstants;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.Attribute;
@@ -103,9 +103,9 @@ import org.w3c.dom.Element;
  * </p>
  * @see Item
  */
-public abstract class DavItemResourceBase extends DavResourceBase implements
-    DavItemResource, TicketConstants {
-    private static final Log log = LogFactory.getLog(DavItemResourceBase.class);
+public abstract class DavItemResourceBase extends DavResourceBase implements DavItemResource, TicketConstants {
+   
+    private static final Logger LOG = LoggerFactory.getLogger(DavItemResourceBase.class);
 
     private Item item;
     private DavCollection parent;
@@ -188,9 +188,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             throw new NotFoundException();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("moving resource " + getResourcePath() + " to "
-                    + destination.getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Moving resource {} to {}", getResourcePath(), destination.getResourcePath());
         }
 
         if (destination.exists()) {
@@ -243,9 +242,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
             throw new NotFoundException();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("copying resource " + getResourcePath() + " to "
-                    + destination.getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Copying resource {} to {}", getResourcePath(), destination.getResourcePath());
         }
 
         try {
@@ -310,8 +308,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     }
 
     public void saveTicket(Ticket ticket) throws CosmoDavException {
-        if (log.isDebugEnabled())
-            log.debug("adding ticket for " + item.getName());
+        if (LOG.isDebugEnabled())
+            LOG.debug("adding ticket for " + item.getName());
 
         // automatically add freebusy privilege along with read
         if (ticket.getPrivileges().contains(Ticket.PRIVILEGE_READ))
@@ -321,8 +319,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
     }
 
     public void removeTicket(Ticket ticket) throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("removing ticket " + ticket.getKey() + " on "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("removing ticket " + ticket.getKey() + " on "
                     + item.getName());
         }
 
@@ -367,8 +365,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
      */
     protected void populateItem(InputContext inputContext)
             throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("populating item for " + getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("populating item for " + getResourcePath());
         }
 
         if (item.getUid() == null) {
@@ -408,8 +406,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
      * property set.
      */
     protected MultiStatusResponse populateAttributes(DavPropertySet properties) {
-        if (log.isDebugEnabled()) {
-            log.debug("populating attributes for " + getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Populating attributes for {}", getResourcePath());
         }
 
         MultiStatusResponse msr = new MultiStatusResponse(getHref(), null);
@@ -508,8 +506,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
                 parentOwner.setInherited(l.getHref(false));
                 acl.getAces().add(parentOwner);
             } catch (CosmoDavException e) {
-                log.warn("Could not create principal locator for parent collection owner '"
-                        + parent.getOwner().getUsername() + "' - skipping ACE");
+                LOG.warn("Could not create principal locator for parent collection owner: '{}' - skipping ACE",
+                        parent.getOwner().getUsername());
             }
         }
 
@@ -677,8 +675,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
     protected void setDeadProperty(WebDavProperty property)
             throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("setting dead property " + property.getName() + " on "
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("setting dead property " + property.getName() + " on "
                     + getResourcePath() + " to " + property.getValue());
         }
 
@@ -706,8 +704,8 @@ public abstract class DavItemResourceBase extends DavResourceBase implements
 
     protected void removeDeadProperty(DavPropertyName name)
             throws CosmoDavException {
-        if (log.isDebugEnabled()) {
-            log.debug("removing property " + name + " on " + getResourcePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("removing property " + name + " on " + getResourcePath());
         }
 
         item.removeAttribute(propNameToQName(name));

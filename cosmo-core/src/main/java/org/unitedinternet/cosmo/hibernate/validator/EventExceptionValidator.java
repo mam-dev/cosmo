@@ -20,79 +20,79 @@ import java.io.IOException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.validate.ValidationException;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.RecurrenceId;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Check if a Calendar object contains a valid VEvent exception.
+ * 
  * @author randy
  *
  */
 public class EventExceptionValidator implements ConstraintValidator<EventException, Calendar> {
 
-    private static final Log LOG = LogFactory.getLog(EventExceptionValidator.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(EventExceptionValidator.class);
+
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
         Calendar calendar = null;
         ComponentList<CalendarComponent> comps = null;
         try {
             calendar = (Calendar) value;
-            
+
             // validate entire icalendar object
             if (calendar != null) {
                 calendar.validate(true);
 
                 // additional check to prevent bad .ics
                 CalendarUtils.parseCalendar(calendar.toString());
-                
-                // make sure we have a VEVENT with a recurrenceid
+
+                // make sure we have a VEVENT with a recurrenceId
                 comps = calendar.getComponents();
-                if(comps==null) {
-                    LOG.warn("error validating event exception: " + calendar.toString());
+                if (comps == null) {
+                    LOG.warn("Error validating event exception: {}", calendar.toString());
                     return false;
                 }
             }
             if (comps != null) {
                 comps = comps.getComponents(Component.VEVENT);
             }
-            if(comps==null || comps.size()==0) {
-                LOG.warn("error validating event exception: " + calendar.toString());
+            if (comps == null || comps.size() == 0) {
+                LOG.warn("Error validating event exception: {}", calendar.toString());
                 return false;
             }
-            
+
             VEvent event = (VEvent) comps.get(0);
-            if(event ==null) {
-                LOG.warn("error validating event exception: " + calendar.toString());
+            if (event == null) {
+                LOG.warn("Error validating event exception: {}", calendar.toString());
                 return false;
             }
-            
+
             RecurrenceId recurrenceId = event.getRecurrenceId();
-            
-            if(recurrenceId==null || recurrenceId.getValue()==null ||
-                    "".equals(recurrenceId.getValue())) {
-                LOG.warn("error validating event exception: " + calendar.toString());
+
+            if (recurrenceId == null || recurrenceId.getValue() == null || "".equals(recurrenceId.getValue())) {
+                LOG.warn("error validating event exception: {}", calendar.toString());
                 return false;
             }
-                
+
             return true;
-        } catch(ValidationException ve) {
-            LOG.warn("event validation error", ve);
-            LOG.warn("error validating event: " + calendar.toString() );
-        } catch(ParserException e) {
-            LOG.warn("parse error", e);
-            LOG.warn("error parsing event: " + calendar.toString() );
-        } catch (IOException | RuntimeException e ) {
-            LOG.warn(e);
+        } catch (ValidationException ve) {
+            LOG.warn("Event validation error", ve);
+            LOG.warn("Error validating event: {}", calendar.toString());
+        } catch (ParserException e) {
+            LOG.warn("Parse error", e);
+            LOG.warn("Error parsing event: {}", calendar.toString());
+        } catch (IOException | RuntimeException e) {
+            LOG.warn("", e);
         }
         return false;
     }

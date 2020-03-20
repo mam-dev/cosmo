@@ -15,8 +15,6 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
@@ -28,10 +26,7 @@ import org.unitedinternet.cosmo.dav.impl.mock.MockCalendarResource;
  * Test case for <code>DavCalendarResource</code>.
  */
 public class DavCalendarResourceTest extends BaseDavTestCase {
-    @SuppressWarnings("unused")
-    private static final Log LOG =
-        LogFactory.getLog(DavCalendarResourceTest.class);
-
+    
     /**
      * Tests CaldavReportTypes.
      * @throws Exception - if something is wrong this exception is thrown.

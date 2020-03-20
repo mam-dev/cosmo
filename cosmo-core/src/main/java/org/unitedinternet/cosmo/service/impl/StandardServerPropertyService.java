@@ -15,8 +15,6 @@
  */
 package org.unitedinternet.cosmo.service.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.unitedinternet.cosmo.dao.ServerPropertyDao;
 import org.unitedinternet.cosmo.service.ServerPropertyService;
 
@@ -24,9 +22,7 @@ import org.unitedinternet.cosmo.service.ServerPropertyService;
  * Standard implementation of {@link ServerPropertyService}.
  */
 public class StandardServerPropertyService implements ServerPropertyService {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(StandardServerPropertyService.class);
-
+   
     private ServerPropertyDao serverPropertyDao = null;
 
     /*

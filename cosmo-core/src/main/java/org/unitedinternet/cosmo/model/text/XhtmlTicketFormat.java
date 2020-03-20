@@ -24,26 +24,21 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.CosmoXMLStreamException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.model.TicketType;
 
 /**
- * Parses and formats tickets in XHTML with a custom microformat
- * (yet to be described.)
+ * Parses and formats tickets in XHTML with a custom microformat (yet to be described.)
  */
-public class XhtmlTicketFormat extends BaseXhtmlFormat
-    implements TicketFormat {
-    private static final Log LOG =
-        LogFactory.getLog(XhtmlTicketFormat.class);
+public class XhtmlTicketFormat extends BaseXhtmlFormat implements TicketFormat {
 
-   
-    public Ticket parse(String source, EntityFactory entityFactory)
-        throws ParseException {
+    private static final Logger LOG = LoggerFactory.getLogger(XhtmlTicketFormat.class);
+
+    public Ticket parse(String source, EntityFactory entityFactory) throws ParseException {
 
         String key = null;
         TicketType type = null;
@@ -58,13 +53,13 @@ public class XhtmlTicketFormat extends BaseXhtmlFormat
             boolean inTicket = false;
             while (reader.hasNext()) {
                 reader.next();
-                if (! reader.isStartElement()) {
+                if (!reader.isStartElement()) {
                     continue;
                 }
 
                 if (hasClass(reader, "ticket")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found ticket element");
+                        LOG.debug("Found ticket element");
                     }
                     inTicket = true;
                     continue;
@@ -72,7 +67,7 @@ public class XhtmlTicketFormat extends BaseXhtmlFormat
 
                 if (inTicket && hasClass(reader, "key")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found key element");
+                        LOG.debug("Found key element");
                     }
 
                     key = reader.getElementText();
@@ -85,7 +80,7 @@ public class XhtmlTicketFormat extends BaseXhtmlFormat
 
                 if (inTicket && hasClass(reader, "type")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found type element");
+                        LOG.debug("Found type element");
                     }
 
                     String typeId = reader.getAttributeValue(null, "title");
@@ -93,22 +88,21 @@ public class XhtmlTicketFormat extends BaseXhtmlFormat
                         handleParseException("Ticket type title must not be empty", reader);
                     }
                     type = TicketType.createInstance(typeId);
-                    
+
                     continue;
                 }
                 if (inTicket && hasClass(reader, "timeout")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("found timeout element");
+                        LOG.debug("Found timeout element");
                     }
 
                     String timeoutString = reader.getAttributeValue(null, "title");
                     if (StringUtils.isBlank(timeoutString)) {
                         timeout = null;
-                    }
-                    else {
+                    } else {
                         timeout = Integer.getInteger(timeoutString);
                     }
-                    
+
                     continue;
                 }
             }
@@ -119,13 +113,12 @@ public class XhtmlTicketFormat extends BaseXhtmlFormat
         } catch (XMLStreamException e) {
             handleXmlException("Error reading XML", e);
         }
-        
+
         Ticket ticket = entityFactory.createTicket(type);
         ticket.setKey(key);
         if (timeout == null) {
             ticket.setTimeout(Ticket.TIMEOUT_INFINITE);
-        }
-        else {
+        } else {
             ticket.setTimeout(timeout);
         }
 

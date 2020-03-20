@@ -15,23 +15,18 @@
  */
 package org.unitedinternet.cosmo.dav.acl.report;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.jackrabbit.webdav.DavServletResponse;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.apache.jackrabbit.webdav.version.report.ReportType;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;
-
 import org.unitedinternet.cosmo.dav.BadRequestException;
-import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
+import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.report.ReportBase;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -54,9 +49,7 @@ import org.w3c.dom.Element;
  */
 public class PrincipalSearchPropertySetReport extends ReportBase
     implements AclConstants {
-    @SuppressWarnings("unused")
-    private static final Log LOG = LogFactory.getLog(PrincipalSearchPropertySetReport.class);
-
+   
     public static final ReportType REPORT_TYPE_PRINCIPAL_SEARCH_PROPERTY_SET =
         ReportType.register("principal-search-property-set", NAMESPACE,
                             PrincipalSearchPropertySetReport.class);
