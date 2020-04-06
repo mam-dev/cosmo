@@ -91,14 +91,14 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
         return originalHttpServletResponse.getContentType();
     }
 
-
+    @Deprecated
     public String encodeUrl(String url) {
         return originalHttpServletResponse.encodeUrl(url);
     }
 
 
     public String encodeRedirectUrl(String url) {
-        return originalHttpServletResponse.encodeRedirectUrl(url);
+        return originalHttpServletResponse.encodeRedirectURL(url);
     }
 
 
@@ -195,7 +195,7 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
         originalHttpServletResponse.flushBuffer();
     }
 
-
+    @Deprecated
     public void setStatus(int sc, String sm) {
         originalHttpServletResponse.setStatus(sc, sm);
     }
@@ -264,19 +264,15 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
     // DavResponse methods
 
     /**
-     * Send the <code>ticketdiscovery</code> response to a
-     * <code>MKTICKET</code> request.
+     * Send the <code>ticketdiscovery</code> response to a <code>MKTICKET</code> request.
      *
      * @param resource the resource on which the ticket was created
      * @param ticketId the id of the newly created ticket
      */
-    public void sendMkTicketResponse(DavItemResource resource,
-                                     String ticketId)
-        throws CosmoDavException, IOException {
+    public void sendMkTicketResponse(DavItemResource resource, String ticketId) throws CosmoDavException, IOException {
         setHeader(HEADER_TICKET, ticketId);
 
-        TicketDiscovery ticketdiscovery = (TicketDiscovery)
-            resource.getProperties().get(TICKETDISCOVERY);
+        TicketDiscovery ticketdiscovery = (TicketDiscovery) resource.getProperties().get(TICKETDISCOVERY);
         MkTicketInfo info = new MkTicketInfo(ticketdiscovery);
 
         sendXmlResponse(info, SC_OK);
@@ -290,9 +286,10 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
         }
 
         public Element toXml(Document document) {
-            Element prop =
-                DomUtil.createElement(document, XML_PROP, NAMESPACE);
-            prop.appendChild(td.toXml(document));
+            Element prop = DomUtil.createElement(document, XML_PROP, NAMESPACE);
+            if (td != null) {
+                prop.appendChild(td.toXml(document));
+            }
             return prop;
         }
     }

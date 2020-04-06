@@ -174,7 +174,8 @@ public class StandardDavRequest extends WebdavRequestImpl implements DavRequest,
     public boolean isRequestedSessionIdFromURL() {
         return originalHttpServletRequest.isRequestedSessionIdFromURL();
     }
-
+    
+    @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return originalHttpServletRequest.isRequestedSessionIdFromUrl();
     }
