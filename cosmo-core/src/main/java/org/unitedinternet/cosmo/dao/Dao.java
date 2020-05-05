@@ -15,9 +15,6 @@
  */
 package org.unitedinternet.cosmo.dao;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 /**
  * Data Access Object (DAO) interface.
  */

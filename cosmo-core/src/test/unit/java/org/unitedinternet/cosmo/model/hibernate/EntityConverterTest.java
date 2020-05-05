@@ -24,6 +24,7 @@ import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
@@ -38,7 +39,6 @@ import net.fortuna.ical4j.model.property.Status;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.unitedinternet.cosmo.calendar.ICalDate;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
@@ -408,7 +408,10 @@ public class EntityConverterTest {
         eventStamp.setStartDate(new DateTime("20070212T074500"));
         eventStamp.setDuration(new Dur("PT1H"));
         eventStamp.setLocation("master location");
-        DateList dates = new ICalDate(";VALUE=DATE-TIME:20070212T074500,20070213T074500").getDateList();
+        DateList dates = new DateList();
+        dates.add(new Date("20070212T074500"));
+        dates.add(new Date("20070213T074500"));
+        
         eventStamp.setRecurrenceDates(dates);
         master.addStamp(eventStamp);
         
@@ -471,7 +474,9 @@ public class EntityConverterTest {
         eventStamp.createCalendar();
         eventStamp.setStartDate(new DateTime("20070212T074500"));
         eventStamp.setAnyTime(true);
-        DateList dates = new ICalDate(";VALUE=DATE-TIME:20070212T074500,20070213T074500").getDateList();
+        DateList dates = new DateList();
+        dates.add(new Date("20070212T074500"));
+        dates.add(new Date("20070213T074500"));
         eventStamp.setRecurrenceDates(dates);
         master.addStamp(eventStamp);
         
