@@ -105,12 +105,6 @@
 				<artifactId>mariaDB4j-app</artifactId>
 				<scope>test</scope>				
 		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-			<scope>test</scope>			
-		</dependency>
 
 		<!-- abdera is the ATOM implementation. This library is still used for 
 			parsing eTags. -->
@@ -146,20 +140,6 @@
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<!-- used in TimeZoneUtils to provide VTimezone around 10MB jar, check 
-			if we really need it -->
-		<dependency>
-			<groupId>com.ibm.icu</groupId>
-			<artifactId>icu4j</artifactId>
-		</dependency>
-
-		<!-- servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -228,12 +208,7 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
-		<!-- aopalliance used internally by spring aop -->
-		<dependency>
-			<groupId>aopalliance</groupId>
-			<artifactId>aopalliance</artifactId>
-		</dependency>
-
+		
 		<!-- Hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -241,17 +216,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>javax.el-api</artifactId>
-		</dependency>		
 		
 		<dependency>
 				<groupId>org.apache.httpcomponents</groupId>

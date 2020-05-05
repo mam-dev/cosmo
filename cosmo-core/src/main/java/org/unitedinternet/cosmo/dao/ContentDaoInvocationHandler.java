@@ -2,7 +2,6 @@ package org.unitedinternet.cosmo.dao;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +46,8 @@ public class ContentDaoInvocationHandler implements InvocationHandler, Applicati
             return method.invoke(dao, args);
         } catch (Exception e) {
             Throwable unwrapped = unwrap(e);
-            LOG.error("Exception caught when calling method " + method.getName() + " with args: "
-                    + Arrays.toString(args) + " and path: " + path, unwrapped);
+            LOG.error("Exc {} with msg '{}' caught when calling method {} with args length {} at path: {}",
+                    unwrapped.getClass().getSimpleName(), unwrapped.getMessage(), method.getName(), args.length, path);
             throw unwrapped;
         }
     }

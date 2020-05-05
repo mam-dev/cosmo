@@ -15,27 +15,20 @@
  */
 package org.unitedinternet.cosmo.service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 /**
- * Service interface. Services provide facades that encapsulate
- * business logic and interact with data access objects (DAOs) to
- * execute business operations.
+ * Service interface. Services provide facades that encapsulate business logic and interact with data access objects
+ * (DAOs) to execute business operations.
  */
 public interface Service {
 
     /**
-     * Initializes the service, sanity checking required properties
-     * and defaulting optional properties.
+     * Initializes the service, sanity checking required properties and defaulting optional properties.
      */
-	@PostConstruct
     public void init();
 
     /**
-     * Readies the service for garbage collection, shutting down any
-     * resources used.
+     * Readies the service for garbage collection, shutting down any resources used.
      */
-	@PreDestroy
+
     public void destroy();
 }
