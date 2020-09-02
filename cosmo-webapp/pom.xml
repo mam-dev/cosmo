@@ -5,19 +5,23 @@
 	<parent>
 		<artifactId>cosmo-multimodule</artifactId>
 		<groupId>net.oneandone.cosmo</groupId>
-		<version>3.7.1</version>
+		<version>3.7.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>cosmo-webapp</artifactId>
 	<packaging>war</packaging>
 	<name>cosmo-webapp</name>
-
+	
+	<properties>
+		<mariadb4j.version>2.2.2</mariadb4j.version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
 			<artifactId>cosmo-core</artifactId>
-			<version>3.7.2</version>
+			<version>3.7.4</version>
 		</dependency>
 
 		<dependency>
