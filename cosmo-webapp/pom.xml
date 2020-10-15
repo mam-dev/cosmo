@@ -13,10 +13,6 @@
 	<packaging>war</packaging>
 	<name>cosmo-webapp</name>
 	
-	<properties>
-		<mariadb4j.version>2.2.2</mariadb4j.version>
-	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
