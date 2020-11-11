@@ -102,6 +102,8 @@ public class CalendarDaoImpl implements CalendarDao {
                     collection.getChildren();
                     for (ICalendarItem item : toReturn) {
                         item.getParents();
+                        item.getOwner().toString();
+                        item.getParent().getOwner().toString();
                         item.getStamps().size();
                         if (item instanceof HibNoteItem) {
                             HibNoteItem note = (HibNoteItem) item;
