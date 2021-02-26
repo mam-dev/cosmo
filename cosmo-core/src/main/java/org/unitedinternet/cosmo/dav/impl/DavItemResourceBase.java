@@ -106,6 +106,7 @@ import org.w3c.dom.Element;
 public abstract class DavItemResourceBase extends DavResourceBase implements DavItemResource, TicketConstants {
    
     private static final Logger LOG = LoggerFactory.getLogger(DavItemResourceBase.class);
+    private static final String DISPLAY_NAME_DEFAULT = "";
 
     private Item item;
     private DavCollection parent;
@@ -376,13 +377,14 @@ public abstract class DavItemResourceBase extends DavResourceBase implements Dav
                 throw new CosmoDavException(e);
             }
             if (item.getDisplayName() == null){
-                item.setDisplayName(item.getName());
+                item.setDisplayName(DISPLAY_NAME_DEFAULT);
             }
         }
 
-        // if we don't know specifically who the user is, then the
-        // owner of the resource becomes the person who issued the
-        // ticket
+        /*
+         * If we don't know specifically who the user is, then the owner of the resource becomes the person who issued
+         * the ticket
+         */
 
         // Only initialize owner once
         if (item.getOwner() == null) {
@@ -443,9 +445,10 @@ public abstract class DavItemResourceBase extends DavResourceBase implements Dav
             return msr;
         }
 
-        // replace the other response with a new one, since we have to
-        // change the response code for each of the properties that would
-        // have been set successfully
+        /*
+         * Replace the other response with a new one, since we have to change the response code for each of the
+         * properties that would have been set successfully
+         */
         msr = new MultiStatusResponse(getHref(), error.getMessage());
         for (DavPropertyName n : df)
             msr.add(n, 424);
