@@ -71,6 +71,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
+import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.DataSizeException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
@@ -377,7 +378,11 @@ public abstract class DavItemResourceBase extends DavResourceBase implements Dav
                 throw new CosmoDavException(e);
             }
             if (item.getDisplayName() == null){
-                item.setDisplayName(DISPLAY_NAME_DEFAULT);
+                if (item instanceof ContentItem) {
+                    item.setDisplayName(DISPLAY_NAME_DEFAULT);
+                } else {
+                    item.setDisplayName(item.getName());
+                }
             }
         }
 
