@@ -15,19 +15,26 @@
  */
 package org.unitedinternet.cosmo.model.mock;
 
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
+import org.unitedinternet.cosmo.model.BaseEventStamp;
+import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VAlarm;
@@ -51,12 +58,6 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Repeat;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Trigger;
-
-import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
-import org.unitedinternet.cosmo.model.BaseEventStamp;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
 
 
 /**
@@ -222,7 +223,7 @@ public abstract class MockBaseEventStamp extends MockStamp
         // if no DTEND, then calculate endDate from DURATION
         if (dtEnd == null) {
             Date startDate = getStartDate();
-            Dur duration = getDuration();
+            TemporalAmount duration = getDuration();
             
             // if no DURATION, then there is no end time
             if (duration == null) {
@@ -237,7 +238,7 @@ public abstract class MockBaseEventStamp extends MockStamp
                 endDate = new Date(startDate);
             }
             
-            endDate.setTime(duration.getTime(startDate).getTime());
+            endDate.setTime(new TemporalAmountAdapter(duration).getTime(startDate).getTime());
             return endDate;
         }
             
@@ -335,7 +336,7 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Gets duration.
      * @return The duration.
      */
-    public Dur getDuration() {
+    public TemporalAmount getDuration() {
         return ICalendarUtils.getDuration(getEvent());
     }
 
@@ -346,7 +347,7 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Sets duration.
      * @param dur The duration.
      */
-    public void setDuration(Dur dur) {
+    public void setDuration(TemporalAmount dur) {
         ICalendarUtils.setDuration(getEvent(), dur);
     }
 
@@ -736,7 +737,7 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Gets display alarm duration.
      * @return The duration.
      */
-    public Dur getDisplayAlarmDuration() {
+    public TemporalAmount getDisplayAlarmDuration() {
         VAlarm alarm = getDisplayAlarm();
         if (alarm == null) {
             return null;
@@ -758,7 +759,7 @@ public abstract class MockBaseEventStamp extends MockStamp
      * Sets display alarm duration.
      * @param dur - The duration.
      */
-    public void setDisplayAlarmDuration(Dur dur) {
+    public void setDisplayAlarmDuration(TemporalAmount dur) {
         VAlarm alarm = getDisplayAlarm();
         if (alarm==null) {
             return;

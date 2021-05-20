@@ -16,18 +16,23 @@
 package org.unitedinternet.cosmo.calendar;
 
 import java.text.ParseException;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.unitedinternet.cosmo.CosmoConstants;
+import org.unitedinternet.cosmo.CosmoParseException;
+import org.unitedinternet.cosmo.calendar.util.Dates;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VAlarm;
@@ -53,10 +58,6 @@ import net.fortuna.ical4j.model.property.Trigger;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.model.property.XProperty;
-
-import org.unitedinternet.cosmo.CosmoConstants;
-import org.unitedinternet.cosmo.CosmoParseException;
-import org.unitedinternet.cosmo.calendar.util.Dates;
 
 /**
  * Contains utility methods for creating/updating net.fortuna.ical4j
@@ -298,7 +299,7 @@ public class ICalendarUtils {
      * @param event The event.
      * @return duration for event
      */
-    public static Dur getDuration(VEvent event) {
+    public static TemporalAmount getDuration(VEvent event) {
         Duration duration = (Duration)
             event.getProperties().getProperty(Property.DURATION);
         if (duration != null) {
@@ -320,7 +321,7 @@ public class ICalendarUtils {
      * @param event The event.
      * @param dur The duration.
      */
-    public static void setDuration(VEvent event, Dur dur) {
+    public static void setDuration(VEvent event, TemporalAmount dur) {
         Duration duration = (Duration)
             event.getProperties().getProperty(Property.DURATION);
         
@@ -619,7 +620,8 @@ public class ICalendarUtils {
         
         Date nextTriggerDate = initialTriggerDate;
         for(int i=0;i<repeat.getCount();i++) {
-            nextTriggerDate = Dates.getInstance(dur.getDuration().getTime(nextTriggerDate), nextTriggerDate);
+            TemporalAmountAdapter taa = new TemporalAmountAdapter(dur.getDuration());
+            nextTriggerDate = Dates.getInstance(taa.getTime(nextTriggerDate), nextTriggerDate);
             dates.add(nextTriggerDate);
         }
         
@@ -660,7 +662,8 @@ public class ICalendarUtils {
             }
             
             // relative to start
-            return Dates.getInstance(trigger.getDuration().getTime(start.getDate()), start.getDate());
+            TemporalAmountAdapter taa = new TemporalAmountAdapter(trigger.getDuration());
+            return Dates.getInstance(taa.getTime(start.getDate()), start.getDate());
         } else {
             // relative to end
             Date endDate = null;
@@ -674,7 +677,8 @@ public class ICalendarUtils {
             if(endDate==null) {
                 Duration dur = (Duration) parent.getProperty(Property.DURATION);
                 if(dur!=null && start!=null) {
-                    endDate= Dates.getInstance(dur.getDuration().getTime(start.getDate()), start.getDate());
+                    TemporalAmountAdapter taa = new TemporalAmountAdapter(dur.getDuration());
+                    endDate= Dates.getInstance(taa.getTime(start.getDate()), start.getDate());
                 }
             }
             
@@ -689,8 +693,8 @@ public class ICalendarUtils {
             if(endDate==null) {
                 return null;
             }
-            
-            return Dates.getInstance(trigger.getDuration().getTime(endDate), endDate);
+            TemporalAmountAdapter taa = new TemporalAmountAdapter(trigger.getDuration());
+            return Dates.getInstance(taa.getTime(endDate), endDate);
         }
     }
     

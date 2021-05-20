@@ -21,29 +21,12 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.security.Principal;
+import java.time.Duration;
 import java.util.HashSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.model.component.VAlarm;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.parameter.XParameter;
-import net.fortuna.ical4j.model.property.Action;
-import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Uid;
-import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.model.property.XProperty;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
@@ -61,6 +44,23 @@ import org.unitedinternet.cosmo.security.mock.MockAnonymousPrincipal;
 import org.unitedinternet.cosmo.security.mock.MockUserPrincipal;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.component.VAlarm;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.parameter.XParameter;
+import net.fortuna.ical4j.model.property.Action;
+import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 
 /**
  */
@@ -143,9 +143,8 @@ public class TestHelper {
         start.set(java.util.Calendar.MINUTE, 30);
 
         // 1 hour duration
-        Dur duration = new Dur(0, 1, 0, 0);
  
-        VEvent event = new VEvent(new Date(start.getTime()), duration, summary);
+        VEvent event = new VEvent(new Date(start.getTime()), Duration.ofHours(1), summary);
         event.getProperties().add(new Uid(serial));
  
         // add timezone information
@@ -158,8 +157,7 @@ public class TestHelper {
 
         // add an alarm for 5 minutes before the event with an xparam
         // on the description
-        Dur trigger = new Dur(0, 0, -5, 0);
-        VAlarm alarm = new VAlarm(trigger);
+        VAlarm alarm = new VAlarm(Duration.ofMinutes(-5));
         alarm.getProperties().add(Action.DISPLAY);
         Description description = new Description("Meeting at 9:30am");
         XParameter xparam = new XParameter("X-COSMO-TEST-PARAM", "deadbeef");

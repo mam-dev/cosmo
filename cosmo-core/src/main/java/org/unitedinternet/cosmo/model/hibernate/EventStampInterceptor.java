@@ -16,10 +16,7 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.Serializable;
-
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
+import java.time.temporal.TemporalAmount;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -27,6 +24,10 @@ import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.calendar.util.Dates;
 import org.unitedinternet.cosmo.model.EventStamp;
+
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 
 /**
  * Hibernate Interceptor that updates BaseEventStamp timeRangeIndexes.
@@ -107,9 +108,9 @@ public class EventStampInterceptor extends EmptyInterceptor {
             
             // Make sure master EventStamp exists
             if(masterStamp!=null) {
-                Dur duration = masterStamp.getDuration();
+                TemporalAmount duration = masterStamp.getDuration();
                 if(duration!=null) {
-                    endDate = Dates.getInstance(duration.getTime(startDate), startDate);
+                    endDate = Dates.getInstance(new TemporalAmountAdapter(duration).getTime(startDate), startDate);
                 }
             }
         }

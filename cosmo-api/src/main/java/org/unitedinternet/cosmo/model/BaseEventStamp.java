@@ -15,13 +15,13 @@
  */
 package org.unitedinternet.cosmo.model;
 
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -109,14 +109,14 @@ public interface BaseEventStamp extends Stamp {
      * iCalendar DURATION property value or the the iCalendar DTEND -
      * DTSTART.
      */
-    public Dur getDuration();
+    public TemporalAmount getDuration();
 
     /** 
      * Sets the iCalendar DURATION property of the event.
      *
      * @param dur a <code>Dur</code>
      */
-    public void setDuration(Dur dur);
+    public void setDuration(TemporalAmount dur);
 
     /**
      * Returns a copy of the the iCalendar LOCATION property value of
@@ -233,13 +233,13 @@ public interface BaseEventStamp extends Stamp {
      * Return the duration of the first display alarm on the event
      * @return duration of the first display alarm
      */
-    public Dur getDisplayAlarmDuration();
+    public TemporalAmount getDisplayAlarmDuration();
 
     /**
      * Set the durcation of the first display alarm on the event
      * @param dur duration
      */
-    public void setDisplayAlarmDuration(Dur dur);
+    public void setDisplayAlarmDuration(TemporalAmount dur);
 
     /**
      * Return the repeat count on the first display alarm on the event

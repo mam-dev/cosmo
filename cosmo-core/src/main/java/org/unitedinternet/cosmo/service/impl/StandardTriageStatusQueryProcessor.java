@@ -15,6 +15,8 @@
  */
 package org.unitedinternet.cosmo.service.impl;
 
+import java.time.Duration;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,8 +56,9 @@ import org.unitedinternet.cosmo.service.triage.TriageStatusQueryProcessor;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
 
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.Recur.Frequency;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZone;
 
 /**
@@ -80,12 +83,12 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
     // to determine the previous/next occurrence
     
     // 31 days (1 month)
-    private Dur monthLaterDur = new Dur("P31D");
-    private Dur monthDoneDur = new Dur("-P31D");
+    private TemporalAmount monthLaterDur = Duration.ofDays(31);
+    private TemporalAmount monthDoneDur = Duration.ofDays(-31);
     
     // 366 days (1 year)
-    private Dur yearLaterDur = new Dur("P366D");
-    private Dur yearDoneDur = new Dur("-P366D");
+    private TemporalAmount yearLaterDur = Duration.ofDays(366);
+    private TemporalAmount yearDoneDur = Duration.ofDays(-366);
     
     // number of DONE items to return
     private int maxDone = 25;
@@ -334,7 +337,7 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
         // year from point in time
         NoteItemFilter eventFilter =
             getRecurringEventFilter(collection, context.getPointInTime(),
-                                    yearLaterDur.getTime(context.getPointInTime()),
+                                    new TemporalAmountAdapter(yearLaterDur).getTime(context.getPointInTime()),
                                     context.getTimeZone());
 
         // Add all items that are have an explicit LATER triage
@@ -420,8 +423,7 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
                                   TriageStatusQueryContext context) {
         EventStamp eventStamp = StampUtils.getEventStamp(note);
         Date currentDate = context.getPointInTime();
-        Date futureDate = getDurToUseForExpanding(eventStamp, true).getTime(
-                currentDate);
+        Date futureDate = new TemporalAmountAdapter(getDurToUseForExpanding(eventStamp, true)).getTime(currentDate);
 
         // calculate the next occurrence or LATER modification
         NoteItem first = getFirstInstanceOrModification(eventStamp,
@@ -462,7 +464,7 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
         // year from point in time
         NoteItemFilter eventFilter =
             getRecurringEventFilter(collection,
-                                    yearDoneDur.getTime(context.getPointInTime()),
+                                    new TemporalAmountAdapter(yearDoneDur).getTime(context.getPointInTime()),
                                     context.getPointInTime(),
                                     context.getTimeZone());
 
@@ -548,8 +550,7 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
                                  TriageStatusQueryContext context) {
         EventStamp eventStamp = StampUtils.getEventStamp(note);
         Date currentDate = context.getPointInTime();
-        Date pastDate = getDurToUseForExpanding(eventStamp, false).getTime(
-                currentDate);
+        Date pastDate = new TemporalAmountAdapter(getDurToUseForExpanding(eventStamp, false)).getTime(currentDate);
 
         // calculate the previous occurrence or modification
         NoteItem latest = getLatestInstanceOrModification(eventStamp, pastDate,
@@ -725,7 +726,7 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
      * @param later boolean
      * @return Dur
      */
-    private Dur getDurToUseForExpanding(EventStamp es, boolean later) {
+    private TemporalAmount getDurToUseForExpanding(EventStamp es, boolean later) {
         List<Recur> rules = es.getRecurrenceRules();
         
         // No rules, assume RDATEs so expand a year
@@ -738,8 +739,8 @@ public class StandardTriageStatusQueryProcessor implements TriageStatusQueryProc
         
         // If rule is yearly or monthly then expand a year,
         // otherwise only expand a month
-        if(Recur.YEARLY.equals(recur.getFrequency()) ||
-           Recur.MONTHLY.equals(recur.getFrequency())) {
+        if(Frequency.YEARLY.equals(recur.getFrequency()) ||
+                Frequency.MONTHLY.equals(recur.getFrequency())) {
             return later ? yearLaterDur : yearDoneDur;
         }
         else {

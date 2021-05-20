@@ -33,6 +33,7 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.property.TzId;
 
 /**
  * Represents a Calendar Collection.
@@ -77,8 +78,7 @@ public class MockCalendarCollectionStamp extends MockStamp
     /**
      * Constructor.
      * 
-     * @param collection
-     *            The collection item.
+     * @param collection The collection item.
      */
     public MockCalendarCollectionStamp(CollectionItem collection) {
         this();
@@ -118,8 +118,7 @@ public class MockCalendarCollectionStamp extends MockStamp
     /**
      * Sets description.
      * 
-     * @param description
-     *            - The description.
+     * @param description - The description.
      * 
      */
     public void setDescription(String description) {
@@ -150,8 +149,7 @@ public class MockCalendarCollectionStamp extends MockStamp
     /**
      * Sets language.
      * 
-     * @param language
-     *            The language
+     * @param language The language
      */
     public void setLanguage(String language) {
         // language stored as StringAttribute on Item
@@ -208,8 +206,8 @@ public class MockCalendarCollectionStamp extends MockStamp
         if (timezone == null) {
             return null;
         }
-        return timezone.getComponents().getComponent(Component.VTIMEZONE).getProperties().getProperty(Property.TZID)
-                .getValue();
+        return ((TzId) timezone.getComponents().getComponent(Component.VTIMEZONE).getProperties()
+                .getProperty(Property.TZID)).getValue();
     }
 
     /*
@@ -222,8 +220,7 @@ public class MockCalendarCollectionStamp extends MockStamp
     /**
      * Sets timezone calendar.
      * 
-     * @param timezone
-     *            The timezone.
+     * @param timezone The timezone.
      */
     public void setTimezoneCalendar(Calendar timezone) {
         // timezone stored as ICalendarAttribute on Item
@@ -255,8 +252,7 @@ public class MockCalendarCollectionStamp extends MockStamp
     /**
      * Return CalendarCollectionStamp from Item
      * 
-     * @param item
-     *            The item
+     * @param item The item
      * @return CalendarCollectionStamp from Item
      */
     public static CalendarCollectionStamp getStamp(Item item) {

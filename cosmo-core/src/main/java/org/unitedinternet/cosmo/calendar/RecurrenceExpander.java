@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.calendar;
 
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,12 +29,12 @@ import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Value;
@@ -142,34 +143,34 @@ public class RecurrenceExpander {
             return new Date[]{};
         }
         
-        Dur duration = null;
+        TemporalAmount duration = null;
         Date end = getEndDate(comp);
         if (end == null) {
             if (start instanceof DateTime) {
                 // Its an timed event with no duration
-                duration = new Dur(0, 0, 0, 0);
+                duration = java.time.Duration.ZERO;
             } else {
                 // Its an all day event so duration is one day
-                duration = new Dur(1, 0, 0, 0);
+                duration = java.time.Duration.ofDays(1);
             }
-            end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
+            end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(start), start);
         } else {
             if(end instanceof DateTime) {
                 // Handle case where dtend is before dtstart, in which the duration
                 // will be 0, since it is a timed event
                 if(end.before(start)) {
                     end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(
-                            new Dur(0, 0, 0, 0).getTime(start), start);
+                            new TemporalAmountAdapter(java.time.Duration.ZERO).getTime(start), start);
                 }
             } else {
                 // Handle case where dtend is before dtstart, in which the duration
                 // will be 1 day since its an all-day event
                 if(end.before(start)) {
                     end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(
-                            new Dur(1, 0, 0, 0).getTime(start), start);
+                            new TemporalAmountAdapter(java.time.Duration.ofDays(1)).getTime(start), start);
                 }
             }
-            duration = new Dur(start, end);
+            duration = java.time.Duration.between(start.toInstant(), end.toInstant());
         }
         
         // Always add master's occurence
@@ -197,7 +198,7 @@ public class RecurrenceExpander {
                 }
             } else {
                 for (Date startDate : rdate.getDates()) {
-                    Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration
+                    Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration)
                             .getTime(startDate), startDate);
                     if (startDate.before(dateRange[0])) {
                         dateRange[0] = startDate;
@@ -232,7 +233,7 @@ public class RecurrenceExpander {
             // date and update dateRange if necessary
             if(startDates.size()>0) {
                 Date lastStart = (Date) startDates.get(startDates.size()-1);
-                Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(lastStart), start);
+                Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(lastStart), start);
                 
                 if (endDate.after(dateRange[1])) {
                     dateRange[1] = endDate;
@@ -417,7 +418,7 @@ public class RecurrenceExpander {
             Duration duration = (Duration) comp.getProperties().getProperty(
                     Property.DURATION);
             if (duration != null) {
-                dtEnd = new DtEnd(org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getDuration()
+                dtEnd = new DtEnd(org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration.getDuration())
                         .getTime(dtStart), dtStart));
             }
         }
