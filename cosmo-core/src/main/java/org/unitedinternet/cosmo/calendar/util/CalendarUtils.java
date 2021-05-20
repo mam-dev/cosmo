@@ -84,7 +84,7 @@ public class CalendarUtils implements ICalendarConstants {
 	clearTZRegistry(builder);
 
 	StringReader sr = new StringReader(calendar);
-	return conformToRfc5545(builder.build(sr));
+	return builder.build(sr);
     }
 
     /**
@@ -109,7 +109,7 @@ public class CalendarUtils implements ICalendarConstants {
 	CalendarBuilder builder = new CalendarBuilder();
 	StringReader sr = new StringReader("BEGIN:VCALENDAR\n" + component + "END:VCALENDAR");
 
-	return (Component) conformToRfc5545(builder.build(sr)).getComponents().get(0);
+	return (Component) builder.build(sr).getComponents().get(0);
     }
 
     /**
@@ -129,7 +129,7 @@ public class CalendarUtils implements ICalendarConstants {
 	}
 	CalendarBuilder builder = CalendarBuilderDispenser.getCalendarBuilder();
 	clearTZRegistry(builder);
-	return conformToRfc5545(builder.build(reader));
+	return builder.build(reader);
     }
 
     /**
@@ -146,7 +146,7 @@ public class CalendarUtils implements ICalendarConstants {
     public static Calendar parseCalendar(byte[] content) throws ParserException, IOException {
 	CalendarBuilder builder = CalendarBuilderDispenser.getCalendarBuilder();
 	clearTZRegistry(builder);
-	return conformToRfc5545(builder.build(new ByteArrayInputStream(content)));
+	return builder.build(new ByteArrayInputStream(content));
     }
 
     /**
@@ -163,16 +163,7 @@ public class CalendarUtils implements ICalendarConstants {
     public static Calendar parseCalendar(InputStream is) throws ParserException, IOException {
 	CalendarBuilder builder = CalendarBuilderDispenser.getCalendarBuilder();
 	clearTZRegistry(builder);
-	return conformToRfc5545(builder.build(is));
-    }
-
-    private static Calendar conformToRfc5545(Calendar calendar) throws IOException {
-//	try {
-//	    calendar.conformToRfc5545();
-	    return calendar;
-//	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//	    throw new IOException(e);
-//	}
+	return builder.build(is);
     }
 
     public static Calendar copyCalendar(Calendar calendar) {
