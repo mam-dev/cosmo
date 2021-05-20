@@ -33,7 +33,7 @@
 		</dependency>
 		<!-- ical4j related libs -->
 		<dependency>
-			<groupId>net.oneandone.ical4j</groupId>
+			<groupId>org.mnode.ical4j</groupId>
 			<artifactId>ical4j</artifactId>
             <exclusions>
                 <exclusion>

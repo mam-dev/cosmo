@@ -357,19 +357,19 @@ public class HCalendarParser implements CalendarParser {
         handler.startProperty(Property.VERSION);
         try {
             handler.propertyValue(Version.VERSION_2_0.getValue());
+            handler.endProperty(Property.VERSION);
+            for (Element vevent : findElements(XPATH_VEVENTS, d)) {
+                buildEvent(vevent, handler);
+            }
+
+            // XXX: support other "first class components": vjournal, vtodo,
+            // vfreebusy, vavailability, vvenue
+
+            handler.endCalendar();
         } catch (URISyntaxException | ParseException | IOException e) {
             LOG.warn("", e);
         } 
-        handler.endProperty(Property.VERSION);
 
-        for (Element vevent : findElements(XPATH_VEVENTS, d)) {
-            buildEvent(vevent, handler);
-        }
-
-        // XXX: support other "first class components": vjournal, vtodo,
-        // vfreebusy, vavailability, vvenue
-
-        handler.endCalendar();
     }
 
     /**
@@ -529,6 +529,7 @@ public class HCalendarParser implements CalendarParser {
 
         try {
             handler.propertyValue(value);
+            handler.endProperty(propName);
         } catch (URISyntaxException e) {
             throw new ParserException("Malformed URI value for element '" + className + "'", -1, e);
         } catch (ParseException e) {
@@ -537,7 +538,6 @@ public class HCalendarParser implements CalendarParser {
             throw new CosmoIOException("Unknown error setting property value for element '" + className + "'", e);
         }
 
-        handler.endProperty(propName);
     }
 
     

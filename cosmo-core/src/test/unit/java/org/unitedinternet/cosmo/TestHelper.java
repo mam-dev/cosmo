@@ -151,12 +151,10 @@ public class TestHelper {
         // add timezone information
         VTimeZone tz = TimeZoneRegistryFactory.getInstance().createRegistry().
             getTimeZone("America/Los_Angeles").getVTimeZone();
-        String tzValue =
-            tz.getProperties().getProperty(Property.TZID).getValue();
+        String tzValue = ((Property) tz.getProperties().getProperty(Property.TZID)).getValue();
         net.fortuna.ical4j.model.parameter.TzId tzParam =
             new net.fortuna.ical4j.model.parameter.TzId(tzValue);
-        event.getProperties().getProperty(Property.DTSTART).
-            getParameters().add(tzParam);
+        ((Property) event.getProperties().getProperty(Property.DTSTART)).getParameters().add(tzParam);
 
         // add an alarm for 5 minutes before the event with an xparam
         // on the description

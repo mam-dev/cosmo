@@ -168,12 +168,12 @@ public class CalendarUtils implements ICalendarConstants {
     }
 
     private static Calendar conformToRfc5545(Calendar calendar) throws IOException {
-	try {
-	    calendar.conformToRfc5545();
+//	try {
+//	    calendar.conformToRfc5545();
 	    return calendar;
-	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-	    throw new IOException(e);
-	}
+//	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//	    throw new IOException(e);
+//	}
     }
 
     public static Calendar copyCalendar(Calendar calendar) {

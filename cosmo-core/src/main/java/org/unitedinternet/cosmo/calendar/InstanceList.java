@@ -372,9 +372,8 @@ public class InstanceList extends TreeMap<String, Instance> {
         }
 
         // Handle THISANDFUTURE if present
-        Range range = (Range) comp.getProperties().getProperty(
-                Property.RECURRENCE_ID).getParameters().getParameter(
-                Parameter.RANGE);
+        Range range = (Range) ((Property) comp.getProperties().getProperty(Property.RECURRENCE_ID)).getParameters()
+                .getParameter(Parameter.RANGE);
 
         // TODO Ignoring THISANDPRIOR
         if (Range.THISANDFUTURE.equals(range)) {
