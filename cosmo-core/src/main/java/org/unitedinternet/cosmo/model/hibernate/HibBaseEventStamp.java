@@ -34,13 +34,13 @@ import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.transform.TzHelper;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
@@ -120,6 +120,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#setEventCalendar(net.fortuna.ical4j.model.Calendar)
      */
     public void setEventCalendar(Calendar calendar) {
+        TzHelper.correctTzParameterFrom(calendar);
         this.eventCalendar = calendar;
     }
     
