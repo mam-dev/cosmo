@@ -18,22 +18,30 @@ package org.unitedinternet.cosmo.calendar.data;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.time.Duration;
+import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.unitedinternet.cosmo.CosmoConstants;
+import org.unitedinternet.cosmo.CosmoException;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
+import org.unitedinternet.cosmo.calendar.Instance;
+import org.unitedinternet.cosmo.calendar.InstanceList;
+
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VJournal;
@@ -48,12 +56,6 @@ import net.fortuna.ical4j.model.property.ExRule;
 import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RecurrenceId;
-
-import org.unitedinternet.cosmo.CosmoConstants;
-import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.calendar.Instance;
-import org.unitedinternet.cosmo.calendar.InstanceList;
 
 /**
  * This is a filter object that allows filtering a {@link Calendar} by
@@ -436,15 +438,15 @@ public class OutputFilter {
         if (dtend != null) {
             end = new DateTime(dtend.getDate());
         } else {
-            Dur duration = new Dur(0, 0, 0, 0);
-            end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
+            TemporalAmount duration = Duration.ZERO;
+            end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(start), start);
         }
 
         Period p = new Period(start, end);
         if (! p.intersects(getLimit())) {
-            Dur duration = new Dur(start, end);
+            TemporalAmount duration = Duration.between(start.toInstant(), end.toInstant());                     
             start = new DateTime(rid.getDate());
-            end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
+            end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(start), start);
             p = new Period(start, end);
             if (! p.intersects(getLimit())) {
                 if (Range.THISANDFUTURE.equals(range)) {

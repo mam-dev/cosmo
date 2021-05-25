@@ -22,12 +22,6 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.component.VTimeZone;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.hibernate.validator.Color;
@@ -40,6 +34,13 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.property.TzId;
 
 
 /**
@@ -163,8 +164,8 @@ public class HibCalendarCollectionStamp extends HibStamp implements ICalendarCon
         if (timezone == null) {
             return null;
         }
-        return timezone.getComponents().getComponent(Component.VTIMEZONE).
-            getProperties().getProperty(Property.TZID).getValue();
+        return ((TzId) timezone.getComponents().getComponent(Component.VTIMEZONE).
+            getProperties().getProperty(Property.TZID)).getValue();
     }
 
     /* (non-Javadoc)

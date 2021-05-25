@@ -15,6 +15,7 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +28,24 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
+import org.unitedinternet.cosmo.model.BaseEventStamp;
+import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.NoteItem;
+import org.unitedinternet.cosmo.transform.TzHelper;
+
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VAlarm;
@@ -60,13 +69,6 @@ import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Repeat;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Trigger;
-
-import org.hibernate.annotations.Type;
-import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
-import org.unitedinternet.cosmo.model.BaseEventStamp;
-import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.NoteItem;
 
 
 /**
@@ -118,6 +120,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#setEventCalendar(net.fortuna.ical4j.model.Calendar)
      */
     public void setEventCalendar(Calendar calendar) {
+        TzHelper.correctTzParameterFrom(calendar);
         this.eventCalendar = calendar;
     }
     
@@ -219,7 +222,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         // if no DTEND, then calculate endDate from DURATION
         if (dtEnd == null) {
             Date startDate = getStartDate();
-            Dur duration = getDuration();
+            TemporalAmount duration = getDuration();
             
             // if no DURATION, then there is no end time
             if(duration==null) {
@@ -234,7 +237,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
                 endDate = new Date(startDate);
             }
             
-            endDate.setTime(duration.getTime(startDate).getTime());
+            endDate.setTime(new TemporalAmountAdapter(duration).getTime(startDate).getTime());
             return endDate;
         }
             
@@ -317,7 +320,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDuration()
      */
-    public Dur getDuration() {
+    public TemporalAmount getDuration() {
         return ICalendarUtils.getDuration(getEvent());
     }
 
@@ -325,7 +328,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDuration(net.fortuna.ical4j.model.Dur)
      */
-    public void setDuration(Dur dur) {
+    public void setDuration(TemporalAmount dur) {
         ICalendarUtils.setDuration(getEvent(), dur);
     }
     
@@ -643,7 +646,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDisplayAlarmDuration()
      */
-    public Dur getDisplayAlarmDuration() {
+    public TemporalAmount getDisplayAlarmDuration() {
         VAlarm alarm = getDisplayAlarm();
         if(alarm==null) {
             return null;
@@ -661,7 +664,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDisplayAlarmDuration(net.fortuna.ical4j.model.Dur)
      */
-    public void setDisplayAlarmDuration(Dur dur) {
+    public void setDisplayAlarmDuration(TemporalAmount dur) {
         VAlarm alarm = getDisplayAlarm();
         if(alarm==null) {
             return;

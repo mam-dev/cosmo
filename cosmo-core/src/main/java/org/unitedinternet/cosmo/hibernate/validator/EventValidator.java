@@ -170,7 +170,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                     return false;
                 }
 
-                String recurFrequency = rrule.getRecur().getFrequency();
+                String recurFrequency = rrule.getRecur().getFrequency().name();
                 if (!config.getAllowedRecurrenceFrequencies().contains(recurFrequency)) {
                     return false;
                 }

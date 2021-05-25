@@ -21,7 +21,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
+
+import org.unitedinternet.cosmo.CosmoException;
+import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -29,12 +31,9 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.validate.ValidationException;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VTimeZone;
-
-import org.unitedinternet.cosmo.CosmoException;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Utility methods for working with icalendar data.
@@ -85,7 +84,7 @@ public class CalendarUtils implements ICalendarConstants {
 	clearTZRegistry(builder);
 
 	StringReader sr = new StringReader(calendar);
-	return conformToRfc5545(builder.build(sr));
+	return builder.build(sr);
     }
 
     /**
@@ -110,7 +109,7 @@ public class CalendarUtils implements ICalendarConstants {
 	CalendarBuilder builder = new CalendarBuilder();
 	StringReader sr = new StringReader("BEGIN:VCALENDAR\n" + component + "END:VCALENDAR");
 
-	return (Component) conformToRfc5545(builder.build(sr)).getComponents().get(0);
+	return (Component) builder.build(sr).getComponents().get(0);
     }
 
     /**
@@ -130,7 +129,7 @@ public class CalendarUtils implements ICalendarConstants {
 	}
 	CalendarBuilder builder = CalendarBuilderDispenser.getCalendarBuilder();
 	clearTZRegistry(builder);
-	return conformToRfc5545(builder.build(reader));
+	return builder.build(reader);
     }
 
     /**
@@ -147,7 +146,7 @@ public class CalendarUtils implements ICalendarConstants {
     public static Calendar parseCalendar(byte[] content) throws ParserException, IOException {
 	CalendarBuilder builder = CalendarBuilderDispenser.getCalendarBuilder();
 	clearTZRegistry(builder);
-	return conformToRfc5545(builder.build(new ByteArrayInputStream(content)));
+	return builder.build(new ByteArrayInputStream(content));
     }
 
     /**
@@ -164,16 +163,7 @@ public class CalendarUtils implements ICalendarConstants {
     public static Calendar parseCalendar(InputStream is) throws ParserException, IOException {
 	CalendarBuilder builder = CalendarBuilderDispenser.getCalendarBuilder();
 	clearTZRegistry(builder);
-	return conformToRfc5545(builder.build(is));
-    }
-
-    private static Calendar conformToRfc5545(Calendar calendar) throws IOException {
-	try {
-	    calendar.conformToRfc5545();
-	    return calendar;
-	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-	    throw new IOException(e);
-	}
+	return builder.build(is);
     }
 
     public static Calendar copyCalendar(Calendar calendar) {

@@ -15,7 +15,10 @@
  */
 package org.unitedinternet.cosmo.calendar;
 
+import static java.time.Duration.ZERO;
+
 import java.text.ParseException;
+import java.time.temporal.TemporalAmount;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -27,11 +30,11 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.parameter.Range;
@@ -58,6 +61,9 @@ import net.fortuna.ical4j.util.Dates;
 public class InstanceList extends TreeMap<String, Instance> {
 
     private static final long serialVersionUID = 1838360990532590681L;
+    
+    private static final java.time.Duration ONE_DAY = java.time.Duration.ofDays(1);
+    
     private boolean isUTC = false;
     private TimeZone timezone = null;
 
@@ -148,17 +154,17 @@ public class InstanceList extends TreeMap<String, Instance> {
             start = adjustFloatingDateIfNecessary(start);
         }
 
-        Dur duration = null;
+        TemporalAmount duration = null;
         Date end = getEndDate(comp);
         if (end == null) {
             if (startValue.equals(Value.DATE_TIME)) {
                 // Its an timed event with no duration
-                duration = new Dur(0, 0, 0, 0);
+                duration = ZERO;
             } else {
                 // Its an all day event so duration is one day
-                duration = new Dur(1, 0, 0, 0);
+                duration = ONE_DAY;
             }
-            end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
+            end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(start), start);
         } else {
             end = convertToUTCIfNecessary(end);
             if (startValue.equals(Value.DATE_TIME)) {
@@ -168,17 +174,17 @@ public class InstanceList extends TreeMap<String, Instance> {
                 // will be 0, since it is a timed event
                 if (end.before(start)) {
                     end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(
-                            new Dur(0, 0, 0, 0).getTime(start), start);
+                            new TemporalAmountAdapter(ZERO).getTime(start), start);
                 }
             } else {
                 // Handle case where dtend is before dtstart, in which the duration
                 // will be 1 day since its an all-day event
                 if (end.before(start)) {
                     end = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(
-                            new Dur(1, 0, 0, 0).getTime(start), start);
+                            new TemporalAmountAdapter (ONE_DAY).getTime(start), start);
                 }
             }
-            duration = new Dur(start, end);
+            duration = java.time.Duration.between(start.toInstant(), end.toInstant());
         }
 		   // Always add first instance if included in range..
         if (dateBefore(start, rangeEnd) &&
@@ -209,7 +215,7 @@ public class InstanceList extends TreeMap<String, Instance> {
                 for (Date startDate : rdate.getDates()) {                     
                     startDate = convertToUTCIfNecessary(startDate);
                     startDate = adjustFloatingDateIfNecessary(startDate);
-                    Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration
+                    Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration)
                             .getTime(startDate), startDate);
                     // Add RDATE if it overlaps range
                     if (inRange(startDate, endDate, rangeStart, rangeEnd)) {
@@ -243,7 +249,7 @@ public class InstanceList extends TreeMap<String, Instance> {
             for (int j = 0; j < startDates.size(); j++) {
                 Date sd = (Date) startDates.get(j);
                 Date startDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(sd, start);
-                Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(sd), start);
+                Date endDate = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(sd), start);
                 Instance instance = new Instance(comp, startDate, endDate);
                 put(instance.getRid().toString(), instance);
             }
@@ -314,15 +320,15 @@ public class InstanceList extends TreeMap<String, Instance> {
         // We need either DTEND or DURATION.
         Date dtend = getEndDate(comp);
         if (dtend == null) {
-            Dur duration;
+            TemporalAmount duration;
             if (startValue.equals(Value.DATE_TIME)) {
                 // Its an timed event with no duration
-                duration = new Dur(0, 0, 0, 0);
+                duration = ZERO;
             } else {
                 // Its an all day event so duration is one day
-                duration = new Dur(1, 0, 0, 0);
+                duration = ONE_DAY;
             }
-            dtend = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(dtstart), dtstart);
+            dtend = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration).getTime(dtstart), dtstart);
         } else {
             // Convert to UTC if needed
             dtend = convertToUTCIfNecessary(dtend);
@@ -332,15 +338,15 @@ public class InstanceList extends TreeMap<String, Instance> {
                 // Handle case where dtend is before dtstart, in which the duration
                 // will be 0, since it is a timed event
                 if (dtend.before(dtstart)) {
-                    dtend = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(
-                            new Dur(0, 0, 0, 0).getTime(dtstart), dtstart);
+                    dtend = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(ZERO)
+                            .getTime(dtstart), dtstart);
                 }
             } else {
                 // Handle case where dtend is before dtstart, in which the duration
                 // will be 1 day since its an all-day event
                 if (dtend.before(dtstart)) {
                     dtend = org.unitedinternet.cosmo.calendar.util.Dates.getInstance(
-                            new Dur(1, 0, 0, 0).getTime(dtstart), dtstart);
+                            new TemporalAmountAdapter(ONE_DAY).getTime(dtstart), dtstart);
                 }
             }
         }
@@ -372,9 +378,8 @@ public class InstanceList extends TreeMap<String, Instance> {
         }
 
         // Handle THISANDFUTURE if present
-        Range range = (Range) comp.getProperties().getProperty(
-                Property.RECURRENCE_ID).getParameters().getParameter(
-                Parameter.RANGE);
+        Range range = (Range) ((Property) comp.getProperties().getProperty(Property.RECURRENCE_ID)).getParameters()
+                .getParameter(Parameter.RANGE);
 
         // TODO Ignoring THISANDPRIOR
         if (Range.THISANDFUTURE.equals(range)) {
@@ -386,8 +391,8 @@ public class InstanceList extends TreeMap<String, Instance> {
             // We need to account for a time shift in the overridden component
             // by applying the same shift to the future instances
             boolean timeShift = dtstart.compareTo(riddt) != 0;
-            Dur offsetTime = timeShift ? new Dur(riddt, dtstart) : null;
-            Dur newDuration = timeShift ? new Dur(dtstart, dtend) : null;
+            TemporalAmount offsetTime = timeShift ? java.time.Duration.between(riddt.toInstant(), dtstart.toInstant()) : null;
+            TemporalAmount newDuration = timeShift ? java.time.Duration.between(dtstart.toInstant(), dtend.toInstant()) : null;
 
             // Get a sorted list rids so we can identify the starting location
             // for the override.  The starting position will be the rid after
@@ -447,10 +452,10 @@ public class InstanceList extends TreeMap<String, Instance> {
                             // shifted, and the original start time is geiven by
                             // its recurrence-id.
                             start = Dates.
-                                    getInstance(offsetTime.getTime(originalstart),
+                                    getInstance(new TemporalAmountAdapter(offsetTime).getTime(originalstart),
                                             originalvalue);
                             end = Dates.
-                                    getInstance(newDuration.getTime(start),
+                                    getInstance(new TemporalAmountAdapter(newDuration).getTime(start),
                                             originalvalue);
                         }
 
@@ -498,7 +503,7 @@ public class InstanceList extends TreeMap<String, Instance> {
             Duration duration = (Duration) comp.getProperties().getProperty(
                     Property.DURATION);
             if (duration != null) {
-                dtEnd = new DtEnd(org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getDuration()
+                dtEnd = new DtEnd(org.unitedinternet.cosmo.calendar.util.Dates.getInstance(new TemporalAmountAdapter(duration.getDuration())
                         .getTime(dtStart), dtStart));
             }
         }
@@ -560,7 +565,7 @@ public class InstanceList extends TreeMap<String, Instance> {
      * @param dur        The duration.
      * @return The adjusted start Range date.
      */
-    private Date adjustStartRangeIfNecessary(Date startRange, Date start, Dur dur) {
+    private Date adjustStartRangeIfNecessary(Date startRange, Date start, TemporalAmount dur) {
 
         // If start is a Date, then we need to convert startRange to
         // a Date using the timezone present
@@ -578,10 +583,10 @@ public class InstanceList extends TreeMap<String, Instance> {
 
         // Need to adjust startRange back one duration to account for instances
         // that occur before the startRange, but end after the startRange
-        Dur negatedDur = dur.negate();
+        TemporalAmount negatedDur = java.time.Duration.from(dur).negated();
 
         Calendar cal = Dates.getCalendarInstance(startRange);
-        cal.setTime(negatedDur.getTime(startRange));
+        cal.setTime(new TemporalAmountAdapter(negatedDur).getTime(startRange));
 
         // Return new startRange only if it is before the original startRange 
         if (cal.getTime().before(startRange)) {

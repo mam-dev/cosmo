@@ -17,25 +17,9 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 
 import java.io.FileInputStream;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.Set;
-
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateList;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.component.VToDo;
-import net.fortuna.ical4j.model.property.Completed;
-import net.fortuna.ical4j.model.property.Status;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,6 +40,22 @@ import org.unitedinternet.cosmo.model.mock.MockEventStamp;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.model.mock.MockTaskStamp;
 import org.unitedinternet.cosmo.model.mock.MockTriageStatus;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.DateList;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.component.VToDo;
+import net.fortuna.ical4j.model.property.Completed;
+import net.fortuna.ical4j.model.property.Status;
 
 /**
  * Test EntityConverter.
@@ -406,7 +406,7 @@ public class EntityConverterTest {
         EventStamp eventStamp = new MockEventStamp(master);
         eventStamp.createCalendar();
         eventStamp.setStartDate(new DateTime("20070212T074500"));
-        eventStamp.setDuration(new Dur("PT1H"));
+        eventStamp.setDuration(Duration.ofHours(1));
         eventStamp.setLocation("master location");
         DateList dates = new DateList();
         dates.add(new Date("20070212T074500"));

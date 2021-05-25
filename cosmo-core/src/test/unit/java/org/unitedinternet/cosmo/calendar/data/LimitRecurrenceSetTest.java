@@ -30,6 +30,7 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.property.Summary;
 
 /**
  * Test limit-recurring-events output filter
@@ -76,8 +77,8 @@ public class LimitRecurrenceSetTest {
 
         ComponentList<CalendarComponent> events = comps.getComponents("VEVENT");
         for(CalendarComponent c : events) {            
-            Assert.assertNotSame("event 6 changed 3",c.getProperties().getProperty("SUMMARY").getValue());
-            Assert.assertNotSame("event 6 changed 4",c.getProperties().getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed 3",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            Assert.assertNotSame("event 6 changed 4",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }
     }
     
@@ -115,7 +116,7 @@ public class LimitRecurrenceSetTest {
         // Make sure 2nd override is dropped
         ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);        
         for(VEvent c : vevents) {            
-            Assert.assertNotSame("event 6 changed 2",c.getProperties().getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }   
     }
     
@@ -155,8 +156,8 @@ public class LimitRecurrenceSetTest {
         ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);
         
         for(VEvent c : vevents) {            
-            Assert.assertNotSame("event 6 changed",c.getProperties().getProperty("SUMMARY").getValue());
-            Assert.assertNotSame("event 6 changed 2",c.getProperties().getProperty("SUMMARY").getValue());
+            Assert.assertNotSame("event 6 changed",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            Assert.assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }   
     }
     

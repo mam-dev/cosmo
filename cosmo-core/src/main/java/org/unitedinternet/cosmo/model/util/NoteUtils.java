@@ -15,6 +15,8 @@
  */
 package org.unitedinternet.cosmo.model.util;
 
+import java.time.temporal.TemporalAmount;
+
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.calendar.util.Dates;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
@@ -26,7 +28,7 @@ import org.unitedinternet.cosmo.model.StampUtils;
 
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
+import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.property.Trigger;
 
@@ -58,12 +60,12 @@ public class NoteUtils {
         if (note instanceof NoteOccurrence) {
             NoteOccurrence no = (NoteOccurrence) note;
             Date startDate = no.getOccurrenceDate();
-            Dur dur = StampUtils.getBaseEventStamp(note).getDuration();
+            TemporalAmount dur = StampUtils.getBaseEventStamp(note).getDuration();
             if (dur == null) {
                 return startDate;
             }
 
-            return Dates.getInstance(dur.getTime(startDate), startDate);
+            return Dates.getInstance(new TemporalAmountAdapter(dur).getTime(startDate), startDate);
         }
 
         BaseEventStamp es = StampUtils.getBaseEventStamp(note);
@@ -79,12 +81,12 @@ public class NoteUtils {
         // handle mod with missing duration
         if (note.getModifies() != null) {
             Date startDate = es.getStartDate();
-            Dur dur = ((EventExceptionStamp) es).getMasterStamp().getDuration();
+            TemporalAmount dur = ((EventExceptionStamp) es).getMasterStamp().getDuration();
             if (dur == null) {
                 return startDate;
             }
             else {
-                return Dates.getInstance(dur.getTime(startDate), startDate);
+                return Dates.getInstance(new TemporalAmountAdapter(dur).getTime(startDate), startDate);
             }
         }
 

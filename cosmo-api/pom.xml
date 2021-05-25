@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>3.7.10-SNAPSHOT</version>
+		<version>3.8.0-SNAPSHOT</version>
 	</parent>
 		
 	<artifactId>cosmo-api</artifactId>
@@ -33,7 +33,7 @@
 		</dependency>
 		<!-- ical4j related libs -->
 		<dependency>
-			<groupId>net.oneandone.ical4j</groupId>
+			<groupId>org.mnode.ical4j</groupId>
 			<artifactId>ical4j</artifactId>
             <exclusions>
                 <exclusion>

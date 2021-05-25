@@ -15,18 +15,10 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import java.time.Duration;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.parameter.XParameter;
-import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.model.property.Trigger;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -37,6 +29,15 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.XParameter;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.Trigger;
 
 /**
  * Hibernate persistent EventExceptionStamp.
@@ -189,7 +190,7 @@ public class HibEventExceptionStamp extends HibBaseEventStamp implements EventEx
     @Override
     public void setDisplayAlarmTrigger(Trigger newTrigger) {
         if(newTrigger==null) {
-            newTrigger = new Trigger(new Dur("-PT15M"));
+            newTrigger = new Trigger(Duration.ofMinutes(-15));
             setMissing(newTrigger, true);
         }
         super.setDisplayAlarmTrigger(newTrigger);    
