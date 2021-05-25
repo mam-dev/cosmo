@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.DefaultTimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.Parameter;
@@ -31,6 +30,7 @@ import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.property.DateProperty;
 
 /**
+ * Helper class containing methods for fixing inconsistencies time zone related issues.
  * 
  * @author corneliu dobrota
  * @author daniel grigore
