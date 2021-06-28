@@ -39,7 +39,7 @@
 				
 		<javax.el.version>2.2.4</javax.el.version>
 		<jackrabbit.version>2.19.0</jackrabbit.version>
-		<ical4j.version>3.0.25</ical4j.version>
+		<ical4j.version>3.0.27</ical4j.version>
 			
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
 		<slf4j.version>1.7.30</slf4j.version>
