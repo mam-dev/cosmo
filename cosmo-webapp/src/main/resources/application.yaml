@@ -27,6 +27,10 @@ cosmo:
       attendees:
          max:
            length: 100
+      icaldata:
+         #1 MB in bytes
+         max:
+          length: 1048576         
   user:
     password:
       min:

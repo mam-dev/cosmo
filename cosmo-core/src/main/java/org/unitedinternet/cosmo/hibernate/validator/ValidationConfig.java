@@ -34,6 +34,10 @@ public class ValidationConfig {
 
     @Value("${cosmo.event.validation.allowed.recurrence.frequencies}")
     private String[] allowedRecurrenceFrequencies;
+    
+    @Value("${cosmo.event.validation.icaldata.max.length}")
+    private int icaldataMaxLength;
+
 
     /**
      * Default constructor.
@@ -77,5 +81,9 @@ public class ValidationConfig {
 
     public List<String> getAllowedRecurrenceFrequencies() {
         return Arrays.asList(this.allowedRecurrenceFrequencies);
+    }
+    
+    public int getIcaldataMaxLength() {
+        return icaldataMaxLength;
     }
 }

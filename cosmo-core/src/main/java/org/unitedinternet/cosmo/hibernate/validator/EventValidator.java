@@ -63,13 +63,19 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
         Calendar calendar = null;
         ComponentList<CalendarComponent> comps = null;
         try {
-            calendar = (Calendar) value;
+            calendar = value;
 
             // validate entire icalendar object
             if (calendar != null) {
                 calendar.validate(true);
                 // additional check to prevent bad .ics
-                CalendarUtils.parseCalendar(calendar.toString());
+                
+                String textCalendar = calendar.toString();
+                int bytesLength = textCalendar.getBytes().length;
+                if (bytesLength > validationConfig.getIcaldataMaxLength()) {
+                    return false;
+                }
+                CalendarUtils.parseCalendar(textCalendar);
 
                 // make sure we have a VEVENT
                 comps = calendar.getComponents();

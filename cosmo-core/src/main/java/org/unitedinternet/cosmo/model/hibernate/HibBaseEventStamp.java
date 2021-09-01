@@ -116,9 +116,6 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         return eventCalendar;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setEventCalendar(net.fortuna.ical4j.model.Calendar)
-     */
     public void setEventCalendar(Calendar calendar) {
         TzHelper.correctTzParameterFrom(calendar);
         this.eventCalendar = calendar;
