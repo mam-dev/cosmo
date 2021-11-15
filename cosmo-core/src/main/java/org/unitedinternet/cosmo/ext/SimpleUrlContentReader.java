@@ -45,7 +45,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleUrlContentReader.class);
 
-    private static final int MAX_LINE_LENGTH = 4096;
+    private static final int MAX_LINE_LENGTH = 8192;
     private static final int MAX_HEADER_COUNT = 30;
     private static final int MAX_REDIRECTS = 10;
 
