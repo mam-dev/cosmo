@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  cosmo:
+    build:
+      context: .
+    volumes:
+        - ./:/usr/src/mymaven/:cached
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12
+    restart: unless-stopped
+    environment:
+        POSTGRES_PASSWORD: mysecretpassword
+        POSTGRES_USER: postgres
+    volumes:
+        - cosmo-postgre-db:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+
+volumes:
+    cosmo-postgre-db:
+        driver: local

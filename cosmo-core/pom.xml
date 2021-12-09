@@ -90,20 +90,20 @@
 			<artifactId>reflections</artifactId>
 		</dependency> -->
 		<!-- Databases -->
-		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.mariadb.jdbc</groupId>-->
+<!--			<artifactId>mariadb-java-client</artifactId>-->
+<!--		</dependency>-->
 		
 		<dependency>
 				<groupId>ch.vorburger.mariaDB4j</groupId>
 				<artifactId>mariaDB4j-core</artifactId>
-				<scope>test</scope>				
+				<scope>test</scope>
 		</dependency>
 		<dependency>
 				<groupId>ch.vorburger.mariaDB4j</groupId>
 				<artifactId>mariaDB4j-app</artifactId>
-				<scope>test</scope>				
+				<scope>test</scope>
 		</dependency>
 
 		<!-- abdera is the ATOM implementation. This library is still used for 

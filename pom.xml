@@ -69,6 +69,7 @@
 	<modules>
 		<module>cosmo-api</module>
 		<module>cosmo-core</module>
+		<module>cosmo-webapp</module>
 	</modules>
 
 	<dependencyManagement>
@@ -118,12 +119,14 @@
 				<groupId>ch.vorburger.mariaDB4j</groupId>
 				<artifactId>mariaDB4j-core</artifactId>
 				<version>${mariadb4j.version}</version>
+				<scope>test</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>ch.vorburger.mariaDB4j</groupId>
 				<artifactId>mariaDB4j-app</artifactId>
 				<version>${mariadb4j.version}</version>
+				<scope>test</scope>
 			</dependency>
 
 			<!-- ical4j related libs -->
