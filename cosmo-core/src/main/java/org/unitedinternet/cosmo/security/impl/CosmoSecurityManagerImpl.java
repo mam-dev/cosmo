@@ -140,7 +140,7 @@ public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
             if (user.equals(item.getOwner())) {
                 return;
             }
-            LOG.warn("User {} attempted access to item {} owned by {}", user.getUsername(), item.getUid());
+            LOG.warn("User {} attempted access to item {} owned by {}", user.getUsername(), item.getUid(), item.getOwner().getUsername());
             throw new PermissionDeniedException("User does not have appropriate permissions on item " + item.getUid());
         }
 
