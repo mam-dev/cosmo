@@ -293,12 +293,12 @@ public class StandardUserService extends BaseService implements UserService {
     public void validateRawPassword(User user) {
         String rawPassword = user.getPassword();
         if (rawPassword == null) {
-            throw new ModelValidationException("UserName" + user.getUsername() + " UID" + user.getUid(),
+            throw new ModelValidationException("User with UID" + user.getUid(),
                 "Password not specified");
         }
         if (rawPassword.length() < this.passwordLengthMin || rawPassword.length() > this.passwordLengthMax) {
 
-            throw new ModelValidationException("UserName" + user.getUsername() + " UID" + user.getUid(),
+            throw new ModelValidationException("User with UID" + user.getUid(),
                 "Password must be " + this.passwordLengthMin + " to " + this.passwordLengthMax + " characters in length");
         }
     }

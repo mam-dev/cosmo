@@ -140,14 +140,17 @@ public class CosmoSecurityManagerImpl implements CosmoSecurityManager {
             if (user.equals(item.getOwner())) {
                 return;
             }
-            LOG.warn("User {} attempted access to item {} owned by {}", user.getUsername(), item.getUid(), item.getOwner().getUsername());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("User {} attempted access to item {} owned by {}", user.getUsername(), item.getUid(),
+                        item.getOwner().getUsername());
+            }
             throw new PermissionDeniedException("User does not have appropriate permissions on item " + item.getUid());
         }
 
         Ticket ticket = ctx.getTicket();
         if (ticket != null) {
             if (!ticket.isGranted(item)) {
-                LOG.warn("Non-granted ticket {} attempted access to item {}",ticket.getKey(), item.getUid());
+                LOG.warn("Non-granted ticket {} attempted access to item {}", ticket.getKey(), item.getUid());
                 throw new PermissionDeniedException(
                         "Ticket " + ticket.getKey() + " is not granted on item " + item.getUid());
             }
