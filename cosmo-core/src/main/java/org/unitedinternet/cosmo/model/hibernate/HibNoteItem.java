@@ -36,6 +36,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.unitedinternet.cosmo.hibernate.validator.Journal;
 import org.unitedinternet.cosmo.hibernate.validator.Task;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -132,6 +133,16 @@ public class HibNoteItem extends HibICalendarItem implements NoteItem {
         NoteItem copy = new HibNoteItem();
         copyToItem(copy);
         return copy;
+    }
+    
+    @Journal
+    public Calendar getJournalCalendar(){
+        // calendar stored as ICalendarAttribute on Item
+        return getCalendar();
+    }
+
+    public void setJournalCalendar(Calendar calendar) {
+        setCalendar(calendar);
     }
     
     /* (non-Javadoc)

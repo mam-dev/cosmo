@@ -53,6 +53,20 @@ public interface NoteItem extends ICalendarItem{
      */
     public void setTaskCalendar(Calendar calendar);
 
+    /**
+     * Return the Calendar object containing a VJOURNAL component.
+     * @return calendar
+     */
+    public Calendar getJournalCalendar();
+
+    /**
+     * Set the Calendar object containing a VJOURNAL component.
+     * This allows non-standard icalendar properties to be stored 
+     * with the task.
+     * @param calendar
+     */
+    public void setJournalCalendar(Calendar calendar);
+
     public Set<NoteItem> getModifications();
 
     public void addModification(NoteItem mod);

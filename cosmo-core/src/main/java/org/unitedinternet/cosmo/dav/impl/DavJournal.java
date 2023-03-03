@@ -73,7 +73,7 @@ public class DavJournal extends DavCalendarResource {
      */
     public Calendar getCalendar() {
         NoteItem note = (NoteItem) getItem();
-        return new EntityConverter(null).convertNote(note);
+        return new EntityConverter(null).convertJournalNote(note);
     }
 
     /**
