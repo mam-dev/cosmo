@@ -22,7 +22,6 @@ import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USERS;
 import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_INBOX;
 import static org.unitedinternet.cosmo.dav.ExtendedDavConstants.TEMPLATE_USER_OUTBOX;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -57,6 +56,7 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.UserIdentitySupplier;
+import org.unitedinternet.cosmo.model.hibernate.HibICalendarItem;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;
@@ -64,6 +64,7 @@ import org.unitedinternet.cosmo.service.ContentService;
 import org.unitedinternet.cosmo.service.UserService;
 import org.unitedinternet.cosmo.util.UriTemplate;
 
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 
 /**
@@ -241,16 +242,13 @@ public class StandardResourceFactory implements DavResourceFactory {
             } else if (item.getStamp(EventStamp.class) != null) {
                 return new DavEvent(note, locator, this, entityFactory);
             } else {
-                Map<QName, Attribute> attr = note.getAttributes();
-                Collection<Attribute> valueAttr = attr.values();
-                for(Attribute a: valueAttr){
-                    String nameAttr = a.getName();
-                    if(nameAttr.equals("icalendar")){
-                        Object val = a.getValue();
-                        String event = String.valueOf(val); 
-                        if(event.contains(Component.VJOURNAL)){
-                            return new DavJournal(note, locator, this, entityFactory);
-                        }
+                Map<QName, Attribute> attributes = note.getAttributes();
+                Attribute attribute = attributes.get(HibICalendarItem.ATTR_ICALENDAR);
+                
+                if(attribute != null){
+                    Calendar calendar = (Calendar) attribute.getValue();
+                    if(calendar != null && !calendar.getComponents(Component.VJOURNAL).isEmpty()){
+                        return new DavJournal(note, locator, this, entityFactory);
                     }
                 }
                 return new DavTask(note, locator, this, entityFactory);

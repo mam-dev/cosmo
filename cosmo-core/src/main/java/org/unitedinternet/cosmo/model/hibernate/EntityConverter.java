@@ -217,8 +217,7 @@ public class EntityConverter {
      * @return NoteItem representation of VJOURNAL
      */
     public NoteItem convertJournalCalendar(NoteItem  note, Calendar calendar) {
-        
-        note.setJournalCalendar(calendar);
+        note.setTaskJournalCalendar(calendar);
         VJournal vj = (VJournal) getMasterComponent(calendar.getComponents(Component.VJOURNAL));
         setCalendarAttributes(note, vj);
         return note;
@@ -248,12 +247,9 @@ public class EntityConverter {
      * @return NoteItem representation of VTODO
      */
     public NoteItem convertTaskCalendar(NoteItem  note, Calendar calendar) {
-        
-        note.setTaskCalendar(calendar);
+        note.setTaskJournalCalendar(calendar);
         VToDo todo = (VToDo) getMasterComponent(calendar.getComponents(Component.VTODO));
-        
         setCalendarAttributes(note, todo);
-        
         return note;
     }
     
@@ -396,27 +392,28 @@ public class EntityConverter {
         return getCalendarFromNote(note);
     }
 
-    /*
-    * Returns a calendar representing the note.
-    * <p>
-    * If the note is a modification, returns null. If the note has an event
-    * stamp, returns a calendar containing the event and any exceptions. If
-    * the note has a journal stamp, returns a calendar containing the journal.
-    * </p>
-    * @param note The note item.
-    * @return calendar The calendar.
-    */
+    /**
+     * Returns a calendar representing the note.
+     * <p>
+     * If the note is a modification, returns null. If the note has an event
+     * stamp, returns a calendar containing the event and any exceptions. If
+     * the note has a journal stamp, returns a calendar containing the journal.
+     * </p>
+     * @param note The note item.
+     * @return calendar The calendar.
+     */
     public Calendar convertJournalNote(NoteItem note) {
+
         // must be a master note
         if (note.getModifies()!=null) {
             return null;
         }
-        
+
         EventStamp event = StampUtils.getEventStamp(note);
         if (event!=null) {
             return getCalendarFromEventStamp(event);
         }
-        
+
         return getJournalCalendarFromNote(note);
     }
 
@@ -445,7 +442,7 @@ public class EntityConverter {
      */
     protected Calendar getCalendarFromNote(NoteItem note) {
         // Start with existing calendar if present
-        Calendar calendar = note.getTaskCalendar();
+        Calendar calendar = note.getTaskJournalCalendar();
         
         // otherwise, start with new calendar
         if (calendar == null) {
@@ -459,7 +456,7 @@ public class EntityConverter {
         // merge in displayName,body
         VToDo task = (VToDo) calendar.getComponent(Component.VTODO);
         mergeCalendarProperties(task, note);
-        
+
         return calendar;
     }
 
@@ -470,7 +467,7 @@ public class EntityConverter {
      */
     protected Calendar getJournalCalendarFromNote(NoteItem note) {
         // Start with existing calendar if present
-        Calendar calendar = note.getJournalCalendar();
+        Calendar calendar = note.getTaskJournalCalendar();
         
         // otherwise, start with new calendar
         if (calendar == null) {
@@ -486,7 +483,7 @@ public class EntityConverter {
         mergeCalendarProperties(journal, note);
         
         return calendar;
-    }
+    }    
     
     /**
      * gets calendar from event stamp.
