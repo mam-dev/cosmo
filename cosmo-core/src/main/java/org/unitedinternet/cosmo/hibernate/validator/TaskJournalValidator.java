@@ -60,15 +60,13 @@ public class TaskJournalValidator implements ConstraintValidator<TaskJournal, Ca
                 
                     return false;
                 }
-            return true;
-            }
-            else if(calendar.getComponent(Component.VJOURNAL) != null) {
+                return true;
+            } else if(calendar.getComponent(Component.VJOURNAL) != null) {
                 ComponentList<VJournal> comps = calendar.getComponents(Component.VJOURNAL);
                 if (comps == null || comps.size() == 0) {
                     LOG.warn("Error validating journal: {}", calendar.toString());
                     return false;
                 }
-    
                 return true;
             }
 
