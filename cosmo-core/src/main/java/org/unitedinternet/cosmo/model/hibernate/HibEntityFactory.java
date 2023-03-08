@@ -18,13 +18,11 @@ package org.unitedinternet.cosmo.model.hibernate;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BinaryAttribute;
-import org.unitedinternet.cosmo.model.CalendarAttribute;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
@@ -100,10 +98,6 @@ public class HibEntityFactory implements EntityFactory {
 
     public BinaryAttribute createBinaryAttribute(QName qname, InputStream is) {
         return new HibBinaryAttribute(qname, is);
-    }
-
-    public CalendarAttribute createCalendarAttribute(QName qname, Calendar cal) {
-        return new HibCalendarAttribute(qname, cal);
     }
 
     public CalendarCollectionStamp createCalendarCollectionStamp(CollectionItem col) {

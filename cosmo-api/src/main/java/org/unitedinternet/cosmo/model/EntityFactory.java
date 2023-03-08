@@ -18,7 +18,6 @@ package org.unitedinternet.cosmo.model;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 import org.w3c.dom.Element;
 
@@ -211,15 +210,6 @@ public interface EntityFactory {
      * @return new DecimalAttribute
      */
     public DecimalAttribute createDecimalAttribute(QName qname, BigDecimal bd);
-    
-    
-    /**
-     * Create new CalendarAttribute using Calendar
-     * @param qname QName of attribute
-     * @param cal calendar value
-     * @return new CalendarAttribute
-     */
-    public CalendarAttribute createCalendarAttribute(QName qname, Calendar cal);
     
     /**
      * Create new IntegerAttribute using Long
