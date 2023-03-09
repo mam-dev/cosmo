@@ -455,8 +455,14 @@ public class EntityConverter {
         
         // merge in displayName,body
         VToDo task = (VToDo) calendar.getComponent(Component.VTODO);
-        mergeCalendarProperties(task, note);
+        VJournal journal = (VJournal) calendar.getComponent(Component.VJOURNAL);
 
+        if (task!= null) {
+            mergeCalendarProperties(task, note);
+        } else if (journal != null) {
+            mergeCalendarProperties(journal, note);
+        }
+    
         return calendar;
     }
 
@@ -772,7 +778,7 @@ public class EntityConverter {
      */
     private VAlarm getDisplayAlarm(VEvent event) {
         for(VAlarm alarm : event.getAlarms()) {
-            if (alarm.getProperties().getProperty(Property.ACTION).equals(Action.DISPLAY)) {
+            if (Action.DISPLAY.equals(alarm.getProperties().getProperty(Property.ACTION))) {
                 return alarm;
             }
         }
