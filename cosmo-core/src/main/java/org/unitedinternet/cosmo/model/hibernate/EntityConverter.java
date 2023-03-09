@@ -217,7 +217,7 @@ public class EntityConverter {
      * @return NoteItem representation of VJOURNAL
      */
     public NoteItem convertJournalCalendar(NoteItem  note, Calendar calendar) {
-        
+        note.setTaskJournalCalendar(calendar);
         VJournal vj = (VJournal) getMasterComponent(calendar.getComponents(Component.VJOURNAL));
         setCalendarAttributes(note, vj);
         return note;
@@ -247,12 +247,9 @@ public class EntityConverter {
      * @return NoteItem representation of VTODO
      */
     public NoteItem convertTaskCalendar(NoteItem  note, Calendar calendar) {
-        
-        note.setTaskCalendar(calendar);
+        note.setTaskJournalCalendar(calendar);
         VToDo todo = (VToDo) getMasterComponent(calendar.getComponents(Component.VTODO));
-        
         setCalendarAttributes(note, todo);
-        
         return note;
     }
     
@@ -392,10 +389,9 @@ public class EntityConverter {
         if (event!=null) {
             return getCalendarFromEventStamp(event);
         }
-
         return getCalendarFromNote(note);
     }
-    
+
     /**
      * Converts FreeBusy item.
      * @param freeBusyItem The freeBusy item.
@@ -421,24 +417,30 @@ public class EntityConverter {
      */
     protected Calendar getCalendarFromNote(NoteItem note) {
         // Start with existing calendar if present
-        Calendar calendar = note.getTaskCalendar();
+        Calendar calendar = note.getTaskJournalCalendar();
         
-        // otherwise, start with new calendar
+        // Otherwise, start with new calendar
         if (calendar == null) {
             calendar = ICalendarUtils.createBaseCalendar(new VToDo());
         }
         else {
-            // use copy when merging calendar with item properties
+            // Use copy when merging calendar with item properties
             calendar = CalendarUtils.copyCalendar(calendar);
         }
         
-        // merge in displayName,body
+        // Merge in displayName,body
         VToDo task = (VToDo) calendar.getComponent(Component.VTODO);
-        mergeCalendarProperties(task, note);
-        
+        VJournal journal = (VJournal) calendar.getComponent(Component.VJOURNAL);
+
+        if (task != null) {
+            mergeCalendarProperties(task, note);
+        } else if (journal != null) {
+            mergeCalendarProperties(journal, note);
+        }
+    
         return calendar;
     }
-    
+
     /**
      * gets calendar from event stamp.
      * @param stamp The event stamp.
@@ -586,6 +588,41 @@ public class EntityConverter {
     
     /**
      * Merges calendar properties.
+     * @param journal The journal.
+     * @param note The note item.
+     */
+    private void mergeCalendarProperties(VJournal journal, NoteItem note) {
+        //uid = icaluid or uid
+        //summary = displayName
+        //description = body
+        //dtstamp = clientModifiedDate/modifiedDate
+
+        String icalUid = note.getIcalUid();
+        if (icalUid==null) {
+            icalUid = note.getUid();
+        }
+        
+        if (note.getClientModifiedDate()!=null) {
+            ICalendarUtils.setDtStamp(note.getClientModifiedDate(), journal);
+        }
+        else {
+            ICalendarUtils.setDtStamp(note.getModifiedDate(), journal);
+        }
+        
+        ICalendarUtils.setUid(icalUid, journal);
+        ICalendarUtils.setSummary(note.getDisplayName(), journal);
+        ICalendarUtils.setDescription(note.getBody(), journal);
+        
+        if (StampUtils.getTaskStamp(note) != null) {
+            ICalendarUtils.setXProperty(X_OSAF_STARRED, "TRUE", journal);
+        }
+        else {
+            ICalendarUtils.setXProperty(X_OSAF_STARRED, null, journal);
+        }
+    }
+
+    /**
+     * Merges calendar properties.
      * @param event The event.
      * @param note The note item.
      */
@@ -691,7 +728,7 @@ public class EntityConverter {
      */
     private VAlarm getDisplayAlarm(VEvent event) {
         for(VAlarm alarm : event.getAlarms()) {
-            if (alarm.getProperties().getProperty(Property.ACTION).equals(Action.DISPLAY)) {
+            if (Action.DISPLAY.equals(alarm.getProperties().getProperty(Property.ACTION))) {
                 return alarm;
             }
         }

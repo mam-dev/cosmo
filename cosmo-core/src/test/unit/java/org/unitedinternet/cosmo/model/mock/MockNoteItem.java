@@ -23,7 +23,7 @@ import java.util.Set;
 
 import net.fortuna.ical4j.model.Calendar;
 
-import org.unitedinternet.cosmo.hibernate.validator.Task;
+import org.unitedinternet.cosmo.hibernate.validator.TaskJournal;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -117,26 +117,26 @@ public class MockNoteItem extends MockICalendarItem implements NoteItem {
     }
     
     /**
-     * Gets task calendar.
+     * Gets a task or a journal calendar.
      * {@inheritDoc}
      * @return The calendar.
      */
-    @Task
-    public Calendar getTaskCalendar() {
+    @TaskJournal
+    public Calendar getTaskJournalCalendar() {
         // calendar stored as ICalendarAttribute on Item
         return MockICalendarAttribute.getValue(this, ATTR_ICALENDAR);
     }
     
    /**
-    * Sets task calendar.
+    * Sets a task or a journal calendar.
     * {@inheritDoc}
     * @param calendar The calendar.
     */
-    public void setTaskCalendar(Calendar calendar) {
+    public void setTaskJournalCalendar(Calendar calendar) {
         // calendar stored as ICalendarAttribute on Item
         MockICalendarAttribute.setValue(this, ATTR_ICALENDAR, calendar);
     }
-    
+
     /**
      * Copy.
      * {@inheritDoc}

@@ -36,7 +36,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.unitedinternet.cosmo.hibernate.validator.Task;
+import org.unitedinternet.cosmo.hibernate.validator.TaskJournal;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.QName;
@@ -118,13 +118,13 @@ public class HibNoteItem extends HibICalendarItem implements NoteItem {
         HibTimestampAttribute.setValue(this, ATTR_REMINDER_TIME, reminderTime);
     }
    
-    @Task
-    public Calendar getTaskCalendar() {
+    @TaskJournal
+    public Calendar getTaskJournalCalendar() {
         // calendar stored as ICalendarAttribute on Item
         return getCalendar();
     }
     
-    public void setTaskCalendar(Calendar calendar) {
+    public void setTaskJournalCalendar(Calendar calendar) {
         setCalendar(calendar);
     }
    
