@@ -42,6 +42,8 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.FreeBusyItem;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.Item;
+import org.unitedinternet.cosmo.model.Attribute;
+import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.NoteOccurrence;
 import org.unitedinternet.cosmo.model.StampUtils;
@@ -373,6 +375,7 @@ public class EntityConverter {
      * If the note is a modification, returns null. If the note has an event
      * stamp, returns a calendar containing the event and any exceptions. If
      * the note has a task stamp, returns a calendar containing the task.
+     * Otherwise, returns a calendar containing a journal.
      * </p>
      * @param note The note item.
      * @return calendar The calendar.
@@ -389,32 +392,17 @@ public class EntityConverter {
             return getCalendarFromEventStamp(event);
         }
 
+        Map<QName, Attribute> attributes = note.getAttributes();
+        Attribute attribute = attributes.get(HibICalendarItem.ATTR_ICALENDAR);
+                
+        if (attribute != null) { 
+            Calendar calendar = (Calendar) attribute.getValue();
+            if (calendar != null && !calendar.getComponents(Component.VJOURNAL).isEmpty()) {
+                return getJournalCalendarFromNote(note);
+            }
+        }
+
         return getCalendarFromNote(note);
-    }
-
-    /**
-     * Returns a calendar representing the note.
-     * <p>
-     * If the note is a modification, returns null. If the note has an event
-     * stamp, returns a calendar containing the event and any exceptions. If
-     * the note has a journal stamp, returns a calendar containing the journal.
-     * </p>
-     * @param note The note item.
-     * @return calendar The calendar.
-     */
-    public Calendar convertJournalNote(NoteItem note) {
-
-        // must be a master note
-        if (note.getModifies()!=null) {
-            return null;
-        }
-
-        EventStamp event = StampUtils.getEventStamp(note);
-        if (event!=null) {
-            return getCalendarFromEventStamp(event);
-        }
-
-        return getJournalCalendarFromNote(note);
     }
 
     /**

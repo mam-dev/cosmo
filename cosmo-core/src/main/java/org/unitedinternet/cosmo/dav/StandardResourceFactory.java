@@ -245,9 +245,9 @@ public class StandardResourceFactory implements DavResourceFactory {
                 Map<QName, Attribute> attributes = note.getAttributes();
                 Attribute attribute = attributes.get(HibICalendarItem.ATTR_ICALENDAR);
                 
-                if(attribute != null){
+                if (attribute != null) {
                     Calendar calendar = (Calendar) attribute.getValue();
-                    if(calendar != null && !calendar.getComponents(Component.VJOURNAL).isEmpty()){
+                    if (calendar != null && !calendar.getComponents(Component.VJOURNAL).isEmpty()) {
                         return new DavJournal(note, locator, this, entityFactory);
                     }
                 }
