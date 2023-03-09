@@ -42,8 +42,6 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.FreeBusyItem;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.Item;
-import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.NoteOccurrence;
 import org.unitedinternet.cosmo.model.StampUtils;
@@ -391,17 +389,6 @@ public class EntityConverter {
         if (event!=null) {
             return getCalendarFromEventStamp(event);
         }
-
-        Map<QName, Attribute> attributes = note.getAttributes();
-        Attribute attribute = attributes.get(HibICalendarItem.ATTR_ICALENDAR);
-                
-        if (attribute != null) { 
-            Calendar calendar = (Calendar) attribute.getValue();
-            if (calendar != null && !calendar.getComponents(Component.VJOURNAL).isEmpty()) {
-                return getJournalCalendarFromNote(note);
-            }
-        }
-
         return getCalendarFromNote(note);
     }
 
@@ -432,20 +419,20 @@ public class EntityConverter {
         // Start with existing calendar if present
         Calendar calendar = note.getTaskJournalCalendar();
         
-        // otherwise, start with new calendar
+        // Otherwise, start with new calendar
         if (calendar == null) {
             calendar = ICalendarUtils.createBaseCalendar(new VToDo());
         }
         else {
-            // use copy when merging calendar with item properties
+            // Use copy when merging calendar with item properties
             calendar = CalendarUtils.copyCalendar(calendar);
         }
         
-        // merge in displayName,body
+        // Merge in displayName,body
         VToDo task = (VToDo) calendar.getComponent(Component.VTODO);
         VJournal journal = (VJournal) calendar.getComponent(Component.VJOURNAL);
 
-        if (task!= null) {
+        if (task != null) {
             mergeCalendarProperties(task, note);
         } else if (journal != null) {
             mergeCalendarProperties(journal, note);
@@ -454,31 +441,6 @@ public class EntityConverter {
         return calendar;
     }
 
-    /**
-     * Gets calendar from note.
-     * @param note The note item.
-     * @return The calendar.
-     */
-    protected Calendar getJournalCalendarFromNote(NoteItem note) {
-        // Start with existing calendar if present
-        Calendar calendar = note.getTaskJournalCalendar();
-        
-        // otherwise, start with new calendar
-        if (calendar == null) {
-            calendar = ICalendarUtils.createBaseCalendar(new VJournal());
-        }
-        else {
-            // use copy when merging calendar with item properties
-            calendar = CalendarUtils.copyCalendar(calendar);
-        }
-        
-        // merge in displayName,body
-        VJournal journal = (VJournal) calendar.getComponent(Component.VJOURNAL);
-        mergeCalendarProperties(journal, note);
-        
-        return calendar;
-    }    
-    
     /**
      * gets calendar from event stamp.
      * @param stamp The event stamp.
