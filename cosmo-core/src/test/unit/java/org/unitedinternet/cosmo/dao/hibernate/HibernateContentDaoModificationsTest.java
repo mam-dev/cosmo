@@ -15,8 +15,12 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -62,10 +66,10 @@ public class HibernateContentDaoModificationsTest extends AbstractSpringDaoTestC
         itemA = (NoteItem) contentDao.findItemByUid(itemA.getUid());
         itemB = (NoteItem) contentDao.findItemByUid(itemB.getUid());
         
-        Assert.assertEquals(1, itemA.getModifications().size());
-        Assert.assertTrue(itemA.getModifications().contains(itemB));
-        Assert.assertNotNull(itemB.getModifies());
-        Assert.assertEquals(itemB.getModifies().getUid(), itemA.getUid());
+        assertEquals(1, itemA.getModifications().size());
+        assertTrue(itemA.getModifications().contains(itemB));
+        assertNotNull(itemB.getModifies());
+        assertEquals(itemB.getModifies().getUid(), itemA.getUid());
         
         // add another mod/remove old
         NoteItem itemC = generateTestContent("CModifesA", "testuser");
@@ -80,11 +84,11 @@ public class HibernateContentDaoModificationsTest extends AbstractSpringDaoTestC
         itemB = (NoteItem) contentDao.findItemByUid(itemB.getUid());
         itemC = (NoteItem) contentDao.findItemByUid(itemC.getUid());
         
-        Assert.assertEquals(1, itemA.getModifications().size());
-        Assert.assertTrue(itemA.getModifications().contains(itemC));
-        Assert.assertNull(itemB);
-        Assert.assertNotNull(itemC.getModifies());
-        Assert.assertEquals(itemC.getModifies().getUid(), itemA.getUid());
+        assertEquals(1, itemA.getModifications().size());
+        assertTrue(itemA.getModifications().contains(itemC));
+        assertNull(itemB);
+        assertNotNull(itemC.getModifies());
+        assertEquals(itemC.getModifies().getUid(), itemA.getUid());
     }
     
     /**
@@ -109,7 +113,7 @@ public class HibernateContentDaoModificationsTest extends AbstractSpringDaoTestC
         
         itemA = (NoteItem) contentDao.findItemByUid(itemA.getUid());
         
-        Assert.assertEquals(2, itemA.getModifications().size());
+        assertEquals(2, itemA.getModifications().size());
         contentDao.removeContent(itemA);
         clearSession();
         
@@ -117,9 +121,9 @@ public class HibernateContentDaoModificationsTest extends AbstractSpringDaoTestC
         itemB = (NoteItem) contentDao.findItemByUid(itemB.getUid());
         itemC = (NoteItem) contentDao.findItemByUid(itemC.getUid());
         
-        Assert.assertNull(itemA);
-        Assert.assertNull(itemB);
-        Assert.assertNull(itemC);
+        assertNull(itemA);
+        assertNull(itemB);
+        assertNull(itemC);
     }
     
     /**

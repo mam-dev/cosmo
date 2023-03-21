@@ -15,7 +15,8 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.jackrabbit.webdav.DavException;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class FreeBusyReportTest extends BaseReportTestCase {
         FreeBusyReport report = new FreeBusyReport();
         try {
             report.init(dcc, makeReportInfo("multiget1.xml", DEPTH_1));
-            Assert.fail("Non-freebusy report info initalized");
+            fail("Non-freebusy report info initalized");
         } catch (Exception e) {
         }
     }
@@ -75,9 +76,9 @@ public class FreeBusyReportTest extends BaseReportTestCase {
 
         try {
             report.runQuery();
-            Assert.fail("free-busy report targeted at excluded collection should not have succeeded but did");
+            fail("free-busy report targeted at excluded collection should not have succeeded but did");
         } catch (DavException e) {
-            Assert.assertEquals("free-busy report targeted at excluded collection did not return 403", 403, e.getErrorCode());
+            assertEquals(403, e.getErrorCode(), "free-busy report targeted at excluded collection did not return 403");
         }
     }
 
@@ -100,10 +101,10 @@ public class FreeBusyReportTest extends BaseReportTestCase {
 
         try {
             report.runQuery();
-            Assert.fail("free-busy report targeted at collection with excluded parent should not have succeeded but did");
+            fail("free-busy report targeted at collection with excluded parent should not have succeeded but did");
         } catch (DavException e) {
-            Assert.assertEquals("free-busy report targeted at collection with excluded parent "
-                    + "did not return 403", 403, e.getErrorCode());
+            assertEquals(403, e.getErrorCode(),
+                         "free-busy report targeted at collection with excluded parent did not return 403");
         }
     }
 

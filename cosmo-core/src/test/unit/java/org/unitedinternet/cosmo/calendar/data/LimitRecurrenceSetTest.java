@@ -18,8 +18,9 @@ package org.unitedinternet.cosmo.calendar.data;
 import java.io.FileInputStream;
 import java.io.StringReader;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
@@ -48,7 +49,7 @@ public class LimitRecurrenceSetTest {
         FileInputStream fis = new FileInputStream(baseDir + "limit_recurr_test.ics");
         Calendar calendar = cb.build(fis);
         
-        Assert.assertEquals(5, calendar.getComponents().getComponents("VEVENT").size());
+        assertEquals(5, calendar.getComponents().getComponents("VEVENT").size());
         
         VTimeZone vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
         TimeZone tz = new TimeZone(vtz);
@@ -70,15 +71,15 @@ public class LimitRecurrenceSetTest {
         Calendar filterCal = cb.build(sr);
         
         ComponentList<CalendarComponent> comps = filterCal.getComponents();
-        Assert.assertEquals(3, comps.getComponents("VEVENT").size());
-        Assert.assertEquals(1, comps.getComponents("VTIMEZONE").size());
+        assertEquals(3, comps.getComponents("VEVENT").size());
+        assertEquals(1, comps.getComponents("VTIMEZONE").size());
         
         // Make sure 3rd and 4th override are dropped
 
         ComponentList<CalendarComponent> events = comps.getComponents("VEVENT");
         for(CalendarComponent c : events) {            
-            Assert.assertNotSame("event 6 changed 3",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
-            Assert.assertNotSame("event 6 changed 4",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            assertNotSame("event 6 changed 3",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            assertNotSame("event 6 changed 4",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }
     }
     
@@ -92,7 +93,7 @@ public class LimitRecurrenceSetTest {
         FileInputStream fis = new FileInputStream(baseDir + "limit_recurr_float_test.ics");
         Calendar calendar = cb.build(fis);
         
-        Assert.assertEquals(3, calendar.getComponents().getComponents("VEVENT").size());
+        assertEquals(3, calendar.getComponents().getComponents("VEVENT").size());
         
         OutputFilter filter = new OutputFilter("test");
         DateTime start = new DateTime("20060102T170000");
@@ -112,11 +113,11 @@ public class LimitRecurrenceSetTest {
         
         Calendar filterCal = cb.build(sr);
         
-        Assert.assertEquals(2, filterCal.getComponents().getComponents("VEVENT").size());
+        assertEquals(2, filterCal.getComponents().getComponents("VEVENT").size());
         // Make sure 2nd override is dropped
         ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);        
         for(VEvent c : vevents) {            
-            Assert.assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }   
     }
     
@@ -130,7 +131,7 @@ public class LimitRecurrenceSetTest {
         FileInputStream fis = new FileInputStream(baseDir + "limit_recurr_taf_test.ics");
         Calendar calendar = cb.build(fis);
         
-        Assert.assertEquals(4, calendar.getComponents().getComponents("VEVENT").size());
+        assertEquals(4, calendar.getComponents().getComponents("VEVENT").size());
         
         VTimeZone vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
         TimeZone tz = new TimeZone(vtz);
@@ -151,13 +152,13 @@ public class LimitRecurrenceSetTest {
         
         Calendar filterCal = cb.build(sr);
         
-        Assert.assertEquals(2, filterCal.getComponents().getComponents("VEVENT").size());
+        assertEquals(2, filterCal.getComponents().getComponents("VEVENT").size());
         // Make sure 2nd and 3rd override are dropped
         ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);
         
         for(VEvent c : vevents) {            
-            Assert.assertNotSame("event 6 changed",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
-            Assert.assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            assertNotSame("event 6 changed",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
+            assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }   
     }
     

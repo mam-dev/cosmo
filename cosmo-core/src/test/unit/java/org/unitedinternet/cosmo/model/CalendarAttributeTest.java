@@ -19,8 +19,10 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.unitedinternet.cosmo.model.mock.MockCalendarAttribute;
 
 /**
@@ -52,22 +54,22 @@ public class CalendarAttributeTest {
         ca3.setValue(test3);
         Calendar cal3 = ca3.getValue();
         
-        Assert.assertEquals(cal1.getTimeZone().getID(), "GMT+05:00");
-        Assert.assertEquals(cal2.getTimeZone().getID(), "GMT-00:00");
-        Assert.assertEquals(cal3.getTimeZone().getID(), "GMT+05:00");
-        Assert.assertEquals(cal1.getTime().getTime(), cal2.getTime().getTime());
-        Assert.assertEquals(cal1.getTime().getTime(), cal3.getTime().getTime());
-        Assert.assertEquals(test1, ca3.toString());
+        assertEquals(cal1.getTimeZone().getID(), "GMT+05:00");
+        assertEquals(cal2.getTimeZone().getID(), "GMT-00:00");
+        assertEquals(cal3.getTimeZone().getID(), "GMT+05:00");
+        assertEquals(cal1.getTime().getTime(), cal2.getTime().getTime());
+        assertEquals(cal1.getTime().getTime(), cal3.getTime().getTime());
+        assertEquals(test1, ca3.toString());
         
-        Assert.assertFalse(cal1.equals(cal2));
-        Assert.assertTrue(cal1.equals(cal3));
+        assertFalse(cal1.equals(cal2));
+        assertTrue(cal1.equals(cal3));
         
         Calendar cal4 = new GregorianCalendar(TimeZone.getTimeZone("GMT+05:00"));
         cal4.setTime(cal1.getTime());
         
-        Assert.assertEquals(cal4.getTimeZone().getID(), cal1.getTimeZone().getID());
-        Assert.assertEquals(cal4.getTime().getTime(), cal1.getTime().getTime());
-        Assert.assertTrue(cal1.equals(cal4));
+        assertEquals(cal4.getTimeZone().getID(), cal1.getTimeZone().getID());
+        assertEquals(cal4.getTime().getTime(), cal1.getTime().getTime());
+        assertTrue(cal1.equals(cal4));
     }
     
 }

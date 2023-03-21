@@ -17,9 +17,12 @@ package org.unitedinternet.cosmo.dav.impl;
 
 
 import org.apache.jackrabbit.webdav.property.DavProperty;
-import org.junit.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
@@ -49,8 +52,7 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
                 break;
             }
         }
-        Assert.assertTrue("exclude-free-busy-rollup not found in dead property filter",
-                   found);
+        assertTrue(found, "exclude-free-busy-rollup not found in dead property filter");
     }
 
     /**
@@ -64,10 +66,10 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
 
         @SuppressWarnings("rawtypes")
         DavProperty efbr = dc.getProperty(EXCLUDEFREEBUSYROLLUP);
-        Assert.assertNotNull("exclude-free-busy-rollup property not found", efbr);
+        assertNotNull(efbr, "exclude-free-busy-rollup property not found");
 
         boolean flag = ((Boolean) efbr.getValue()).booleanValue();
-        Assert.assertTrue("exclude-free-busy-rollup property not false", ! flag);
+        assertTrue(! flag, "exclude-free-busy-rollup property not false");
     }
 
     /**
@@ -81,10 +83,10 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
 
         @SuppressWarnings("rawtypes")
         DavProperty efbr = dc.getProperty(EXCLUDEFREEBUSYROLLUP);
-        Assert.assertNotNull("exclude-free-busy-rollup property not found", efbr);
+        assertNotNull(efbr, "exclude-free-busy-rollup property not found");
 
         boolean flag = ((Boolean) efbr.getValue()).booleanValue();
-        Assert.assertTrue("exclude-free-busy-rollup property not true", flag);
+        assertTrue(flag, "exclude-free-busy-rollup property not true");
     }
 
     /**
@@ -99,8 +101,8 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
         ExcludeFreeBusyRollup efbr = new ExcludeFreeBusyRollup(false);
         dc.setLiveProperty(efbr, false);
 
-        Assert.assertTrue("set exclude-free-busy-rollup property is true",
-                   ! testHelper.getHomeCollection().isExcludeFreeBusyRollup());
+        assertTrue(! testHelper.getHomeCollection().isExcludeFreeBusyRollup(),
+                "set exclude-free-busy-rollup property is true");
     }
 
     /**
@@ -115,8 +117,8 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
         ExcludeFreeBusyRollup efbr = new ExcludeFreeBusyRollup(true);
         dc.setLiveProperty(efbr, false);
 
-        Assert.assertTrue("set exclude-free-busy-rollup property is false",
-                   testHelper.getHomeCollection().isExcludeFreeBusyRollup());
+        assertTrue(testHelper.getHomeCollection().isExcludeFreeBusyRollup(), 
+                   "set exclude-free-busy-rollup property is false");
     }
 
     /**
@@ -130,8 +132,8 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
 
         dc.removeLiveProperty(EXCLUDEFREEBUSYROLLUP);
 
-        Assert.assertTrue("removed exclude-free-busy-rollup property is true",
-                   ! testHelper.getHomeCollection().isExcludeFreeBusyRollup());
+        assertTrue(! testHelper.getHomeCollection().isExcludeFreeBusyRollup(),
+                   "removed exclude-free-busy-rollup property is true");
     }
 
     /**

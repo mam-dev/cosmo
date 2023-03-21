@@ -18,9 +18,11 @@ package org.unitedinternet.cosmo.security.aop;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
@@ -105,28 +107,28 @@ public class SecurityAdviceTest {
         
         // should work fine
         proxyService.findItemByUid("1");
-        //Assert.assertTrue(sa.getSecured());
+        //assertTrue(sa.getSecured());
         
         // now set security context to user2
         initiateContext(user2);
-        //Assert.assertFalse(sa.getSecured());
+        //assertFalse(sa.getSecured());
         // should fail
         try {
             proxyService.findItemByUid("1");
-            Assert.fail("able to view item");
+            fail("able to view item");
         } catch (ItemSecurityException e) {
-            Assert.assertEquals("1", e.getItem().getUid());
-            Assert.assertEquals(Permission.READ, e.getPermission());
+            assertEquals("1", e.getItem().getUid());
+            assertEquals(Permission.READ, e.getPermission());
         }
         
         // try to update item
         // should fail
         try {
             proxyService.updateContent(dummyContent);
-            Assert.fail("able to update item");
+            fail("able to update item");
         } catch (ItemSecurityException e) {
-            Assert.assertEquals("1", e.getItem().getUid());
-            Assert.assertEquals(Permission.WRITE, e.getPermission());
+            assertEquals("1", e.getItem().getUid());
+            assertEquals(Permission.WRITE, e.getPermission());
         }
         
         // login as user1
@@ -176,10 +178,10 @@ public class SecurityAdviceTest {
         // update should fail
         try {
             proxyService.updateContent(dummyContent);
-            Assert.fail("able to update item");
+            fail("able to update item");
         } catch (ItemSecurityException e) {
-            Assert.assertEquals("1", e.getItem().getUid());
-            Assert.assertEquals(Permission.WRITE, e.getPermission());
+            assertEquals("1", e.getItem().getUid());
+            assertEquals(Permission.WRITE, e.getPermission());
         }
         
         // login as RW ticket
@@ -204,10 +206,10 @@ public class SecurityAdviceTest {
         // view should fail
         try {
             proxyService.findItemByUid("1");
-            Assert.fail("able to view item");
+            fail("able to view item");
         } catch (ItemSecurityException e) {
-            Assert.assertEquals("1", e.getItem().getUid());
-            Assert.assertEquals(Permission.READ, e.getPermission());
+            assertEquals("1", e.getItem().getUid());
+            assertEquals(Permission.READ, e.getPermission());
         }
     }
     

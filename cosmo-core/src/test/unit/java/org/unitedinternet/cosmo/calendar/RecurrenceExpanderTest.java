@@ -25,8 +25,11 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test RecurrenceExpander.
@@ -49,15 +52,15 @@ public class RecurrenceExpanderTest {
         
         Date[] range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101", range[0].toString());
-        Assert.assertEquals("20070120", range[1].toString());
+        assertEquals("20070101", range[0].toString());
+        assertEquals("20070120", range[1].toString());
         
         calendar = getCalendar("allday_recurring2.ics");
         
         range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101", range[0].toString());
-        Assert.assertNull(range[1]);
+        assertEquals("20070101", range[0].toString());
+        assertNull(range[1]);
     }
     
     /**
@@ -71,14 +74,14 @@ public class RecurrenceExpanderTest {
         
         Date[] range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101T100000", range[0].toString());
-        Assert.assertEquals("20070119T120000", range[1].toString());
+        assertEquals("20070101T100000", range[0].toString());
+        assertEquals("20070119T120000", range[1].toString());
         
         calendar = getCalendar("floating_recurring2.ics");
         range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101T100000", range[0].toString());
-        Assert.assertNull(range[1]);
+        assertEquals("20070101T100000", range[0].toString());
+        assertNull(range[1]);
     }
     /**
      * Tests reccurence expander floating.
@@ -90,8 +93,8 @@ public class RecurrenceExpanderTest {
         Calendar calendar = getCalendar("withExceptions.ics");
         
         Date[] range = expander.calculateRecurrenceRange(calendar);
-        Assert.assertEquals("20131223", range[0].toString());
-        Assert.assertEquals("20140111T075100Z", range[1].toString());
+        assertEquals("20131223", range[0].toString());
+        assertEquals("20140111T075100Z", range[1].toString());
     }
     /***
      * Tests recurrence expander timezone.
@@ -104,20 +107,20 @@ public class RecurrenceExpanderTest {
         
         Date[] range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101T100000", range[0].toString());
-        Assert.assertEquals("20070119T120000", range[1].toString());
+        assertEquals("20070101T100000", range[0].toString());
+        assertEquals("20070119T120000", range[1].toString());
         
-        Assert.assertEquals(((DateTime) range[0]).getTimeZone().getID(), "America/Chicago");
-        Assert.assertEquals(((DateTime) range[1]).getTimeZone().getID(), "America/Chicago");
+        assertEquals(((DateTime) range[0]).getTimeZone().getID(), "America/Chicago");
+        assertEquals(((DateTime) range[1]).getTimeZone().getID(), "America/Chicago");
         
         calendar = getCalendar("tz_recurring2.ics");
         
         range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101T100000", range[0].toString());
-        Assert.assertNull(range[1]);
+        assertEquals("20070101T100000", range[0].toString());
+        assertNull(range[1]);
         
-        Assert.assertEquals(((DateTime) range[0]).getTimeZone().getID(), "America/Chicago");
+        assertEquals(((DateTime) range[0]).getTimeZone().getID(), "America/Chicago");
     }
     
     /**
@@ -131,8 +134,8 @@ public class RecurrenceExpanderTest {
         
         Date[] range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20070101T100000", range[0].toString());
-        Assert.assertEquals("20091231T120000", range[1].toString());
+        assertEquals("20070101T100000", range[0].toString());
+        assertEquals("20091231T120000", range[1].toString());
     }
     
     /**
@@ -146,8 +149,8 @@ public class RecurrenceExpanderTest {
         
         Date[] range = expander.calculateRecurrenceRange(calendar);
         
-        Assert.assertEquals("20061212T100000", range[0].toString());
-        Assert.assertEquals("20101212T120000", range[1].toString());
+        assertEquals("20061212T100000", range[0].toString());
+        assertEquals("20101212T120000", range[1].toString());
     }
     
     /**
@@ -162,7 +165,7 @@ public class RecurrenceExpanderTest {
         InstanceList instances = expander.getOcurrences(calendar, new DateTime("20080101T100000"),
                                                         new DateTime("20080101T100001"), null);
         
-        Assert.assertEquals(1, instances.size());
+        assertEquals(1, instances.size());
     }
     
     /**
@@ -175,24 +178,24 @@ public class RecurrenceExpanderTest {
         Calendar calendar = getCalendar("floating_recurring3.ics");
         
         
-        Assert.assertTrue(expander.isOccurrence(calendar, new DateTime("20070102T100000")));
-        Assert.assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T110000")));
-        Assert.assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T100001")));
+        assertTrue(expander.isOccurrence(calendar, new DateTime("20070102T100000")));
+        assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T110000")));
+        assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T100001")));
     
         // test DATE
         calendar = getCalendar("allday_recurring3.ics");
         
-        Assert.assertTrue(expander.isOccurrence(calendar, new Date("20070101")));
-        Assert.assertFalse(expander.isOccurrence(calendar, new Date("20070102")));
-        Assert.assertTrue(expander.isOccurrence(calendar, new Date("20070108")));
+        assertTrue(expander.isOccurrence(calendar, new Date("20070101")));
+        assertFalse(expander.isOccurrence(calendar, new Date("20070102")));
+        assertTrue(expander.isOccurrence(calendar, new Date("20070108")));
         
         // test DATETIME with timezone
         calendar = getCalendar("tz_recurring3.ics");
         TimeZone ctz = TIMEZONE_REGISTRY.getTimeZone("America/Chicago");
         
-        Assert.assertTrue(expander.isOccurrence(calendar, new DateTime("20070102T100000", ctz)));
-        Assert.assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T110000", ctz)));
-        Assert.assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T100001", ctz)));
+        assertTrue(expander.isOccurrence(calendar, new DateTime("20070102T100000", ctz)));
+        assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T110000", ctz)));
+        assertFalse(expander.isOccurrence(calendar, new DateTime("20070102T100001", ctz)));
     }
     
     /**

@@ -15,9 +15,10 @@
  */
 package org.unitedinternet.cosmo.calendar.query.impl;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.UserDao;
@@ -132,21 +133,21 @@ public class StandardCalendarQueryProcessorTest {
         
         queryProcessor.addBusyPeriods(calendar, tz, fbRange, busyPeriods, busyTentativePeriods, busyUnavailablePeriods);
         
-        Assert.assertEquals("20070108T060000Z/20070109T060000Z,20070115T060000Z/20070116T060000Z", busyPeriods.toString());
+        assertEquals("20070108T060000Z/20070109T060000Z,20070115T060000Z/20070116T060000Z", busyPeriods.toString());
         
         busyPeriods.clear();
         
         tz = TIMEZONE_REGISTRY.getTimeZone("America/Los_Angeles");
         queryProcessor.addBusyPeriods(calendar, tz, fbRange, busyPeriods, busyTentativePeriods, busyUnavailablePeriods);
         
-        Assert.assertEquals("20070108T080000Z/20070109T080000Z,20070115T080000Z/20070116T080000Z", busyPeriods.toString());
+        assertEquals("20070108T080000Z/20070109T080000Z,20070115T080000Z/20070116T080000Z", busyPeriods.toString());
         
         busyPeriods.clear();
         
         tz = TIMEZONE_REGISTRY.getTimeZone("Australia/Sydney");
         queryProcessor.addBusyPeriods(calendar, tz, fbRange, busyPeriods, busyTentativePeriods, busyUnavailablePeriods);
         
-        Assert.assertEquals("20070107T130000Z/20070108T130000Z,20070114T130000Z/20070115T130000Z", busyPeriods.toString());
+        assertEquals("20070107T130000Z/20070108T130000Z,20070114T130000Z/20070115T130000Z", busyPeriods.toString());
     }
 
     /**
@@ -276,8 +277,8 @@ public class StandardCalendarQueryProcessorTest {
         }
         
         if (fb == null) {
-            Assert.fail("periods " + periods + " not in " + vfb.toString());
+            fail("periods " + periods + " not in " + vfb.toString());
         }
-        Assert.assertEquals(periods, fb.getPeriods().toString());
+        assertEquals(periods, fb.getPeriods().toString());
     }
 }

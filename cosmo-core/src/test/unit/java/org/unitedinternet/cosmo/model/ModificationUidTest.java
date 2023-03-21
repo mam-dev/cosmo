@@ -20,8 +20,11 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.hibernate.ModificationUidImpl;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
@@ -46,39 +49,39 @@ public class ModificationUidTest {
         Date date = new Date("20070101");
         
         ModificationUidImpl modUid = new ModificationUidImpl(parent, date);
-        Assert.assertEquals("abc:20070101", modUid.toString());
-        Assert.assertEquals(modUid, new ModificationUidImpl("abc:20070101"));
+        assertEquals("abc:20070101", modUid.toString());
+        assertEquals(modUid, new ModificationUidImpl("abc:20070101"));
         
         date = new DateTime("20070101T100000");
         modUid = new ModificationUidImpl(parent, date);
-        Assert.assertEquals("abc:20070101T100000", modUid.toString());
-        Assert.assertEquals(modUid, new ModificationUidImpl("abc:20070101T100000"));
+        assertEquals("abc:20070101T100000", modUid.toString());
+        assertEquals(modUid, new ModificationUidImpl("abc:20070101T100000"));
         
         date = new DateTime("20070101T100000", TIMEZONE_REGISTRY.getTimeZone("America/Chicago"));
         modUid = new ModificationUidImpl(parent, date);
-        Assert.assertEquals("abc:20070101T160000Z", modUid.toString());
+        assertEquals("abc:20070101T160000Z", modUid.toString());
        
         modUid = new ModificationUidImpl("abc:20070101T160000Z");
-        Assert.assertEquals(parent.getUid(), modUid.getParentUid());
-        Assert.assertTrue(modUid.getRecurrenceId() instanceof DateTime);
-        Assert.assertTrue(((DateTime) modUid.getRecurrenceId()).isUtc());
-        Assert.assertEquals("20070101T160000Z", modUid.getRecurrenceId().toString());
+        assertEquals(parent.getUid(), modUid.getParentUid());
+        assertTrue(modUid.getRecurrenceId() instanceof DateTime);
+        assertTrue(((DateTime) modUid.getRecurrenceId()).isUtc());
+        assertEquals("20070101T160000Z", modUid.getRecurrenceId().toString());
         
         try {
             new ModificationUidImpl("blah");
-            Assert.fail("able to parse invalid date");
+            fail("able to parse invalid date");
         } catch (ModelValidationException e) {
         }
         
         try {
             new ModificationUidImpl("blah:blah");
-            Assert.fail("able to parse invalid date");
+            fail("able to parse invalid date");
         } catch (ModelValidationException e) {
         }
         
         try {
             new ModificationUidImpl("blah:blahT");
-            Assert.fail("able to parse invalid date");
+            fail("able to parse invalid date");
         } catch (ModelValidationException e) {
         }
         

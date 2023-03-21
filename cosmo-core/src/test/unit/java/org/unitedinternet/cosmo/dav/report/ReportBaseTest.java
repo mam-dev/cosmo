@@ -17,8 +17,11 @@ package org.unitedinternet.cosmo.dav.report;
 
 import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
-import org.junit.Assert;
+
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.impl.DavHomeCollection;
 import org.unitedinternet.cosmo.dav.report.mock.MockReport;
@@ -55,10 +58,10 @@ public class ReportBaseTest extends BaseDavTestCase implements DavConstants {
 
         // Should be 3 collection: home collection and two test collecitons
         // NOTE if scheduling is enabled, outbox/inbox will also be present
-        Assert.assertEquals(3, report.calls.size());
-        Assert.assertTrue(report.calls.contains(testHelper.getHomeCollection().getDisplayName()));
-        Assert.assertTrue(report.calls.contains(coll1.getDisplayName()));
-        Assert.assertTrue(report.calls.contains(coll2.getDisplayName()));
+        assertEquals(3, report.calls.size());
+        assertTrue(report.calls.contains(testHelper.getHomeCollection().getDisplayName()));
+        assertTrue(report.calls.contains(coll1.getDisplayName()));
+        assertTrue(report.calls.contains(coll2.getDisplayName()));
     }
 
     /**

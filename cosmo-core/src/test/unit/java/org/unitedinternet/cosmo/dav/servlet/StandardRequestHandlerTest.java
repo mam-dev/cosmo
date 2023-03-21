@@ -21,8 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.unitedinternet.cosmo.dav.BadRequestException;
@@ -64,7 +68,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-Match all failed");
+            fail("If-Match all failed");
         }
     }
 
@@ -83,7 +87,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-Match specific etag failed");
+            fail("If-Match specific etag failed");
         }
     }
 
@@ -102,13 +106,13 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
-            Assert.fail("If-Match bogus etag succeeded");
+            fail("If-Match bogus etag succeeded");
         } catch (PreconditionFailedException e) {
         }
 
         String responseEtag = (String) ctx.getHttpResponse().getHeader("ETag");
-        Assert.assertNotNull("Null ETag header", responseEtag);
-        Assert.assertEquals("Incorrect ETag header value", responseEtag, home.getETag());
+        assertNotNull(responseEtag, "Null ETag header");
+        assertEquals(responseEtag, home.getETag(), "Incorrect ETag header value");
     }
 
     /**
@@ -126,16 +130,16 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
-            Assert.fail("If-None-Match all succeeded");
+            fail("If-None-Match all succeeded");
         } catch (NotModifiedException e) {
             // expected
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-None-Match all (method GET) failed with 412");
+            fail("If-None-Match all (method GET) failed with 412");
         }
 
         String responseEtag = (String) ctx.getHttpResponse().getHeader("ETag");
-        Assert.assertNotNull("Null ETag header", responseEtag);
-        Assert.assertEquals("Incorrect ETag header value", responseEtag, home.getETag());
+        assertNotNull(responseEtag, "Null ETag header");
+        assertEquals(responseEtag, home.getETag(), "Incorrect ETag header value");
     }
 
     /**
@@ -154,7 +158,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-None-Match bogus etag failed");
+            fail("If-None-Match bogus etag failed");
         }
     }
 
@@ -173,16 +177,16 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
-            Assert.fail("If-None-Match specific etag succeeded");
+            fail("If-None-Match specific etag succeeded");
         } catch (NotModifiedException e) {
             // expected
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-None-Match specific etag (method GET) failed with 412");
+            fail("If-None-Match specific etag (method GET) failed with 412");
         }
 
         String responseEtag = (String) ctx.getHttpResponse().getHeader("ETag");
-        Assert.assertNotNull("Null ETag header", responseEtag);
-        Assert.assertEquals("Incorrect ETag header value", responseEtag, home.getETag());
+        assertNotNull(responseEtag, "Null ETag header");
+        assertEquals(responseEtag, home.getETag(), "Incorrect ETag header value");
     }
 
     /**
@@ -200,11 +204,11 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
-            Assert.fail("If-Modified-Since succeeded for unmodified resource");
+            fail("If-Modified-Since succeeded for unmodified resource");
         } catch (NotModifiedException e) {
             // expected
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-Modified-Since failed with 412 for unmodified resource");
+            fail("If-Modified-Since failed with 412 for unmodified resource");
         }
     }
 
@@ -224,7 +228,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-Modified-Since failed for mmodified resource");
+            fail("If-Modified-Since failed for mmodified resource");
         }
     }
 
@@ -244,7 +248,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
         } catch (PreconditionFailedException e) {
-            Assert.fail("If-Unmodified-Since failed for unmodified resource");
+            fail("If-Unmodified-Since failed for unmodified resource");
         }
     }
 
@@ -264,7 +268,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         try {
             new StandardRequestHandler(null, null, null).preconditions(ctx.getDavRequest(), ctx.getDavResponse(), home);
-            Assert.fail("If-Unmodified-Since succeeded for modified resource");
+            fail("If-Unmodified-Since succeeded for modified resource");
         } catch (PreconditionFailedException e) {
         }
     }
@@ -274,7 +278,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         PermissionDeniedException pde = new PermissionDeniedException("some error message");
         CosmoDavException actual = captureExceptionForErrorResponseCausedBy(pde);
 
-        Assert.assertTrue(actual instanceof NeedsPrivilegesException);
+        assertTrue(actual instanceof NeedsPrivilegesException);
     }
 
     @Test
@@ -284,11 +288,11 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         ItemSecurityException pde = new ItemSecurityException(item, "some security message", Permission.READ);
         CosmoDavException actual = captureExceptionForErrorResponseCausedBy(pde);
 
-        Assert.assertTrue(actual instanceof NeedsPrivilegesException);
+        assertTrue(actual instanceof NeedsPrivilegesException);
 
         // specific atts
-        Assert.assertEquals(DavPrivilege.READ, ((NeedsPrivilegesException) actual).getPrivilege());
-        Assert.assertEquals("test/Request/Uri", ((NeedsPrivilegesException) actual).getHref());
+        assertEquals(DavPrivilege.READ, ((NeedsPrivilegesException) actual).getPrivilege());
+        assertEquals("test/Request/Uri", ((NeedsPrivilegesException) actual).getHref());
 
     }
 
@@ -298,7 +302,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         CosmoDavException actual = captureExceptionForErrorResponseCausedBy(bre);
 
-        Assert.assertEquals(bre, actual);
+        assertEquals(bre, actual);
     }
 
     @Test
@@ -307,7 +311,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         CosmoDavException actual = captureExceptionForErrorResponseCausedBy(ve);
 
-        Assert.assertTrue(actual instanceof ForbiddenException);
+        assertTrue(actual instanceof ForbiddenException);
     }
 
     @Test
@@ -316,7 +320,7 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         CosmoDavException actual = captureExceptionForErrorResponseCausedBy(ceemcf);
 
-        Assert.assertTrue(actual instanceof ForbiddenException);
+        assertTrue(actual instanceof ForbiddenException);
     }
 
     @Test
@@ -347,8 +351,8 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
 
         CosmoDavException actual = exceptionCaptor.getValue();
 
-        Assert.assertTrue(actual instanceof CosmoDavException);
-        Assert.assertEquals(npe, req.getAttribute(ServerConstants.ATTR_SERVICE_EXCEPTION));
+        assertTrue(actual instanceof CosmoDavException);
+        assertEquals(npe, req.getAttribute(ServerConstants.ATTR_SERVICE_EXCEPTION));
     }
 
     private CosmoDavException captureExceptionForErrorResponseCausedBy(Throwable t) throws Exception {

@@ -18,8 +18,10 @@ package org.unitedinternet.cosmo.util;
 import java.io.ByteArrayInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
+
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test case for <code>BufferedServletOutpoutStream</code>.
@@ -38,14 +40,14 @@ public class BufferedServletOutputStreamTest {
         BufferedServletOutputStream buf = new BufferedServletOutputStream();
         
         // no data yet
-        Assert.assertTrue(buf.isEmpty());
+        assertTrue(buf.isEmpty());
         
         // write 8 bytes
         buf.write(testData);
         
         // should be data
-        Assert.assertFalse(buf.isEmpty()); 
-        Assert.assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(testData), buf.getBufferInputStream()));
+        assertFalse(buf.isEmpty()); 
+        assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(testData), buf.getBufferInputStream()));
         buf.close();
     }
 }

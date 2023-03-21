@@ -17,8 +17,13 @@ package org.unitedinternet.cosmo.model;
 
 import java.util.Date;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
@@ -49,22 +54,22 @@ public class NoteOccurrenceTest {
         NoteOccurrence no2 = NoteOccurrenceUtil.createNoteOccurrence(new net.fortuna.ical4j.model.Date("20070102"), note);
         
         
-        Assert.assertEquals("1:20070101", no.getUid());
-        Assert.assertEquals(note, no.getMasterNote());
-        Assert.assertNotNull(no.getOccurrenceDate());
+        assertEquals("1:20070101", no.getUid());
+        assertEquals(note, no.getMasterNote());
+        assertNotNull(no.getOccurrenceDate());
         
-        Assert.assertEquals(note.getCreationDate(), no.getCreationDate());
-        Assert.assertEquals("dn", no.getDisplayName());
-        Assert.assertEquals("body", no.getBody());
+        assertEquals(note.getCreationDate(), no.getCreationDate());
+        assertEquals("dn", no.getDisplayName());
+        assertEquals("body", no.getBody());
         
-        Assert.assertEquals(1, no.getStamps().size());
+        assertEquals(1, no.getStamps().size());
         
-        Assert.assertFalse(no.equals(no2));
-        Assert.assertTrue(no.hashCode() != no2.hashCode());
+        assertFalse(no.equals(no2));
+        assertTrue(no.hashCode() != no2.hashCode());
         
         try {
             no.setUid("blah");
-            Assert.fail("able to perform unsupported op");
+            fail("able to perform unsupported op");
         } catch (UnsupportedOperationException e) {
             
         }

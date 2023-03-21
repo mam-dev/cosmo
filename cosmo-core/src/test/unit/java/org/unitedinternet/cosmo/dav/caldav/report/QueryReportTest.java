@@ -15,9 +15,10 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
-
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
@@ -44,7 +45,7 @@ public class QueryReportTest extends BaseReportTestCase {
         QueryReport report = new QueryReport();
         try {
             report.init(dcc, makeReportInfo("freebusy1.xml", DEPTH_1));
-            Assert.fail("Non-query report info initalized");
+            fail("Non-query report info initalized");
         } catch (Exception e) {}
     }
 
@@ -61,10 +62,9 @@ public class QueryReportTest extends BaseReportTestCase {
         try {
             report.doQuerySelf(test);
         } catch (Exception e) {
-            Assert.fail("Self query failed for calendar resource");
+            fail("Self query failed for calendar resource");
         }
-        Assert.assertTrue("Calendar resource not found in results",
-                   report.getResults().contains(test));
+        assertTrue(report.getResults().contains(test), "Calendar resource not found in results");
     }
 
     /**
@@ -77,7 +77,7 @@ public class QueryReportTest extends BaseReportTestCase {
         QueryReport report = makeReport("query1.xml", DEPTH_0, test);
         try {
             report.doQuerySelf(test);
-            Assert.fail("Self query succeeded for non-calendar resource");
+            fail("Self query succeeded for non-calendar resource");
         } catch (UnprocessableEntityException e) {}
     }
 
@@ -92,7 +92,7 @@ public class QueryReportTest extends BaseReportTestCase {
         try {
             report.doQuerySelf(test);
         } catch (Exception e) {
-            Assert.fail("Self query failed for calendar collection");
+            fail("Self query failed for calendar collection");
         }
     }
 
@@ -107,7 +107,7 @@ public class QueryReportTest extends BaseReportTestCase {
         try {
             report.doQuerySelf(test);
         } catch (Exception e) {
-            Assert.fail("Self query failed for non-calendar collection");
+            fail("Self query failed for non-calendar collection");
         }
     }
 
@@ -123,7 +123,7 @@ public class QueryReportTest extends BaseReportTestCase {
         try {
             report.doQueryChildren(test);
         } catch (Exception e) {
-            Assert.fail("Children query failed for calendar collection");
+            fail("Children query failed for calendar collection");
         }
     }
 
@@ -139,7 +139,7 @@ public class QueryReportTest extends BaseReportTestCase {
         try {
             report.doQueryChildren(test);
         } catch (Exception e) {
-            Assert.fail("Children query failed for non-calendar collection");
+            fail("Children query failed for non-calendar collection");
         }
     }
 

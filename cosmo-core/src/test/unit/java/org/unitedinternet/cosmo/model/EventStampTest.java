@@ -23,8 +23,10 @@ import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.unitedinternet.cosmo.model.mock.MockEventStamp;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 
@@ -53,9 +55,9 @@ public class EventStampTest {
         
         DateList exdates = eventStamp.getExceptionDates();
         
-        Assert.assertNotNull(exdates);
-        Assert.assertTrue(2==exdates.size());
-        Assert.assertNotNull(exdates.getTimeZone());
+        assertNotNull(exdates);
+        assertTrue(2==exdates.size());
+        assertNotNull(exdates.getTimeZone());
     }
     
     /**

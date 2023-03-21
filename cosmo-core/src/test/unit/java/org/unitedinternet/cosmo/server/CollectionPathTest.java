@@ -15,8 +15,11 @@
  */
 package org.unitedinternet.cosmo.server;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test case for <code>CollectionPath</code>.
@@ -32,7 +35,7 @@ public class CollectionPathTest {
         String badUrlPath = "http://dead.beef/";
         try {
             CollectionPath.parse(badUrlPath);
-            Assert.fail("absolute urlPath parsed successfully");
+            fail("absolute urlPath parsed successfully");
         } catch (IllegalArgumentException e) {}
     }
 
@@ -44,7 +47,7 @@ public class CollectionPathTest {
     public void testSuccessfulParse() throws Exception {
         String urlPath = "/collection/deadbeef";
         CollectionPath cp = CollectionPath.parse(urlPath);
-        Assert.assertNotNull("path did not parse successfully", cp);
+        assertNotNull(cp, "path did not parse successfully");
     }
 
     /**
@@ -55,7 +58,7 @@ public class CollectionPathTest {
     public void testUnsuccessfulParse() throws Exception {
         String urlPath = "/bcm/stuff/deadbeef";
         CollectionPath cp = CollectionPath.parse(urlPath);
-        Assert.assertNull("non-collection path parsed successfuly", cp);
+        assertNull(cp, "non-collection path parsed successfuly");
     }
 
     /**
@@ -66,7 +69,7 @@ public class CollectionPathTest {
     public void testParseNoPathInfo() throws Exception {
         String urlPath = "/collection/deadbeef/foobar";
         CollectionPath cp = CollectionPath.parse(urlPath);
-        Assert.assertNull("path with disallowed pathInfo parsed successfully", cp);
+        assertNull(cp, "path with disallowed pathInfo parsed successfully");
     }
 
     /**
@@ -77,8 +80,7 @@ public class CollectionPathTest {
     public void testParseWithPathInfo() throws Exception {
         String urlPath = "/collection/deadbeef/foobar";
         CollectionPath cp = CollectionPath.parse(urlPath, true);
-        Assert.assertNotNull("path with allowed pathInfo did not parse successfully",
-                      cp);
+        assertNotNull(cp, "path with allowed pathInfo did not parse successfully");
     }
 
     /**
@@ -90,9 +92,9 @@ public class CollectionPathTest {
         String uid = "deadbeef";
         String urlPath = "/collection/" + uid;
         CollectionPath cp = CollectionPath.parse(urlPath);
-        Assert.assertNotNull("path did not parse successfully", cp);
-        Assert.assertNotNull("uid not found", cp.getUid());
-        Assert.assertEquals("found incorrect uid", uid, cp.getUid());
+        assertNotNull(cp, "path did not parse successfully");
+        assertNotNull(cp.getUid(), "uid not found");
+        assertEquals(uid, cp.getUid(), "found incorrect uid");
     }
 
     /**
@@ -105,10 +107,10 @@ public class CollectionPathTest {
         String pathInfo = "/foobar";
         String urlPath = "/collection/" + uid + pathInfo;
         CollectionPath cp = CollectionPath.parse(urlPath, true);
-        Assert.assertNotNull("path did not parse successfully", cp);
-        Assert.assertNotNull("uid not found", cp.getUid());
-        Assert.assertEquals("found incorrect uid", uid, cp.getUid());
-        Assert.assertNotNull("path info not found", cp.getPathInfo());
-        Assert.assertEquals("found incorrect path info", pathInfo, cp.getPathInfo());
+        assertNotNull(cp, "path did not parse successfully");
+        assertNotNull(cp.getUid(), "uid not found");
+        assertEquals(uid, cp.getUid(), "found incorrect uid");
+        assertNotNull(cp.getPathInfo(), "path info not found");
+        assertEquals(pathInfo, cp.getPathInfo(), "found incorrect path info");
     }
 }

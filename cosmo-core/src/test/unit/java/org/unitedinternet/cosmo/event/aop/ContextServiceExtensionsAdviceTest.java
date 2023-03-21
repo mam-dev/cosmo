@@ -15,9 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.mockito.Mockito;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.unitedinternet.cosmo.TestHelper;
@@ -84,40 +87,40 @@ public class ContextServiceExtensionsAdviceTest {
         @Override
         public void beforeUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-            Assert.fail("Unexpected call of update handler!");          
+            fail("Unexpected call of update handler!");          
             
         }
 
         @Override
         public void afterUpdate(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-            Assert.fail("Unexpected call of update handler!");          
+            fail("Unexpected call of update handler!");          
             
         }
 
         @Override
         public void beforeRemove(CollectionItem collection, Set<Item> items) {
-              Assert.fail("Unexpected call of remove handler!");    
+              fail("Unexpected call of remove handler!");    
             
         }
 
         @Override
         public void afterRemove(CollectionItem collection, Set<Item> items) {
-              Assert.fail("Unexpected call of remove handler!");    
+              fail("Unexpected call of remove handler!");    
             
         }
 
         @Override
         public void beforeAdd(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-             //Assert.fail("Unexpected call of add handler!");          
+             //fail("Unexpected call of add handler!");          
             
         }
 
         @Override
         public void afterAdd(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-             //Assert.fail("Unexpected call of add handler!");          
+             //fail("Unexpected call of add handler!");          
             
         }
     }
@@ -131,12 +134,12 @@ public class ContextServiceExtensionsAdviceTest {
             VEvent event = events.get(0);
             //organizer
             String organizer = getOrganizerFrom(event);
-            Assert.assertTrue("Check expected Organizer",organizer.equals(ORGANIZER));
+            assertTrue(organizer.equals(ORGANIZER), "Check expected Organizer");
             
             //attendees
             List<String> addresses = getAttendeesFrom(event);
-            Assert.assertTrue("Check 1 expected Attendee",addresses.size() == 1);
-            Assert.assertTrue("Check expected Attendee", addresses.get(0).equals(ATTENDEE_1));
+            assertTrue(addresses.size() == 1, "Check 1 expected Attendee");
+            assertTrue(addresses.get(0).equals(ATTENDEE_1), "Check expected Attendee");
         }
         
         private List<String> getAttendeesFrom(VEvent event) {
@@ -172,8 +175,8 @@ public class ContextServiceExtensionsAdviceTest {
 
         private void checkMethoodParameters(CollectionItem parent,
                 Set<ContentItem> contentItems) {
-            Assert.assertEquals("parent collection was sent", rootCollection, parent);
-            Assert.assertTrue("contentItems sent to handler", contentItems.equals(this.contentItems));
+            assertEquals(rootCollection, parent, "parent collection was sent");
+            assertTrue(contentItems.equals(this.contentItems), "contentItems sent to handler");
         }
 
         @Override
@@ -227,10 +230,10 @@ public class ContextServiceExtensionsAdviceTest {
             
             List<String> addresses = getAttendeesFrom(event);
             
-            Assert.assertTrue("Check 3 expected Attendee", addresses.size() == 3);
-            Assert.assertTrue("Check expected Attendee testuser1@test.de", addresses.get(0).equals("testuser1@test.de"));
-            Assert.assertTrue("Check expected Attendee testuser2@test.de", addresses.get(1).equals("testuser2@test.de"));
-            Assert.assertTrue("Check expected Attendee testuser3@test.de", addresses.get(2).equals("testuser3@test.de"));
+            assertTrue(addresses.size() == 3, "Check 3 expected Attendee");
+            assertTrue(addresses.get(0).equals("testuser1@test.de"), "Check expected Attendee testuser1@test.de");
+            assertTrue(addresses.get(1).equals("testuser2@test.de"), "Check expected Attendee testuser2@test.de");
+            assertTrue(addresses.get(2).equals("testuser3@test.de"), "Check expected Attendee testuser3@test.de");
         }
         
         private List<String> getAttendeesFrom(VEvent event) {

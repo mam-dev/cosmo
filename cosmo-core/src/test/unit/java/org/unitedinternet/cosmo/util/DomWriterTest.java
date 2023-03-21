@@ -14,8 +14,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,7 +37,7 @@ public class DomWriterTest {
         //The element above gets translated into an invalid element
         //Apple PROPFIND request is broken
         //<E:calendar-color xmlns:E="http://apple.com/ns/ical/" xmlns:E="http://apple.com/ns/ical/">#711A76FF</E:calendar-color>             
-        Assert.assertEquals("<E:calendar-color xmlns:E=\"http://apple.com/ns/ical/\">#711A76FF</E:calendar-color>", 
+        assertEquals("<E:calendar-color xmlns:E=\"http://apple.com/ns/ical/\">#711A76FF</E:calendar-color>", 
                 DomWriter.write(element));        
     }
 
