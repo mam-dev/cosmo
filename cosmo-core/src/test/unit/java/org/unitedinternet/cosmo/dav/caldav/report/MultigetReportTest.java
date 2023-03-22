@@ -15,10 +15,10 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
-import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.CosmoDavException;

@@ -19,7 +19,7 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 

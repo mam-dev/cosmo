@@ -18,8 +18,8 @@ package org.unitedinternet.cosmo.dav.impl;
 
 import org.apache.jackrabbit.webdav.property.DavProperty;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -153,7 +153,7 @@ public class DavCollectionBaseTest extends BaseDavTestCase  implements ExtendedD
      * SetUp.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

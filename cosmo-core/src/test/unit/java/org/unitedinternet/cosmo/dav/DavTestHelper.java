@@ -17,7 +17,7 @@ package org.unitedinternet.cosmo.dav;
 
 import java.net.URL;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.MockHelper;
 import org.unitedinternet.cosmo.dav.acl.resource.DavUserPrincipal;
@@ -66,7 +66,7 @@ public class DavTestHelper extends MockHelper implements ExtendedDavConstants {
      * SetUp.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

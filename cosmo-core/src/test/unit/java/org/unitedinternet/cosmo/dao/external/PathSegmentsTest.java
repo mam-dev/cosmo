@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.unitedinternet.cosmo.dao.PathSegments;
 
 /**
@@ -16,9 +17,11 @@ import org.unitedinternet.cosmo.dao.PathSegments;
  */
 public class PathSegmentsTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void shouldThrowExceptionWhenPassingNullPath() {
-        new PathSegments(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new PathSegments(null);
+        });
     }
 
     @Test

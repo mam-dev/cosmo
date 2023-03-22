@@ -22,9 +22,9 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -37,7 +37,7 @@ public class CalendarFilterEvaluaterTest {
      * SetUp.
      * @throws - if something is wrong this exception is thrown.
      */
-   @Before
+   @BeforeEach
     public void setUp() throws Exception {
         System.setProperty("ical4j.unfolding.relaxed", "true");
         System.setProperty("ical4j.parsing.relaxed", "true");
@@ -48,7 +48,7 @@ public class CalendarFilterEvaluaterTest {
      * TearDown.
      * @throws - if something is wrong this exception is thrown.
      */
-    @After
+    @AfterEach
      public void tearDown() throws Exception {
         System.clearProperty("ical4j.unfolding.relaxed");
         System.clearProperty("ical4j.parsing.relaxed");

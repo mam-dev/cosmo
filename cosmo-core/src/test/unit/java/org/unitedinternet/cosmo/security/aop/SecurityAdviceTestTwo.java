@@ -10,10 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -67,7 +68,7 @@ public class SecurityAdviceTestTwo {
 
     private SecurityAdvice advice = null;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.advice = new SecurityAdvice(securityManager,contentDao,userDao);        
@@ -90,9 +91,11 @@ public class SecurityAdviceTestTwo {
 
     // addItemToCollection - Start
 
-    @Test(expected = ItemSecurityException.class)
+    @Test()
     public void shouldThrowExceptionWhenAddingItemToCollectionAndShareeHasNoPrivileges() throws Throwable {
-        this.advice.checkAddItemToCollection(pjp, item, collection);
+        assertThrows(ItemSecurityException.class, () -> {
+            this.advice.checkAddItemToCollection(pjp, item, collection);
+        });
     }
 
     @Test
@@ -109,10 +112,12 @@ public class SecurityAdviceTestTwo {
         verify(this.pjp).proceed();
     }
 
-    @Test(expected = ItemSecurityException.class)
+    @Test()
     public void shouldThrowExceptionWhenAddItemToCollectionAndTicketIsReadOnly() throws Throwable {
         this.setUpSubscriptionAndTicket(TicketType.READ_ONLY);
-        this.advice.checkAddItemToCollection(pjp, item, collection);
+        assertThrows(ItemSecurityException.class, () -> {
+            this.advice.checkAddItemToCollection(pjp, item, collection);
+        });
     }
 
     // addItemToCollection - End
@@ -138,9 +143,11 @@ public class SecurityAdviceTestTwo {
 
     // checkRemoveTicket - Start
 
-    @Test(expected = ItemSecurityException.class)
+    @Test()
     public void shouldThrowExceptionWhenDeletingAnItemWithoutPermission() throws Throwable {
-        this.advice.checkRemoveItem(pjp, item);
+        assertThrows(ItemSecurityException.class, () -> {
+            this.advice.checkRemoveItem(pjp, item);
+        });
     }
 
     @Test
@@ -150,10 +157,12 @@ public class SecurityAdviceTestTwo {
         verify(pjp).proceed();
     }
 
-    @Test(expected = ItemSecurityException.class)
+    @Test()
     public void shouldThrowExceptionWhenRemovingItemWithReadonlyTicket() throws Throwable {
         this.setUpSubscriptionAndTicket(TicketType.READ_ONLY);
-        this.advice.checkRemoveItem(pjp, item);
+        assertThrows(ItemSecurityException.class, () -> {
+            this.advice.checkRemoveItem(pjp, item);
+        });
     }
 
     @Test
@@ -167,9 +176,11 @@ public class SecurityAdviceTestTwo {
 
     // checkUpdateContent - Start
 
-    @Test(expected = ItemSecurityException.class)
+    @Test()
     public void shouldThrowExceptionWhenModifyingContentWithoutRights() throws Throwable {
-        this.advice.checkUpdateContent(pjp, item);
+        assertThrows(ItemSecurityException.class, () -> {
+            this.advice.checkUpdateContent(pjp, item);
+        });
     }
 
     @Test
@@ -179,10 +190,12 @@ public class SecurityAdviceTestTwo {
         verify(this.pjp).proceed();
     }
 
-    @Test(expected = ItemSecurityException.class)
+    @Test()
     public void shouldThrowExceptionWhenUpdatingContentWithReadOnlyTicket() throws Throwable {
         this.setUpSubscriptionAndTicket(TicketType.READ_ONLY);
-        this.advice.checkUpdateContent(pjp, item);
+        assertThrows(ItemSecurityException.class, () -> {
+            this.advice.checkUpdateContent(pjp, item);
+        });
     }
     
     @Test

@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.dao.CollectionSubscriptionDao;
 import org.unitedinternet.cosmo.dao.UserDao;
@@ -44,7 +44,7 @@ public class HibernateCollectionSubscriptionDaoTest extends AbstractSpringDaoTes
 
     private HomeCollectionItem homeCollection;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         assertNotNull(this.subscriptionDao);
         this.sharer = this.testHelper.createDummyUser(userDao, 0);

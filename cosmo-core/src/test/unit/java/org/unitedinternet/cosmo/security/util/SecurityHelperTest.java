@@ -18,8 +18,8 @@ package org.unitedinternet.cosmo.security.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -55,7 +55,7 @@ public class SecurityHelperTest {
      * Sets up.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testHelper = new TestHelper();
         storage = new MockDaoStorage();

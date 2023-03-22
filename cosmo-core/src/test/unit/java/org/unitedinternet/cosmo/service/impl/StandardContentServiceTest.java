@@ -21,9 +21,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -77,7 +78,7 @@ public class StandardContentServiceTest {
      * Set up.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testHelper = new TestHelper();
         storage = new MockDaoStorage();        
@@ -184,7 +185,7 @@ public class StandardContentServiceTest {
         assertEquals(user, content.getOwner());
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test()
     public void testCreateContentThrowsExceptionForInvalidDates() throws Exception {
         User user = testHelper.makeDummyUser();
         CollectionItem rootCollection = contentDao.createRootItem(user);
@@ -204,10 +205,13 @@ public class StandardContentServiceTest {
         mockEventStamp.setEventCalendar(c);
         noteItem.addStamp(mockEventStamp);
         
-        service.createContent(rootCollection, noteItem);
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.createContent(rootCollection, noteItem);
+        });
+
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test()
     public void testUpdateCollectionFailsForEventsWithInvalidDates() throws Exception {
         User user = testHelper.makeDummyUser();
         CollectionItem rootCollection = contentDao.createRootItem(user);
@@ -227,10 +231,12 @@ public class StandardContentServiceTest {
         mockEventStamp.setEventCalendar(c);
         noteItem.addStamp(mockEventStamp);
         
-        service.updateCollection(rootCollection, Collections.singleton((Item)noteItem));
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateCollection(rootCollection, Collections.singleton((Item)noteItem));
+        });
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test()
     public void testCreateContentItemsForEventsWithInvalidDates() throws Exception {
         NoteItem masterEvent = new MockNoteItem();
         
@@ -248,10 +254,12 @@ public class StandardContentServiceTest {
         
         masterEvent.addModification(overridenComponent);
         
-        service.createContentItems(createParent(), Collections.<ContentItem>singleton(masterEvent));
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.createContentItems(createParent(), Collections.<ContentItem>singleton(masterEvent));
+        });
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test()
     public void testUpdateContentItemsForEventsWithInvalidDates() throws Exception {
         NoteItem masterEvent = new MockNoteItem();
         
@@ -269,10 +277,12 @@ public class StandardContentServiceTest {
         
         masterEvent.addModification(overridenComponent);
         
-        service.updateContentItems(createParent(), Collections.<ContentItem>singleton(masterEvent));
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateContentItems(createParent(), Collections.<ContentItem>singleton(masterEvent));
+        });
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test()
     public void testUpdateContentForEventsWithInvalidDates() throws Exception {
         NoteItem masterEvent = new MockNoteItem();
         
@@ -290,7 +300,9 @@ public class StandardContentServiceTest {
         
         masterEvent.addModification(overridenComponent);
         
-        service.updateContent(masterEvent);
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.updateContent(masterEvent);
+        });
     }
     private CollectionItem createParent(){
         User user = testHelper.makeDummyUser();
@@ -310,10 +322,6 @@ public class StandardContentServiceTest {
         return c;
     }
     
-    
-    
-    
-
     /**
      * Tests remove content.
      * @throws Exception - if something is wrong this exception is thrown.

@@ -19,14 +19,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.UserDao;
@@ -55,7 +55,7 @@ import net.fortuna.ical4j.model.Period;
  * Test findItems() api in ItemDao.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @Transactional
 public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
 
@@ -80,7 +80,7 @@ public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
      * OnSetUpInTransaction
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void onSetUpInTransaction() throws Exception {
         CollectionItem calendar1 = generateCalendar("test1", "testuser");
         CollectionItem calendar2 = generateCalendar("test2", "testuser");

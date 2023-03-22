@@ -20,8 +20,8 @@ import java.util.Date;
 
 import org.hibernate.query.internal.QueryImpl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
 
     private TimeZoneRegistry registry;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         registry = TimeZoneRegistryFactory.getInstance().createRegistry();
     }

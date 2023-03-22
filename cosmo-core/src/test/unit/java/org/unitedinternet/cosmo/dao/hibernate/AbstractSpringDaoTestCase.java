@@ -18,15 +18,15 @@ package org.unitedinternet.cosmo.dao.hibernate;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.boot.CalendarTestApplication;
 
@@ -38,7 +38,7 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  */
 @Rollback
 @Transactional
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarTestApplication.class)
 @ActiveProfiles(value = { "test" })
 public abstract class AbstractSpringDaoTestCase {
@@ -52,7 +52,7 @@ public abstract class AbstractSpringDaoTestCase {
 
     protected HibernateTestHelper helper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.helper = new HibernateTestHelper();
     }
@@ -63,7 +63,7 @@ public abstract class AbstractSpringDaoTestCase {
         this.entityManager.close();
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void startMariaDB() {
         if (mariaDB.isRunning()) {
             return;

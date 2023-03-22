@@ -17,8 +17,9 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import javax.validation.ConstraintViolationException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -403,7 +404,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         } 
     }
     
-    @Test(expected=ConstraintViolationException.class)
+    @Test()
     public void shouldNotAllowDisplayNamesWithLengthGreaterThan64() throws Exception {
         User user = getUser(userDao, "testuser");
         CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
@@ -411,12 +412,14 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         CalendarCollectionStamp calendarStamp = new HibCalendarCollectionStamp(root);
         calendarStamp.setDisplayName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         root.addStamp(calendarStamp);
-        
-        contentDao.updateCollection(root);
-        clearSession();
+
+        assertThrows(ConstraintViolationException.class, () -> {
+            contentDao.updateCollection(root);
+            clearSession();
+        });
     }
     
-    @Test(expected=ConstraintViolationException.class)
+    @Test()
     public void shouldNotAllowEmptyDisplayNames() throws Exception {
         User user = getUser(userDao, "testuser");
         CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
@@ -425,8 +428,10 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         calendarStamp.setDisplayName("");
         root.addStamp(calendarStamp);
         
-        contentDao.updateCollection(root);
-        clearSession();
+        assertThrows(ConstraintViolationException.class, () -> {
+            contentDao.updateCollection(root);
+            clearSession();
+        });
     }
     
     public void shouldAllowLegalDisplayNames() throws Exception {

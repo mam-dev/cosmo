@@ -19,8 +19,8 @@ import java.util.Set;
 
 import net.fortuna.ical4j.model.DateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,7 +71,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
      * On set up in transaction
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void onSetUpInTransaction() throws Exception {
         queryProcessor = new StandardTriageStatusQueryProcessor();
         queryProcessor.setContentDao(contentDao);

@@ -17,8 +17,8 @@ package org.unitedinternet.cosmo;
 
 import java.security.SecureRandom;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.unitedinternet.cosmo.calendar.query.CalendarQueryProcessor;
 import org.unitedinternet.cosmo.calendar.query.impl.StandardCalendarQueryProcessor;
@@ -118,14 +118,14 @@ public class MockHelper extends TestHelper {
      * Setup.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {}
     
     /**
      * TearDown method.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {}
 
     /**

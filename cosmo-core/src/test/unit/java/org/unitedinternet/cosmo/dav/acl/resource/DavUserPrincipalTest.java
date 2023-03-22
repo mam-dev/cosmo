@@ -18,7 +18,7 @@ package org.unitedinternet.cosmo.dav.acl.resource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;

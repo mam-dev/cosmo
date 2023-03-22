@@ -10,7 +10,7 @@ package org.unitedinternet.cosmo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.config.Scope;
  * @author iulia
  *
  */
-@Ignore
+@Disabled
 public class TestRequestScope implements Scope{
     
     /**

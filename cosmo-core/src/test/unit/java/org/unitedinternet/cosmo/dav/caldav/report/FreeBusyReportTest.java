@@ -15,11 +15,11 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.jackrabbit.webdav.DavException;
-import org.junit.Test;
 import org.unitedinternet.cosmo.dav.DavCollection;
 import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.impl.DavCalendarCollection;

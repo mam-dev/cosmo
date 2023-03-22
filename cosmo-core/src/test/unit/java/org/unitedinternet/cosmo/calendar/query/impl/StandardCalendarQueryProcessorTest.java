@@ -15,8 +15,8 @@
  */
 package org.unitedinternet.cosmo.calendar.query.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.unitedinternet.cosmo.TestHelper;
@@ -79,7 +79,7 @@ public class StandardCalendarQueryProcessorTest {
      * SetUp
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testHelper = new TestHelper();
         factory = new MockEntityFactory();
