@@ -21,8 +21,12 @@ import java.text.ParseException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.ComponentFilter;
 import org.unitedinternet.cosmo.calendar.query.ParamFilter;
@@ -48,18 +52,18 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20040903T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20040903T000000Z", timeRange.getUTCEnd());
     }
     
     
@@ -73,18 +77,18 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20060902T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20060902T000000Z", timeRange.getUTCEnd());
     }
     /**
      * Tests component filter is not defined.
@@ -96,14 +100,14 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getIsNotDefinedFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getIsNotDefinedFilter());
     }
     
     /**
@@ -116,26 +120,26 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20040903T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20040903T000000Z", timeRange.getUTCEnd());
         
-        Assert.assertEquals(1, compFilter.getPropFilters().size());
+        assertEquals(1, compFilter.getPropFilters().size());
         PropertyFilter propFilter = (PropertyFilter) compFilter.getPropFilters().get(0);
         
-        Assert.assertEquals("SUMMARY", propFilter.getName());
+        assertEquals("SUMMARY", propFilter.getName());
         TextMatchFilter textMatch = propFilter.getTextMatchFilter();
-        Assert.assertNotNull(textMatch);
-        Assert.assertEquals("ABC",textMatch.getValue());
+        assertNotNull(textMatch);
+        assertEquals("ABC",textMatch.getValue());
     }
     
     /**
@@ -148,24 +152,24 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20040903T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20040903T000000Z", timeRange.getUTCEnd());
         
-        Assert.assertEquals(1, compFilter.getPropFilters().size());
+        assertEquals(1, compFilter.getPropFilters().size());
         PropertyFilter propFilter = (PropertyFilter) compFilter.getPropFilters().get(0);
         
-        Assert.assertEquals("SUMMARY", propFilter.getName());
-        Assert.assertNotNull(propFilter.getIsNotDefinedFilter());
+        assertEquals("SUMMARY", propFilter.getName());
+        assertNotNull(propFilter.getIsNotDefinedFilter());
     }
     
     /**
@@ -178,35 +182,35 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20040903T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20040903T000000Z", timeRange.getUTCEnd());
         
-        Assert.assertEquals(1, compFilter.getPropFilters().size());
+        assertEquals(1, compFilter.getPropFilters().size());
         PropertyFilter propFilter = (PropertyFilter) compFilter.getPropFilters().get(0);
         
-        Assert.assertEquals("SUMMARY", propFilter.getName());
+        assertEquals("SUMMARY", propFilter.getName());
         TextMatchFilter textMatch = propFilter.getTextMatchFilter();
-        Assert.assertNotNull(textMatch);
-        Assert.assertEquals("ABC",textMatch.getValue());
+        assertNotNull(textMatch);
+        assertEquals("ABC",textMatch.getValue());
         
-        Assert.assertEquals(1, propFilter.getParamFilters().size());
+        assertEquals(1, propFilter.getParamFilters().size());
         ParamFilter paramFilter = (ParamFilter) propFilter.getParamFilters().get(0);
-        Assert.assertEquals("PARAM1", paramFilter.getName());
+        assertEquals("PARAM1", paramFilter.getName());
         
         textMatch = paramFilter.getTextMatchFilter();
-        Assert.assertNotNull(textMatch);
-        Assert.assertEquals("DEF", textMatch.getValue());
-        Assert.assertTrue(textMatch.isCaseless());
+        assertNotNull(textMatch);
+        assertEquals("DEF", textMatch.getValue());
+        assertTrue(textMatch.isCaseless());
     }
     
     /**
@@ -219,33 +223,33 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20040903T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20040903T000000Z", timeRange.getUTCEnd());
         
-        Assert.assertEquals(1, compFilter.getPropFilters().size());
+        assertEquals(1, compFilter.getPropFilters().size());
         PropertyFilter propFilter = (PropertyFilter) compFilter.getPropFilters().get(0);
         
-        Assert.assertEquals("SUMMARY", propFilter.getName());
+        assertEquals("SUMMARY", propFilter.getName());
         TextMatchFilter textMatch = propFilter.getTextMatchFilter();
-        Assert.assertNotNull(textMatch);
-        Assert.assertEquals("ABC",textMatch.getValue());
+        assertNotNull(textMatch);
+        assertEquals("ABC",textMatch.getValue());
         
-        Assert.assertEquals(1, propFilter.getParamFilters().size());
+        assertEquals(1, propFilter.getParamFilters().size());
         ParamFilter paramFilter = (ParamFilter) propFilter.getParamFilters().get(0);
-        Assert.assertEquals("PARAM1", paramFilter.getName());
+        assertEquals("PARAM1", paramFilter.getName());
         
        
-        Assert.assertNotNull(paramFilter.getIsNotDefinedFilter());
+        assertNotNull(paramFilter.getIsNotDefinedFilter());
     }
     
     /**
@@ -258,30 +262,30 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
-        Assert.assertNotNull(compFilter);
-        Assert.assertEquals("VCALENDAR", compFilter.getName());
-        Assert.assertEquals(1, compFilter.getComponentFilters().size());
+        assertNotNull(compFilter);
+        assertEquals("VCALENDAR", compFilter.getName());
+        assertEquals(1, compFilter.getComponentFilters().size());
         
         compFilter = (ComponentFilter) compFilter.getComponentFilters().get(0);
         
-        Assert.assertEquals("VEVENT", compFilter.getName());
-        Assert.assertNotNull(compFilter.getTimeRangeFilter());
+        assertEquals("VEVENT", compFilter.getName());
+        assertNotNull(compFilter.getTimeRangeFilter());
         
         TimeRangeFilter timeRange = compFilter.getTimeRangeFilter();
-        Assert.assertEquals("20040902T000000Z", timeRange.getUTCStart());
-        Assert.assertEquals("20040903T000000Z", timeRange.getUTCEnd());
+        assertEquals("20040902T000000Z", timeRange.getUTCStart());
+        assertEquals("20040903T000000Z", timeRange.getUTCEnd());
         
-        Assert.assertEquals(2, compFilter.getPropFilters().size());
+        assertEquals(2, compFilter.getPropFilters().size());
         PropertyFilter propFilter = (PropertyFilter) compFilter.getPropFilters().get(0);
         
-        Assert.assertEquals("SUMMARY", propFilter.getName());
+        assertEquals("SUMMARY", propFilter.getName());
         TextMatchFilter textMatch = propFilter.getTextMatchFilter();
-        Assert.assertNotNull(textMatch);
-        Assert.assertEquals("ABC",textMatch.getValue());
+        assertNotNull(textMatch);
+        assertEquals("ABC",textMatch.getValue());
         
         propFilter = (PropertyFilter) compFilter.getPropFilters().get(1);
-        Assert.assertEquals("DESCRIPTION", propFilter.getName());
-        Assert.assertNotNull(propFilter.getIsNotDefinedFilter());
+        assertEquals("DESCRIPTION", propFilter.getName());
+        assertNotNull(propFilter.getIsNotDefinedFilter());
     }
     
     /**
@@ -296,7 +300,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test4.xml"));
              filter = new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
         
@@ -304,7 +308,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test5.xml"));
             filter = new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
         
@@ -312,7 +316,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test6.xml"));
             filter = new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
         
@@ -320,7 +324,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test7.xml"));
             filter = new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
         
@@ -328,7 +332,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test8.xml"));
             filter = new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
         
@@ -345,7 +349,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test9.xml"));
             new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
     }
@@ -361,7 +365,7 @@ public class CalendarQueryFilterTest {
         {
             Element element = parseFile(new File(baseDir + "/error-test10.xml"));
             new CalendarFilter(element);
-            Assert.fail("able to create invalid filter");
+            fail("able to create invalid filter");
         }
         catch(ParseException e) {}
     }

@@ -27,7 +27,7 @@ public class EventValidatorTest {
         c.getProperties().add(new Version("1", "1"));
         c.getComponents().add(evt);
         
-        Assert.assertFalse(classUnderTest.isValid(c, null));
+        assertFalse(classUnderTest.isValid(c, null));
     }
     
     @Test
@@ -42,7 +42,7 @@ public class EventValidatorTest {
         c.getProperties().add(new Version("1", "1"));
         c.getComponents().add(evt);
         
-        Assert.assertFalse(classUnderTest.isValid(c, null));
+        assertFalse(classUnderTest.isValid(c, null));
     }
     
     @Test
@@ -57,7 +57,7 @@ public class EventValidatorTest {
         c.getProperties().add(new Version("1", "1"));
         c.getComponents().add(evt);
         
-        Assert.assertFalse(classUnderTest.isValid(c, null));
+        assertFalse(classUnderTest.isValid(c, null));
     }
     
     @Test
@@ -77,7 +77,7 @@ public class EventValidatorTest {
         }
         
         evt.getProperties().add(new Summary(sb.toString()));
-        Assert.assertFalse(classUnderTest.isValid(c, null));
+        assertFalse(classUnderTest.isValid(c, null));
     }
     @Test
     public void shouldInvalidateALocationGreaterThan64Chars() throws ParseException{
@@ -94,7 +94,7 @@ public class EventValidatorTest {
         }
         
         evt.getProperties().add(new Location(sb.toString()));
-        Assert.assertFalse(classUnderTest.isValid(c, null));
+        assertFalse(classUnderTest.isValid(c, null));
     }
     
     @Test
@@ -112,6 +112,6 @@ public class EventValidatorTest {
         }
         
         evt.getProperties().add(new Description(sb.toString()));
-        Assert.assertFalse(classUnderTest.isValid(c, null));
+        assertFalse(classUnderTest.isValid(c, null));
     }*/
 }

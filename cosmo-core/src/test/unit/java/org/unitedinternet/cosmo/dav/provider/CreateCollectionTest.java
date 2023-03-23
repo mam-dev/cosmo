@@ -15,10 +15,12 @@
  */
 package org.unitedinternet.cosmo.dav.provider;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.ConflictException;
 import org.unitedinternet.cosmo.dav.DavCollection;
@@ -55,7 +57,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
 
         try {
             provider.mkcol(ctx.getDavRequest(), ctx.getDavResponse(), member);
-            Assert.fail("mkcol succeeded when resource already exists");
+            fail("mkcol succeeded when resource already exists");
         } catch (ExistsException e) {}
     }
 
@@ -79,12 +81,13 @@ public class CreateCollectionTest extends BaseDavTestCase {
 
         provider.mkcol(ctx.getDavRequest(), ctx.getDavResponse(), member);
 
-        Assert.assertEquals("response status not 201", 201,
-                     ctx.getHttpResponse().getStatus());
+        assertEquals(201,
+                     ctx.getHttpResponse().getStatus(),
+                     "response status not 201");
 
         DavCollection home = testHelper.initializeHomeResource();
-        Assert.assertNotNull("member not found in parent collection",
-                      testHelper.findMember(home, "add-member"));
+        assertNotNull(testHelper.findMember(home, "add-member"),
+                      "member not found in parent collection");
     }
 
     /**
@@ -105,7 +108,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
 
         try {
             provider.mkcol(ctx.getDavRequest(), ctx.getDavResponse(), member);
-            Assert.fail("mkcol succeeded when location is bogus");
+            fail("mkcol succeeded when location is bogus");
         } catch (ConflictException e) {}
     }
 
@@ -127,8 +130,9 @@ public class CreateCollectionTest extends BaseDavTestCase {
 
          provider.mkcol(ctx.getDavRequest(), ctx.getDavResponse(), member);
 
-         Assert.assertEquals("found unexpected members in new collection", 0,
-                       member.getMembers().size());
+         assertEquals( 0,
+                       member.getMembers().size(),
+                       "found unexpected members in new collection");
     }
 
     /**
@@ -155,7 +159,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
 
         try {
             provider.mkcol(ctx.getDavRequest(), ctx.getDavResponse(), member);
-            Assert.fail("mkcol succeeded even with request body");
+            fail("mkcol succeeded even with request body");
         } catch (UnsupportedMediaTypeException e) {}
      }
 
@@ -165,7 +169,7 @@ public class CreateCollectionTest extends BaseDavTestCase {
      * SetUp.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         testHelper.logIn();

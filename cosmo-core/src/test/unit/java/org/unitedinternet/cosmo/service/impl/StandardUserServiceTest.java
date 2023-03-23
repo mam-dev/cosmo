@@ -17,9 +17,15 @@ package org.unitedinternet.cosmo.service.impl;
 
 import java.security.SecureRandom;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.unitedinternet.cosmo.TestHelper;
@@ -45,7 +51,7 @@ public class StandardUserServiceTest {
      * @throws Exception
      *             - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testHelper = new TestHelper();
         storage = new MockDaoStorage();
@@ -77,9 +83,9 @@ public class StandardUserServiceTest {
         User u3 = testHelper.makeDummyUser();
         userDao.createUser(u3);
 
-        Assert.assertNotNull("User 1 not found in users", userDao.getUser(u1.getUsername()));
-        Assert.assertNotNull("User 2 not found in users", userDao.getUser(u2.getUsername()));
-        Assert.assertNotNull("User 3 not found in users", userDao.getUser(u3.getUsername()));
+        assertNotNull(userDao.getUser(u1.getUsername()), "User 1 not found in users");
+        assertNotNull(userDao.getUser(u2.getUsername()), "User 2 not found in users");
+        assertNotNull(userDao.getUser(u3.getUsername()), "User 3 not found in users");
     }
 
     /**
@@ -95,7 +101,7 @@ public class StandardUserServiceTest {
         userDao.createUser(u1);
 
         User user = service.getUser(username1);
-        Assert.assertNotNull("User " + username1 + " null", user);
+        assertNotNull(user, "User " + username1 + " null");
     }
 
     /**
@@ -111,7 +117,7 @@ public class StandardUserServiceTest {
         userDao.createUser(u1);
 
         User user = service.getUserByEmail(email1);
-        Assert.assertNotNull("User " + email1 + " null", user);
+        assertNotNull(user, "User " + email1 + " null");
     }
 
     /**
@@ -126,9 +132,9 @@ public class StandardUserServiceTest {
         String password = u1.getPassword();
 
         User user = service.createUser(u1);
-        Assert.assertNotNull("User not stored", userDao.getUser(u1.getUsername()));
-        Assert.assertFalse("Original and stored password are the same", user.getPassword().equals(password));
-        Assert.assertEquals(user.getCreationDate(), user.getModifiedDate());
+        assertNotNull(userDao.getUser(u1.getUsername()), "User not stored");
+        assertFalse(user.getPassword().equals(password), "Original and stored password are the same");
+        assertEquals(user.getCreationDate(), user.getModifiedDate());
     }
 
     /**
@@ -153,11 +159,10 @@ public class StandardUserServiceTest {
         try {
             userDao.getUser(user.getUsername());
         } catch (DataRetrievalFailureException e) {
-            Assert.fail("User not stored");
+            fail("User not stored");
         }
-        Assert.assertFalse("Original and stored password are the same", user.getPassword().equals(digestedPassword));
-        Assert.assertTrue("Created and modified dates are the same",
-                !user.getCreationDate().equals(user.getModifiedDate()));
+        assertFalse(user.getPassword().equals(digestedPassword), "Original and stored password are the same");
+        assertTrue(!user.getCreationDate().equals(user.getModifiedDate()), "Created and modified dates are the same");
 
 
         Thread.sleep(1000); // let modified date change
@@ -168,12 +173,10 @@ public class StandardUserServiceTest {
         try {
             userDao.getUser(user.getUsername());
         } catch (DataRetrievalFailureException e) {
-            Assert.fail("User not stored");
+            fail("User not stored");
         }
-        Assert.assertTrue("Original and stored password are not the same",
-                user2.getPassword().equals(user.getPassword()));
-        Assert.assertTrue("Created and modified dates are the same",
-                !user2.getCreationDate().equals(user2.getModifiedDate()));
+        assertTrue(user2.getPassword().equals(user.getPassword()), "Original and stored password are not the same");
+        assertTrue(!user2.getCreationDate().equals(user2.getModifiedDate()), "Created and modified dates are the same");
     }
 
     /**
@@ -187,7 +190,7 @@ public class StandardUserServiceTest {
         User u1 = testHelper.makeDummyUser();
         service.createUser(u1);
         service.removeUser(u1);
-        Assert.assertNull("User not removed", service.getUser(u1.getUsername()));
+        assertNull(service.getUser(u1.getUsername()), "User not removed");
     }
 
     /**
@@ -203,7 +206,7 @@ public class StandardUserServiceTest {
 
         service.removeUser(u1.getUsername());
 
-        Assert.assertNull("User not removed", service.getUser(u1.getUsername()));
+        assertNull(service.getUser(u1.getUsername()), "User not removed");
     }
 
     /**
@@ -216,8 +219,8 @@ public class StandardUserServiceTest {
     public void testGeneratePassword() throws Exception {
         String pwd = service.generatePassword();
 
-        Assert.assertTrue("Password too long", pwd.length() <= service.getPasswordLengthMax());
-        Assert.assertTrue("Password too short", pwd.length() >= service.getPasswordLengthMin());
+        assertTrue(pwd.length() <= service.getPasswordLengthMax(), "Password too long");
+        assertTrue(pwd.length() >= service.getPasswordLengthMin(), "Password too short");
     }
 
     /**
@@ -231,7 +234,7 @@ public class StandardUserServiceTest {
         service.setUserDao(null);
         try {
             service.init();
-            Assert.fail("Should not be able to initialize service without userDao");
+            fail("Should not be able to initialize service without userDao");
         } catch (IllegalStateException e) {
             // expected
         }
@@ -248,7 +251,7 @@ public class StandardUserServiceTest {
         service.setPasswordGenerator(null);
         try {
             service.init();
-            Assert.fail("Should not be able to initialize service without passwordGenerator");
+            fail("Should not be able to initialize service without passwordGenerator");
         } catch (IllegalStateException e) {
             // expected
         }
@@ -262,7 +265,7 @@ public class StandardUserServiceTest {
      */
     @Test
     public void testDefaultDigestAlgorithm() throws Exception {
-        Assert.assertEquals(service.getDigestAlgorithm(), "MD5");
+        assertEquals(service.getDigestAlgorithm(), "MD5");
     }
 
     /**
@@ -278,9 +281,9 @@ public class StandardUserServiceTest {
         String digested = service.digestPassword(password);
 
         // tests MD5
-        Assert.assertTrue("Digest not correct length", digested.length() == 32);
+        assertTrue(digested.length() == 32, "Digest not correct length");
 
         // tests hex
-        Assert.assertTrue("Digest not hex encoded", digested.matches("^[0-9a-f]+$"));
+        assertTrue(digested.matches("^[0-9a-f]+$"), "Digest not hex encoded");
     }
 }

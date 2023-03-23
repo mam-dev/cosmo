@@ -26,8 +26,11 @@ import java.util.Set;
 
 import net.fortuna.ical4j.model.Calendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.UserDao;
@@ -66,15 +69,15 @@ public class HibernateTestHelper {
      * @throws Exception - if something is wrong this exception is thrown.
      */
     public void verifyItem(Item item1, Item item2) throws Exception {
-        Assert.assertEquals(item1.getName(), item2.getName());
-        Assert.assertEquals(item1.getCreationDate(), item2.getCreationDate());
-        Assert.assertEquals(item1.getClientCreationDate(), item2.getClientCreationDate());
-        Assert.assertEquals(item1.getClientModifiedDate(), item2.getClientModifiedDate());
-        Assert.assertEquals(item1.getModifiedDate(), item2.getModifiedDate());
-        Assert.assertEquals(item1.getDisplayName(), item2.getDisplayName());
-        Assert.assertEquals(getHibItem(item1).getId(), getHibItem(item2).getId());
-        Assert.assertEquals(item1.getUid(), item2.getUid());
-        Assert.assertEquals(item1.getAttributes().size(), item2.getAttributes()
+        assertEquals(item1.getName(), item2.getName());
+        assertEquals(item1.getCreationDate(), item2.getCreationDate());
+        assertEquals(item1.getClientCreationDate(), item2.getClientCreationDate());
+        assertEquals(item1.getClientModifiedDate(), item2.getClientModifiedDate());
+        assertEquals(item1.getModifiedDate(), item2.getModifiedDate());
+        assertEquals(item1.getDisplayName(), item2.getDisplayName());
+        assertEquals(getHibItem(item1).getId(), getHibItem(item2).getId());
+        assertEquals(item1.getUid(), item2.getUid());
+        assertEquals(item1.getAttributes().size(), item2.getAttributes()
                 .size());
         for (@SuppressWarnings("rawtypes")
         Iterator it = item1.getAttributes().keySet().iterator(); it
@@ -102,7 +105,7 @@ public class HibernateTestHelper {
                 return;
             }
         }
-        Assert.fail("Item not in collection");
+        fail("Item not in collection");
     }
 
     /**
@@ -111,11 +114,11 @@ public class HibernateTestHelper {
      * @param val2 Val2.
      */
     public void verifyMap(@SuppressWarnings("rawtypes") Map val1, @SuppressWarnings("rawtypes") Map val2) {
-        Assert.assertEquals(val1.size(), val2.size());
+        assertEquals(val1.size(), val2.size());
         for (@SuppressWarnings("rawtypes")
         Iterator keys = val1.keySet().iterator(); keys.hasNext();) {
             String key = (String) keys.next();
-            Assert.assertEquals(val1.get(key), val2.get(key));
+            assertEquals(val1.get(key), val2.get(key));
         }
     }
 
@@ -125,10 +128,10 @@ public class HibernateTestHelper {
      * @param val2 Val2.
      */
     public void verifySet(@SuppressWarnings("rawtypes") Set val1, @SuppressWarnings("rawtypes") Set val2) {
-        Assert.assertEquals(val1.size(), val2.size());
+        assertEquals(val1.size(), val2.size());
         for (@SuppressWarnings("rawtypes")
         Iterator elems = val1.iterator(); elems.hasNext();) {
-            Assert.assertTrue(val2.contains(elems.next()));
+            assertTrue(val2.contains(elems.next()));
         }
     }
 
@@ -138,7 +141,7 @@ public class HibernateTestHelper {
      * @param val2 Val2.
      */
     public void verifyDate(Date val1, Date val2) {
-        Assert.assertEquals(val1.getTime(), val2.getTime());
+        assertEquals(val1.getTime(), val2.getTime());
     }
 
     /**
@@ -150,7 +153,7 @@ public class HibernateTestHelper {
     @SuppressWarnings("rawtypes")
     public void verifyAttributeValue(Object val1, Object val2) throws Exception {
         if (val1 instanceof String) {
-            Assert.assertEquals(val1, val2);
+            assertEquals(val1, val2);
         }
         else if (val1 instanceof byte[]) {
             verifyBytes((byte[]) val1, (byte[]) val2);
@@ -165,7 +168,7 @@ public class HibernateTestHelper {
             verifyDate((Date) val1, (Date) val2);
         }
         else if (!val1.equals(val2)) {
-            Assert.fail("attributes not equal");
+            fail("attributes not equal");
         }
     }
 
@@ -226,10 +229,10 @@ public class HibernateTestHelper {
         int read1 = is1.read(buf1);
         int read2 = is2.read(buf2);
         while (read1 > 0 || read2 > 0) {
-            Assert.assertEquals(read1, read2);
+            assertEquals(read1, read2);
 
             for (int i = 0; i < read1; i++) {
-                Assert.assertEquals(buf1[i], buf2[i]);
+                assertEquals(buf1[i], buf2[i]);
             }
 
             read1 = is1.read(buf1);

@@ -17,9 +17,10 @@ package org.unitedinternet.cosmo.calendar;
 
 import java.text.ParseException;
 
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests ICalValueParser
@@ -38,15 +39,15 @@ public class ICalValueParserTest {
         ICalValueParser parser = new ICalValueParser(str);
         parser.parse();
 
-        Assert.assertNotNull("null value", parser.getValue());
-        Assert.assertEquals("incorrect value", "20021010T120000", parser.getValue());
+        assertNotNull("null value", parser.getValue());
+        assertEquals("20021010T120000", parser.getValue(), "incorrect value");
 
-        Assert.assertEquals("wrong number of params", 2,
-                     parser.getParams().keySet().size());
-        Assert.assertEquals("wrong VALUE value", "DATE-TIME",
-                     parser.getParams().get("VALUE"));
-        Assert.assertEquals("wrong TZID value", "America/Los_Angeles",
-                     parser.getParams().get("TZID"));
+        assertEquals(2, parser.getParams().keySet().size(), 
+                     "wrong number of params");
+        assertEquals("DATE-TIME", parser.getParams().get("VALUE"), 
+                     "wrong VALUE value");
+        assertEquals("America/Los_Angeles", parser.getParams().get("TZID"),
+                     "wrong TZID value");
     }
     
     /**
@@ -60,11 +61,11 @@ public class ICalValueParserTest {
         ICalValueParser parser = new ICalValueParser(str);
         parser.parse();
 
-        Assert.assertNotNull("null value", parser.getValue());
-        Assert.assertEquals("incorrect value", "20021010T120000", parser.getValue());
+        assertNotNull(parser.getValue(), "null value");
+        assertEquals("20021010T120000", parser.getValue(), "incorrect value");
 
-        Assert.assertEquals("wrong number of params", 0,
-                     parser.getParams().keySet().size());
+        assertEquals(0, parser.getParams().keySet().size(), 
+                     "wrong number of params");
     }
 
     /**
@@ -78,13 +79,13 @@ public class ICalValueParserTest {
         ICalValueParser parser = new ICalValueParser(str);
         parser.parse();
 
-        Assert.assertNotNull("null value", parser.getValue());
-        Assert.assertEquals("incorrect value", "20021010T120000", parser.getValue());
+        assertNotNull(parser.getValue(), "null value");
+        assertEquals("20021010T120000", parser.getValue(), "incorrect value");
 
-        Assert.assertEquals("wrong number of params", 1,
-                     parser.getParams().keySet().size());
-        Assert.assertEquals("wrong VALUE value", "DATE-TIME",
-                     parser.getParams().get("VALUE"));
+        assertEquals(1, parser.getParams().keySet().size(),
+                     "wrong number of params");
+        assertEquals("DATE-TIME", parser.getParams().get("VALUE"), 
+                     "wrong VALUE value");
     }
 
     /**
@@ -98,7 +99,7 @@ public class ICalValueParserTest {
         ICalValueParser parser = new ICalValueParser(str);
         try {
             parser.parse();
-            Assert.fail("parsed param value with unclosed quotes");
+            fail("parsed param value with unclosed quotes");
         } catch (ParseException e) {}
     }
 }

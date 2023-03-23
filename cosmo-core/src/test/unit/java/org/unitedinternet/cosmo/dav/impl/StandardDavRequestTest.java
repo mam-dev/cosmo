@@ -15,8 +15,11 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 
@@ -40,8 +43,9 @@ public class StandardDavRequestTest extends BaseDavTestCase {
                                    testHelper.getResourceLocatorFactory(),
                                    testHelper.getEntityFactory());
 
-        Assert.assertEquals("no depth not infinity", DEPTH_INFINITY,
-                     request.getDepth());
+        assertEquals(DEPTH_INFINITY,
+                     request.getDepth(),
+                     "no depth not infinity");
     }
 
     /**
@@ -60,7 +64,7 @@ public class StandardDavRequestTest extends BaseDavTestCase {
 
         try {
             int depth = request.getDepth();
-            Assert.fail("got bad depth " + depth);
+            fail("got bad depth " + depth);
         } catch (IllegalArgumentException e) {
             // expected
         }
@@ -82,9 +86,10 @@ public class StandardDavRequestTest extends BaseDavTestCase {
                                    testHelper.getResourceLocatorFactory(),
                                    testHelper.getEntityFactory());
 
-        Assert.assertEquals("propfind type not allprop", PROPFIND_ALL_PROP,
-                     request.getPropFindType());
-        Assert.assertTrue("propnames not empty",
-                   request.getPropFindProperties().isEmpty());
+        assertEquals(PROPFIND_ALL_PROP,
+                     request.getPropFindType(),
+                     "propfind type not allprop");
+        assertTrue(request.getPropFindProperties().isEmpty(),
+                   "propnames not empty");
     }
 }

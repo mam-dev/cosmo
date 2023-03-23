@@ -15,10 +15,10 @@
  */
 package org.unitedinternet.cosmo.dav.caldav.report;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
-import org.junit.Test;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
@@ -44,7 +44,7 @@ public class MultigetReportTest extends BaseDavTestCase {
         MultigetReport report = new MultigetReport();
         try {
             report.init(dcc, makeReportInfo("freebusy1.xml"));
-            Assert.fail("Freebusy report initalized");
+            fail("Freebusy report initalized");
         } catch (CosmoDavException e) {}
     }
 
@@ -60,7 +60,7 @@ public class MultigetReportTest extends BaseDavTestCase {
         MultigetReport report = new MultigetReport();
         try {
             report.init(dcc, makeReportInfo("multiget1.xml"));
-            Assert.fail("Report with no hrefs initalized");
+            fail("Report with no hrefs initalized");
         } catch (BadRequestException e) {}
     }
 
@@ -77,7 +77,7 @@ public class MultigetReportTest extends BaseDavTestCase {
         MultigetReport report = new MultigetReport();
         try {
             report.init(de, makeReportInfo("multiget2.xml"));
-            Assert.fail("Report against resource with more than one href initalized");
+            fail("Report against resource with more than one href initalized");
         } catch (BadRequestException e) {}
     }
 
@@ -147,7 +147,7 @@ public class MultigetReportTest extends BaseDavTestCase {
         MultigetReport report = new MultigetReport();
         try {
             report.init(dcc, makeReportInfo("multiget6.xml"));
-            Assert.fail("Report with mislocated href parsed");
+            fail("Report with mislocated href parsed");
         } catch (BadRequestException e) {}
     }
 
@@ -164,7 +164,7 @@ public class MultigetReportTest extends BaseDavTestCase {
         MultigetReport report = new MultigetReport();
         try {
             report.init(de, makeReportInfo("multiget6.xml"));
-            Assert.fail("Report with mislocated href parsed");
+            fail("Report with mislocated href parsed");
         } catch (BadRequestException e) {}
     }
     

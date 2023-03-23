@@ -19,7 +19,7 @@ import java.io.ByteArrayInputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
@@ -46,7 +46,7 @@ public abstract class BaseMockServletTestCase {
    * 
    * @throws Exception - if something is wrong this exception is thrown.
    */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         securityManager = new MockSecurityManager();
         servletContext = new MockServletContext();

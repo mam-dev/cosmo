@@ -17,9 +17,9 @@ package org.unitedinternet.cosmo.model;
 
 import java.util.Date;
 
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 
 /**
@@ -49,7 +49,7 @@ public class NoteItemTest {
         String etag2 = master.calculateEntityTag();
         
         // etag should have changed when modification was added
-        Assert.assertFalse(etag1.equals(etag2));
+        assertFalse(etag1.equals(etag2));
         
         mod.setModifiedDate(new Date(mod.getModifiedDate().getTime()+1));
         
@@ -57,10 +57,10 @@ public class NoteItemTest {
         etag2 = master.calculateEntityTag();
         
         // etag should have changed when modification was changed
-        Assert.assertFalse(etag1.equals(etag2));
+        assertFalse(etag1.equals(etag2));
         
         // etag shouldn't change between calls
-        Assert.assertTrue(etag2.equals(master.calculateEntityTag()));
+        assertTrue(etag2.equals(master.calculateEntityTag()));
         
         master.removeAllModifications();
         
@@ -68,6 +68,6 @@ public class NoteItemTest {
         etag2 = master.calculateEntityTag();
         
         // etag should have changed when modification was removed
-        Assert.assertFalse(etag1.equals(etag2));
+        assertFalse(etag1.equals(etag2));
     }
 }

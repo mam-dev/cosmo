@@ -17,8 +17,12 @@ package org.unitedinternet.cosmo.dav.acl.resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.acl.AclConstants;
 import org.unitedinternet.cosmo.dav.acl.property.AlternateUriSet;
@@ -51,13 +55,12 @@ public class DavUserPrincipalTest extends BaseDavTestCase implements AclConstant
 
         DisplayName displayName = (DisplayName)
             p.getProperty(DavPropertyName.DISPLAYNAME);
-        Assert.assertNotNull("No displayname property", displayName);
-        Assert.assertTrue("Empty displayname ",
-                    ! StringUtils.isBlank(displayName.getDisplayName()));
+        assertNotNull(displayName, "No displayname property");
+        assertTrue(! StringUtils.isBlank(displayName.getDisplayName()), "Empty displayname ");
 
         ResourceType resourceType = (ResourceType)
             p.getProperty(DavPropertyName.RESOURCETYPE);
-        Assert.assertNotNull("No resourcetype property", resourceType);
+        assertNotNull(resourceType, "No resourcetype property");
         boolean foundPrincipalQname = false;
         for (QName qname : resourceType.getQnames()) {
             if (qname.equals(RESOURCE_TYPE_PRINCIPAL)) {
@@ -65,28 +68,26 @@ public class DavUserPrincipalTest extends BaseDavTestCase implements AclConstant
                 break;
             }
         }
-        Assert.assertTrue("Principal qname not found", foundPrincipalQname);
+        assertTrue(foundPrincipalQname, "Principal qname not found");
 
         // 4.1
         AlternateUriSet alternateUriSet = (AlternateUriSet)
             p.getProperty(ALTERNATEURISET);
-        Assert.assertNotNull("No alternate-uri-set property", alternateUriSet);
-        Assert.assertTrue("Found hrefs for alternate-uri-set",
-                   alternateUriSet.getHrefs().isEmpty());
+        assertNotNull(alternateUriSet, "No alternate-uri-set property");
+        assertTrue(alternateUriSet.getHrefs().isEmpty(), "Found hrefs for alternate-uri-set");
 
         // 4.2
         PrincipalUrl principalUrl = (PrincipalUrl)
             p.getProperty(PRINCIPALURL);
-        Assert.assertNotNull("No principal-URL property", principalUrl);
-        Assert.assertEquals("principal-URL value not the same as locator href",
-                     p.getResourceLocator().getHref(false),
-                     principalUrl.getHref());
+        assertNotNull(principalUrl, "No principal-URL property");
+        assertEquals(p.getResourceLocator().getHref(false),
+                     principalUrl.getHref(),
+                     "principal-URL value not the same as locator href");
 
         // 4.4
         GroupMembership groupMembership = (GroupMembership)
             p.getProperty(GROUPMEMBERSHIP);
-        Assert.assertNotNull("No group-membership property", groupMembership);
-        Assert.assertTrue("Found hrefs for group-membership",
-                   groupMembership.getHrefs().isEmpty());
+        assertNotNull(groupMembership, "No group-membership property");
+        assertTrue(groupMembership.getHrefs().isEmpty(), "Found hrefs for group-membership");
     }
 }

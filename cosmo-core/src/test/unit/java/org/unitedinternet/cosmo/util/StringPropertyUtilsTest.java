@@ -18,8 +18,9 @@ package org.unitedinternet.cosmo.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test StringPropertyUtils
@@ -38,29 +39,29 @@ public class StringPropertyUtilsTest {
         String[] testKeys = {"a.b.c", "a.b.d", "a.b.d.foo", "a.e.f.g.h.i"};
         
         String[] childKeys = StringPropertyUtils.getChildKeys("a", testKeys);
-        Assert.assertEquals(2, childKeys.length);
+        assertEquals(2, childKeys.length);
         verifyContains(childKeys, "b");
         verifyContains(childKeys, "e");
         
         childKeys = StringPropertyUtils.getChildKeys("a.", testKeys);
-        Assert.assertEquals(2, childKeys.length);
+        assertEquals(2, childKeys.length);
         verifyContains(childKeys, "b");
         verifyContains(childKeys, "e");
         
         childKeys = StringPropertyUtils.getChildKeys("a.b", testKeys);
-        Assert.assertEquals(2, childKeys.length);
+        assertEquals(2, childKeys.length);
         verifyContains(childKeys, "c");
         verifyContains(childKeys, "d");
         
         childKeys = StringPropertyUtils.getChildKeys("a.b.d", testKeys);
-        Assert.assertEquals(1, childKeys.length);
+        assertEquals(1, childKeys.length);
         verifyContains(childKeys, "foo");
 
         childKeys = StringPropertyUtils.getChildKeys("a.b.d.foo", testKeys);
-        Assert.assertEquals(0, childKeys.length);
+        assertEquals(0, childKeys.length);
         
         childKeys = StringPropertyUtils.getChildKeys("ldksf", testKeys);
-        Assert.assertEquals(0, childKeys.length);
+        assertEquals(0, childKeys.length);
        
     }
     /**
@@ -75,19 +76,18 @@ public class StringPropertyUtilsTest {
         testProps.put("a.b.e.f", "foo3");
         
         Map<String, String> childProps = StringPropertyUtils.getChildProperties("a.b", testProps);
-        Assert.assertEquals(2, childProps.size());
-        Assert.assertEquals("foo1", childProps.get("c"));
-        Assert.assertEquals("foo2", childProps.get("d"));
+        assertEquals(2, childProps.size());
+        assertEquals("foo1", childProps.get("c"));
+        assertEquals("foo2", childProps.get("d"));
         
         childProps = StringPropertyUtils.getChildProperties("a.b.c", testProps);
-        Assert.assertEquals(0, childProps.size());
+        assertEquals(0, childProps.size());
         
         childProps = StringPropertyUtils.getChildProperties("a", testProps);
-        Assert.assertEquals(0, childProps.size());
+        assertEquals(0, childProps.size());
         
         childProps = StringPropertyUtils.getChildProperties("afsdfasd", testProps);
-        Assert.assertEquals(0, childProps.size());
-       
+        assertEquals(0, childProps.size());  
     }
     
     /**
@@ -102,7 +102,7 @@ public class StringPropertyUtilsTest {
             }
         }
         
-        Assert.fail("String " + str + " not found");
+        fail("String " + str + " not found");
     }
     
 }           

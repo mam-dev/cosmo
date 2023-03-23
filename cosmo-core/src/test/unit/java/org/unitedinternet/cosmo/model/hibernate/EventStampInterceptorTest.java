@@ -19,8 +19,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
@@ -54,9 +56,9 @@ public class EventStampInterceptorTest {
         
         HibEventTimeRangeIndex index = interceptor.calculateEventStampIndexes(eventStamp);
         
-        Assert.assertEquals("20070212T074500", index.getStartDate());
-        Assert.assertEquals("20070212T094500", index.getEndDate());
-        Assert.assertTrue(index.getIsFloating().booleanValue());
+        assertEquals("20070212T074500", index.getStartDate());
+        assertEquals("20070212T094500", index.getEndDate());
+        assertTrue(index.getIsFloating().booleanValue());
         
         TimeZone ctz = registry.getTimeZone("America/Chicago");
         DateTime start = new DateTime("20070212T074500", ctz);
@@ -83,9 +85,9 @@ public class EventStampInterceptorTest {
         
         index = interceptor.calculateEventStampIndexes(eventStamp);
         
-        Assert.assertEquals("20070212T134500Z", index.getStartDate());
-        Assert.assertEquals(HibEventStamp.TIME_INFINITY, index.getEndDate());
-        Assert.assertFalse(index.getIsFloating().booleanValue());
+        assertEquals("20070212T134500Z", index.getStartDate());
+        assertEquals(HibEventStamp.TIME_INFINITY, index.getEndDate());
+        assertFalse(index.getIsFloating().booleanValue());
     }
     
     /**
@@ -104,9 +106,9 @@ public class EventStampInterceptorTest {
         
         HibEventTimeRangeIndex index = interceptor.calculateEventStampIndexes(eventStamp);
         
-        Assert.assertEquals("20070212", index.getStartDate());
-        Assert.assertEquals("20070213", index.getEndDate());
-        Assert.assertTrue(index.getIsFloating().booleanValue());
+        assertEquals("20070212", index.getStartDate());
+        assertEquals("20070213", index.getEndDate());
+        assertTrue(index.getIsFloating().booleanValue());
       
         String recur1 = "FREQ=DAILY;";
         
@@ -126,9 +128,9 @@ public class EventStampInterceptorTest {
         
         index = interceptor.calculateEventStampIndexes(eventStamp);
         
-        Assert.assertEquals("20070212", index.getStartDate());
-        Assert.assertEquals(HibEventStamp.TIME_INFINITY, index.getEndDate());
-        Assert.assertTrue(index.getIsFloating().booleanValue());
+        assertEquals("20070212", index.getStartDate());
+        assertEquals(HibEventStamp.TIME_INFINITY, index.getEndDate());
+        assertTrue(index.getIsFloating().booleanValue());
     }
     
     /**
@@ -155,16 +157,16 @@ public class EventStampInterceptorTest {
         
         HibEventTimeRangeIndex index = interceptor.calculateEventStampIndexes(eventExceptionStamp);
         
-        Assert.assertEquals("20070213T084500", index.getStartDate());
-        Assert.assertEquals("20070213T104500", index.getEndDate());
-        Assert.assertTrue(index.getIsFloating().booleanValue());
+        assertEquals("20070213T084500", index.getStartDate());
+        assertEquals("20070213T104500", index.getEndDate());
+        assertTrue(index.getIsFloating().booleanValue());
         
         // handle case where master isn't an event anymore
         master.removeStamp(eventStamp);
         index = interceptor.calculateEventStampIndexes(eventExceptionStamp);
         
-        Assert.assertEquals("20070213T084500", index.getStartDate());
-        Assert.assertEquals("20070213T084500", index.getEndDate());
+        assertEquals("20070213T084500", index.getStartDate());
+        assertEquals("20070213T084500", index.getEndDate());
     }
     
 }

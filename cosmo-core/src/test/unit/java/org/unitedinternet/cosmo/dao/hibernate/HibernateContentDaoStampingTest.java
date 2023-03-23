@@ -17,8 +17,15 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import javax.validation.ConstraintViolationException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,29 +105,29 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertEquals(2, queryItem.getStamps().size());
+        assertEquals(2, queryItem.getStamps().size());
         
         Stamp stamp = queryItem.getStamp(EventStamp.class);
-        Assert.assertNotNull(stamp.getCreationDate());
-        Assert.assertNotNull(stamp.getModifiedDate());
-        Assert.assertTrue(stamp.getCreationDate().equals(stamp.getModifiedDate()));
-        Assert.assertTrue(stamp instanceof EventStamp);
-        Assert.assertEquals("event", stamp.getType());
+        assertNotNull(stamp.getCreationDate());
+        assertNotNull(stamp.getModifiedDate());
+        assertTrue(stamp.getCreationDate().equals(stamp.getModifiedDate()));
+        assertTrue(stamp instanceof EventStamp);
+        assertEquals("event", stamp.getType());
         EventStamp es = (EventStamp) stamp;
-        Assert.assertEquals(es.getEventCalendar().toString(), event.getEventCalendar()
+        assertEquals(es.getEventCalendar().toString(), event.getEventCalendar()
                 .toString());
         
-        Assert.assertEquals("icaluid", ((NoteItem) queryItem).getIcalUid());
-        Assert.assertEquals("this is a body", ((NoteItem) queryItem).getBody());
+        assertEquals("icaluid", ((NoteItem) queryItem).getIcalUid());
+        assertEquals("this is a body", ((NoteItem) queryItem).getBody());
         
         stamp = queryItem.getStamp(MessageStamp.class);
-        Assert.assertTrue(stamp instanceof MessageStamp);
-        Assert.assertEquals("message", stamp.getType());
+        assertTrue(stamp instanceof MessageStamp);
+        assertEquals("message", stamp.getType());
         MessageStamp ms = (MessageStamp) stamp;
-        Assert.assertEquals(ms.getBcc(), message.getBcc());
-        Assert.assertEquals(ms.getCc(), message.getCc());
-        Assert.assertEquals(ms.getTo(), message.getTo());
-        Assert.assertEquals(ms.getFrom(), message.getFrom());
+        assertEquals(ms.getBcc(), message.getBcc());
+        assertEquals(ms.getCc(), message.getCc());
+        assertEquals(ms.getTo(), message.getTo());
+        assertEquals(ms.getFrom(), message.getFrom());
     }
     
     /**
@@ -142,7 +149,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         
         item.addStamp(event);
         
-        Assert.assertNull(event.getTimeRangeIndex());
+        assertNull(event.getTimeRangeIndex());
         
         ContentItem newItem = contentDao.createContent(root, item);
         clearSession();
@@ -150,9 +157,9 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
         
         event = (HibEventStamp) queryItem.getStamp(EventStamp.class);
-        Assert.assertEquals("20050817T115000Z", event.getTimeRangeIndex().getStartDate());
-        Assert.assertEquals("20050817T131500Z",event.getTimeRangeIndex().getEndDate());
-        Assert.assertFalse(event.getTimeRangeIndex().getIsFloating().booleanValue());
+        assertEquals("20050817T115000Z", event.getTimeRangeIndex().getStartDate());
+        assertEquals("20050817T131500Z",event.getTimeRangeIndex().getEndDate());
+        assertFalse(event.getTimeRangeIndex().getIsFloating().booleanValue());
         
         event.setStartDate(new Date("20070101"));
         //event.setEntityTag("foo"); // FIXME setStartDate does not modify any persistent field, so object is not marked dirty
@@ -164,9 +171,9 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
         
         event = (HibEventStamp) queryItem.getStamp(EventStamp.class);
-        Assert.assertEquals("20070101", event.getTimeRangeIndex().getStartDate());
-        Assert.assertEquals("20070101",event.getTimeRangeIndex().getEndDate());
-        Assert.assertTrue(event.getTimeRangeIndex().getIsFloating().booleanValue());
+        assertEquals("20070101", event.getTimeRangeIndex().getStartDate());
+        assertEquals("20070101",event.getTimeRangeIndex().getEndDate());
+        assertTrue(event.getTimeRangeIndex().getIsFloating().booleanValue());
     }
     
     /**
@@ -199,7 +206,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertEquals(2, queryItem.getStamps().size());
+        assertEquals(2, queryItem.getStamps().size());
         
         Stamp stamp = queryItem.getStamp(MessageStamp.class);
         queryItem.removeStamp(stamp);
@@ -215,18 +222,18 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         
         clearSession();
         queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertEquals(1, queryItem.getStamps().size());
-        Assert.assertNull(queryItem.getStamp(MessageStamp.class));
+        assertEquals(1, queryItem.getStamps().size());
+        assertNull(queryItem.getStamp(MessageStamp.class));
         stamp = queryItem.getStamp(EventStamp.class);
         es = (EventStamp) stamp;
        
-        Assert.assertTrue(stamp.getModifiedDate().after(stamp.getCreationDate()));
+        assertTrue(stamp.getModifiedDate().after(stamp.getCreationDate()));
         
         if(!es.getEventCalendar().toString().equals(newCal.toString())) {
             LOG.error(es.getEventCalendar().toString());
             LOG.error(newCal.toString());
         }
-        Assert.assertEquals(es.getEventCalendar().toString(), newCal.toString());
+        assertEquals(es.getEventCalendar().toString(), newCal.toString());
     }
     
     /**
@@ -247,7 +254,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         try {
             contentDao.createContent(root, item);
             clearSession();
-            Assert.fail("able to create invalid event!");
+            fail("able to create invalid event!");
         } catch (Exception is) {}
     }
     
@@ -274,7 +281,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertEquals(1, queryItem.getStamps().size());
+        assertEquals(1, queryItem.getStamps().size());
        
         Stamp stamp = queryItem.getStamp(EventStamp.class);
         queryItem.removeStamp(stamp);
@@ -282,9 +289,9 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
         
         queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertNotNull(queryItem);
-        Assert.assertEquals(queryItem.getStamps().size(),0);
-        Assert.assertEquals(1, queryItem.getTombstones().size());
+        assertNotNull(queryItem);
+        assertEquals(queryItem.getStamps().size(),0);
+        assertEquals(1, queryItem.getTombstones().size());
         
         event = new HibEventStamp();
         event.setEventCalendar(helper.getCalendar("cal1.ics"));
@@ -294,7 +301,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
         
         queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertEquals(1, queryItem.getStamps().size());
+        assertEquals(1, queryItem.getStamps().size());
     }
     
     /**
@@ -332,19 +339,19 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
         
         CollectionItem queryCol = (CollectionItem) contentDao.findItemByUid(root.getUid());
-        Assert.assertEquals(1, queryCol.getStamps().size());
+        assertEquals(1, queryCol.getStamps().size());
         Stamp stamp = queryCol.getStamp(CalendarCollectionStamp.class);
-        Assert.assertTrue(stamp instanceof CalendarCollectionStamp);
-        Assert.assertEquals("calendar", stamp.getType());
+        assertTrue(stamp instanceof CalendarCollectionStamp);
+        assertEquals("calendar", stamp.getType());
         CalendarCollectionStamp ccs = (CalendarCollectionStamp) stamp;
-        Assert.assertEquals("description", ccs.getDescription());
-        Assert.assertEquals(testCal.toString(), ccs.getTimezoneCalendar().toString());
-        Assert.assertEquals("en", ccs.getLanguage());
-        Assert.assertEquals("#123123", ccs.getColor());
-        Assert.assertEquals(true, ccs.getVisibility());
+        assertEquals("description", ccs.getDescription());
+        assertEquals(testCal.toString(), ccs.getTimezoneCalendar().toString());
+        assertEquals("en", ccs.getLanguage());
+        assertEquals("#123123", ccs.getColor());
+        assertEquals(true, ccs.getVisibility());
         
         Calendar cal = new EntityConverter(null).convertCollection(queryCol);
-        Assert.assertEquals(1, cal.getComponents().getComponents(Component.VEVENT).size());
+        assertEquals(1, cal.getComponents().getComponents(Component.VEVENT).size());
     }
     
     /**
@@ -366,7 +373,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         try {
             contentDao.updateCollection(root);
             clearSession();
-            Assert.fail("able to save invalid timezone, is TimezoneValidator active?");
+            fail("able to save invalid timezone, is TimezoneValidator active?");
         } catch (ConstraintViolationException cve) {
             
         } 
@@ -391,13 +398,13 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         try {
             contentDao.updateCollection(root);
             clearSession();
-            Assert.fail("able to save invalid color, is ColorValidator active?");
+            fail("able to save invalid color, is ColorValidator active?");
         } catch (ConstraintViolationException cve) {
             
         } 
     }
     
-    @Test(expected=ConstraintViolationException.class)
+    @Test()
     public void shouldNotAllowDisplayNamesWithLengthGreaterThan64() throws Exception {
         User user = getUser(userDao, "testuser");
         CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
@@ -405,12 +412,14 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         CalendarCollectionStamp calendarStamp = new HibCalendarCollectionStamp(root);
         calendarStamp.setDisplayName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         root.addStamp(calendarStamp);
-        
-        contentDao.updateCollection(root);
-        clearSession();
+
+        assertThrows(ConstraintViolationException.class, () -> {
+            contentDao.updateCollection(root);
+            clearSession();
+        });
     }
     
-    @Test(expected=ConstraintViolationException.class)
+    @Test()
     public void shouldNotAllowEmptyDisplayNames() throws Exception {
         User user = getUser(userDao, "testuser");
         CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
@@ -419,8 +428,10 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         calendarStamp.setDisplayName("");
         root.addStamp(calendarStamp);
         
-        contentDao.updateCollection(root);
-        clearSession();
+        assertThrows(ConstraintViolationException.class, () -> {
+            contentDao.updateCollection(root);
+            clearSession();
+        });
     }
     
     public void shouldAllowLegalDisplayNames() throws Exception {
@@ -434,7 +445,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         try{
             contentDao.updateCollection(root);
         }catch(ConstraintViolationException ex){
-            Assert.fail("Valid display name was used");
+            fail("Valid display name was used");
         }
         clearSession();
     }
@@ -461,16 +472,16 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-        Assert.assertEquals(1, queryItem.getStamps().size());
+        assertEquals(1, queryItem.getStamps().size());
        
         Stamp stamp = queryItem.getStamp(EventExceptionStamp.class);
-        Assert.assertNotNull(stamp.getCreationDate());
-        Assert.assertNotNull(stamp.getModifiedDate());
-        Assert.assertTrue(stamp.getCreationDate().equals(stamp.getModifiedDate()));
-        Assert.assertTrue(stamp instanceof EventExceptionStamp);
-        Assert.assertEquals("eventexception", stamp.getType());
+        assertNotNull(stamp.getCreationDate());
+        assertNotNull(stamp.getModifiedDate());
+        assertTrue(stamp.getCreationDate().equals(stamp.getModifiedDate()));
+        assertTrue(stamp instanceof EventExceptionStamp);
+        assertEquals("eventexception", stamp.getType());
         EventExceptionStamp ees = (EventExceptionStamp) stamp;
-        Assert.assertEquals(ees.getEventCalendar().toString(), eventex.getEventCalendar()
+        assertEquals(ees.getEventCalendar().toString(), eventex.getEventCalendar()
                 .toString());
     }
     
@@ -496,7 +507,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         try {
             contentDao.createContent(root, item);
             clearSession();
-            Assert.fail("able to save invalid exception event, is TimezoneValidator active?");
+            fail("able to save invalid exception event, is TimezoneValidator active?");
         } catch (ConstraintViolationException cve) {
         }
     }

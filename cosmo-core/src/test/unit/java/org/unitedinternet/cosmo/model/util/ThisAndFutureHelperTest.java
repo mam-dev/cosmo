@@ -21,8 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -76,9 +80,9 @@ public class ThisAndFutureHelperTest {
         EventStamp eventStamp = StampUtils.getEventStamp(oldSeries);
         Recur recur = eventStamp.getRecurrenceRules().get(0);
         
-        Assert.assertEquals(new DateTime("20070807T235959Z"), recur.getUntil());
+        assertEquals(new DateTime("20070807T235959Z"), recur.getUntil());
         
-        Assert.assertEquals(8, results.size());
+        assertEquals(8, results.size());
         
         assertContains("oldmaster:20070808T081500", results, false);
         assertContains("oldmaster:20070809T081500", results, false);
@@ -112,9 +116,9 @@ public class ThisAndFutureHelperTest {
         EventStamp eventStamp = StampUtils.getEventStamp(oldSeries);
         Recur recur = eventStamp.getRecurrenceRules().get(0);
         
-        Assert.assertEquals(new DateTime("20070807T235959Z"), recur.getUntil());
+        assertEquals(new DateTime("20070807T235959Z"), recur.getUntil());
         
-        Assert.assertEquals(8, results.size());
+        assertEquals(8, results.size());
         
         assertContains("oldmaster:20070808T081500", results, false);
         assertContains("oldmaster:20070809T081500", results, false);
@@ -128,12 +132,12 @@ public class ThisAndFutureHelperTest {
         // verify that start date was also changed for mod where
         // recurrenceId==dtstart
         NoteItem mod = getByUid("newmaster:20070811T101500", results);
-        Assert.assertNotNull(mod);
+        assertNotNull(mod);
         
         EventExceptionStamp ees = StampUtils.getEventExceptionStamp(mod);
-        Assert.assertNotNull(ees);
+        assertNotNull(ees);
         
-        Assert.assertTrue(ees.getStartDate().equals(ees.getRecurrenceId()));
+        assertTrue(ees.getStartDate().equals(ees.getRecurrenceId()));
     }
     
     /**
@@ -160,9 +164,9 @@ public class ThisAndFutureHelperTest {
         EventStamp eventStamp = StampUtils.getEventStamp(oldSeries);
         Recur recur = eventStamp.getRecurrenceRules().get(0);
         
-        Assert.assertEquals(new DateTime("20070808T235959Z", tz), recur.getUntil());
+        assertEquals(new DateTime("20070808T235959Z", tz), recur.getUntil());
         
-        Assert.assertEquals(4, results.size());
+        assertEquals(4, results.size());
         
         assertContains("oldmaster:20070809T134500Z", results, false);
         assertContains("oldmaster:20070816T134500Z", results, false);
@@ -194,9 +198,9 @@ public class ThisAndFutureHelperTest {
         EventStamp eventStamp = StampUtils.getEventStamp(oldSeries);
         Recur recur = eventStamp.getRecurrenceRules().get(0);
         
-        Assert.assertEquals(new Date("20070812"), recur.getUntil());
+        assertEquals(new Date("20070812"), recur.getUntil());
         
-        Assert.assertEquals(4, results.size());
+        assertEquals(4, results.size());
         
         assertContains("oldmaster:20070820", results, false);
         assertContains("oldmaster:20070827", results, false);
@@ -218,7 +222,7 @@ public class ThisAndFutureHelperTest {
             }
         }
             
-        Assert.fail(uid + " not in collection");
+        fail(uid + " not in collection");
     }
     
     /**

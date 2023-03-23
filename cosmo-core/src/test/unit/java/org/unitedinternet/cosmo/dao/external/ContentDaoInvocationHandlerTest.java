@@ -8,8 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
@@ -46,7 +48,7 @@ public class ContentDaoInvocationHandlerTest {
     
     private ContentDao contentDaoProxy;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         ContentDaoInvocationHandler invocationHandler = new ContentDaoInvocationHandler();
@@ -100,17 +102,19 @@ public class ContentDaoInvocationHandlerTest {
         verify(contentDaoExternal, times(1)).findItems(filter);
     }
 
-    @Test(expected = CaldavExceptionForbidden.class)
+    @Test()
     public void shouldThrowExceptionWhenCreatingEventInExternalCalendar() {
         HibCollectionItem delegate = new HibCollectionItem();
         delegate.setUid(UuidExternalGenerator.get().getNext());
         NoteItem child = new HibNoteItem();
         CollectionItem item = new ExternalCollectionItem(delegate, new HashSet<Item>());
         when(contentDaoExternal.createContent(item, child)).thenThrow(new CaldavExceptionForbidden(""));
-        this.contentDaoProxy.createContent(item, child);
+        assertThrows(CaldavExceptionForbidden.class, () -> {
+            this.contentDaoProxy.createContent(item, child);
+        });
     }
 
-    @Test(expected = CaldavExceptionForbidden.class)
+    @Test()
     public void shouldThrowExceptionWhenUpdatingExternalCalendar() {
         HibCollectionItem delegate = new HibCollectionItem();
         delegate.setUid(UuidExternalGenerator.get().getNext());
@@ -119,6 +123,8 @@ public class ContentDaoInvocationHandlerTest {
         children.add(child);
         CollectionItem item = new ExternalCollectionItem(delegate, new HashSet<Item>());
         when(contentDaoExternal.updateCollection(item, children)).thenThrow(new CaldavExceptionForbidden(""));
-        this.contentDaoProxy.updateCollection(item, children);
+        assertThrows(CaldavExceptionForbidden.class, () -> {
+            this.contentDaoProxy.updateCollection(item, children);
+        });
     }
 }

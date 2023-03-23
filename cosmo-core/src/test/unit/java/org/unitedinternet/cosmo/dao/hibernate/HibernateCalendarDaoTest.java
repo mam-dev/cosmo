@@ -15,16 +15,16 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.text.ParseException;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.ComponentFilter;
@@ -69,7 +69,7 @@ public class HibernateCalendarDaoTest extends AbstractSpringDaoTestCase {
     private CalendarFilter filter;
     private ComponentFilter eventFilter;
 
-    @Before
+    @BeforeEach
     public void setUpCalendar() throws Exception {
         calendar = generateCalendar("test", "testuser");
         CollectionItem root = (CollectionItem) contentDao.getRootItem(getUser(userDao, "testuser"));
@@ -86,7 +86,7 @@ public class HibernateCalendarDaoTest extends AbstractSpringDaoTestCase {
 
     // Query-filters BEGIN
 
-    @Before
+    @BeforeEach
     public void setUpFilters() {
         this.filter = new CalendarFilter();
         ComponentFilter compFilter = new ComponentFilter("VCALENDAR");

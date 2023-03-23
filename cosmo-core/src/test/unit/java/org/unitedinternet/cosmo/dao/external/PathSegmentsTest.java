@@ -1,12 +1,13 @@
 package org.unitedinternet.cosmo.dao.external;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.unitedinternet.cosmo.dao.PathSegments;
 
 /**
@@ -16,9 +17,11 @@ import org.unitedinternet.cosmo.dao.PathSegments;
  */
 public class PathSegmentsTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void shouldThrowExceptionWhenPassingNullPath() {
-        new PathSegments(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new PathSegments(null);
+        });
     }
 
     @Test

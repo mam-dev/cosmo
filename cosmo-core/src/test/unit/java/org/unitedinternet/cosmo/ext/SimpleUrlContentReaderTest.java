@@ -1,14 +1,16 @@
 package org.unitedinternet.cosmo.ext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.mockito.MockitoAnnotations;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -21,7 +23,7 @@ import org.unitedinternet.cosmo.model.hibernate.HibEntityFactory;
  * @author daniel grigore
  *
  */
-@Ignore
+@Disabled
 public class SimpleUrlContentReaderTest {
 
     private static final int TIMEOUT = 5 * 1000;
@@ -32,7 +34,7 @@ public class SimpleUrlContentReaderTest {
 
     private UrlContentReader instanceUnderTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
@@ -56,16 +58,21 @@ public class SimpleUrlContentReaderTest {
         assertEquals(80, items.size());
     }
 
-    @Test(expected = ExternalContentInvalidException.class)
+    @Test()
     public void shouldFailAnInvalidEvent() {
-        instanceUnderTest.getContent("http://google.com", TIMEOUT);
+        assertThrows(ExternalContentInvalidException.class, () -> {
+            instanceUnderTest.getContent("http://google.com", TIMEOUT);
+        });
     }
 
-    @Test(expected = ExternalContentTooLargeException.class)
+    @Test()
     public void shouldFailTooLargeContent() {
-        instanceUnderTest.getContent(
+        assertThrows(ExternalContentTooLargeException.class, () -> {
+            instanceUnderTest.getContent(
                 "https://calendar.google.com/calendar/ical/8ojgn92qi1921h78j3n4p7va4s%40group.calendar.google.com/public/basic.ics",
                 TIMEOUT);
+        });
+        
     }
 
     @Test

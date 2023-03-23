@@ -17,9 +17,8 @@ package org.unitedinternet.cosmo.util;
 
 import java.util.Random;
 
-import org.junit.Assert;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test case for uri template.
@@ -38,7 +37,7 @@ public class UriTemplateTest {
      */
     @Test
     public void testUnescapeSpaces() throws Exception {
-        Assert.assertEquals("test test", UriTemplate.unescapeSegment("test+test"));
+        assertEquals("test test", UriTemplate.unescapeSegment("test+test"));
     }
     
     /**
@@ -75,9 +74,7 @@ public class UriTemplateTest {
     @Test
     public void testBindAbsolute() throws Exception {
         String username = getPlaceHolder(10);
-        Assert.assertEquals("Error binding template: ", "/" + username
-                + "/Inbox", new UriTemplate("/{username}/Inbox").bindAbsolute(
-                false, "", username));
+        assertEquals("/" + username + "/Inbox", new UriTemplate("/{username}/Inbox").bindAbsolute(false, "", username), "Error binding template: ");
     }
     
 }           

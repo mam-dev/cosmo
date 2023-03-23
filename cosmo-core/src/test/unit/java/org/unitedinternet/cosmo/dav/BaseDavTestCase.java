@@ -15,8 +15,8 @@
  */
 package org.unitedinternet.cosmo.dav;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base class for DAV test cases.
@@ -28,7 +28,7 @@ public abstract class BaseDavTestCase implements ExtendedDavConstants {
      * SetUp.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testHelper = new DavTestHelper();
         testHelper.setUp();
@@ -38,7 +38,7 @@ public abstract class BaseDavTestCase implements ExtendedDavConstants {
      * Tear down.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         testHelper.tearDown();
     }

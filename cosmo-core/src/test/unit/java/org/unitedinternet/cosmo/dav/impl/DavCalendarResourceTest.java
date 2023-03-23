@@ -15,7 +15,7 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
 import org.unitedinternet.cosmo.dav.caldav.report.MultigetReport;

@@ -15,8 +15,12 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
@@ -66,15 +70,15 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
 
         // find by username
         User queryUser1 = userDao.getUser("user1");
-        Assert.assertNotNull(queryUser1);
-        Assert.assertNotNull(queryUser1.getUid());
+        assertNotNull(queryUser1);
+        assertNotNull(queryUser1.getUid());
         verifyUser(user1, queryUser1);
 
         clearSession();
 
         // find by uid
         queryUser1 = userDao.getUserByUid(user1.getUid());
-        Assert.assertNotNull(queryUser1);
+        assertNotNull(queryUser1);
         verifyUser(user1, queryUser1);
 
         clearSession();
@@ -90,14 +94,14 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
 
         try {
             userDao.createUser(user3);
-            Assert.fail("able to create user with duplicate username");
+            fail("able to create user with duplicate username");
         } catch (DuplicateUsernameException due) {
         }
 
         user3.setUsername("user3");
         try {
             userDao.createUser(user3);
-            Assert.fail("able to create user with duplicate email");
+            fail("able to create user with duplicate email");
         } catch (DuplicateEmailException dee) {
         }
 
@@ -132,7 +136,7 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         try {
             user2 = userDao.createUser(user2);
             clearSession();
-            Assert.fail("able to create duplicate usernames!");
+            fail("able to create duplicate usernames!");
         } catch (DuplicateUsernameException e) {
         }
 
@@ -151,7 +155,7 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         try {
             user3 = userDao.createUser(user3);
             clearSession();
-            Assert.fail("able to create duplicate email!");
+            fail("able to create duplicate email!");
         } catch (DuplicateEmailException e) {
         }
 
@@ -182,7 +186,7 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
 
         // find by uid
         User queryUser1 = userDao.getUserByUid(user1.getUid());
-        Assert.assertNotNull(queryUser1);
+        assertNotNull(queryUser1);
         verifyUser(user1, queryUser1);
 
         queryUser1.setPassword("user2password");
@@ -190,7 +194,7 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
 
         clearSession();
         queryUser1 = userDao.getUserByUid(user1.getUid());
-        Assert.assertEquals(queryUser1.getPassword(), "user2password");
+        assertEquals(queryUser1.getPassword(), "user2password");
     }
 
     /**
@@ -228,7 +232,7 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         queryUser1.setUsername("user2");
         try {
             userDao.updateUser(queryUser1);
-            Assert.fail("able to update with duplicate username");
+            fail("able to update with duplicate username");
         } catch (DuplicateUsernameException e) {
         }
 
@@ -236,7 +240,7 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         queryUser1.setEmail("user2@user2.com");
         try {
             userDao.updateUser(queryUser1);
-            Assert.fail("able to update with duplicate email");
+            fail("able to update with duplicate email");
         } catch (DuplicateEmailException e) {
         }
 
@@ -265,13 +269,13 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         User queryUser1 = userDao.getUser("user1");
-        Assert.assertNotNull(queryUser1);
+        assertNotNull(queryUser1);
         userDao.removeUser(queryUser1);
 
         clearSession();
 
         queryUser1 = userDao.getUser("user1");
-        Assert.assertNull(queryUser1);
+        assertNull(queryUser1);
     }
 
     /**
@@ -295,13 +299,13 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         User queryUser1 = userDao.getUser("user1");
-        Assert.assertNotNull(queryUser1);
+        assertNotNull(queryUser1);
         userDao.removeUser(user1.getUsername());
 
         clearSession();
 
         queryUser1 = userDao.getUser("user1");
-        Assert.assertNull(queryUser1);
+        assertNull(queryUser1);
     }
 
     /**
@@ -313,12 +317,12 @@ public class HibernateUserDaoTest extends AbstractSpringDaoTestCase {
      *            User2.
      */
     private void verifyUser(User user1, User user2) {
-        Assert.assertEquals(user1.getUid(), user2.getUid());
-        Assert.assertEquals(user1.getUsername(), user2.getUsername());
-        Assert.assertEquals(user1.getAdmin(), user2.getAdmin());
-        Assert.assertEquals(user1.getEmail(), user2.getEmail());
-        Assert.assertEquals(user1.getFirstName(), user2.getFirstName());
-        Assert.assertEquals(user1.getLastName(), user2.getLastName());
-        Assert.assertEquals(user1.getPassword(), user2.getPassword());
+        assertEquals(user1.getUid(), user2.getUid());
+        assertEquals(user1.getUsername(), user2.getUsername());
+        assertEquals(user1.getAdmin(), user2.getAdmin());
+        assertEquals(user1.getEmail(), user2.getEmail());
+        assertEquals(user1.getFirstName(), user2.getFirstName());
+        assertEquals(user1.getLastName(), user2.getLastName());
+        assertEquals(user1.getPassword(), user2.getPassword());
     }
 }

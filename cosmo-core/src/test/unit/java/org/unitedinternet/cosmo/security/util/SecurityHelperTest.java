@@ -18,9 +18,11 @@ package org.unitedinternet.cosmo.security.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
@@ -53,7 +55,7 @@ public class SecurityHelperTest {
      * Sets up.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testHelper = new TestHelper();
         storage = new MockDaoStorage();
@@ -75,11 +77,11 @@ public class SecurityHelperTest {
         CollectionItem col = testHelper.makeDummyCalendarCollection(user1);
         CosmoSecurityContext context = getSecurityContext(user1);
         
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, col));
+        assertTrue(securityHelper.hasWriteAccess(context, col));
         context = getSecurityContext(user2);
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, col));
+        assertFalse(securityHelper.hasWriteAccess(context, col));
         context = getSecurityContext(admin);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, col));
+        assertTrue(securityHelper.hasWriteAccess(context, col));
     }
     
     /**
@@ -106,11 +108,11 @@ public class SecurityHelperTest {
         
         CosmoSecurityContext context = getSecurityContext(roTicket);
         
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, col));
+        assertFalse(securityHelper.hasWriteAccess(context, col));
         context = getSecurityContext(rwTicket);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, col));
+        assertTrue(securityHelper.hasWriteAccess(context, col));
         context = getSecurityContext(rwBogus);
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, col));
+        assertFalse(securityHelper.hasWriteAccess(context, col));
     }
     
     /**
@@ -138,19 +140,19 @@ public class SecurityHelperTest {
         
         CosmoSecurityContext context = getSecurityContext(user1);
         
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
         context = getSecurityContext(user2);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
         context = getSecurityContext(user3);
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, note));
+        assertFalse(securityHelper.hasWriteAccess(context, note));
         context = getSecurityContext(admin);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
         
         // remove note from col2, so user2 doesn't have access
         note.removeParent(col2);
         
         context = getSecurityContext(user2);
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, note));
+        assertFalse(securityHelper.hasWriteAccess(context, note));
         
     }
     
@@ -192,21 +194,21 @@ public class SecurityHelperTest {
         
         CosmoSecurityContext context = getSecurityContext(roTicket);
         
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, note));
+        assertFalse(securityHelper.hasWriteAccess(context, note));
         context = getSecurityContext(rwTicket);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
         context = getSecurityContext(rwBogus);
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, note));
+        assertFalse(securityHelper.hasWriteAccess(context, note));
         
         // remove note from col2, so rwTicket doesn't have access
         note.removeParent(col2);
         
         context = getSecurityContext(rwTicket);
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, note));
+        assertFalse(securityHelper.hasWriteAccess(context, note));
         
         // check item ticket
         context = getSecurityContext(rwItemTicket);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
     }
     
     /**
@@ -246,13 +248,13 @@ public class SecurityHelperTest {
         tickets.add(rwTicket);
         
         CosmoSecurityContext context = getSecurityContextWithTickets(user2, tickets);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
         
         tickets.clear();
-        Assert.assertFalse(securityHelper.hasWriteAccess(context, note));
+        assertFalse(securityHelper.hasWriteAccess(context, note));
         
         tickets.add(rwItemTicket);
-        Assert.assertTrue(securityHelper.hasWriteAccess(context, note));
+        assertTrue(securityHelper.hasWriteAccess(context, note));
     }
     
     @Test
@@ -283,7 +285,7 @@ public class SecurityHelperTest {
         sharee.getSubscriptions().add(subscription);
         
         CosmoSecurityContext context = this.getSecurityContext(sharee);
-        Assert.assertTrue(this.securityHelper.hasReadAccess(context, collectionItem));        
+        assertTrue(this.securityHelper.hasReadAccess(context, collectionItem));        
     }
     
     @Test
@@ -314,10 +316,9 @@ public class SecurityHelperTest {
         sharee.getSubscriptions().add(subscription);
         
         CosmoSecurityContext context = this.getSecurityContext(sharee);
-        Assert.assertTrue(this.securityHelper.hasWriteAccess(context, collectionItem));
+        assertTrue(this.securityHelper.hasWriteAccess(context, collectionItem));
         
     }
-    
     
     /**
      * Gets security context.

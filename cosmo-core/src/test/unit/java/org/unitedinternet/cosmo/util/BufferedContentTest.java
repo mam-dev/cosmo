@@ -20,8 +20,9 @@ import java.io.FileInputStream;
 import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.unitedinternet.cosmo.util.BufferedContent;
 
 /**
@@ -43,23 +44,23 @@ public class BufferedContentTest {
         
         BufferedContent content = new BufferedContent(new ByteArrayInputStream(bytes));
         
-        Assert.assertTrue(content.getLength()==(1024*100));
+        assertTrue(content.getLength()==(1024*100));
         
         // verify streams are the same
-        Assert.assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
+        assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
         // verify we can re-consume the same stream
-        Assert.assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
+        assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
         
         // should fit into memory
-        Assert.assertTrue(content.getInputStream() instanceof ByteArrayInputStream);
+        assertTrue(content.getInputStream() instanceof ByteArrayInputStream);
         
         // should be buffered into file
         content = new BufferedContent(new ByteArrayInputStream(bytes), 1024*50);
-        Assert.assertTrue(content.getLength()==(1024*100));
-        Assert.assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
-        Assert.assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
+        assertTrue(content.getLength()==(1024*100));
+        assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
+        assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(bytes), content.getInputStream()));
         
         // should be in a file
-        Assert.assertTrue(content.getInputStream() instanceof FileInputStream);
+        assertTrue(content.getInputStream() instanceof FileInputStream);
     }
 }

@@ -1,10 +1,8 @@
 package org.unitedinternet.cosmo.hibernate.validator;
 
-
-import org.junit.Assert;
-import org.junit.Test;
-
-
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Validator for Color
@@ -19,9 +17,9 @@ public class ColorValidatorTest {
     @Test
     public void colorMustHave7digits(){
         ColorValidator colorValidator = new ColorValidator();
-        Assert.assertTrue("color has 7 digits", colorValidator.isValid("#123456",null));
-        Assert.assertFalse("color has 7 digits", colorValidator.isValid("#1234567",null));
-        Assert.assertFalse("color has 7 digits", colorValidator.isValid("#12345",null));
+        assertTrue(colorValidator.isValid("#123456",null), "color has 7 digits");
+        assertFalse(colorValidator.isValid("#1234567",null), "color has 7 digits");
+        assertFalse(colorValidator.isValid("#12345",null), "color has 7 digits");
     }
     
     /**
@@ -30,8 +28,8 @@ public class ColorValidatorTest {
     @Test
     public void colorMustStartWithDiez(){
         ColorValidator colorValidator = new ColorValidator();
-        Assert.assertTrue("color must start with #", colorValidator.isValid("#123456",null));
-        Assert.assertFalse("color must start with #", colorValidator.isValid("1234567",null));        
+        assertTrue(colorValidator.isValid("#123456",null), "color must start with #");
+        assertFalse(colorValidator.isValid("1234567",null), "color must start with #");        
     }
     
     /**
@@ -40,12 +38,12 @@ public class ColorValidatorTest {
     @Test
     public void onlyHexaDigitsPermited(){
         ColorValidator colorValidator = new ColorValidator();
-        Assert.assertTrue("color must start with #", colorValidator.isValid("#123456",null));
-        Assert.assertTrue("color must start with #", colorValidator.isValid("#7890AB",null));    
-        Assert.assertTrue("color must start with #", colorValidator.isValid("#CDEFab",null));    
-        Assert.assertTrue("color must start with #", colorValidator.isValid("#cdef01",null));    
+        assertTrue(colorValidator.isValid("#123456",null), "color must start with #");
+        assertTrue(colorValidator.isValid("#7890AB",null), "color must start with #");    
+        assertTrue(colorValidator.isValid("#CDEFab",null), "color must start with #");    
+        assertTrue(colorValidator.isValid("#cdef01",null), "color must start with #");    
         
-        Assert.assertFalse("color must start with #", colorValidator.isValid("#Gdef01",null));
+        assertFalse(colorValidator.isValid("#Gdef01",null), "color must start with #");
     }
     
     /**
@@ -54,8 +52,8 @@ public class ColorValidatorTest {
     @Test
     public void nullColorIsValid(){
         ColorValidator colorValidator = new ColorValidator();
-        Assert.assertTrue("null color is valid", colorValidator.isValid(null,null));
-        Assert.assertTrue("empty color is valid", colorValidator.isValid("",null));
+        assertTrue(colorValidator.isValid(null,null), "null color is valid");
+        assertTrue(colorValidator.isValid("",null), "empty color is valid");
     }
     
 }

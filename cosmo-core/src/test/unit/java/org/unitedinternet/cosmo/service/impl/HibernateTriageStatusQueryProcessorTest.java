@@ -19,9 +19,11 @@ import java.util.Set;
 
 import net.fortuna.ical4j.model.DateTime;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.dao.hibernate.AbstractSpringDaoTestCase;
@@ -69,7 +71,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
      * On set up in transaction
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    @Before
+    @BeforeEach
     public void onSetUpInTransaction() throws Exception {
         queryProcessor = new StandardTriageStatusQueryProcessor();
         queryProcessor.setContentDao(contentDao);
@@ -116,7 +118,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(null, new DateTime("20070601T000000Z"), null);
         Set<NoteItem> done = queryProcessor.processTriageStatusQuery(calendar, context);
-        Assert.assertEquals(10, done.size());
+        assertEquals(10, done.size());
         verifyItemInSet(done,NOTE_UID + "later");
         verifyItemInSet(done,NOTE_UID + "done");
         verifyItemInSet(done,NOTE_UID + "mod");
@@ -137,7 +139,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(TriageStatus.LABEL_DONE, new DateTime("20070601T000000Z"), null);
         Set<NoteItem> done = queryProcessor.processTriageStatusQuery(calendar, context);
-        Assert.assertEquals(5, done.size());
+        assertEquals(5, done.size());
         verifyItemInSet(done,NOTE_UID + "done");
         verifyItemInSet(done,"calendar2_1:20070529T101500Z");
         verifyItemInSet(done,"calendar2_3:20070531T081500Z");
@@ -155,7 +157,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(TriageStatus.LABEL_DONE, new DateTime("20070601T000000Z"), null);
         Set<NoteItem> results = queryProcessor.processTriageStatusQuery(done, context);
-        Assert.assertEquals(2, results.size());
+        assertEquals(2, results.size());
         
         verifyItemInSet(results,"calendar2_1:20070529T101500Z");
         verifyItemInSet(results,"calendar2_1");
@@ -171,7 +173,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(TriageStatus.LABEL_LATER, new DateTime("20070601T000000Z"), null);
         Set<NoteItem> later = queryProcessor.processTriageStatusQuery(calendar, context);
-        Assert.assertEquals(5, later.size());
+        assertEquals(5, later.size());
         verifyItemInSet(later,NOTE_UID + "later");
         verifyItemInSet(later,"calendar2_1:20070605T101500Z");
         verifyItemInSet(later,"calendar2_3:20070601T081500Z");
@@ -189,7 +191,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(TriageStatus.LABEL_LATER, new DateTime("20070601T000000Z"), null);
         Set<NoteItem> results = queryProcessor.processTriageStatusQuery(later, context);
-        Assert.assertEquals(2, results.size());
+        assertEquals(2, results.size());
         verifyItemInSet(results,"calendar2_1:20070605T101500Z");
         verifyItemInSet(results,"calendar2_1");
     }
@@ -204,7 +206,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(TriageStatus.LABEL_NOW, new DateTime("20070601T083000Z"), null);
         Set<NoteItem> now = queryProcessor.processTriageStatusQuery(calendar, context);
-        Assert.assertEquals(5, now.size());
+        assertEquals(5, now.size());
         
         // should be included because triage status is NOW
         verifyItemInSet(now,NOTE_UID + "mod");
@@ -228,7 +230,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
         TriageStatusQueryContext context =
             new TriageStatusQueryContext(TriageStatus.LABEL_NOW, new DateTime("20070601T083000Z"), null);
         Set<NoteItem> results = queryProcessor.processTriageStatusQuery(now, context);
-        Assert.assertEquals(2, results.size());
+        assertEquals(2, results.size());
         
         // should be included because occurence overlaps instant in time
         verifyItemInSet(results,"calendar2_3:20070601T081500Z");
@@ -316,7 +318,7 @@ public class HibernateTriageStatusQueryProcessorTest extends AbstractSpringDaoTe
             }
         }
         
-        Assert.fail("item " + uid + " not in set");   
+        fail("item " + uid + " not in set");   
     }
 
 }

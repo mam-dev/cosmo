@@ -19,8 +19,10 @@ import java.io.FileInputStream;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
@@ -50,7 +52,7 @@ public class ExpandRecurringEventsTest {
         FileInputStream fis = new FileInputStream(baseDir + "expand_recurr_test1.ics");
         Calendar calendar = cb.build(fis);
         
-        Assert.assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
+        assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
         
         VTimeZone vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
         TimeZone tz = new TimeZone(vtz);
@@ -74,24 +76,24 @@ public class ExpandRecurringEventsTest {
         ComponentList<VEvent> comps = filterCal.getComponents().getComponents("VEVENT");
         
         // Should expand to 3 event components
-        Assert.assertEquals(3, comps.size());
+        assertEquals(3, comps.size());
                 
         Iterator<VEvent> it = comps.iterator();
         VEvent event = it.next();
         
-        Assert.assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
-        Assert.assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
+        assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
+        assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
-        Assert.assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
+        assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
+        assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060104T190000Z", event.getStartDate().getDate().toString());
-        Assert.assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
+        assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060104T190000Z", event.getStartDate().getDate().toString());
+        assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
         
         verifyExpandedCalendar(filterCal);
     }
@@ -108,7 +110,7 @@ public class ExpandRecurringEventsTest {
         
         ComponentList<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
         
-        Assert.assertEquals(5, comps.size());
+        assertEquals(5, comps.size());
         
         VTimeZone vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
         TimeZone tz = new TimeZone(vtz);
@@ -132,24 +134,24 @@ public class ExpandRecurringEventsTest {
         comps = filterCal.getComponents().getComponents("VEVENT");
         
         // Should expand to 3 event components
-        Assert.assertEquals(3, comps.size());
+        assertEquals(3, comps.size());
                 
         Iterator<VEvent> it = comps.iterator();
         VEvent event = it.next();
         
-        Assert.assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
-        Assert.assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
+        assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
+        assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
-        Assert.assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
+        assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
+        assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
         
         event = it.next();
-        Assert.assertEquals("event 6 changed", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060104T210000Z", event.getStartDate().getDate().toString());
-        Assert.assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
+        assertEquals("event 6 changed", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060104T210000Z", event.getStartDate().getDate().toString());
+        assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
         
         verifyExpandedCalendar(filterCal);
     }
@@ -163,7 +165,7 @@ public class ExpandRecurringEventsTest {
         FileInputStream fis = new FileInputStream(baseDir + "expand_nonrecurr_test3.ics");
         Calendar calendar = cb.build(fis);
         
-        Assert.assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
+        assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
         
         VTimeZone vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
         TimeZone tz = new TimeZone(vtz);
@@ -187,14 +189,14 @@ public class ExpandRecurringEventsTest {
         ComponentList<VEvent> comps = filterCal.getComponents().getComponents("VEVENT");
         
         // Should be the same component
-        Assert.assertEquals(1, comps.size());
+        assertEquals(1, comps.size());
                 
         Iterator<VEvent> it = comps.iterator();
         VEvent event = it.next();
         
-        Assert.assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
-        Assert.assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
-        Assert.assertNull(event.getRecurrenceId());
+        assertEquals("event 6", ((Summary) event.getProperties().getProperty(Property.SUMMARY)).getValue());
+        assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
+        assertNull(event.getRecurrenceId());
         
         verifyExpandedCalendar(filterCal);
     }
@@ -205,7 +207,7 @@ public class ExpandRecurringEventsTest {
      */
     private void verifyExpandedCalendar(Calendar calendar) {
         // timezone should be stripped
-        Assert.assertNull(calendar.getComponents().getComponent("VTIMEZONE"));
+        assertNull(calendar.getComponents().getComponent("VTIMEZONE"));
         
         ComponentList<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
         
@@ -213,11 +215,11 @@ public class ExpandRecurringEventsTest {
             DateTime dt = (DateTime) event.getStartDate().getDate();
             
             // verify start dates are UTC
-            Assert.assertNull(event.getStartDate().getParameters().getParameter(Parameter.TZID));
-            Assert.assertTrue(dt.isUtc());
+            assertNull(event.getStartDate().getParameters().getParameter(Parameter.TZID));
+            assertTrue(dt.isUtc());
             
             // verify no recurrence rules
-            Assert.assertNull(event.getProperties().getProperty(Property.RRULE));
+            assertNull(event.getProperties().getProperty(Property.RRULE));
         }
     }
     

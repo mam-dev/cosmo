@@ -15,9 +15,11 @@
  */
 package org.unitedinternet.cosmo.server;
 
-import org.junit.Assert;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test case for <code>UserPath</code>.
@@ -33,7 +35,7 @@ public class UserPathTest {
         String badUrlPath = "http://dead.beef/";
         try {
             UserPath.parse(badUrlPath);
-            Assert.fail("absolute urlPath parsed successfully");
+            fail("absolute urlPath parsed successfully");
         } catch (IllegalArgumentException e) {}
     }
 
@@ -45,7 +47,7 @@ public class UserPathTest {
     public void testSuccessfulParse() throws Exception {
         String urlPath = "/user/jonez";
         UserPath up = UserPath.parse(urlPath);
-        Assert.assertNotNull("path did not parse successfully", up);
+        assertNotNull(up, "path did not parse successfully");
     }
 
     /**
@@ -56,7 +58,7 @@ public class UserPathTest {
     public void testUnsuccessfulParse() throws Exception {
         String urlPath = "/bcm/stuff/jonez";
         UserPath up = UserPath.parse(urlPath);
-        Assert.assertNull("non-user path parsed successfuly", up);
+        assertNull(up, "non-user path parsed successfuly");
     }
 
     /**
@@ -67,7 +69,7 @@ public class UserPathTest {
     public void testParseNoPathInfo() throws Exception {
         String urlPath = "/user/jonez/foobar";
         UserPath up = UserPath.parse(urlPath);
-        Assert.assertNull("path with disallowed pathInfo parsed successfully", up);
+        assertNull(up, "path with disallowed pathInfo parsed successfully");
     }
 
     /**
@@ -78,8 +80,7 @@ public class UserPathTest {
     public void testParseWithPathInfo() throws Exception {
         String urlPath = "/user/jonez/foobar";
         UserPath up = UserPath.parse(urlPath, true);
-        Assert.assertNotNull("path with allowed pathInfo did not parse successfully",
-                      up);
+        assertNotNull(up, "path with allowed pathInfo did not parse successfully");
     }
 
     /**
@@ -91,9 +92,9 @@ public class UserPathTest {
         String username = "jonez";
         String urlPath = "/user/" + username;
         UserPath up = UserPath.parse(urlPath);
-        Assert.assertNotNull("path did not parse successfully", up);
-        Assert.assertNotNull("username not found", up.getUsername());
-        Assert.assertEquals("found incorrect username", username, up.getUsername());
+        assertNotNull(up, "path did not parse successfully");
+        assertNotNull(up.getUsername(), "username not found");
+        assertEquals(username, up.getUsername(), "found incorrect username");
     }
 
     /**
@@ -106,10 +107,10 @@ public class UserPathTest {
         String pathInfo = "/foobar";
         String urlPath = "/user/" + username + pathInfo;
         UserPath up = UserPath.parse(urlPath, true);
-        Assert.assertNotNull("path did not parse successfully", up);
-        Assert.assertNotNull("username not found", up.getUsername());
-        Assert.assertEquals("found incorrect username", username, up.getUsername());
-        Assert.assertNotNull("path info not found", up.getPathInfo());
-        Assert.assertEquals("found incorrect path info", pathInfo, up.getPathInfo());
+        assertNotNull(up, "path did not parse successfully");
+        assertNotNull(up.getUsername(), "username not found");
+        assertEquals(username, up.getUsername(), "found incorrect username");
+        assertNotNull(up.getPathInfo(), "path info not found");
+        assertEquals(pathInfo, up.getPathInfo(), "found incorrect path info");
     }
 }
