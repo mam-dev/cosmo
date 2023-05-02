@@ -445,7 +445,7 @@ public class ContentDaoExternal implements ContentDao {
     }
 
     @Override
-    public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp) {
         throw new UnsupportedOperationException();
     }
 

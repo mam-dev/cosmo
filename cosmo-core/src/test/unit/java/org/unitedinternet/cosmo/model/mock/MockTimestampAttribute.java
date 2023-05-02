@@ -37,7 +37,7 @@ public class MockTimestampAttribute extends MockAttribute implements
     private static final long serialVersionUID = 5263977785074085449L;
     
     
-    private Date value;
+    private Long value;
 
     /** default constructor */
     public MockTimestampAttribute() {
@@ -48,7 +48,7 @@ public class MockTimestampAttribute extends MockAttribute implements
      * @param qname The name of the attribute.
      * @param value The date.
      */
-    public MockTimestampAttribute(QName qname, Date value) {
+    public MockTimestampAttribute(QName qname, Long value) {
         setQName(qname);
         this.value = value;
     }
@@ -61,7 +61,7 @@ public class MockTimestampAttribute extends MockAttribute implements
      * Gets value.
      * @return The date.
      */
-    public Date getValue() {
+    public Long getValue() {
         return this.value;
     }
 
@@ -72,7 +72,7 @@ public class MockTimestampAttribute extends MockAttribute implements
      * Sets value.
      * @param value The date.
      */
-    public void setValue(Date value) {
+    public void setValue(Long value) {
         this.value = value;
     }
     
@@ -95,7 +95,7 @@ public class MockTimestampAttribute extends MockAttribute implements
      * @param qname QName of attribute
      * @return Date value of TextAttribute
      */
-    public static Date getValue(Item item, QName qname) {
+    public static Long getValue(Item item, QName qname) {
         TimestampAttribute ta = (TimestampAttribute) item.getAttribute(qname);
         if (ta == null) {
             return null;
@@ -112,10 +112,10 @@ public class MockTimestampAttribute extends MockAttribute implements
      * @param qname QName of attribute
      * @param value value to set on TextAttribute
      */
-    public static void setValue(Item item, QName qname, Date value) {
+    public static void setValue(Item item, QName qname, Long value) {
         TimestampAttribute attr = (TimestampAttribute) item.getAttribute(qname);
         if(attr==null && value!=null) {
-            attr = new MockTimestampAttribute(qname,value);
+            attr = new MockTimestampAttribute(qname, value);
             item.addAttribute(attr);
             return;
         }
@@ -135,7 +135,7 @@ public class MockTimestampAttribute extends MockAttribute implements
     public Attribute copy() {
         TimestampAttribute attr = new MockTimestampAttribute();
         attr.setQName(getQName().copy());
-        attr.setValue(value.clone());
+        attr.setValue(value);
         return attr;
     }
 

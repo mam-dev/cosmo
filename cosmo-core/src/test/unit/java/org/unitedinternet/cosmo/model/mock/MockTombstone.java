@@ -15,22 +15,19 @@
  */
 package org.unitedinternet.cosmo.model.mock;
 
-import java.util.Date;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Tombstone;
 
 /**
- * When an Item is removed from a collection, a tombstone is attached
- * to the collection to track when this removal ocurred.
+ * When an Item is removed from a collection, a tombstone is attached to the collection to track when this removal
+ * ocurred.
  */
 public abstract class MockTombstone implements Tombstone {
-    
-   
-    private Date timestamp = null;
-    
+
+    private Long timestamp = null;
+
     private Item item = null;
 
     /**
@@ -38,79 +35,41 @@ public abstract class MockTombstone implements Tombstone {
      */
     public MockTombstone() {
     }
-    
+
     /**
      * Constructor.
+     * 
      * @param item The item.
      */
     public MockTombstone(Item item) {
         this.item = item;
-        this.timestamp = new Date(System.currentTimeMillis());
+        this.timestamp = System.currentTimeMillis();
     }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceTombstone#getTimestamp()
-     */
-    /**
-     * Gets timestamp.
-     * @return The date.
-     */
-    public Date getTimestamp() {
+
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceTombstone#setTimestamp(java.util.Date)
-     */
-    /**
-     * Sets timestamp.
-     * @param timestamp The Timestamp.
-     */
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceTombstone#getItem()
-     */
-    /**
-     * Gets item.
-     * @return The item.
-     */
     public Item getItem() {
         return item;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceTombstone#setItem(org.unitedinternet.cosmo.model.copy.Item)
-     */
-    /**
-     * Sets item.
-     * @param item The item.
-     */
     public void setItem(Item item) {
         this.item = item;
     }
 
-    /**
-     * Equals.
-     * {@inheritDoc}
-     * @param obj The object.
-     * @return The boolean for equals.
-     */
     @Override
     public boolean equals(Object obj) {
-        if (obj==null || !(obj instanceof Tombstone)) {
+        if (obj == null || !(obj instanceof Tombstone)) {
             return false;
         }
         return new EqualsBuilder().append(item, ((Tombstone) obj).getItem()).isEquals();
     }
-
-    /**
-     * HashCode.
-     * {@inheritDoc}
-     * @return The hashcode.
-     */
+    
     @Override
     public int hashCode() {
         return new HashCodeBuilder(13, 23).append(item).toHashCode();

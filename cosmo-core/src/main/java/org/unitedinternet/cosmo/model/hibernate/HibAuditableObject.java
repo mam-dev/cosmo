@@ -17,13 +17,11 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import org.apache.commons.codec.binary.Base64;
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.CosmoNoSuchAlgorithmException;
 import org.unitedinternet.cosmo.model.AuditableObject;
 import org.unitedinternet.cosmo.model.EntityFactory;
@@ -32,6 +30,7 @@ import org.unitedinternet.cosmo.model.EntityFactory;
  * Hibernate persistent AuditableObject.
  */
 @MappedSuperclass
+@SuppressWarnings("serial")
 public abstract class HibAuditableObject extends BaseModelObject implements AuditableObject {
 
     private static final ThreadLocal<MessageDigest> ETAG_DIGEST_LOCAL = new ThreadLocal<MessageDigest>(){
@@ -51,44 +50,37 @@ public abstract class HibAuditableObject extends BaseModelObject implements Audi
     private static final EntityFactory FACTORY = new HibEntityFactory();
     
     @Column(name = "createdate")
-    @Type(type="long_timestamp")
-    private Date creationDate;
+    private Long creationDate;
     
     @Column(name = "modifydate")
-    @Type(type="long_timestamp")
-    private Date modifiedDate;
+    private Long modifiedDate;
     
     @Column(name="etag")
     private String etag = "";
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.AuditableObject#getCreationDate()
-     */
-    public Date getCreationDate() {
+        
+
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.AuditableObject#getModifiedDate()
-     */
-    public Date getModifiedDate() {
+    
+    public Long getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
+    public void setModifiedDate(Long modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
-    
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.AuditableObject#updateTimestamp()
      */
     public void updateTimestamp() {
-        modifiedDate = new Date();
+        this.modifiedDate = System.currentTimeMillis();
     }
     
     /* (non-Javadoc)

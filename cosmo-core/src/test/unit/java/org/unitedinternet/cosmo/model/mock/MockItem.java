@@ -17,13 +17,12 @@ package org.unitedinternet.cosmo.model.mock;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.AttributeTombstone;
@@ -54,10 +53,10 @@ public abstract class MockItem extends MockAuditableObject implements Item {
     private String displayName;
     
     
-    private Date clientCreationDate;
+    private Long clientCreationDate;
     
     
-    private Date clientModifiedDate;
+    private Long clientModifiedDate;
     
     private Integer version = 0;
     
@@ -422,7 +421,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
      * Gets client creation date.
      * @return The date.
      */
-    public Date getClientCreationDate() {
+    public Long getClientCreationDate() {
         return clientCreationDate;
     }
 
@@ -433,7 +432,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
      * Sets client creation date.
      * @param clientCreationDate The client creation date.
      */
-    public void setClientCreationDate(Date clientCreationDate) {
+    public void setClientCreationDate(Long clientCreationDate) {
         this.clientCreationDate = clientCreationDate;
     }
     
@@ -444,7 +443,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
      * Gets client modified date.
      * @return The date.
      */
-    public Date getClientModifiedDate() {
+    public Long getClientModifiedDate() {
         return clientModifiedDate;
     }
 
@@ -455,7 +454,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
      * Sets client modified date.
      * @param clientModifiedDate The client modified date.
      */
-    public void setClientModifiedDate(Date clientModifiedDate) {
+    public void setClientModifiedDate(Long clientModifiedDate) {
         this.clientModifiedDate = clientModifiedDate;
     }
     
@@ -730,7 +729,7 @@ public abstract class MockItem extends MockAuditableObject implements Item {
     public String calculateEntityTag() {
         String uid = getUid() != null ? getUid() : "-";
         String modTime = getModifiedDate() != null ?
-            Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+            Long.valueOf(getModifiedDate()).toString() : "-";
         String etag = uid + ":" + modTime;
         return encodeEntityTag(etag.getBytes());
     }

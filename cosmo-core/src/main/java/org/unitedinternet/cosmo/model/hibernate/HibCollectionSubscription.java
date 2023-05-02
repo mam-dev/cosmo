@@ -106,7 +106,7 @@ public class HibCollectionSubscription extends HibAuditableObject implements Col
     public String calculateEntityTag() {
         String targetUid = this.targetCollection != null ? this.targetCollection.getUid() : "-";
         String ownerUid = getOwner() != null && getOwner().getUid() != null ? getOwner().getUid() : "-";
-        String modTime = getModifiedDate() != null ? Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+        String modTime = getModifiedDate() != null ? Long.valueOf(getModifiedDate()).toString() : "-";
         String etag = targetUid + ":" + ownerUid + ":" + ":" + modTime;
         return encodeEntityTag(etag.getBytes(Charset.forName("UTF-8")));
     }

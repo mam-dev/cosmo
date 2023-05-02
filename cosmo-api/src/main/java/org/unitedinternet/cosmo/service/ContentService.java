@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.service;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -159,7 +158,7 @@ public interface ContentService {
      * @return children of collection that have been updated since 
      *         timestamp, or all children if timestamp is null
      */
-    public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp);
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp);
 
     /**
      * Create a new collection.

@@ -18,7 +18,6 @@ package org.unitedinternet.cosmo.dao.mock;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -184,7 +183,7 @@ public class MockDaoStorage {
         rootCollection.setName(user.getUsername());
         rootCollection.setOwner(user);
         rootCollection.setUid(calculateUid());
-        rootCollection.setCreationDate(new Date());
+        rootCollection.setCreationDate(System.currentTimeMillis());
         rootCollection.setModifiedDate(rootCollection.getCreationDate());
         rootCollection.setEntityTag(getMockItem(rootCollection).calculateEntityTag());
 
@@ -198,8 +197,7 @@ public class MockDaoStorage {
     /**
      * Stores item.
      * @param item The item.
-     */
-    @SuppressWarnings("deprecation")
+     */    
     public void storeItem(Item item) {
         if (item.getOwner() == null) {
             throw new IllegalArgumentException("owner cannot be null");
@@ -211,7 +209,7 @@ public class MockDaoStorage {
         if (item.getName() == null) {
             item.setName(item.getUid());
         }
-        ((MockItem) item).setCreationDate(new Date());
+        ((MockItem) item).setCreationDate(System.currentTimeMillis());
         ((MockItem) item).setModifiedDate(item.getCreationDate());
         ((MockItem) item).setEntityTag(getMockItem(item).calculateEntityTag());
         
@@ -262,7 +260,6 @@ public class MockDaoStorage {
             throw new IllegalArgumentException("owner cannot be null");
         }
 
-        @SuppressWarnings("deprecation")
         CollectionItem parentItem = item.getParent();
 
         if (parentItem != null) {
@@ -274,7 +271,7 @@ public class MockDaoStorage {
             }
         }
 
-        ((MockItem) item).setModifiedDate(new Date());
+        ((MockItem) item).setModifiedDate(System.currentTimeMillis());
         ((MockItem) item).setEntityTag(getMockItem(item).calculateEntityTag());
         ((MockItem) item).setVersion(getMockItem(item).getVersion()+1);
 
@@ -294,7 +291,7 @@ public class MockDaoStorage {
      * @param item The item.
      * @return The set.
      */
-    @SuppressWarnings({ "rawtypes", "deprecation", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Set findItemChildren(Item item) {
         HashSet children = new HashSet();
 
@@ -366,7 +363,6 @@ public class MockDaoStorage {
      * @param item The item.
      * @return The item path.
      */
-    @SuppressWarnings("deprecation")
     public String getItemPath(Item item) {
         StringBuilder path = new StringBuilder();
         LinkedList<String> hierarchy = new LinkedList<String>();

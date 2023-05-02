@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.dav.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -159,7 +158,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements Dav
             return -1;
         if (getItem().getModifiedDate() == null)
             return new Date().getTime();
-        return getItem().getModifiedDate().getTime();
+        return getItem().getModifiedDate();
     }
 
     public void setProperty(
@@ -403,7 +402,7 @@ public abstract class DavItemResourceBase extends DavResourceBase implements Dav
         }
 
         if (item.getUid() == null) {
-            item.setClientCreationDate(Calendar.getInstance().getTime());
+            item.setClientCreationDate(System.currentTimeMillis());
             item.setClientModifiedDate(item.getClientCreationDate());
         }
     }

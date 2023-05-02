@@ -62,6 +62,6 @@ public class NoteItemTriageStatusComparator implements Comparator<NoteItem>, Ser
         }
         
         // use modified date * -1 as a last resort
-        return note.getModifiedDate().getTime()*-1;
+        return note.getModifiedDate()*-1;
     }
 }

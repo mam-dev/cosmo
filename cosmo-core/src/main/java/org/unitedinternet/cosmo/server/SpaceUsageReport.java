@@ -74,7 +74,7 @@ public class SpaceUsageReport {
         }
 
         /** */
-        public Date getLastAccessed() {
+        public Long getLastAccessed() {
             return item.getModifiedDate();
         }
 

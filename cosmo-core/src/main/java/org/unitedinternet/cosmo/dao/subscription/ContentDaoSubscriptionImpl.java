@@ -1,7 +1,6 @@
 package org.unitedinternet.cosmo.dao.subscription;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -304,7 +303,7 @@ public class ContentDaoSubscriptionImpl implements ContentDao {
     }
 
     @Override
-    public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp) {
         throw new UnsupportedOperationException();
     }
 

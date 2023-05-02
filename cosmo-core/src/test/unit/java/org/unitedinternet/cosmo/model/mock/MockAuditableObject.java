@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.model.mock;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
 import org.unitedinternet.cosmo.CosmoException;
@@ -33,8 +32,8 @@ public abstract class MockAuditableObject implements AuditableObject {
     private static final ThreadLocal<MessageDigest> ETAG_DIGEST_LOCAL = new ThreadLocal<MessageDigest>();
     private static final EntityFactory FACTORY = new MockEntityFactory();
     
-    private Date creationDate;
-    private Date modifiedDate;
+    private Long creationDate;
+    private Long modifiedDate;
     private String etag = "";
     
     /* (non-Javadoc)
@@ -44,7 +43,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Gets creation date.
      * @return The date.
      */
-    public Date getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
@@ -55,7 +54,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Sets creation date.
      * @param creationDate The creation date.
      */
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -66,7 +65,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Gets modified date.
      * @return the date.
      */
-    public Date getModifiedDate() {
+    public Long getModifiedDate() {
         return modifiedDate;
     }
 
@@ -77,7 +76,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Sets modified date.
      * @param modifiedDate Modified date.
      */
-    public void setModifiedDate(Date modifiedDate) {
+    public void setModifiedDate(Long modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
@@ -88,7 +87,7 @@ public abstract class MockAuditableObject implements AuditableObject {
      * Updates timestamp.
      */
     public void updateTimestamp() {
-        modifiedDate = new Date();
+        modifiedDate = System.currentTimeMillis();
     }
     
     /* (non-Javadoc)

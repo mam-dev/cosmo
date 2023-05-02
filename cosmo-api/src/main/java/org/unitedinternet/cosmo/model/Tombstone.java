@@ -15,24 +15,22 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.util.Date;
-
 /**
  * Represents something that was removed from an item.
  */
 public interface Tombstone {
 
     /**
-     * Time that tombstone was created.  This is effectively 
-     * the time that the object was removed from the item.
-     * @return time tombstone was created
+     * Time that tombstone was created. This is effectively the time that the object was removed from the item.
+     * 
+     * @return time when tombstone was created
      */
-    public Date getTimestamp();
+    public Long getTimestamp();
 
     /**
-     * @param timestamp time tombstone created
+     * @param timestamp time when tombstone created
      */
-    public void setTimestamp(Date timestamp);
+    public void setTimestamp(Long timestamp);
 
     /**
      * @return Item that tombstone is associated with.

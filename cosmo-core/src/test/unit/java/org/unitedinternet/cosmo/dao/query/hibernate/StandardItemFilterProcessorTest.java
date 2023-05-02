@@ -15,15 +15,11 @@
  */
 package org.unitedinternet.cosmo.dao.query.hibernate;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import org.hibernate.query.internal.QueryImpl;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.hibernate.query.internal.QueryImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.dao.hibernate.AbstractSpringDaoTestCase;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -78,10 +74,9 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
     @Test
     public void testModifiedSinceQuery() {
         NoteItemFilter filter = new NoteItemFilter();
-        Calendar c = Calendar.getInstance();
-        Date end = c.getTime();
-        c.add(Calendar.YEAR, -1);
-        filter.setModifiedSince(Restrictions.between(c.getTime(), end));
+        Long end = System.currentTimeMillis();
+        Long start = end - 1;
+        filter.setModifiedSince(Restrictions.between(start, end));
         QueryImpl<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibNoteItem i where i.modifiedDate between :param0 and :param1",
                 query.getQueryString());
@@ -238,9 +233,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
                 query.getQueryString());
 
         filter = new NoteItemFilter();
-        Date date1 = new Date(1000);
-        Date date2 = new Date(2000);
-        filter.setReminderTime(Restrictions.between(date1, date2));
+        filter.setReminderTime(Restrictions.between(System.currentTimeMillis(), System.currentTimeMillis() + 1));
         query = queryBuilder.buildQuery(filter);
         assertEquals(
                 "select i from HibNoteItem i, HibTimestampAttribute tsa0 where "

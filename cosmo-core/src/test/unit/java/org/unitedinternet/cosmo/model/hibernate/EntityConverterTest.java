@@ -144,7 +144,7 @@ public class EntityConverterTest {
         // the event is in the past, it should be DONE
         assertTrue(TriageStatus.CODE_DONE==ts.getCode());
         // DTSTAMP
-        assertEquals(master.getClientModifiedDate().getTime(), new DateTime("20051222T210507Z").getTime());
+        assertEquals(master.getClientModifiedDate(), new DateTime("20051222T210507Z").getTime());
         // UID
         assertEquals(master.getIcalUid(), "F5B811E00073B22BA6B87551@ninevah.local");
         // SUMMARY
@@ -304,7 +304,7 @@ public class EntityConverterTest {
         master.setDisplayName("displayName");
         master.setBody("body");
         master.setIcalUid("icaluid");
-        master.setClientModifiedDate(new DateTime("20070101T100000Z"));
+        master.setClientModifiedDate(new DateTime("20070101T100000Z").getTime());
         master.setTriageStatus(TriageStatusUtil.initialize(new MockTriageStatus()));
         
         Calendar cal = converter.convertNote(master);
@@ -347,7 +347,7 @@ public class EntityConverterTest {
         master.setDisplayName("displayName");
         master.setBody("body");
         master.setIcalUid("icaluid");
-        master.setClientModifiedDate(new DateTime("20070101T100000Z"));
+        master.setClientModifiedDate(new DateTime("20070101T100000Z").getTime());
         EventStamp eventStamp = new MockEventStamp(master);
         eventStamp.createCalendar();
         eventStamp.setStartDate(new DateTime("20070212T074500"));
@@ -376,7 +376,7 @@ public class EntityConverterTest {
         assertEquals("displayName", event.getSummary().getValue());
         assertEquals("body", event.getDescription().getValue());
         assertEquals("icaluid", event.getUid().getValue());
-        assertEquals(master.getClientModifiedDate().getTime(), event.getDateStamp().getDate().getTime());
+        assertEquals(master.getClientModifiedDate(), event.getDateStamp().getDate().getTime());
          
         // date has timezone, so there should be a timezone
         assertEquals(1, cal.getComponents(Component.VTIMEZONE).size());

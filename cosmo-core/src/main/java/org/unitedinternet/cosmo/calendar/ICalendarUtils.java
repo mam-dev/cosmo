@@ -247,15 +247,15 @@ public class ICalendarUtils {
     
     /**
      * Update the DTSTAMP property on a component.
-     * @param date DTSTAMP value to update.  If null, the DTSTAMP property
+     * @param timestamp DTSTAMP value to update.  If null, the DTSTAMP property
      *        will be removed
      * @param comp component to update
      */
-    public static void setDtStamp(java.util.Date date, Component comp) {
+    public static void setDtStamp(Long timestamp, Component comp) {
         DtStamp dtStamp = (DtStamp)
         comp.getProperties().getProperty(Property.DTSTAMP);
    
-        if (date == null) {
+        if (timestamp == null) {
             if (dtStamp != null) {
                 comp.getProperties().remove(dtStamp);
             }
@@ -266,7 +266,7 @@ public class ICalendarUtils {
             comp.getProperties().add(dtStamp);
         }
         
-        dtStamp.getDate().setTime(date.getTime());
+        dtStamp.getDate().setTime(timestamp);
     }
     
     /**

@@ -15,8 +15,6 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -30,7 +28,6 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.Tombstone;
 
@@ -46,14 +43,11 @@ import org.unitedinternet.cosmo.model.Tombstone;
         length=16)
 public abstract class HibTombstone extends BaseModelObject implements Tombstone {
     
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = -2053727391597612705L;
 
     @Column(name = "removedate", nullable = false)
-    @Type(type="long_timestamp")
-    private Date timestamp = null;
+    private Long timestamp = null;
     
     @ManyToOne(targetEntity=HibItem.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "itemid", nullable = false)
@@ -67,20 +61,16 @@ public abstract class HibTombstone extends BaseModelObject implements Tombstone 
     
     public HibTombstone(Item item) {
         this.item = item;
-        this.timestamp = new Date(System.currentTimeMillis());
+        this.timestamp = System.currentTimeMillis();
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Tombstone#getTimestamp()
-     */
-    public Date getTimestamp() {
+    @Override
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Tombstone#setTimestamp(java.util.Date)
-     */
-    public void setTimestamp(Date timestamp) {
+    @Override
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 

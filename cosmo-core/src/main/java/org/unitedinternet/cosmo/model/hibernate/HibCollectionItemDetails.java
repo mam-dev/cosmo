@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -28,7 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionItemDetails;
 import org.unitedinternet.cosmo.model.Item;
@@ -42,18 +40,13 @@ import org.unitedinternet.cosmo.model.Item;
  */
 @Entity
 @Table(name="collection_item")
-//@AssociationOverrides({
-//@AssociationOverride(name="primaryKey.collection", joinColumns = @JoinColumn(name="collectionid")),
-//@AssociationOverride(name="primaryKey.item", joinColumns = @JoinColumn(name="itemid"))
-//})
 public class HibCollectionItemDetails implements CollectionItemDetails {
 
     @Id
     private CollectionItemPK primaryKey = new CollectionItemPK();
     
     @Column(name = "createdate", nullable=false)
-    @Type(type="long_timestamp")
-    private Date creationDate = new Date();
+    private Long creationDate = System.currentTimeMillis();
  
     public HibCollectionItemDetails() {}
     
@@ -79,7 +72,7 @@ public class HibCollectionItemDetails implements CollectionItemDetails {
         return primaryKey.item;
     }
 
-    public Date getTimestamp() {
+    public Long getTimestamp() {
         return creationDate;
     }
 

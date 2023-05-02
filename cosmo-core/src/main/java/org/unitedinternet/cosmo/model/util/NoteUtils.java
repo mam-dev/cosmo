@@ -115,7 +115,7 @@ public class NoteUtils {
     public static java.util.Date getCustomAlarm(NoteItem note) {
         BaseEventStamp es = StampUtils.getBaseEventStamp(note);
         if (es == null) {
-            return note.getReminderTime();
+            return new Date(note.getReminderTime());
         }
 
         Trigger trigger = es.getDisplayAlarmTrigger();

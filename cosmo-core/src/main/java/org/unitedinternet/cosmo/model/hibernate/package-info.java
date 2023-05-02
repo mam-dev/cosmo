@@ -39,10 +39,6 @@
             typeClass = org.unitedinternet.cosmo.hibernate.CalendarType.class
     ),
     
-    @TypeDef(
-            name="long_timestamp",
-            typeClass = org.unitedinternet.cosmo.hibernate.LongTimestampType.class
-    ),
     
     @TypeDef(
             name="boolean_integer",
@@ -125,10 +121,6 @@
         @NamedQuery(name = "event.by.calendar.icaluid", query = "select i from HibNoteItem i join "
                 + "i.parentDetails pd join i.stamps stamp where pd.primaryKey.collection=:calendar and "
                 + "stamp.class=HibEventStamp and i.icalUid=:uid"),
-
-        // Event Log Queries
-        @NamedQuery(name = "logEntry.by.collection.date", query = "from HibEventLogEntry e where id1=:parentId "
-                + "and entryDate between :startDate and :endDate")
     
 })
 package org.unitedinternet.cosmo.model.hibernate;

@@ -15,13 +15,10 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
@@ -35,76 +32,63 @@ import org.unitedinternet.cosmo.model.TimestampAttribute;
 @DiscriminatorValue("timestamp")
 public class HibTimestampAttribute extends HibAttribute implements TimestampAttribute {
 
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = 5263977785074085449L;
     
     @Column(name = "intvalue")
-    @Type(type="long_timestamp")
-    private Date value;
+    private Long value;
 
-    /** default constructor */
     public HibTimestampAttribute() {
     }
 
-    public HibTimestampAttribute(QName qname, Date value) {
+    public HibTimestampAttribute(QName qname, Long value) {
         setQName(qname);
         this.value = value;
     }
 
-    // Property accessors
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Attribute#getValue()
-     */
-    public Date getValue() {
+    public Long getValue() {
         return this.value;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.TimestampAttribute#setValue(java.util.Date)
-     */
-    public void setValue(Date value) {
+    public void setValue(Long value) {
         this.value = value;
     }
     
     public void setValue(Object value) {
-        if (value != null && !(value instanceof Date)) {
+        if (value != null && !(value instanceof Long)) {
             throw new ModelValidationException(
-                    "attempted to set non Date value on attribute");
+                    "attempted to set non Long value on attribute");
         }
-        setValue((Date) value);
+        setValue((Long) value);
     }
     
     /**
-     * Convienence method for returning a Date value on a TimestampAttribute
+     * Convenience method for returning a Date value on a TimestampAttribute
      * with a given QName stored on the given item.
+     * 
      * @param item item to fetch TextAttribute from
      * @param qname QName of attribute
      * @return Date value of TextAttribute
      */
-    public static Date getValue(Item item, QName qname) {
-        TimestampAttribute ta = (TimestampAttribute) item.getAttribute(qname);
-        if(ta==null) {
+    public static Long getValue(Item item, QName qname) {
+        TimestampAttribute attibute = (TimestampAttribute) item.getAttribute(qname);
+        if(attibute == null) {
             return null;
         }
-        else {
-            return ta.getValue();
-        }
+        return attibute.getValue();        
     }
     
     /**
-     * Convienence method for setting a Date value on a TimestampAttribute
+     * Convenience method for setting a Date value on a TimestampAttribute
      * with a given QName stored on the given item.
      * @param item item to fetch TimestampAttribute from
      * @param qname QName of attribute
      * @param value value to set on TextAttribute
      */
-    public static void setValue(Item item, QName qname, Date value) {
+    public static void setValue(Item item, QName qname, Long value) {
         TimestampAttribute attr = (TimestampAttribute) item.getAttribute(qname);
         if(attr==null && value!=null) {
-            attr = new HibTimestampAttribute(qname,value);
+            attr = new HibTimestampAttribute(qname, value);
             item.addAttribute(attr);
             return;
         }
@@ -119,7 +103,7 @@ public class HibTimestampAttribute extends HibAttribute implements TimestampAttr
     public Attribute copy() {
         TimestampAttribute attr = new HibTimestampAttribute();
         attr.setQName(getQName().copy());
-        attr.setValue(value.clone());
+        attr.setValue(value);
         return attr;
     }
 

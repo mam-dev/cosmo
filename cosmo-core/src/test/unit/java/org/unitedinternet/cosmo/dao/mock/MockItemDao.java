@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.dao.mock;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -296,7 +295,7 @@ public class MockItemDao implements ItemDao {
      */
     public void createTicket(Item item,  Ticket ticket) {
         item.addTicket(ticket);
-        ((MockAuditableObject) ticket).setModifiedDate(new Date());
+        ((MockAuditableObject) ticket).setModifiedDate(System.currentTimeMillis());
         storage.createTicket(item, ticket);
     }
 

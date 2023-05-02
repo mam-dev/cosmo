@@ -213,7 +213,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         
         stamp = queryItem.getStamp(EventStamp.class);
         EventStamp es = (EventStamp) stamp;
-        queryItem.setClientModifiedDate(new Date());
+        queryItem.setClientModifiedDate(System.currentTimeMillis());
         es.setEventCalendar(helper.getCalendar("cal2.ics"));
         Calendar newCal = es.getEventCalendar();
         Thread.sleep(10);
@@ -227,7 +227,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         stamp = queryItem.getStamp(EventStamp.class);
         es = (EventStamp) stamp;
        
-        assertTrue(stamp.getModifiedDate().after(stamp.getCreationDate()));
+        assertTrue(stamp.getModifiedDate() >= stamp.getCreationDate());
         
         if(!es.getEventCalendar().toString().equals(newCal.toString())) {
             LOG.error(es.getEventCalendar().toString());

@@ -966,7 +966,7 @@ public class EntityConverter {
             exceptionStamp.getEventCalendar().getComponents().add(0, vtimezone);
         }
         
-        noteMod.setClientModifiedDate(new Date());
+        noteMod.setClientModifiedDate(System.currentTimeMillis());
         noteMod.setLastModifiedBy(noteMod.getModifies().getLastModifiedBy());
         noteMod.setLastModification(ContentItem.Action.EDITED);
         
@@ -982,7 +982,7 @@ public class EntityConverter {
         TriageStatus ts = entityFactory.createTriageStatus();
         TriageStatusUtil.initialize(ts);
 
-        item.setClientCreationDate(new Date());
+        item.setClientCreationDate(System.currentTimeMillis());
         item.setClientModifiedDate(item.getClientCreationDate());
         item.setTriageStatus(ts);
         item.setLastModification(ContentItem.Action.CREATED);
@@ -1014,8 +1014,8 @@ public class EntityConverter {
         }
 
         // look for DTSTAMP
-        if(event.getDateStamp()!=null) {
-            note.setClientModifiedDate(event.getDateStamp().getDate());
+        if(event.getDateStamp() != null) {
+            note.setClientModifiedDate(event.getDateStamp().getDate().getTime());
         }
         
         // look for absolute VALARM
@@ -1024,7 +1024,7 @@ public class EntityConverter {
             Trigger trigger = va.getTrigger();
             Date reminderTime = trigger.getDateTime();
             if (reminderTime != null) {
-                note.setReminderTime(reminderTime);
+                note.setReminderTime(reminderTime.getTime());
             }
         }
 
@@ -1080,17 +1080,17 @@ public class EntityConverter {
 
         // look for DTSTAMP
         if (task.getDateStamp() != null) {
-            note.setClientModifiedDate(task.getDateStamp().getDate());
+            note.setClientModifiedDate(task.getDateStamp().getDate().getTime());
         }
 
         // look for absolute VALARM
         VAlarm va = ICalendarUtils.getDisplayAlarm(task);
-        if (va != null && va.getTrigger()!=null) {
+        if (va != null && va.getTrigger() != null) {
             Trigger trigger = va.getTrigger();
             Date reminderTime = trigger.getDateTime();
-           if (reminderTime != null) {
-                note.setReminderTime(reminderTime);
-           }
+            if (reminderTime != null) {
+                note.setReminderTime(reminderTime.getTime());
+            }
         }
         
         // look for COMPLETED or STATUS:COMPLETED
@@ -1153,7 +1153,7 @@ public class EntityConverter {
 
         // look for DTSTAMP
         if (journal.getDateStamp() != null) {
-            note.setClientModifiedDate(journal.getDateStamp().getDate());
+            note.setClientModifiedDate(journal.getDateStamp().getDate().getTime());
         }
     }
     
@@ -1170,7 +1170,7 @@ public class EntityConverter {
         
         // look for DTSTAMP
         if (vfb.getDateStamp() != null) {
-            freeBusy.setClientModifiedDate(vfb.getDateStamp().getDate());
+            freeBusy.setClientModifiedDate(vfb.getDateStamp().getDate().getTime());
         }
     }
     

@@ -18,7 +18,6 @@ package org.unitedinternet.cosmo.model.hibernate;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +46,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.AttributeTombstone;
@@ -98,12 +96,10 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     private String displayName;
 
     @Column(name = "clientcreatedate")
-    @Type(type="long_timestamp")
-    private Date clientCreationDate;
+    private Long clientCreationDate;
 
     @Column(name = "clientmodifieddate")
-    @Type(type="long_timestamp")
-    private Date clientModifiedDate;
+    private Long clientModifiedDate;
 
     @Version
     @Column(name="version", nullable = false)
@@ -343,22 +339,22 @@ public abstract class HibItem extends HibAuditableObject implements Item {
 
 
     @Override
-    public Date getClientCreationDate() {
+    public Long getClientCreationDate() {
         return clientCreationDate;
     }
 
     @Override
-    public void setClientCreationDate(Date clientCreationDate) {
+    public void setClientCreationDate(Long clientCreationDate) {
         this.clientCreationDate = clientCreationDate;
     }
 
     @Override
-    public Date getClientModifiedDate() {
+    public Long getClientModifiedDate() {
         return clientModifiedDate;
     }
 
     @Override
-    public void setClientModifiedDate(Date clientModifiedDate) {
+    public void setClientModifiedDate(Long clientModifiedDate) {
         this.clientModifiedDate = clientModifiedDate;
     }
 
@@ -517,7 +513,7 @@ public abstract class HibItem extends HibAuditableObject implements Item {
     public String calculateEntityTag() {
         String uid = getUid() != null ? getUid() : "-";
         String modTime = getModifiedDate() != null ?
-                Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+                Long.valueOf(getModifiedDate()).toString() : "-";
                 String etag = uid + ":" + modTime;
                 return encodeEntityTag(etag.getBytes(Charset.forName("UTF-8")));
     }

@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.dao.mock;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +23,6 @@ import java.util.Set;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
 import org.unitedinternet.cosmo.dao.UserDao;
-import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.Preference;
 import org.unitedinternet.cosmo.model.User;
@@ -73,8 +71,8 @@ public class MockUserDao implements UserDao {
         overlord.setPassword("32a8bd4d676f4fef0920c7da8db2bad7");
         overlord.setEmail("root@localhost");
         overlord.setAdmin(true);
-        overlord.setCreationDate(new Date());
-        overlord.setModifiedDate(new Date());
+        overlord.setCreationDate(System.currentTimeMillis());
+        overlord.setModifiedDate(System.currentTimeMillis());
         createUser(overlord);
     }
 
@@ -148,8 +146,8 @@ public class MockUserDao implements UserDao {
         
         // Set create/modified date, etag for User and associated subscriptions
         // and perferences.
-        ((MockAuditableObject) user).setModifiedDate(new Date());
-        ((MockAuditableObject) user).setCreationDate(new Date());
+        ((MockAuditableObject) user).setModifiedDate(System.currentTimeMillis());
+        ((MockAuditableObject) user).setCreationDate(System.currentTimeMillis());
         ((MockAuditableObject) user).setEntityTag(((MockAuditableObject) user)
                 .calculateEntityTag());
                
@@ -157,8 +155,8 @@ public class MockUserDao implements UserDao {
         for(Preference p: user.getPreferences()) {
             ((MockAuditableObject) p).setEntityTag(((MockAuditableObject) p)
                     .calculateEntityTag());
-            ((MockAuditableObject) p).setModifiedDate(new Date());
-            ((MockAuditableObject) p).setCreationDate(new Date());
+            ((MockAuditableObject) p).setModifiedDate(System.currentTimeMillis());
+            ((MockAuditableObject) p).setCreationDate(System.currentTimeMillis());
         }
             
         ((MockUser) user).validate();
@@ -190,7 +188,7 @@ public class MockUserDao implements UserDao {
         
         // Update modified date, etag for User and associated subscriptions
         // and preferences.
-        ((MockAuditableObject) user).setModifiedDate(new Date());
+        ((MockAuditableObject) user).setModifiedDate(System.currentTimeMillis());
         ((MockAuditableObject) user).setEntityTag(((MockAuditableObject) user)
                 .calculateEntityTag());
                 
@@ -198,9 +196,9 @@ public class MockUserDao implements UserDao {
         for(Preference p: user.getPreferences()) {
             ((MockAuditableObject) p).setEntityTag(((MockAuditableObject) p)
                     .calculateEntityTag());
-            ((MockAuditableObject) p).setModifiedDate(new Date());
-            if (p.getCreationDate()==null) {
-                ((MockAuditableObject) p).setCreationDate(new Date());
+            ((MockAuditableObject) p).setModifiedDate(System.currentTimeMillis());
+            if (p.getCreationDate() == null) {
+                ((MockAuditableObject) p).setCreationDate(System.currentTimeMillis());
             }
         }
         

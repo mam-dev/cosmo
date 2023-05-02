@@ -35,17 +35,17 @@ public class LastModified extends StandardDavProperty {
         
     };
     
-    public LastModified(Date date) {
-        super(DavPropertyName.GETLASTMODIFIED, dateFormatLocal(date), false);
+    public LastModified(Long timestamp) {
+        super(DavPropertyName.GETLASTMODIFIED, dateFormatLocal(timestamp), false);
     }
 
-    private static String dateFormatLocal(Date date) {
+    private static String dateFormatLocal(Long timestamp) {
         // need one DateFormat instance per thread
         DateFormat df = dateFormatLocal.get();           
-        if (date == null) {
-            date = new Date();
+        if (timestamp == null) {
+            timestamp = System.currentTimeMillis();
         }
         
-        return df.format(date);
+        return df.format(new Date(timestamp));
     }
 }

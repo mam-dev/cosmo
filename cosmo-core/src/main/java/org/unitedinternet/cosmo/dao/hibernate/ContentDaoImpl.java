@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -246,7 +245,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
     }
 
     @Override
-    public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp) {
 
         Set<ContentItem> children = new HashSet<ContentItem>();
         TypedQuery<ContentItem> query = null;
@@ -698,7 +697,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         return this.em
                 .createQuery("SELECT count(i) from HibNoteItem i "
                         + "WHERE i.owner.id=:ownerId AND i.creationDate >:fromTimestamp", Long.class)
-                .setParameter("ownerId", ownerId).setParameter("fromTimestamp", new Date(fromTimestamp))
+                .setParameter("ownerId", ownerId).setParameter("fromTimestamp", fromTimestamp)
                 .getSingleResult();
     }
 

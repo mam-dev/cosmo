@@ -15,9 +15,16 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,14 +38,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
@@ -173,7 +172,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         children = contentDao.loadChildren(root, newItem.getModifiedDate());
         assertEquals(0, children.size());
 
-        children = contentDao.loadChildren(root, new Date(newItem.getModifiedDate().getTime() - 1));
+        children = contentDao.loadChildren(root, newItem.getModifiedDate() - 1);
         assertEquals(1, children.size());
     }
 
@@ -359,7 +358,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
 
         ContentItem item = generateTestContent();
-        Date dateVal = new Date();
+        Long dateVal = System.currentTimeMillis();
         TimestampAttribute tsAttr = new HibTimestampAttribute(new HibQName("timestampattribute"), dateVal);
         item.addAttribute(tsAttr);
 
@@ -373,10 +372,10 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(attr);
         assertTrue(attr instanceof TimestampAttribute);
 
-        Date val = (Date) attr.getValue();
+        Long val = (Long) attr.getValue();
         assertTrue(dateVal.equals(val));
 
-        dateVal.setTime(dateVal.getTime() + 101);
+        dateVal+= 101;
         attr.setValue(dateVal);
 
         contentDao.updateContent(queryItem);
@@ -388,7 +387,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(queryAttr);
         assertTrue(queryAttr instanceof TimestampAttribute);
 
-        val = (Date) queryAttr.getValue();
+        val = (Long) queryAttr.getValue();
         assertTrue(dateVal.equals(val));
     }
 
@@ -429,7 +428,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(element);
         assertEquals(DomWriter.write(testElement), DomWriter.write(element));
 
-        Date modifyDate = attr.getModifiedDate();
+        Long modifyDate = attr.getModifiedDate();
 
         // Sleep a couple millis to make sure modifyDate doesn't change
         Thread.sleep(2);
@@ -461,7 +460,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(attr);
         assertTrue(attr instanceof XmlAttribute);
         // Attribute should have been updated
-        assertTrue(modifyDate.before(attr.getModifiedDate()));
+        assertTrue(modifyDate <= attr.getModifiedDate());
 
         element = (org.w3c.dom.Element) attr.getValue();
 
@@ -620,7 +619,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         FileItem item = generateTestContent();
 
         ContentItem newItem = contentDao.createContent(root, item);
-        Date newItemModifyDate = newItem.getModifiedDate();
+        Long newItemModifyDate = newItem.getModifiedDate();
 
         clearSession();
 
@@ -647,7 +646,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         helper.verifyItem(queryItem, queryItem2);
 
-        assertTrue(newItemModifyDate.before(queryItem2.getModifiedDate()));
+        assertTrue(newItemModifyDate <= queryItem2.getModifiedDate());
     }
 
     /**
@@ -902,7 +901,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         a = contentDao.createCollection(root, a);
         Integer ver = ((HibItem) a).getVersion();
-        Date timestamp = a.getModifiedDate();
+        Long timestamp = a.getModifiedDate();
 
         clearSession();
         // FIXME this test is timing dependant!
@@ -910,7 +909,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         a = contentDao.updateCollectionTimestamp(a);
         assertTrue(((HibItem) a).getVersion() == ver + 1);
-        assertTrue(timestamp.before(a.getModifiedDate()));
+        assertTrue(timestamp <= a.getModifiedDate());
     }
 
     /**

@@ -15,15 +15,13 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.util.Date;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.unitedinternet.cosmo.model.mock.MockEntityFactory;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
@@ -44,8 +42,8 @@ public class NoteOccurrenceTest {
         
         MockNoteItem note = (MockNoteItem) factory.createNote();
         note.setUid("1");
-        note.setCreationDate(new Date());
-        note.setModifiedDate(new Date());
+        note.setCreationDate(System.currentTimeMillis());
+        note.setModifiedDate(System.currentTimeMillis());
         note.setDisplayName("dn");
         note.setBody("body");
         note.addStamp(factory.createEventStamp(note));
