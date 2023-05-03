@@ -20,11 +20,6 @@
  */
 @TypeDefs({
     @TypeDef(
-            name="bufferedcontent_blob",
-            typeClass = org.unitedinternet.cosmo.hibernate.BufferedContentBlob.class
-        ),
-
-    @TypeDef(
             name="calendar_clob",
             typeClass = org.unitedinternet.cosmo.hibernate.CalendarClobType.class
     ),

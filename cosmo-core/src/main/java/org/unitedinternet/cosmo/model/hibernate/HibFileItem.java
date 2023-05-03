@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -42,10 +41,7 @@ import org.unitedinternet.cosmo.model.Item;
 @DiscriminatorValue("file")
 public class HibFileItem extends HibContentItem implements FileItem {
 
-    
-    /**
-     * 
-     */
+ 
     private static final long serialVersionUID = -3829504638044059875L;
 
     @Column(name = "contentType", length=64)
@@ -66,32 +62,22 @@ public class HibFileItem extends HibContentItem implements FileItem {
     
     public HibFileItem() {
     }
-
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#getContent()
-     */
     public byte[] getContent() {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            InputStream contentStream = contentData.getContentInputStream();
-            IOUtils.copy(contentStream, bos);
-            contentStream.close();
-            return bos.toByteArray();
-        } catch (IOException e) {
-            throw new CosmoIOException("Error getting content", e);
+        if (this.contentData != null) {
+            return this.contentData.getContent();
         }
+        return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#setContent(byte[])
-     */
+    @Override
     public void setContent(byte[] content) {
+        if (content == null) {
+            return;
+        }
         if (content.length > MAX_CONTENT_SIZE) {
             throw new DataSizeException("Item content too large");
-        }
-        
+        }        
         try {
             setContent(new ByteArrayInputStream(content));
         } catch (IOException e) {
@@ -99,99 +85,72 @@ public class HibFileItem extends HibContentItem implements FileItem {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#clearContent()
-     */
-    public void clearContent() {
-        contentData = null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#setContent(java.io.InputStream)
-     */
+    @Override
     public void setContent(InputStream is) throws IOException {
-        if(contentData==null) {
-            contentData = new HibContentData(); 
+        if (contentData == null) {
+            contentData = new HibContentData();
         }
         
-        contentData.setContentInputStream(is);
-        
-        // Verify size is not greater than MAX.
-        // TODO: do this checking in ContentData.setContentInputStream()
-        if (contentData.getSize() > MAX_CONTENT_SIZE) {
+        byte[] content = IOUtils.toByteArray(is);
+        if (content.length > MAX_CONTENT_SIZE) {
             throw new DataSizeException("Item content too large");
         }
-        
-        setContentLength(contentData.getSize());
+        this.contentData.setContent(content);
+        this.setContentLength(contentData.getSize());
     }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#getContentInputStream()
-     */
+    
+    public void clearContent() {
+        this.contentData = null;
+    }
+    
+    @Override
     public InputStream getContentInputStream() {
-        if(contentData==null) {
+        if (contentData == null) {
             return null;
-        }
-        else {
-            return contentData.getContentInputStream();
+        } else {
+            return new ByteArrayInputStream(contentData.getContent());
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#getContentEncoding()
-     */
+    
+    @Override
     public String getContentEncoding() {
         return contentEncoding;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#setContentEncoding(java.lang.String)
-     */
+    @Override
     public void setContentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#getContentLanguage()
-     */
+    @Override
     public String getContentLanguage() {
         return contentLanguage;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#setContentLanguage(java.lang.String)
-     */
+    @Override
     public void setContentLanguage(String contentLanguage) {
         this.contentLanguage = contentLanguage;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#getContentLength()
-     */
+    @Override
     public Long getContentLength() {
         return contentLength;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#setContentLength(java.lang.Long)
-     */
+    @Override
     public void setContentLength(Long contentLength) {
         this.contentLength = contentLength;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#getContentType()
-     */
+    @Override
     public String getContentType() {
         return contentType;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.FileItem#setContentType(java.lang.String)
-     */
+    @Override
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
