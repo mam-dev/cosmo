@@ -33,13 +33,7 @@
             name="xml_clob",
             typeClass = org.unitedinternet.cosmo.hibernate.XmlClobType.class
     ),
-    
-    @TypeDef(
-            name="composite_calendar",
-            typeClass = org.unitedinternet.cosmo.hibernate.CalendarType.class
-    ),
-    
-    
+       
     @TypeDef(
             name="boolean_integer",
             typeClass = org.unitedinternet.cosmo.hibernate.BooleanIntegerType.class
