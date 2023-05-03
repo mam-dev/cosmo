@@ -22,17 +22,7 @@
     @TypeDef(
             name="calendar_clob",
             typeClass = org.unitedinternet.cosmo.hibernate.CalendarClobType.class
-    ),
-
-    @TypeDef(
-            name="xml_clob",
-            typeClass = org.unitedinternet.cosmo.hibernate.XmlClobType.class
-    ),
-       
-    @TypeDef(
-            name="boolean_integer",
-            typeClass = org.unitedinternet.cosmo.hibernate.BooleanIntegerType.class
-    )
+    ),    
 })
 
 /*
