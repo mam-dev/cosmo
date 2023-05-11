@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-
-/*
- * Type Definitions for custom hibernate data types.
- */
-@TypeDefs({
-    @TypeDef(
-            name="calendar_clob",
-            typeClass = org.unitedinternet.cosmo.hibernate.CalendarClobType.class
-    ),    
-})
-
 /*
  * Named Queries
  */
@@ -106,6 +95,4 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 

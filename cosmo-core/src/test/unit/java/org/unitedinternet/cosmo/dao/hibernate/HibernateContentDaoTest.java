@@ -98,6 +98,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.property.ProdId;
 
 /**
@@ -482,7 +484,8 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         ICalendarAttribute icalAttr = new HibICalendarAttribute();
         icalAttr.setQName(new HibQName("icalattribute"));
-        icalAttr.setValue(helper.getInputStream("vjournal.ics"));
+        Calendar calendar = new CalendarBuilder().build(helper.getInputStream("vjournal.ics"));
+        icalAttr.setValue(calendar);
         item.addAttribute(icalAttr);
 
         ContentItem newItem = contentDao.createContent(root, item);
@@ -495,14 +498,17 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(attr);
         assertTrue(attr instanceof ICalendarAttribute);
 
-        net.fortuna.ical4j.model.Calendar calendar = (net.fortuna.ical4j.model.Calendar) attr.getValue();
+        calendar = (net.fortuna.ical4j.model.Calendar) attr.getValue();
         assertNotNull(calendar);
 
         net.fortuna.ical4j.model.Calendar expected = CalendarUtils.parseCalendar(helper.getInputStream("vjournal.ics"));
 
         assertEquals(expected.toString(), calendar.toString());
-
-        calendar.getProperties().add(new ProdId("blah"));
+        
+        Property prodIdProperty = calendar.getProperties().getProperty(Property.PRODID);
+        calendar.getProperties().remove(prodIdProperty);
+        calendar.getProperties().add(new ProdId("new-prod-id"));
+        attr.setValue(calendar);
         contentDao.updateContent(queryItem);
 
         clearSession();

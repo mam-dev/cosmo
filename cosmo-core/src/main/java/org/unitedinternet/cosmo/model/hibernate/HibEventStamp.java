@@ -21,20 +21,20 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.component.VEvent;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.CosmoException;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.hibernate.validator.Event;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.component.VEvent;
 
 
 /**
@@ -94,22 +94,9 @@ public class HibEventStamp extends HibBaseEventStamp implements EventStamp {
         return exceptions;
     }
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.EventStamp#getMasterEvent()
-     */
+    @Override
     public VEvent getMasterEvent() {
-        if(getEventCalendar()==null) {
-            return null;
-        }
-        
-        ComponentList<VEvent> events = getEventCalendar().getComponents().getComponents(
-                Component.VEVENT);
-        
-        if(events.size()==0) {
-            return null;
-        }
-        
-        return (VEvent) events.get(0);
+        return ICalendarUtils.getEventFrom(this.getEventCalendar());
     }
 
     /**

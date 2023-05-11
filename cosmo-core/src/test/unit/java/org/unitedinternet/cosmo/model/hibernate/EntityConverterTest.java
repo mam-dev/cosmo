@@ -54,13 +54,19 @@ import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.property.Completed;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Status;
+import static org.unitedinternet.cosmo.calendar.ICalendarUtils.createBaseCalendar;
+
 
 /**
  * Test EntityConverter.
@@ -348,9 +354,12 @@ public class EntityConverterTest {
         master.setBody("body");
         master.setIcalUid("icaluid");
         master.setClientModifiedDate(new DateTime("20070101T100000Z").getTime());
-        EventStamp eventStamp = new MockEventStamp(master);
-        eventStamp.createCalendar();
-        eventStamp.setStartDate(new DateTime("20070212T074500"));
+        EventStamp eventStamp = new HibEventStamp(master);
+        
+        VEvent vEvent = new VEvent();
+        Calendar calendar = createBaseCalendar(vEvent);
+        vEvent.getProperties().add(new DtStart(new DateTime("20070212T074500")));
+        eventStamp.setEventCalendar(calendar);
         master.addStamp(eventStamp);
         
         Calendar cal = converter.convertNote(master);
@@ -359,7 +368,9 @@ public class EntityConverterTest {
         // date has no timezone, so there should be no timezones
         assertEquals(0, cal.getComponents(Component.VTIMEZONE).size());
       
-        eventStamp.setStartDate(new DateTime("20070212T074500",TIMEZONE_REGISTRY.getTimeZone("America/Chicago")));
+        vEvent.getProperties().clear();
+        vEvent.getProperties().add(new DtStart(new DateTime("20070212T074500",TIMEZONE_REGISTRY.getTimeZone("America/Chicago"))));
+        eventStamp.setEventCalendar(calendar);
         
         cal = converter.convertNote(master);
         cal.validate();
@@ -381,7 +392,9 @@ public class EntityConverterTest {
         // date has timezone, so there should be a timezone
         assertEquals(1, cal.getComponents(Component.VTIMEZONE).size());
         
-        eventStamp.setEndDate(new DateTime("20070212T074500",TIMEZONE_REGISTRY.getTimeZone("America/Los_Angeles")));
+        vEvent.getProperties().add(new DtEnd(new DateTime("20070212T074500",TIMEZONE_REGISTRY.getTimeZone("America/Los_Angeles"))));
+        eventStamp.setEventCalendar(calendar);
+        
         
         cal = converter.convertNote(master);
         cal.validate();
@@ -389,9 +402,17 @@ public class EntityConverterTest {
         // dates have 2 different timezones, so there should be 2 timezones
         assertEquals(2, cal.getComponents(Component.VTIMEZONE).size());
         
+        vEvent.getProperties().clear();
+        eventStamp.setEventCalendar(calendar);
+        cal = converter.convertNote(master);
+        cal.validate();
+        //No dates, no timezone
+        assertEquals(0, cal.getComponents(Component.VTIMEZONE).size());
+        
         // add timezones to master event calendar
-        eventStamp.getEventCalendar().getComponents().add(registry.getTimeZone("America/Chicago").getVTimeZone());
-        eventStamp.getEventCalendar().getComponents().add(registry.getTimeZone("America/Los_Angeles").getVTimeZone());
+        calendar.getComponents().add(registry.getTimeZone("America/Chicago").getVTimeZone());
+        calendar.getComponents().add(registry.getTimeZone("America/Los_Angeles").getVTimeZone());
+        eventStamp.setEventCalendar(calendar);
         
         cal = converter.convertNote(master);
         cal.validate();
@@ -409,10 +430,14 @@ public class EntityConverterTest {
         master.setDisplayName("master displayName");
         master.setBody("master body");
         EventStamp eventStamp = new MockEventStamp(master);
-        eventStamp.createCalendar();
-        eventStamp.setStartDate(new DateTime("20070212T074500"));
-        eventStamp.setDuration(Duration.ofHours(1));
-        eventStamp.setLocation("master location");
+        
+        VEvent vEvent = new VEvent();
+        Calendar calendar = createBaseCalendar(vEvent);
+        vEvent.getProperties().add(new DtStart(new DateTime("20070212T074500")));
+        vEvent.getProperties().add(new net.fortuna.ical4j.model.property.Duration(Duration.ofHours(1)));
+        vEvent.getProperties().add(new Location("master location"));
+        eventStamp.setEventCalendar(calendar);
+        
         DateList dates = new DateList();
         dates.add(new Date("20070212T074500"));
         dates.add(new Date("20070213T074500"));
@@ -429,8 +454,11 @@ public class EntityConverterTest {
         master.addModification(mod);
         EventExceptionStamp exceptionStamp = new MockEventExceptionStamp(mod);
         mod.addStamp(exceptionStamp);
-        exceptionStamp.createCalendar();
-        exceptionStamp.setStartDate(eventStamp.getStartDate());
+
+        VEvent vEventEx = new VEvent();
+        vEventEx.getProperties().add(new Location("ex"));
+        Calendar calendarEx = createBaseCalendar(vEventEx);        
+        exceptionStamp.setEventCalendar(calendarEx);
         exceptionStamp.setRecurrenceId(eventStamp.getStartDate());
         mod.addStamp(exceptionStamp);
         
@@ -454,7 +482,8 @@ public class EntityConverterTest {
         // test inherited description/location/body
         mod.setDisplayName(null);
         mod.setBody((String) null);
-        exceptionStamp.setLocation(null);
+        Location location = exceptionStamp.getEvent().getProperties().getProperty(Property.LOCATION);
+        exceptionStamp.getEvent().getProperties().remove(location);
         
         cal = converter.convertNote(master);
         comps = cal.getComponents(Component.VEVENT);
@@ -466,79 +495,6 @@ public class EntityConverterTest {
         assertEquals("master body", modEvent.getDescription().getValue());
         assertEquals("master location", modEvent.getLocation().getValue());
         
-    }
-    
-    /**
-     * Tests inherited any time.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    @Test
-    public void testInheritedAnyTime() throws Exception {
-        NoteItem master = new MockNoteItem();
-        EventStamp eventStamp = new MockEventStamp(master);
-        eventStamp.createCalendar();
-        eventStamp.setStartDate(new DateTime("20070212T074500"));
-        eventStamp.setAnyTime(true);
-        DateList dates = new DateList();
-        dates.add(new Date("20070212T074500"));
-        dates.add(new Date("20070213T074500"));
-        eventStamp.setRecurrenceDates(dates);
-        master.addStamp(eventStamp);
-        
-        NoteItem mod = new MockNoteItem();
-        mod.setModifies(master);
-        master.addModification(mod);
-        EventExceptionStamp exceptionStamp = new MockEventExceptionStamp(mod);
-        mod.addStamp(exceptionStamp);
-        exceptionStamp.createCalendar();
-        exceptionStamp.setRecurrenceId(new DateTime("20070212T074500"));
-        exceptionStamp.setStartDate(new DateTime("20070212T074500"));
-        exceptionStamp.setAnyTime(null);
-        mod.addStamp(exceptionStamp);
-        
-        Calendar cal = converter.convertNote(master);
-        cal.validate();
-        ComponentList<VEvent> comps = cal.getComponents(Component.VEVENT);
-        assertEquals(2, comps.size());
-        VEvent masterEvent = (VEvent) comps.get(0);
-        VEvent modEvent = (VEvent) comps.get(1);
-        
-        Parameter masterAnyTime = masterEvent.getStartDate().getParameter("X-OSAF-ANYTIME");
-        Parameter modAnyTime = modEvent.getStartDate().getParameter("X-OSAF-ANYTIME");
-        
-        assertNotNull(masterAnyTime);
-        assertEquals("TRUE", masterAnyTime.getValue());
-        assertNotNull(modAnyTime);
-        assertEquals("TRUE", modAnyTime.getValue());
-        
-        // change master and verify attribute is inherited in modification
-        eventStamp.setAnyTime(false);
-        
-        cal = converter.convertNote(master);
-        cal.validate();
-        comps = cal.getComponents(Component.VEVENT);
-        assertEquals(2, comps.size());
-        masterEvent = (VEvent) comps.get(0);
-        modEvent = (VEvent) comps.get(1);
-        
-        assertNull(masterEvent.getStartDate().getParameter("X-OSAF-ANYTIME"));
-        assertNull(modEvent.getStartDate().getParameter("X-OSAF-ANYTIME"));
-        
-        // change both and verify
-        exceptionStamp.setAnyTime(true);
-        
-        cal = converter.convertNote(master);
-        cal.validate();
-        comps = cal.getComponents(Component.VEVENT);
-        assertEquals(2, comps.size());
-        masterEvent = (VEvent) comps.get(0);
-        modEvent = (VEvent) comps.get(1);
-        
-        modAnyTime = modEvent.getStartDate().getParameter("X-OSAF-ANYTIME");
-        
-        assertNull(masterEvent.getStartDate().getParameter("X-OSAF-ANYTIME"));
-        assertNotNull(modAnyTime);
-        assertEquals("TRUE", modAnyTime.getValue());
     }
     
     /**

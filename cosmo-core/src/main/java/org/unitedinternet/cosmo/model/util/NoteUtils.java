@@ -15,22 +15,15 @@
  */
 package org.unitedinternet.cosmo.model.util;
 
-import java.time.temporal.TemporalAmount;
-
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.calendar.util.Dates;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
-import org.unitedinternet.cosmo.model.EventExceptionStamp;
-import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.NoteOccurrence;
 import org.unitedinternet.cosmo.model.StampUtils;
 
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TemporalAmountAdapter;
 import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.property.Trigger;
 
 /**
  * Utility functions for NoteItems
@@ -56,92 +49,11 @@ public class NoteUtils {
         return ICalendarUtils.pinFloatingTime(date, tz);
     }
 
-    public static Date getEndDate(NoteItem note) {
-        if (note instanceof NoteOccurrence) {
-            NoteOccurrence no = (NoteOccurrence) note;
-            Date startDate = no.getOccurrenceDate();
-            TemporalAmount dur = StampUtils.getBaseEventStamp(note).getDuration();
-            if (dur == null) {
-                return startDate;
-            }
-
-            return Dates.getInstance(new TemporalAmountAdapter(dur).getTime(startDate), startDate);
-        }
-
-        BaseEventStamp es = StampUtils.getBaseEventStamp(note);
-        if (es == null) {
-            return null;
-        }
-
-        Date endDate = es.getEndDate();
-        if (endDate != null) {
-            return endDate;
-        }
-
-        // handle mod with missing duration
-        if (note.getModifies() != null) {
-            Date startDate = es.getStartDate();
-            TemporalAmount dur = ((EventExceptionStamp) es).getMasterStamp().getDuration();
-            if (dur == null) {
-                return startDate;
-            }
-            else {
-                return Dates.getInstance(new TemporalAmountAdapter(dur).getTime(startDate), startDate);
-            }
-        }
-
-        // return startDate if all else fails
-        return es.getStartDate();
-    }
-
     public static boolean isEvent(NoteItem note) {
         return StampUtils.getBaseEventStamp(note) != null;
     }
 
     public static boolean isTask(NoteItem note) {
         return StampUtils.getTaskStamp(note) != null;
-    }
-
-    public static boolean hasCustomAlarm(NoteItem note) {
-        BaseEventStamp es = StampUtils.getBaseEventStamp(note);
-        if (es == null) {
-            return note.getReminderTime() != null;
-        }
-
-        Trigger trigger = es.getDisplayAlarmTrigger();
-        return trigger != null && trigger.isUtc();
-    }
-
-    public static java.util.Date getCustomAlarm(NoteItem note) {
-        BaseEventStamp es = StampUtils.getBaseEventStamp(note);
-        if (es == null) {
-            return new Date(note.getReminderTime());
-        }
-
-        Trigger trigger = es.getDisplayAlarmTrigger();
-        if (trigger != null && trigger.isUtc()) {
-            return trigger.getDateTime();
-        }
-
-        return null;
-    }
-
-    public static String getLocation(NoteItem note) {
-        BaseEventStamp es = StampUtils.getBaseEventStamp(note);
-        if (es == null) {
-            return null;
-        }
-
-        String loc = es.getLocation();
-        if (loc != null || es instanceof EventStamp) {
-            return loc;
-        }
-
-        // could be mod, in which case we inherit from master
-        if (es instanceof EventExceptionStamp) {
-            loc = ((EventExceptionStamp) es).getMasterStamp().getLocation();
-        }
-
-        return loc;
     }
 }

@@ -15,14 +15,13 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.time.Duration;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.CosmoException;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.hibernate.validator.EventException;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
@@ -32,12 +31,7 @@ import org.unitedinternet.cosmo.model.Stamp;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.parameter.XParameter;
-import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.model.property.Trigger;
 
 /**
  * Hibernate persistent EventExceptionStamp.
@@ -47,15 +41,11 @@ import net.fortuna.ical4j.model.property.Trigger;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibEventExceptionStamp extends HibBaseEventStamp implements EventExceptionStamp {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3992468809776886156L;
     
-    public static final String PARAM_OSAF_MISSING = "X-OSAF-MISSING";
     
-    /** default constructor */
     public HibEventExceptionStamp() {
+        //Default constructor.
     }
     
     public HibEventExceptionStamp(Item item) {
@@ -82,144 +72,49 @@ public class HibEventExceptionStamp extends HibBaseEventStamp implements EventEx
     }
     
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.EventExceptionStamp#getExceptionEvent()
-     */
+    @Override
     public VEvent getExceptionEvent() {
-        return (VEvent) getEventCalendar().getComponents().getComponents(
-                Component.VEVENT).get(0);
+        return ICalendarUtils.getEventFrom(this.getEventCalendar());
     }
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.EventExceptionStamp#setExceptionEvent(net.fortuna.ical4j.model.component.VEvent)
-     */
+    @Override
     public void setExceptionEvent(VEvent event) {
-        if(getEventCalendar()==null) {
-            createCalendar();
+        Calendar calendar = this.getEventCalendar();
+        if (calendar == null) {
+            calendar = this.createCalendar();
         }
+        // Remove all events
+        calendar.getComponents().removeAll(calendar.getComponents().getComponents(Component.VEVENT));
+
+        // Add event exception
+        calendar.getComponents().add(event);
+        this.setEventCalendar(calendar);
+    }
+
+    private Calendar createCalendar() {
         
-        // remove all events
-        getEventCalendar().getComponents().removeAll(
-                getEventCalendar().getComponents().getComponents(Component.VEVENT));
-        
-        // add event exception
-        getEventCalendar().getComponents().add(event);
+        NoteItem note = (NoteItem) getItem();
+       
+        String icalUid = note.getIcalUid();
+        if(icalUid==null) {
+            // A modifications UID will be the parent's icaluid or uid
+    
+            if(note.getModifies()!=null) {
+                if(note.getModifies().getIcalUid()!=null) {
+                    icalUid = note.getModifies().getIcalUid();
+                }
+                else {
+                    icalUid = note.getModifies().getUid();
+                }
+            } else {
+                icalUid = note.getUid();
+            }
+        }
+    
+        return  ICalendarUtils.createBaseCalendar(new VEvent(), icalUid);
+                
     }
  
-    /**
-     * Toggle the event exception anytime parameter.
-     * @param isAnyTime True if the event occurs anytime<br/>
-     *                  False if the event does not occur anytime</br>
-     *                  null if the event should inherit the anyTime
-     *                  attribute of the master event.
-     */
-    @Override
-    public void setAnyTime(Boolean isAnyTime) {
-        // Interpret null as "missing" anyTime, meaning inherited from master
-        if(isAnyTime==null) {
-            DtStart dtStart = getEvent().getStartDate();
-            if (dtStart == null) {
-                throw new IllegalStateException("event has no start date");
-            }
-            Parameter parameter = dtStart.getParameters().getParameter(
-                    PARAM_X_OSAF_ANYTIME);
-            if(parameter!=null) {
-                dtStart.getParameters().remove(parameter);
-            }
-            
-            // "missing" anyTime is represented as X-OSAF-ANYTIME=MISSING
-            dtStart.getParameters().add(getInheritedAnyTimeXParam());
-        } else {
-            super.setAnyTime(isAnyTime);
-        }
-    }
-    
-    /**
-     * Is the event exception marked as anytime.
-     * @return True if the event is an anytime event<br/>
-     *         False if it is not an anytime event<br/>
-     *         null if the anyTime attribute is "missing", ie inherited
-     *         from the master event.
-     */
-    @Override
-    public Boolean isAnyTime() {
-        DtStart dtStart = getEvent().getStartDate();
-        if (dtStart == null) {
-            return Boolean.FALSE;
-        }
-        Parameter parameter = dtStart.getParameters()
-            .getParameter(PARAM_X_OSAF_ANYTIME);
-        if (parameter == null) {
-            return Boolean.FALSE;
-        }
-     
-        // return null for "missing" anyTime
-        if(!VALUE_MISSING.equals(parameter.getValue())) {
-            return Boolean.valueOf(VALUE_TRUE.equals(parameter.getValue()));
-        }
-        
-        return Boolean.FALSE;
-    }
-    
-    
-    /**
-     * Override to handle "missing" trigger by searching for a
-     * custom X-PARAM "X-OSAF-MISSING".  If present, then this
-     * trigger is "missing" and null should be returned, since
-     * for now we are representing "missing" values using null.
-     */
-    @Override
-    public Trigger getDisplayAlarmTrigger() {
-        Trigger trigger =  super.getDisplayAlarmTrigger();
-        if(trigger!=null && isMissing(trigger)) {
-            return null;
-        }
-        else {
-            return trigger;
-        }
-    }
-
-    /**
-     * Override to handle "missing" trigger by appending a
-     * custom X-PARAM "X-OSAF-MISSING".  If present, then this
-     * trigger is "missing".  Since a "missing" trigger is
-     * represented by a null trigger, whenever a null trigger
-     * is set, then a basic trigger property with this custom
-     * "X-OSAF-MISSING" param will be created instead.
-     */
-    @Override
-    public void setDisplayAlarmTrigger(Trigger newTrigger) {
-        if(newTrigger==null) {
-            newTrigger = new Trigger(Duration.ofMinutes(-15));
-            setMissing(newTrigger, true);
-        }
-        super.setDisplayAlarmTrigger(newTrigger);    
-    }
-
-    protected boolean isMissing(Property prop) {
-        return prop.getParameters().getParameter(PARAM_OSAF_MISSING) != null;
-    }
-    
-    protected void setMissing(Property prop, boolean missing) {
-        Parameter parameter = 
-            prop.getParameters().getParameter(PARAM_OSAF_MISSING);
-        
-        if (missing) {
-            if (parameter == null) {
-                prop.getParameters().add(
-                        new XParameter(PARAM_OSAF_MISSING, VALUE_TRUE));
-            }
-        } else {
-            if (parameter != null) {
-                prop.getParameters().remove(parameter);
-            }
-        }
-    }
-    
-    private Parameter getInheritedAnyTimeXParam() {
-        return new XParameter(PARAM_X_OSAF_ANYTIME, VALUE_MISSING);
-    }
-
    
     /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.EventExceptionStamp#getMasterStamp()

@@ -51,18 +51,17 @@ import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Duration;
 import net.fortuna.ical4j.model.property.ExDate;
 import net.fortuna.ical4j.model.property.ExRule;
-import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Repeat;
-import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Trigger;
 
 
 /**
  * Represents a calendar event.
  */
+@SuppressWarnings("serial")
 public abstract class MockBaseEventStamp extends MockStamp
     implements java.io.Serializable, ICalendarConstants, BaseEventStamp {
 
@@ -349,47 +348,6 @@ public abstract class MockBaseEventStamp extends MockStamp
      */
     public void setDuration(TemporalAmount dur) {
         ICalendarUtils.setDuration(getEvent(), dur);
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceBaseEventStamp#getLocation()
-     */
-    /**
-     * Gets location.
-     * @return The location.
-     */
-    public String getLocation() {
-        Property p = getEvent().getProperties().
-            getProperty(Property.LOCATION);
-        if (p == null) {
-            return null;
-        }
-        return p.getValue();
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceBaseEventStamp#setLocation(java.lang.String)
-     */
-    /**
-     * Sets location.
-     * @param text The text.
-     */
-    public void setLocation(String text) {
-        
-        Location location = (Location)
-            getEvent().getProperties().getProperty(Property.LOCATION);
-        
-        if (text == null) {
-            if (location != null) {
-                getEvent().getProperties().remove(location);
-            }
-            return;
-        }                
-        if (location == null) {
-            location = new Location();
-            getEvent().getProperties().add(location);
-        }
-        location.setValue(text);
     }
     
     /* (non-Javadoc)
@@ -897,45 +855,6 @@ public abstract class MockBaseEventStamp extends MockStamp
     }
 
     /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceBaseEventStamp#getStatus()
-     */
-    /**
-     * Gets status.
-     * @return The status.
-     */
-    public String getStatus() {
-        Property p = getEvent().getProperties().
-            getProperty(Property.STATUS);
-        if (p == null) {
-            return null;
-        }
-        return p.getValue();
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceBaseEventStamp#setStatus(java.lang.String)
-     */
-    /**
-     * Sets status.
-     * @param text The text.
-     */
-    public void setStatus(String text) {
-        // ical4j Status value is immutable, so if there's any change
-        // at all, we have to remove the old status and add a new
-        // one.
-        Status status = (Status)
-            getEvent().getProperties().getProperty(Property.STATUS);
-        if (status != null) {
-            getEvent().getProperties().remove(status);
-        }
-        if (text == null) {
-            return;
-        }
-        getEvent().getProperties().add(new Status(text));
-    }
-    
-    
-    /* (non-Javadoc)
      * @see org.unitedinternet.cosmo.model.copy.InterfaceBaseEventStamp#isAnyTime()
      */
     /**
@@ -1051,18 +970,5 @@ public abstract class MockBaseEventStamp extends MockStamp
        DateList rdates = getRecurrenceDates();
        
        return (rdates!=null && rdates.size()>0);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfaceBaseEventStamp#creatDisplayAlarm()
-     */
-    /**
-     * Creates display alarm.
-     */
-    public void creatDisplayAlarm() {
-        VAlarm alarm = new VAlarm();
-        alarm.getProperties().add(Action.DISPLAY);
-        getEvent().getAlarms().add(alarm);
-        setDisplayAlarmDescription("Event Reminder");
     }
 }

@@ -62,33 +62,14 @@ public interface BaseEventStamp extends Stamp {
      * @param uid uid of VEVENT
      */
     public void setIcalUid(String uid);
-
-    /** 
-     * Sets the iCalendar SUMMARY property of the event.
-     *
-     * @param text a text string
-     */
-    public void setSummary(String text);
-
-    /** 
-     * Sets the iCalendar DESCRIPTION property of the event.
-     *
-     * @param text a text string
-     */
-    public void setDescription(String text);
-
+    
     /**
      * Returns a copy of the the iCalendar DTSTART property value of
      * the event (never null).
      */
     public Date getStartDate();
 
-    /** 
-     * Sets the iCalendar DTSTART property of the event.
-     *
-     * @param date a <code>Date</code>
-     */
-    public void setStartDate(Date date);
+    
 
     /**
      * Returns the end date of the event as calculated from the
@@ -96,14 +77,7 @@ public interface BaseEventStamp extends Stamp {
      * DURATION.
      */
     public Date getEndDate();
-
-    /** 
-     * Sets the iCalendar DTEND property of the event.
-     *
-     * @param date a <code>Date</code>
-     */
-    public void setEndDate(Date date);
-
+    
     /**
      * Returns the duration of the event as calculated from the
      * iCalendar DURATION property value or the the iCalendar DTEND -
@@ -117,20 +91,7 @@ public interface BaseEventStamp extends Stamp {
      * @param dur a <code>Dur</code>
      */
     public void setDuration(TemporalAmount dur);
-
-    /**
-     * Returns a copy of the the iCalendar LOCATION property value of
-     * the event (can be null).
-     */
-    public String getLocation();
-
-    /** 
-     * Sets the iCalendar LOCATION property of the event.
-     *
-     * @param text a text string
-     */
-    public void setLocation(String text);
-
+    
     /**
      * Returns a list of copies of the iCalendar RRULE property values
      * of the event (can be empty).
@@ -274,53 +235,11 @@ public interface BaseEventStamp extends Stamp {
      */
     public void setRecurrenceId(Date date);
 
-    /**
-     * Returns a copy of the the iCalendar STATUS property value of
-     * the event (can be null).
-     */
-    public String getStatus();
-
-    /** 
-     * Sets the iCalendar STATUS property of the event.
-     *
-     * @param text a text string
-     */
-    public void setStatus(String text);
-
-    /**
-     * Is the event marked as anytime.
-     * @return true if the event is an anytime event
-     */
-    public Boolean isAnyTime();
-
-    /**
-     * Same as isAnyTime()
-     * @return true if the event is an anytime event
-     */
-    public Boolean getAnyTime();
-
-    /**
-     * Toggle the event anytime parameter.
-     * @param isAnyTime true if the event occurs anytime
-     */
-    public void setAnyTime(Boolean isAnyTime);
-
-    /**
-     * Initializes the Calendar with a default master event.
-     * Initializes the master event using the underlying item's
-     * icalUid (if NoteItem) or uid.
-     */
-    public void createCalendar();
 
     /**
      * Determine if an event is recurring
      * @return true if the underlying event is a recurring event
      */
     public boolean isRecurring();
-
-    /**
-     * Create and add new display alarm on event.
-     */
-    public void creatDisplayAlarm();
 
 }

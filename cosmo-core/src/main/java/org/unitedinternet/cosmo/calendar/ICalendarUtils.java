@@ -726,4 +726,15 @@ public class ICalendarUtils {
         
         return null;   
     }
+    
+    public static VEvent getEventFrom(Calendar calendar) {
+        if (calendar == null) {
+            return null;
+        }
+        ComponentList<VEvent> vEvents = calendar.getComponents().getComponents(Component.VEVENT);
+        if (vEvents.size() == 0) {
+            return null;
+        }
+        return (VEvent) vEvents.get(0);
+    }
 }

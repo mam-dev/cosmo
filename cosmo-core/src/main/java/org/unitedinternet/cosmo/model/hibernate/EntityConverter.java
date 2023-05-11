@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -54,7 +53,6 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
@@ -67,19 +65,18 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.component.VJournal;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
-import net.fortuna.ical4j.model.parameter.XParameter;
 import net.fortuna.ical4j.model.property.Action;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Completed;
 import net.fortuna.ical4j.model.property.DateListProperty;
 import net.fortuna.ical4j.model.property.DateProperty;
 import net.fortuna.ical4j.model.property.DtStamp;
-import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Trigger;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.Location;
 
 /**
  * A component that converts iCalendar objects to entities and vice versa.
@@ -460,7 +457,8 @@ public class EntityConverter {
 
         VEvent masterEvent = (VEvent) masterCal.getComponents(Component.VEVENT).get(0);
         VAlarm masterAlarm = getDisplayAlarm(masterEvent);
-        String masterLocation = stamp.getLocation();
+        Location masterLocationProperty = masterEvent.getProperties().getProperty(Property.LOCATION);
+        String masterLocation = masterLocationProperty != null ? masterLocationProperty.getValue() : null;
         
         // build timezone map that includes all timezones in master calendar
         ComponentList<VTimeZone> timezones = masterCal.getComponents(Component.VTIMEZONE);
@@ -529,18 +527,7 @@ public class EntityConverter {
             
             // merge item properties to icalendar props
             mergeCalendarProperties(exceptionEvent, exception);
-          
-            // check for inherited anyTime
-            if(exceptionStamp.isAnyTime()==null) {
-                DtStart modDtStart = exceptionEvent.getStartDate();
-                // remove "missing" value
-                modDtStart.getParameters().remove(modDtStart.getParameter(ICalendarConstants.PARAM_X_OSAF_ANYTIME));
-                // add inherited value
-                if(stamp.isAnyTime()) {
-                    modDtStart.getParameters().add(getAnyTimeXParam());
-                }
-            }
-                
+              
             // Check for inherited displayAlarm, which is represented
             // by a valarm with no TRIGGER
             VAlarm displayAlarm = getDisplayAlarm(exceptionEvent);
@@ -553,7 +540,9 @@ public class EntityConverter {
             
             // Check for inherited LOCATION which is represented as null LOCATION
             // If inherited, and master event has a LOCATION, then add it to exception
-            if(exceptionStamp.getLocation()==null && masterLocation!=null) {
+            Location exLocationProperty = exceptionEvent.getProperties().getProperty(Property.LOCATION);
+            String exceptionLocation = exLocationProperty != null ? exLocationProperty.getValue() : null;
+            if (exceptionLocation == null && masterLocation != null) {
                 ICalendarUtils.setLocation(masterLocation, exceptionEvent);
             }
             
@@ -750,14 +739,6 @@ public class EntityConverter {
         }
         
         return null;
-    }
-    
-    /**
-     * Gets any time x param.
-     * @return The parameter.
-     */
-    private Parameter getAnyTimeXParam() {
-        return new XParameter(ICalendarConstants.PARAM_X_OSAF_ANYTIME, ICalendarConstants.VALUE_TRUE);
     }
     
     /**
