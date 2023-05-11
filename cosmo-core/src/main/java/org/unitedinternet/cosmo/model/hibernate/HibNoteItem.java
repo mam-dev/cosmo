@@ -68,7 +68,7 @@ public class HibNoteItem extends HibICalendarItem implements NoteItem {
     @JoinColumn(name = "modifiesitemid")
     private NoteItem modifies = null;
     
-    @Column(name= "hasmodifications")
+    @Column(name= "hasmodifications", columnDefinition = "tinyint(4)")
     private boolean hasModifications = false;
     
     /**

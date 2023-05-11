@@ -201,16 +201,7 @@ public interface EntityFactory {
      * @return new TextAttribute
      */
     public TextAttribute createTextAttribute(QName qname, Reader reader);
-    
-    
-    /**
-     * Create new DecimalAttribute using BigDecimal
-     * @param qname QName of attribute
-     * @param bd decimal value
-     * @return new DecimalAttribute
-     */
-    public DecimalAttribute createDecimalAttribute(QName qname, BigDecimal bd);
-    
+        
     /**
      * Create new IntegerAttribute using Long
      * @param qname QName of attribute

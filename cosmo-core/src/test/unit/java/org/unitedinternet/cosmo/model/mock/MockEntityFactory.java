@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.model.mock;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.unitedinternet.cosmo.model.AvailabilityItem;
@@ -26,7 +25,6 @@ import org.unitedinternet.cosmo.model.CalendarAttribute;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.DecimalAttribute;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
@@ -137,17 +135,6 @@ public class MockEntityFactory implements EntityFactory {
      */
     public CollectionSubscription createCollectionSubscription() {
         return new MockCollectionSubscription();
-    }
-
-    /**
-     * Creates decimal attribute.
-     * {@inheritDoc}
-     * @param qname The name.
-     * @param bd The big decimal.
-     * @return decimal attribute.
-     */
-    public DecimalAttribute createDecimalAttribute(QName qname, BigDecimal bd) {
-        return new MockDecimalAttribute(qname, bd);
     }
     
     /**

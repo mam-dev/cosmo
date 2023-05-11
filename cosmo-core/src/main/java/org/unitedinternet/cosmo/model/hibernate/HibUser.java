@@ -119,12 +119,12 @@ public class HibUser extends HibAuditableObject implements User {
     @Length(min = 1, max = 255)
     private String activationId;
 
-    @Column(name = "admin")
+    @Column(name = "admin", columnDefinition = "tinyint(4)")
     private Boolean admin;
 
     private transient Boolean oldAdmin;
 
-    @Column(name = "locked")
+    @Column(name = "locked", columnDefinition = "tinyint(4)")
     private Boolean locked;
 
     @OneToMany(targetEntity = HibPreference.class, mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

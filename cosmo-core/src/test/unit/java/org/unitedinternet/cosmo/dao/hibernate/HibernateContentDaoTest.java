@@ -49,7 +49,6 @@ import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BooleanAttribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.DecimalAttribute;
 import org.unitedinternet.cosmo.model.DictionaryAttribute;
 import org.unitedinternet.cosmo.model.FileItem;
 import org.unitedinternet.cosmo.model.FreeBusyItem;
@@ -77,7 +76,6 @@ import org.unitedinternet.cosmo.model.hibernate.HibAvailabilityItem;
 import org.unitedinternet.cosmo.model.hibernate.HibBooleanAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibContentItem;
-import org.unitedinternet.cosmo.model.hibernate.HibDecimalAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibDictionaryAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibFileItem;
 import org.unitedinternet.cosmo.model.hibernate.HibFreeBusyItem;
@@ -277,15 +275,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         BooleanAttribute ba = new HibBooleanAttribute(new HibQName("booleanattribute"), Boolean.TRUE);
         item.addAttribute(ba);
 
-        DecimalAttribute decAttr = new HibDecimalAttribute(new HibQName("decimalattribute"),
-                new BigDecimal("1.234567"));
-        item.addAttribute(decAttr);
-
-        // TODO: figure out db date type is handled because i'm seeing
-        // issues with accuracy
-        // item.addAttribute(new DateAttribute("dateattribute", new Date()));
-
-        HashSet<String> values = new HashSet<String>();
+        Set<String> values = new HashSet<String>();
         values.add("value1");
         values.add("value2");
         MultiValueStringAttribute mvs = new HibMultiValueStringAttribute(new HibQName("multistringattribute"), values);
@@ -305,11 +295,6 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-
-        Attribute attr = queryItem.getAttribute(new HibQName("decimalattribute"));
-        assertNotNull(attr);
-        assertTrue(attr instanceof DecimalAttribute);
-        assertEquals(attr.getValue().toString(), "1.234567");
 
         Set<String> querySet = (Set<String>) queryItem.getAttributeValue("multistringattribute");
         assertTrue(querySet.contains("value1"));

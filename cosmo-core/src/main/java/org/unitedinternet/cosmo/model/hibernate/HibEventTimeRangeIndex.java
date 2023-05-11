@@ -17,10 +17,10 @@ public class HibEventTimeRangeIndex {
     @Column(table="event_stamp", name = "enddate", length=16)
     private String endDate = null;
     
-    @Column(table="event_stamp", name = "isfloating")
+    @Column(table="event_stamp", name = "isfloating", columnDefinition = "tinyint(4)")
     private Boolean isFloating = null;
     
-    @Column(table="event_stamp", name = "isrecurring")
+    @Column(table="event_stamp", name = "isrecurring", columnDefinition = "tinyint(4)")
     private Boolean isRecurring = null;
     
     /**

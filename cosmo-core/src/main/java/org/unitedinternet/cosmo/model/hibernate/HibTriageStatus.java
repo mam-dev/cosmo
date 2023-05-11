@@ -40,7 +40,7 @@ public class HibTriageStatus implements TriageStatus, Serializable {
     @Type(type="org.hibernate.type.BigDecimalType")
     private BigDecimal rank = null;
     
-    @Column(name = "isautotriage")
+    @Column(name = "isautotriage", columnDefinition = "tinyint(4)")
     private Boolean autoTriage = null;
     
     /**
