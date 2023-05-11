@@ -439,7 +439,8 @@ public class EntityConverter {
     }
 
     /**
-     * gets calendar from event stamp.
+     * Gets calendar from event stamp.
+     * 
      * @param stamp The event stamp.
      * @return The calendar.
      */
@@ -449,8 +450,7 @@ public class EntityConverter {
             return null;
         }
        
-        // the master calendar might not have any events; for
-        // instance, a client might be trying to save a VTODO
+        // the master calendar might not have any events; for instance, a client might be trying to save a VTODO
         if (masterCal.getComponents(Component.VEVENT).isEmpty()) {
             return masterCal;
         }
@@ -491,15 +491,13 @@ public class EntityConverter {
         // merge item properties to icalendar props
         mergeCalendarProperties(masterEvent, (NoteItem) stamp.getItem());
         
-        // bug 9606: handle displayAlarm with no trigger by not including
-        // in exported icalendar
+        // bug 9606: handle displayAlarm with no trigger by not including in exported icalendar
         if(masterAlarm!=null && stamp.getDisplayAlarmTrigger()==null) {
             masterEvent.getAlarms().remove(masterAlarm);
             masterAlarm = null;
         }
         
-        // If event is not recurring, skip all the event modification
-        // processing
+        // If event is not recurring, skip all the event modification processing
         if (!stamp.isRecurring()) {
             return masterCal;
         }
@@ -528,8 +526,7 @@ public class EntityConverter {
             // merge item properties to icalendar props
             mergeCalendarProperties(exceptionEvent, exception);
               
-            // Check for inherited displayAlarm, which is represented
-            // by a valarm with no TRIGGER
+            // Check for inherited displayAlarm, which is represented by a valarm with no TRIGGER
             VAlarm displayAlarm = getDisplayAlarm(exceptionEvent);
             if(displayAlarm !=null && exceptionStamp.getDisplayAlarmTrigger()==null) {
                 exceptionEvent.getAlarms().remove(displayAlarm);

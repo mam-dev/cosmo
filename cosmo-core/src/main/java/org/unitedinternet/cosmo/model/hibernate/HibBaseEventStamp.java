@@ -60,17 +60,12 @@ import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.parameter.Value;
 import net.fortuna.ical4j.model.property.Action;
 import net.fortuna.ical4j.model.property.DateListProperty;
-import net.fortuna.ical4j.model.property.DateProperty;
-import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.model.property.Duration;
 import net.fortuna.ical4j.model.property.ExDate;
-import net.fortuna.ical4j.model.property.ExRule;
 import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RecurrenceId;
-import net.fortuna.ical4j.model.property.Repeat;
 import net.fortuna.ical4j.model.property.Trigger;
 
 
@@ -169,6 +164,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
       
     /**
      * Return BaseEventStamp from Item
+     * 
      * @param item
      * @return BaseEventStamp from Item
      */
@@ -196,10 +192,10 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     @Override
     public Date getStartDate() {
         VEvent event = getEvent();
-        if(event==null) {
+        if (event == null) {
             return null;
         }
-        
+
         DtStart dtStart = event.getStartDate();
         if (dtStart == null) {
             return null;
@@ -211,7 +207,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     @Override
     public Date getEndDate() {
         VEvent event = getEvent();
-        if(event==null) {
+        if (event == null) {
             return null;
         }
         DtEnd dtEnd = event.getEndDate(false);
@@ -219,46 +215,27 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         if (dtEnd == null) {
             Date startDate = getStartDate();
             TemporalAmount duration = getDuration();
-            
+
             // if no DURATION, then there is no end time
-            if(duration==null) {
+            if (duration == null) {
                 return null;
             }
-            
+
             Date endDate = null;
-            if(startDate instanceof DateTime) {
+            if (startDate instanceof DateTime) {
                 endDate = new DateTime(startDate);
-            }
-            else {
+            } else {
                 endDate = new Date(startDate);
             }
-            
+
             endDate.setTime(new TemporalAmountAdapter(duration).getTime(startDate).getTime());
             return endDate;
         }
-            
+
         return dtEnd.getDate();
     }
-
-    protected void setDatePropertyValue(DateProperty prop,
-                                        Date date) {
-        if (prop == null) {
-            return;
-        }
-        Value value = (Value)
-            prop.getParameters().getParameter(Parameter.VALUE);
-        if (value != null) {
-            prop.getParameters().remove(value);
-        }
-        
-        // Add VALUE=DATE for Date values, otherwise
-        // leave out VALUE=DATE-TIME because it is redundant
-        if(! (date instanceof DateTime)) {
-            prop.getParameters().add(Value.DATE);
-        }
-    }
     
-    protected void setDateListPropertyValue(DateListProperty prop) {
+    private void setDateListPropertyValue(DateListProperty prop) {
         if (prop == null) {
             return;
         }
@@ -288,24 +265,13 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     }
 
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDuration()
-     */
+    @Override
     public TemporalAmount getDuration() {
         return ICalendarUtils.getDuration(getEvent());
     }
 
-  
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDuration(net.fortuna.ical4j.model.Dur)
-     */
-    public void setDuration(TemporalAmount dur) {
-        ICalendarUtils.setDuration(getEvent(), dur);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getRecurrenceRules()
-     */
+
+    @Override
     public List<Recur> getRecurrenceRules() {
         List<Recur> toReturn = new ArrayList<>();
         VEvent event = getEvent();
@@ -318,65 +284,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         return toReturn;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setRecurrenceRules(java.util.List)
-     */
-    public void setRecurrenceRules(List<Recur> recurs) {
-        if (recurs == null) {
-            return;
-        }
-        PropertyList<Property> properties = getEvent().getProperties();
-        for (Property rrule : properties.getProperties(Property.RRULE)) {
-            properties.remove(rrule);
-        }
-        for (Recur recur : recurs) {
-            properties.add(new RRule(recur));
-        }      
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setRecurrenceRule(net.fortuna.ical4j.model.Recur)
-     */
-    public void setRecurrenceRule(Recur recur) {
-        if (recur == null) {
-            return;
-        }
-        ArrayList<Recur> recurs = new ArrayList<Recur>(1);
-        recurs.add(recur);
-        setRecurrenceRules(recurs);
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getExceptionRules()
-     */
-    public List<Recur> getExceptionRules() {
-        List<Recur> toReturn = new ArrayList<Recur>();
-        PropertyList<ExRule> exRuleProperties = getEvent().getProperties().getProperties(Property.EXRULE);
-        for (ExRule exrule : exRuleProperties) {
-            toReturn.add(exrule.getRecur());
-        }
-        return toReturn;
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setExceptionRules(java.util.List)
-     */
-    public void setExceptionRules(List<Recur> recurs) {
-        if (recurs == null) {
-            return;
-        }
-        PropertyList<Property> properties = getEvent().getProperties();
-        for (Property exrule : properties.getProperties(Property.EXRULE)) {
-            properties.remove(exrule);
-        }
-        for (Recur recur : recurs) {
-            properties.add(new ExRule(recur));
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getRecurrenceDates()
-     */
+    @Override
     public DateList getRecurrenceDates() {
         DateList dateList = null;
 
@@ -400,30 +308,8 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         return dateList;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setRecurrenceDates(net.fortuna.ical4j.model.DateList)
-     */
-    public void setRecurrenceDates(DateList dates) {
-        if (dates == null) {
-            return;
-        }
-        
-        PropertyList<RDate> rdateList = getEvent().getProperties().getProperties(Property.RDATE);
-        for (RDate rdate : rdateList) {
-            rdateList.remove(rdate);
-        }
-        if (dates.isEmpty()) {
-            return;
-        }
-        
-        RDate rDate = new RDate(dates);
-        setDateListPropertyValue(rDate);
-        rdateList.add(rDate);   
-    }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getExceptionDates()
-     */
+    @Override
     public DateList getExceptionDates() {
         DateList dateList = null;
         PropertyList<ExDate> exDatesProperties = getEvent().getProperties().getProperties(Property.EXDATE);
@@ -443,228 +329,31 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         return dateList;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDisplayAlarm()
-     */
-    public VAlarm getDisplayAlarm() {
-        VEvent event = getEvent();
-       
-        if(event==null) {
-            return null;
-        }
-        
-        return getDisplayAlarm(event);
-    }
-    
-    protected VAlarm getDisplayAlarm(VEvent event) {
+    private static VAlarm getDisplayAlarm(VEvent event) {
         ComponentList<VAlarm> alarmsList = event.getAlarms();
-        for(VAlarm alarm: alarmsList) {
-            if (alarm.getProperties().getProperty(Property.ACTION).equals(
-                    Action.DISPLAY)) {
+        for (VAlarm alarm : alarmsList) {
+            if (alarm.getProperties().getProperty(Property.ACTION).equals(Action.DISPLAY)) {
                 return alarm;
             }
         }
-        
         return null;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#removeDisplayAlarm()
-     */
-    public void removeDisplayAlarm() {
-        VEvent event = getEvent();
-        
-        if(event==null) {
-            return;
-        }
-         
-        ComponentList<VAlarm> alarmsList = event.getAlarms();
-        for(VAlarm alarm: alarmsList) {
-            if (alarm.getProperties().getProperty(Property.ACTION).equals(
-                    Action.DISPLAY)) {
-                alarmsList.remove(alarm);
-            }
-        }
-    }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDisplayAlarmDescription()
-     */
-    public String getDisplayAlarmDescription() {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return null;
-        }
-        
-        Description description = (Description) alarm.getProperties()
-                .getProperty(Property.DESCRIPTION);
-        
-        if(description==null) {
-            return null;
-        }
-        
-        return description.getValue();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDisplayAlarmDescription(java.lang.String)
-     */
-    public void setDisplayAlarmDescription(String newDescription) {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return;
-        }
-        
-        Description description = (Description) alarm.getProperties()
-                .getProperty(Property.DESCRIPTION);
-        
-        if (description == null) {
-            description = new Description();
-            alarm.getProperties().add(description);
-        }
-        
-        description.setValue(newDescription);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDisplayAlarmTrigger()
-     */
+    @Override
     public Trigger getDisplayAlarmTrigger() {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
+        VEvent event = this.getEvent();
+        if (event == null) {
+            return null;
+        }        
+        VAlarm alarm = getDisplayAlarm(event);
+        if (alarm == null) {
             return null;
         }
-        
         return (Trigger) alarm.getProperties().getProperty(Property.TRIGGER);
     }
     
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDisplayAlarmTrigger(net.fortuna.ical4j.model.property.Trigger)
-     */
-    public void setDisplayAlarmTrigger(Trigger newTrigger) {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return;
-        }
-        
-        Trigger oldTrigger = (Trigger) alarm.getProperties().getProperty(
-                Property.TRIGGER);
-        if (oldTrigger != null) {
-            alarm.getProperties().remove(oldTrigger);
-        }
-
-        if(newTrigger!=null) {
-            alarm.getProperties().add(newTrigger);
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDisplayAlarmTriggerDate(net.fortuna.ical4j.model.DateTime)
-     */
-    public void setDisplayAlarmTriggerDate(DateTime triggerDate) {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return;
-        }
-
-        Trigger oldTrigger = (Trigger) alarm.getProperties().getProperty(
-                Property.TRIGGER);
-        if (oldTrigger != null) {
-            alarm.getProperties().remove(oldTrigger);
-        }
-        
-        Trigger newTrigger = new Trigger();
-        newTrigger.getParameters().add(Value.DATE_TIME);
-        newTrigger.setDateTime(triggerDate);
-        
-        alarm.getProperties().add(newTrigger);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDisplayAlarmDuration()
-     */
-    public TemporalAmount getDisplayAlarmDuration() {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return null;
-        }
-        
-        Duration dur =  (Duration) alarm.getProperties().getProperty(Property.DURATION);
-        if(dur!=null) {
-            return dur.getDuration();
-        }
-        else {
-            return null;
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDisplayAlarmDuration(net.fortuna.ical4j.model.Dur)
-     */
-    public void setDisplayAlarmDuration(TemporalAmount dur) {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return;
-        }
-        
-        Duration duration = (Duration) alarm.getProperties().getProperty(
-                Property.DURATION);
-        if (dur == null) {
-            if (duration != null) {
-                alarm.getProperties().remove(duration);
-            }
-            return;
-        }
-        if (duration == null) {
-            duration = new Duration();
-            alarm.getProperties().add(duration);
-        }
-        
-        duration.setDuration(dur);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#getDisplayAlarmRepeat()
-     */
-    public Integer getDisplayAlarmRepeat() {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return null;
-        }
-        
-        Repeat repeat = (Repeat) alarm.getProperties().getProperty(Property.REPEAT);
-        
-        if(repeat==null) {
-            return null;
-        }
-        
-        return repeat.getCount();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#setDisplayAlarmRepeat(java.lang.Integer)
-     */
-    public void setDisplayAlarmRepeat(Integer count) {
-        VAlarm alarm = getDisplayAlarm();
-        if(alarm==null) {
-            return;
-        }
-        Repeat repeat = (Repeat) alarm.getProperties().getProperty(Property.REPEAT);
-        if (count == null) {
-            if (repeat != null) {
-                alarm.getProperties().remove(repeat);
-            }
-            return;
-        }
-        if (repeat == null) {
-            repeat = new Repeat();
-            alarm.getProperties().add(repeat);
-        }
-
-        repeat.setCount(count.intValue());
-    }
-
+       
     @Override
     public void setExceptionDates(DateList dates) {
         if (dates == null) {
@@ -698,38 +387,13 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
         return rid.getDate();
     }
 
-    @Override
-    public void setRecurrenceId(Date date) {
-        RecurrenceId recurrenceId = (RecurrenceId)
-            getEvent().getProperties().
-            getProperty(Property.RECURRENCE_ID);
-        if (date == null) {
-            if (recurrenceId != null) {
-                getEvent().getProperties().remove(recurrenceId);
-            }
-            return;
-        }
-        if (recurrenceId == null) {
-            recurrenceId = new RecurrenceId();
-            getEvent().getProperties().add(recurrenceId);
-        }
-        
-        recurrenceId.setDate(date);
-        setDatePropertyValue(recurrenceId, date);
-    }
 
-    
-    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.BaseEventStamp#isRecurring()
-     */
+    @Override
     public boolean isRecurring() {
-       if(getRecurrenceRules().size()>0) {
-           return true;
-       }
-       
-       DateList rdates = getRecurrenceDates();
-       
-       return rdates!=null && rdates.size()>0;
-    }    
+        if (getRecurrenceRules().size() > 0) {
+            return true;
+        }
+        DateList rdates = getRecurrenceDates();
+        return rdates != null && rdates.size() > 0;
+    }  
 }

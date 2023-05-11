@@ -64,6 +64,8 @@ import net.fortuna.ical4j.model.property.Completed;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Location;
+import net.fortuna.ical4j.model.property.RDate;
+import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Status;
 import static org.unitedinternet.cosmo.calendar.ICalendarUtils.createBaseCalendar;
 
@@ -436,13 +438,12 @@ public class EntityConverterTest {
         vEvent.getProperties().add(new DtStart(new DateTime("20070212T074500")));
         vEvent.getProperties().add(new net.fortuna.ical4j.model.property.Duration(Duration.ofHours(1)));
         vEvent.getProperties().add(new Location("master location"));
-        eventStamp.setEventCalendar(calendar);
-        
         DateList dates = new DateList();
         dates.add(new Date("20070212T074500"));
         dates.add(new Date("20070213T074500"));
+        vEvent.getProperties().add(new RDate(dates));
+        eventStamp.setEventCalendar(calendar);
         
-        eventStamp.setRecurrenceDates(dates);
         master.addStamp(eventStamp);
         
         eventStamp.getEventCalendar().validate();
@@ -458,8 +459,8 @@ public class EntityConverterTest {
         VEvent vEventEx = new VEvent();
         vEventEx.getProperties().add(new Location("ex"));
         Calendar calendarEx = createBaseCalendar(vEventEx);        
-        exceptionStamp.setEventCalendar(calendarEx);
-        exceptionStamp.setRecurrenceId(eventStamp.getStartDate());
+        vEventEx.getProperties().add(new RecurrenceId(eventStamp.getStartDate()));
+        exceptionStamp.setEventCalendar(calendarEx);        
         mod.addStamp(exceptionStamp);
         
         // test modification VEVENT gets added properly
