@@ -44,7 +44,7 @@ public class QueryReportTest extends BaseReportTestCase {
 
         QueryReport report = new QueryReport();
         try {
-            report.init(dcc, makeReportInfo("freebusy1.xml", DEPTH_1));
+            report.init(dcc, makeReportInfo(this.getClass().getResourceAsStream("freebusy1.xml"), DEPTH_1));
             fail("Non-query report info initalized");
         } catch (Exception e) {}
     }
@@ -154,6 +154,6 @@ public class QueryReportTest extends BaseReportTestCase {
     private QueryReport makeReport(String reportXml, int depth,  WebDavResource target)
         throws Exception {
         return (QueryReport)
-            super.makeReport(QueryReport.class, reportXml, depth, target);
+            super.makeReport(QueryReport.class, this.getClass().getResourceAsStream(reportXml), depth, target);
     }
 }

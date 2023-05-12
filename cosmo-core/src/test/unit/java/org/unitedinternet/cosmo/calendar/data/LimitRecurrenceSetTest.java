@@ -15,12 +15,12 @@
  */
 package org.unitedinternet.cosmo.calendar.data;
 
-import java.io.FileInputStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
 import java.io.StringReader;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
@@ -37,7 +37,6 @@ import net.fortuna.ical4j.model.property.Summary;
  * Test limit-recurring-events output filter
  */
 public class LimitRecurrenceSetTest {
-    protected String baseDir = "src/test/unit/resources/testdata/";
     
     /**
      * Tests limit recurrence set.
@@ -46,8 +45,7 @@ public class LimitRecurrenceSetTest {
     @Test
     public void testLimitRecurrenceSet() throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + "limit_recurr_test.ics");
-        Calendar calendar = cb.build(fis);
+        Calendar calendar = cb.build(this.getClass().getResourceAsStream("limit_recurr_test.ics"));
         
         assertEquals(5, calendar.getComponents().getComponents("VEVENT").size());
         
@@ -90,8 +88,7 @@ public class LimitRecurrenceSetTest {
     @Test
     public void testLimitFloatingRecurrenceSet() throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + "limit_recurr_float_test.ics");
-        Calendar calendar = cb.build(fis);
+        Calendar calendar = cb.build(this.getClass().getResourceAsStream("limit_recurr_float_test.ics"));
         
         assertEquals(3, calendar.getComponents().getComponents("VEVENT").size());
         
@@ -128,8 +125,7 @@ public class LimitRecurrenceSetTest {
     @Test
     public void testLimitRecurrenceSetThisAndFuture() throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + "limit_recurr_taf_test.ics");
-        Calendar calendar = cb.build(fis);
+        Calendar calendar = cb.build(this.getClass().getResourceAsStream("limit_recurr_taf_test.ics"));
         
         assertEquals(4, calendar.getComponents().getComponents("VEVENT").size());
         

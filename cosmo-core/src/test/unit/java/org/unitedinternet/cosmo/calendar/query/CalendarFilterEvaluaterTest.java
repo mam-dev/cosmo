@@ -574,7 +574,7 @@ public class CalendarFilterEvaluaterTest {
      */
     protected Calendar getCalendar(String name) throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        InputStream in = getClass().getClassLoader().getResourceAsStream(name);
+        InputStream in = getClass().getResourceAsStream(name);
         if (in == null) {
             throw new IllegalStateException("resource " + name + " not found");
         }        

@@ -1,0 +1,2 @@
+These resources are not used during tests.
+However they could provide some value for different scenario at some point or they could be simply deleted after a while.

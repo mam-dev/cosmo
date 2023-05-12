@@ -439,7 +439,7 @@ public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
        
         EventStamp evs = new HibEventStamp();
         event.addStamp(evs);
-        evs.setEventCalendar(CalendarUtils.parseCalendar(helper.getBytes(file)));
+        evs.setEventCalendar(CalendarUtils.parseCalendar(this.getClass().getResourceAsStream(file)));
        
         return event;
     }

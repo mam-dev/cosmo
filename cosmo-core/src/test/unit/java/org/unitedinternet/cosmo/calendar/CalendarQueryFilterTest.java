@@ -15,18 +15,17 @@
  */
 package org.unitedinternet.cosmo.calendar;
 
-import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.text.ParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.ComponentFilter;
 import org.unitedinternet.cosmo.calendar.query.ParamFilter;
@@ -40,7 +39,6 @@ import org.w3c.dom.Element;
  * Test CalendarQueryFilter
  */
 public class CalendarQueryFilterTest {
-    protected String baseDir = "src/test/unit/resources/testdata/queries";
     
     /**
      * Tests component filter basic.
@@ -48,7 +46,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testComponentFilterBasic() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test1.xml"));
+        Element element = parseFile("test1.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -73,7 +71,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testIphoneios7bugNoEndDate() throws Exception {
-        Element element = parseFile(new File(baseDir + "/testIphoneios7bugNoEndDate.xml"));
+        Element element = parseFile("testIphoneios7bugNoEndDate.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -96,7 +94,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testComponentFilterIsNotDefined() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test4.xml"));
+        Element element = parseFile("/test4.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -116,7 +114,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testPropertyFilterBasic() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test2.xml"));
+        Element element = parseFile("test2.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -148,7 +146,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testPropertyFilterIsNotDefined() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test5.xml"));
+        Element element = parseFile("test5.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -178,7 +176,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testParamFilterBasic() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test3.xml"));
+        Element element = parseFile("test3.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -219,7 +217,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testParamFilterIsNotDefined() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test6.xml"));
+        Element element = parseFile("/test6.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -258,7 +256,7 @@ public class CalendarQueryFilterTest {
      */
     @Test
     public void testMultiplePropFilters() throws Exception {
-        Element element = parseFile(new File(baseDir + "/test7.xml"));
+        Element element = parseFile("test7.xml");
         CalendarFilter filter = new CalendarFilter(element);
         ComponentFilter compFilter = filter.getFilter();
         
@@ -298,7 +296,7 @@ public class CalendarQueryFilterTest {
         CalendarFilter filter;
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test4.xml"));
+            Element element = parseFile("error-test4.xml");
              filter = new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -306,7 +304,7 @@ public class CalendarQueryFilterTest {
         
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test5.xml"));
+            Element element = parseFile("error-test5.xml");
             filter = new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -314,7 +312,7 @@ public class CalendarQueryFilterTest {
         
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test6.xml"));
+            Element element = parseFile("error-test6.xml");
             filter = new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -322,7 +320,7 @@ public class CalendarQueryFilterTest {
         
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test7.xml"));
+            Element element = parseFile("error-test7.xml");
             filter = new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -330,7 +328,7 @@ public class CalendarQueryFilterTest {
         
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test8.xml"));
+            Element element = parseFile("error-test8.xml");
             filter = new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -347,7 +345,7 @@ public class CalendarQueryFilterTest {
         
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test9.xml"));
+            Element element = parseFile("error-test9.xml");
             new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -363,7 +361,7 @@ public class CalendarQueryFilterTest {
         
         try
         {
-            Element element = parseFile(new File(baseDir + "/error-test10.xml"));
+            Element element = parseFile("error-test10.xml");
             new CalendarFilter(element);
             fail("able to create invalid filter");
         }
@@ -376,11 +374,11 @@ public class CalendarQueryFilterTest {
      * @return The element.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    protected Element parseFile(File file) throws Exception{
+    protected Element parseFile(String resourceName) throws Exception{
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document dom = db.parse(file);
+        Document dom = db.parse(this.getClass().getResourceAsStream("queries/".concat(resourceName)));
         return (Element) dom.getFirstChild();
     }
     

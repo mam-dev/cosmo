@@ -281,7 +281,7 @@ public class StandardTriageStatusQueryProcessorTest {
        
         EventStamp evs = factory.createEventStamp(event);
         event.addStamp(evs);
-        evs.setEventCalendar(CalendarUtils.parseCalendar(testHelper.getBytes(file)));
+        evs.setEventCalendar(CalendarUtils.parseCalendar(this.getClass().getResourceAsStream(file)));
        
         return event;
     }

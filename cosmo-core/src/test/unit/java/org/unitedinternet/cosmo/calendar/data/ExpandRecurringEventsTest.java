@@ -15,14 +15,14 @@
  */
 package org.unitedinternet.cosmo.calendar.data;
 
-import java.io.FileInputStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.StringReader;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
@@ -40,7 +40,7 @@ import net.fortuna.ical4j.model.property.Summary;
  * Test expand output filter
  */
 public class ExpandRecurringEventsTest {
-    protected String baseDir = "src/test/unit/resources/testdata/";
+    
     
     /**
      * Tests expand event.
@@ -49,8 +49,7 @@ public class ExpandRecurringEventsTest {
     @Test
     public void testExpandEvent() throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + "expand_recurr_test1.ics");
-        Calendar calendar = cb.build(fis);
+        Calendar calendar = cb.build(this.getClass().getResourceAsStream("expand_recurr_test1.ics"));
         
         assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
         
@@ -105,8 +104,8 @@ public class ExpandRecurringEventsTest {
     @Test
     public void testExpandEventWithOverrides() throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + "expand_recurr_test2.ics");
-        Calendar calendar = cb.build(fis);
+        
+        Calendar calendar = cb.build(this.getClass().getResourceAsStream("expand_recurr_test2.ics"));
         
         ComponentList<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
         
@@ -162,8 +161,8 @@ public class ExpandRecurringEventsTest {
      */
     public void removedTestExpandNonRecurringEvent() throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + "expand_nonrecurr_test3.ics");
-        Calendar calendar = cb.build(fis);
+        
+        Calendar calendar = cb.build(this.getClass().getResourceAsStream("expand_nonrecurr_test3.ics"));
         
         assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
         

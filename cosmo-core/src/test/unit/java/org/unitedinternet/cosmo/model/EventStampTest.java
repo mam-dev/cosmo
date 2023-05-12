@@ -15,33 +15,24 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.io.FileInputStream;
-
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateList;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.unitedinternet.cosmo.model.mock.MockEventStamp;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.model.DateList;
 
 /**
  * Test EventStamp
  */
 public class EventStampTest {
-   
-    protected String baseDir = "src/test/unit/resources/testdata/";
-    @SuppressWarnings("unused")
-    private static final TimeZoneRegistry TIMEZONE_REGISTRY =
-        TimeZoneRegistryFactory.getInstance().createRegistry();
-    
+
     /**
      * Tests ex dates.
+     * 
      * @throws Exception - if something is wrong this exception is thrown.
      */
     @Test
@@ -50,26 +41,15 @@ public class EventStampTest {
         master.setDisplayName("displayName");
         master.setBody("body");
         EventStamp eventStamp = new MockEventStamp(master);
-        
-        eventStamp.setEventCalendar(getCalendar("recurring_with_exdates.ics"));
-        
+
+        eventStamp.setEventCalendar(
+                new CalendarBuilder().build(this.getClass().getResourceAsStream("recurring_with_exdates.ics")));
+
         DateList exdates = eventStamp.getExceptionDates();
-        
+
         assertNotNull(exdates);
-        assertTrue(2==exdates.size());
+        assertTrue(2 == exdates.size());
         assertNotNull(exdates.getTimeZone());
     }
-    
-    /**
-     * Gets calendar.
-     * @param name The name.
-     * @return The calendar.
-     * @throws Exception - if something is wrong this exception is thrown.
-     */
-    protected Calendar getCalendar(String name) throws Exception {
-        CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + name);
-        Calendar calendar = cb.build(fis);
-        return calendar;
-    }
+
 }

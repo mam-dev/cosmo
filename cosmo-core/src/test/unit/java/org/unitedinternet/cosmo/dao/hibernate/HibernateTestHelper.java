@@ -47,8 +47,9 @@ import org.unitedinternet.cosmo.model.hibernate.HibUser;
 public class HibernateTestHelper {
     /**
      * Creates dummy user.
+     * 
      * @param userDao The userDao.
-     * @param index The index.
+     * @param index   The index.
      * @return The user.
      */
     public User createDummyUser(UserDao userDao, int index) {
@@ -64,6 +65,7 @@ public class HibernateTestHelper {
 
     /**
      * Verify item.
+     * 
      * @param item1 Item1.
      * @param item2 Item2.
      * @throws Exception - if something is wrong this exception is thrown.
@@ -77,11 +79,9 @@ public class HibernateTestHelper {
         assertEquals(item1.getDisplayName(), item2.getDisplayName());
         assertEquals(getHibItem(item1).getId(), getHibItem(item2).getId());
         assertEquals(item1.getUid(), item2.getUid());
-        assertEquals(item1.getAttributes().size(), item2.getAttributes()
-                .size());
+        assertEquals(item1.getAttributes().size(), item2.getAttributes().size());
         for (@SuppressWarnings("rawtypes")
-        Iterator it = item1.getAttributes().keySet().iterator(); it
-                .hasNext();) {
+        Iterator it = item1.getAttributes().keySet().iterator(); it.hasNext();) {
             QName key = (QName) it.next();
             Object val1 = item1.getAttributeValue(key);
             Object val2 = item2.getAttributeValue(key);
@@ -92,12 +92,12 @@ public class HibernateTestHelper {
 
     /**
      * Verify item in collection.
+     * 
      * @param items The items.
-     * @param item The item.
+     * @param item  The item.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    public void verifyItemInCollection(@SuppressWarnings("rawtypes") Collection items, Item item)
-            throws Exception {
+    public void verifyItemInCollection(@SuppressWarnings("rawtypes") Collection items, Item item) throws Exception {
         for (@SuppressWarnings("rawtypes")
         Iterator it = items.iterator(); it.hasNext();) {
             Item nextItem = (Item) it.next();
@@ -110,6 +110,7 @@ public class HibernateTestHelper {
 
     /**
      * Verify map.
+     * 
      * @param val1 Val1.
      * @param val2 Val2.
      */
@@ -124,6 +125,7 @@ public class HibernateTestHelper {
 
     /**
      * Verify set.
+     * 
      * @param val1 Val1.
      * @param val2 Val2.
      */
@@ -137,6 +139,7 @@ public class HibernateTestHelper {
 
     /**
      * verify date.
+     * 
      * @param val1 Val1.
      * @param val2 Val2.
      */
@@ -146,40 +149,37 @@ public class HibernateTestHelper {
 
     /**
      * Verify attribute value.
+     * 
      * @param val1 Val1.
      * @param val2 Val2.
-     * @throws Exception - if something is wrong this exception is thrown. 
+     * @throws Exception - if something is wrong this exception is thrown.
      */
     @SuppressWarnings("rawtypes")
     public void verifyAttributeValue(Object val1, Object val2) throws Exception {
         if (val1 instanceof String) {
             assertEquals(val1, val2);
-        }
-        else if (val1 instanceof byte[]) {
+        } else if (val1 instanceof byte[]) {
             verifyBytes((byte[]) val1, (byte[]) val2);
-        }
-        else if (val1 instanceof Set) {
+        } else if (val1 instanceof Set) {
             verifySet((Set) val1, (Set) val2);
-        }
-        else if (val1 instanceof Map) {
+        } else if (val1 instanceof Map) {
             verifyMap((Map) val1, (Map) val2);
-        }
-        else if (val1 instanceof Date) {
+        } else if (val1 instanceof Date) {
             verifyDate((Date) val1, (Date) val2);
-        }
-        else if (!val1.equals(val2)) {
+        } else if (!val1.equals(val2)) {
             fail("attributes not equal");
         }
     }
 
     /**
      * Gets bytes.
+     * 
      * @param name The name.
      * @return byte[].
      * @throws Exception - if something is wrong this exception is thrown.
      */
     public byte[] getBytes(String name) throws Exception {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(name);
+        InputStream in = this.getClass().getResourceAsStream(name);
         if (in == null) {
             throw new IllegalStateException("resource " + name + " not found");
         }
@@ -187,40 +187,42 @@ public class HibernateTestHelper {
         IOUtils.copy(in, bos);
         return bos.toByteArray();
     }
-    
+
     /**
      * Gets input stream.
+     * 
      * @param name The name.
      * @return The input stream.
      * @throws Exception - if something is wrong this exception is thrown.
      */
     public InputStream getInputStream(String name) throws Exception {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(name);
+        InputStream in = getClass().getResourceAsStream(name);
         if (in == null) {
             throw new IllegalStateException("resource " + name + " not found");
         }
         return in;
     }
-    
+
     /**
      * Gets calendar.
+     * 
      * @param name The name.
      * @return The calendar.
      * @throws Exception - if something is wrong this exception is thrown.
      */
     public Calendar getCalendar(String name) throws Exception {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(name);
+        InputStream in = getClass().getResourceAsStream(name);
         return CalendarUtils.parseCalendar(in);
     }
 
     /**
      * Verify input stream.
-     * @param is1 The input stream.
+     * 
+     * @param is1     The input stream.
      * @param content The content.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    public void verifyInputStream(InputStream is1, byte[] content)
-            throws Exception {
+    public void verifyInputStream(InputStream is1, byte[] content) throws Exception {
         byte[] buf1 = new byte[4096];
         byte[] buf2 = new byte[4096];
 
@@ -242,6 +244,7 @@ public class HibernateTestHelper {
 
     /**
      * Verify bytes.
+     * 
      * @param content1 Content1.
      * @param content2 Content2
      * @throws Exception - if something is wrong this exception is thrown.
@@ -253,9 +256,10 @@ public class HibernateTestHelper {
 
     /**
      * Gets user.
-     * @param userDao UserDao.
+     * 
+     * @param userDao    UserDao.
      * @param contentDao ContentDao.
-     * @param username The username.
+     * @param username   The username.
      * @return The user.
      */
     public User getUser(UserDao userDao, ContentDao contentDao, String username) {
@@ -277,9 +281,10 @@ public class HibernateTestHelper {
         }
         return user;
     }
-    
+
     /**
      * Gets Hib Item.
+     * 
      * @param item The item.
      * @return HibItem.
      */
