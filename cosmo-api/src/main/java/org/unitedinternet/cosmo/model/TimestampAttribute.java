@@ -15,16 +15,14 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.util.Date;
-
 /**
  * Attribute that stores timestamp value.
  */
 public interface TimestampAttribute extends Attribute{
 
     // Property accessors
-    public Date getValue();
+    public Long getValue();
 
-    public void setValue(Date value);
+    public void setValue(Long value);
 
 }

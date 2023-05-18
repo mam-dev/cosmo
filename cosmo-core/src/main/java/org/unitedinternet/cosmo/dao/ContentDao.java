@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.dao;
 
-import java.util.Date;
 import java.util.Set;
 
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -166,7 +165,7 @@ public interface ContentDao extends ItemDao {
      * @return children of collection that have been updated since 
      *         timestamp, or all children if timestamp is null
      */
-    public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp);
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp);
     
     /**
      * Removes all items from a given collection.

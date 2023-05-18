@@ -105,7 +105,7 @@ public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
         note.setBody("find me");
         note.setIcalUid("find me");
         note.setDisplayName("find me");
-        note.setReminderTime(new Date(123456789));
+        note.setReminderTime(new Date(123456789).getTime());
         note.getTriageStatus().setCode(TriageStatus.CODE_DONE);
         
         note = (NoteItem) contentDao.createContent(calendar1, note);
@@ -212,11 +212,11 @@ public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
         
         // find notes by reminderTime
         filter = new NoteItemFilter();
-        filter.setReminderTime(Restrictions.between(new Date(12345678),new Date(1234567890)));
+        filter.setReminderTime(Restrictions.between(new Date(12345678).getTime() ,new Date(1234567890).getTime()));
         results = contentDao.findItems(filter);
         assertEquals(1, results.size());
         
-        filter.setReminderTime(Restrictions.between(new Date(1000),new Date(2000)));
+        filter.setReminderTime(Restrictions.between(new Date(1000).getTime(), new Date(2000).getTime()));
         results = contentDao.findItems(filter);
         assertEquals(0, results.size());
     }
@@ -439,7 +439,7 @@ public class HibernateItemDaoFilterTest extends AbstractSpringDaoTestCase {
        
         EventStamp evs = new HibEventStamp();
         event.addStamp(evs);
-        evs.setEventCalendar(CalendarUtils.parseCalendar(helper.getBytes(file)));
+        evs.setEventCalendar(CalendarUtils.parseCalendar(this.getClass().getResourceAsStream(file)));
        
         return event;
     }

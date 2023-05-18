@@ -15,78 +15,51 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.Type;
-import org.unitedinternet.cosmo.util.BufferedContent;
-
-
-
 /**
- * Represents the data of a piece of Content. Data is stored
- * as a BufferedContent, either in memory (small content) or
+ * Represents the data of a piece of Content. Data is stored as a BufferedContent, either in memory (small content) or
  * on disk (large content).
  */
 @Entity
-@Table(name="content_data")
+@Table(name = "content_data")
 public class HibContentData extends BaseModelObject {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5014854905531456753L;
-    
-    @Column(name = "content", length=102400000)
-    @Type(type="bufferedcontent_blob")
-    private BufferedContent content = null;
-   
-    /**
-     */
+
+    @Column(name = "content", length = 102400000)
+    @Lob
+    private byte[] content = null;
+
+    public HibContentData() {
+    }
+
     public String toString() {
-        return ToStringBuilder.reflectionToString(this,
-                ToStringStyle.MULTI_LINE_STYLE);
-    }
-
-
-    /**
-     * Get an InputStream to the content data.  Repeated
-     * calls to this method will return new instances
-     * of InputStream.
-     */
-    public InputStream getContentInputStream() {
-        if(content==null) {
-            return null;
+        if (content != null) {
+            return new String(content);
         }
-        
-        return content.getInputStream();
+        return null;
     }
-    
-    /**
-     * Set the content using an InputSteam.  Does not close the 
-     * InputStream.
-     * @param is content data
-     * @throws IOException
-     */
-    public void setContentInputStream(InputStream is) throws IOException {
-        content = new BufferedContent(is);
+
+    public byte[] getContent() {
+        return content;
     }
-    
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
     /**
      * @return the size of the data read, or -1 for no data present
      */
     public long getSize() {
-        if(content != null) {
-            return content.getLength();
-        }
-        else {
+        if (content != null) {
+            return content.length;
+        } else {
             return -1;
         }
-    } 
+    }
 }

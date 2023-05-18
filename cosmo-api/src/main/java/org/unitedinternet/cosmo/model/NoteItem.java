@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.model;
 
 import java.io.Reader;
-import java.util.Date;
 import java.util.Set;
 
 import net.fortuna.ical4j.model.Calendar;
@@ -35,9 +34,9 @@ public interface NoteItem extends ICalendarItem{
 
     public void setBody(Reader body);
 
-    public Date getReminderTime();
+    public Long getReminderTime();
 
-    public void setReminderTime(Date reminderTime);
+    public void setReminderTime(Long reminderTime);
 
     /**
      * Return the Calendar object containing a VTODO or a VJOURNAL component.

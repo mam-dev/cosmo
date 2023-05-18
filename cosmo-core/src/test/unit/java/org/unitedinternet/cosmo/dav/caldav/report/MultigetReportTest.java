@@ -176,7 +176,7 @@ public class MultigetReportTest extends BaseDavTestCase {
      */
     private ReportInfo makeReportInfo(String resource)
         throws Exception {
-        Document doc = testHelper.loadXml(resource);
+        Document doc = testHelper.loadXml(this.getClass().getResourceAsStream(resource));
         return new ReportInfo(doc.getDocumentElement(), DEPTH_1);
     }
 }

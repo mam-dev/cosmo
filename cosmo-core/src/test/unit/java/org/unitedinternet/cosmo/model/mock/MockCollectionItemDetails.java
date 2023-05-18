@@ -15,8 +15,6 @@
  */
 package org.unitedinternet.cosmo.model.mock;
 
-import java.util.Date;
-
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionItemDetails;
 import org.unitedinternet.cosmo.model.Item;
@@ -28,40 +26,22 @@ public class MockCollectionItemDetails implements CollectionItemDetails {
 
     private CollectionItem collection = null;
     private Item item = null;
-    private Date createDate = new Date();
-    
-    /**
-     * Constructor.
-     * @param collection The collection item.
-     * @param item The item.
-     */
+    private Long createDate = System.currentTimeMillis();
+
     public MockCollectionItemDetails(CollectionItem collection, Item item) {
         this.collection = collection;
         this.item = item;
     }
-    
-    /**
-     * Gets collection.
-     * {@inheritDoc}
-     * @return collection item.
-     */
+
     public CollectionItem getCollection() {
         return collection;
     }
-    /**
-     * Gets item.
-     * {@inheritDoc}
-     * @return The item.
-     */
+
     public Item getItem() {
-       return item;
+        return item;
     }
-    /**
-     * Gets timestamp.
-     * {@inheritDoc}
-     * @return The date.
-     */
-    public Date getTimestamp() {
+
+    public Long getTimestamp() {
         return createDate;
     }
 }

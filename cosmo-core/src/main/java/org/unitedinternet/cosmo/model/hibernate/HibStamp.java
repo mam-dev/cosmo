@@ -15,12 +15,11 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.util.Date;
-
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -32,7 +31,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import javax.persistence.Index;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
@@ -45,8 +43,6 @@ import org.unitedinternet.cosmo.model.Stamp;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "stamptype", 
                      discriminatorType = DiscriminatorType.STRING, length = 16)
-// Unique constraint for stamptype and itemid to prevent items
-// having more than one of the same stamp
 @Table(name = "stamp",
         uniqueConstraints = {@UniqueConstraint(columnNames = { "itemid", "stamptype" })} ,
         indexes={@Index(name = "idx_stamptype",columnList = "stamptype" )}
@@ -56,26 +52,20 @@ public abstract class HibStamp extends HibAuditableObject implements Stamp {
 
     private static final long serialVersionUID = 3717468937415626702L;
     // Fields
+
     @ManyToOne(targetEntity=HibItem.class, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "itemid", nullable = false)
     private Item item;
     
-    // Constructors
-    /** default constructor */
+
     public HibStamp() {
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Stamp#getItem()
-     */
     public Item getItem() {
         return item;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.Stamp#setItem(org.unitedinternet.cosmo.model.Item)
-     */
     public void setItem(Item item) {
         this.item = item;
     }
@@ -107,10 +97,7 @@ public abstract class HibStamp extends HibAuditableObject implements Stamp {
         getItem().removeAttribute(qname);
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.hibernate.HibAuditableObject#updateTimestamp()
-     */
     public void updateTimestamp() {
-        setModifiedDate(new Date());
+        setModifiedDate(System.currentTimeMillis());
     }
 }

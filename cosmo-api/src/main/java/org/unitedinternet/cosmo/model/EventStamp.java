@@ -23,7 +23,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 /**
  * Represents a calendar event, recurring or non-recurring.
  */
-public interface EventStamp extends BaseEventStamp{
+public interface EventStamp extends BaseEventStamp {
 
     
     /**

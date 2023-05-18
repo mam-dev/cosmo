@@ -15,7 +15,6 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -145,13 +144,13 @@ public interface Item extends AuditableObject{
      */
     public Map<String, Attribute> getAttributes(String namespace);
 
-    public Date getClientCreationDate();
+    public Long getClientCreationDate();
 
-    public void setClientCreationDate(Date clientCreationDate);
+    public void setClientCreationDate(Long clientCreationDate);
 
-    public Date getClientModifiedDate();
+    public Long getClientModifiedDate();
 
-    public void setClientModifiedDate(Date clientModifiedDate);
+    public void setClientModifiedDate(Long clientModifiedDate);
 
     public String getName();
 

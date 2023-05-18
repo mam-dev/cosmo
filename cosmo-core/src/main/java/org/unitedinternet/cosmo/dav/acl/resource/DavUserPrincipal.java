@@ -135,7 +135,7 @@ public class DavUserPrincipal extends DavResourceBase implements CaldavConstants
     }
 
     public long getModificationTime() {
-        return user.getModifiedDate().getTime();
+        return user.getModifiedDate();
     }
 
     public boolean exists() {

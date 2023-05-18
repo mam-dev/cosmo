@@ -73,7 +73,7 @@ public class ReportBaseTest extends BaseDavTestCase implements DavConstants {
      * @throws Exception - if something is wrong this exception is thrown.
      */
     private ReportInfo makeReportInfo(String resource, int depth) throws Exception {
-        Document doc = testHelper.loadXml(resource);
+        Document doc = testHelper.loadXml(this.getClass().getResourceAsStream(resource));
         return new ReportInfo(doc.getDocumentElement(), depth);
     }
 }

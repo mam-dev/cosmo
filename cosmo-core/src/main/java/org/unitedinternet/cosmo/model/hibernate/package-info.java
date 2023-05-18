@@ -14,42 +14,6 @@
  * limitations under the License.
  */
 
-
-/*
- * Type Definitions for custom hibernate data types.
- */
-@TypeDefs({
-    @TypeDef(
-            name="bufferedcontent_blob",
-            typeClass = org.unitedinternet.cosmo.hibernate.BufferedContentBlob.class
-        ),
-
-    @TypeDef(
-            name="calendar_clob",
-            typeClass = org.unitedinternet.cosmo.hibernate.CalendarClobType.class
-    ),
-
-    @TypeDef(
-            name="xml_clob",
-            typeClass = org.unitedinternet.cosmo.hibernate.XmlClobType.class
-    ),
-    
-    @TypeDef(
-            name="composite_calendar",
-            typeClass = org.unitedinternet.cosmo.hibernate.CalendarType.class
-    ),
-    
-    @TypeDef(
-            name="long_timestamp",
-            typeClass = org.unitedinternet.cosmo.hibernate.LongTimestampType.class
-    ),
-    
-    @TypeDef(
-            name="boolean_integer",
-            typeClass = org.unitedinternet.cosmo.hibernate.BooleanIntegerType.class
-    )
-})
-
 /*
  * Named Queries
  */
@@ -125,16 +89,10 @@
         @NamedQuery(name = "event.by.calendar.icaluid", query = "select i from HibNoteItem i join "
                 + "i.parentDetails pd join i.stamps stamp where pd.primaryKey.collection=:calendar and "
                 + "stamp.class=HibEventStamp and i.icalUid=:uid"),
-
-        // Event Log Queries
-        @NamedQuery(name = "logEntry.by.collection.date", query = "from HibEventLogEntry e where id1=:parentId "
-                + "and entryDate between :startDate and :endDate")
     
 })
 package org.unitedinternet.cosmo.model.hibernate;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 

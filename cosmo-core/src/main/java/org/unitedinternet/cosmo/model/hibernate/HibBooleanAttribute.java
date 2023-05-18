@@ -37,7 +37,7 @@ public class HibBooleanAttribute extends HibAttribute implements BooleanAttribut
      */
     private static final long serialVersionUID = -8393344132524216261L;
     
-    @Column(name = "booleanvalue")
+    @Column(name = "booleanvalue", columnDefinition = "tinyint(4)")
     private Boolean value;
 
     /** default constructor */

@@ -31,6 +31,7 @@ import org.unitedinternet.cosmo.model.QName;
  * (String, Integer, Binary, Boolean, etc.)
  * 
  */
+@SuppressWarnings("serial")
 public abstract class MockAttribute extends MockAuditableObject implements java.io.Serializable, Attribute {
 
     // Fields

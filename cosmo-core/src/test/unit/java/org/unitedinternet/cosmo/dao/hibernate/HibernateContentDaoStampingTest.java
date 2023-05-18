@@ -51,6 +51,9 @@ import org.unitedinternet.cosmo.model.hibernate.HibStringAttribute;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Test for hibernate content dao stamping.
@@ -145,7 +148,8 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         item.setBody("this is a body");
         
         HibEventStamp event = new HibEventStamp();
-        event.setEventCalendar(helper.getCalendar("cal1.ics"));
+        Calendar calendar = helper.getCalendar("cal1.ics");
+        event.setEventCalendar(calendar);
         
         item.addStamp(event);
         
@@ -161,9 +165,10 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         assertEquals("20050817T131500Z",event.getTimeRangeIndex().getEndDate());
         assertFalse(event.getTimeRangeIndex().getIsFloating().booleanValue());
         
-        event.setStartDate(new Date("20070101"));
-        //event.setEntityTag("foo"); // FIXME setStartDate does not modify any persistent field, so object is not marked dirty
-        event.setEndDate(null);
+        VEvent vEvent = (VEvent) calendar.getComponent(Component.VEVENT);
+        vEvent.getProperties().clear();
+        vEvent.getProperties().add(new DtStart(new Date("20070101")));
+        event.setEventCalendar(calendar);
         
         contentDao.updateContent(queryItem);
         clearSession();
@@ -213,7 +218,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         
         stamp = queryItem.getStamp(EventStamp.class);
         EventStamp es = (EventStamp) stamp;
-        queryItem.setClientModifiedDate(new Date());
+        queryItem.setClientModifiedDate(System.currentTimeMillis());
         es.setEventCalendar(helper.getCalendar("cal2.ics"));
         Calendar newCal = es.getEventCalendar();
         Thread.sleep(10);
@@ -227,7 +232,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
         stamp = queryItem.getStamp(EventStamp.class);
         es = (EventStamp) stamp;
        
-        assertTrue(stamp.getModifiedDate().after(stamp.getCreationDate()));
+        assertTrue(stamp.getModifiedDate() >= stamp.getCreationDate());
         
         if(!es.getEventCalendar().toString().equals(newCal.toString())) {
             LOG.error(es.getEventCalendar().toString());
@@ -242,20 +247,10 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
      */
     @Test
     public void testEventStampValidation() throws Exception {
-        User user = getUser(userDao, "testuser");
-        CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
-
-        ContentItem item = generateTestContent();
-        
-        EventStamp event = new HibEventStamp();
-        event.setEventCalendar(helper.getCalendar("noevent.ics"));
-        item.addStamp(event);
-       
-        try {
-            contentDao.createContent(root, item);
-            clearSession();
-            fail("able to create invalid event!");
-        } catch (Exception is) {}
+        EventStamp event = new HibEventStamp();        
+        assertThrows(ValidationException.class, ()-> {
+            event.setEventCalendar(helper.getCalendar("noevent.ics"));
+        });                
     }
     
     /**

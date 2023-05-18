@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.model;
 
 import java.util.Comparator;
-import java.util.Date;
 
 /**
  * Compares instances of {@link AuditableObject} based on their
@@ -62,12 +61,11 @@ public class AuditableComparator implements Comparator<AuditableObject> {
         return compare(o1.getModifiedDate(), o2.getModifiedDate());
     }
 
-    protected int compare(Date d1,
-                          Date d2) {
-        if (d1.after(d2)) {
+    protected int compare(Long d1, Long d2) {
+        if (d1 > d2) {
             return reverse ? -1 : 1;
         }
-        return reverse ? 1 : -1;
+        return reverse ? 1 : -1;        
     }
 
     public boolean equals(Object obj) {

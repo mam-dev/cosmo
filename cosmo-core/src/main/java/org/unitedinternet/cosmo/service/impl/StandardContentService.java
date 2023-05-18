@@ -384,7 +384,7 @@ public class StandardContentService implements ContentService {
      *         all children if timestamp is null
      */
     @Transactional(readOnly = true)
-    public Set<ContentItem> loadChildren(CollectionItem collection, java.util.Date timestamp) {
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp) {
         return contentDao.loadChildren(collection, timestamp);
     }
 

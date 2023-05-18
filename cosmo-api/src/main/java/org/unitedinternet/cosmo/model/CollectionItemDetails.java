@@ -15,28 +15,24 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.util.Date;
-
 /**
- * Represents the relationship between an item and a collection.
- * An item can belong to many collection.  This relationship
- * also has extra information suck as a timestamp of when the
- * item was added to a collection.
+ * Represents the relationship between an item and a collection. An item can belong to many collection. This
+ * relationship also has extra information such as a timestamp of when the item was added to a collection.
  */
 public interface CollectionItemDetails {
-    
+
     /**
      * @return collection
      */
     public CollectionItem getCollection();
-    
+
     /**
      * @return item
      */
     public Item getItem();
-    
+
     /**
      * @return date item was added to collection
      */
-    public Date getTimestamp();
+    public Long getTimestamp();
 }

@@ -15,22 +15,20 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.util.Date;
-
 /**
  * Represents a model object.
  */
 public interface AuditableObject {
 
     /**
-     * @return date object was created
+     * @return timestamp when object was created
      */
-    public Date getCreationDate();
+    public Long getCreationDate();
 
     /**
-     * @return date object was last updated
+     * @return timestamp when object was last updated
      */
-    public Date getModifiedDate();
+    public Long getModifiedDate();
 
     /**
      * Update modifiedDate with current system time.

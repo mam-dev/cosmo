@@ -43,7 +43,7 @@ public class FreeBusyReportTest extends BaseReportTestCase {
 
         FreeBusyReport report = new FreeBusyReport();
         try {
-            report.init(dcc, makeReportInfo("multiget1.xml", DEPTH_1));
+            report.init(dcc, makeReportInfo(this.getClass().getResourceAsStream("multiget1.xml"), DEPTH_1));
             fail("Non-freebusy report info initalized");
         } catch (Exception e) {
         }
@@ -119,6 +119,6 @@ public class FreeBusyReportTest extends BaseReportTestCase {
     private FreeBusyReport makeReport(String reportXml, int depth, WebDavResource target)
         throws Exception {
         return (FreeBusyReport)
-            super.makeReport(FreeBusyReport.class, reportXml, depth, target);
+            super.makeReport(FreeBusyReport.class, this.getClass().getResourceAsStream(reportXml), depth, target);
     }
 }

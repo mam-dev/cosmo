@@ -1,6 +1,5 @@
 package org.unitedinternet.cosmo.ext;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +38,7 @@ public class ContentConverter {
                  */
                 if (item instanceof HibNoteItem) {
                     HibNoteItem noteItem = (HibNoteItem) item;
-                    Date now = new Date();
+                    Long now = System.currentTimeMillis();
                     noteItem.setCreationDate(now);
                     noteItem.setModifiedDate(now);
                     items.add(noteItem);

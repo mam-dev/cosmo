@@ -50,6 +50,7 @@ import net.fortuna.ical4j.model.parameter.Rsvp;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.Organizer;
+import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Transp;
 import net.fortuna.ical4j.model.property.Version;
@@ -479,6 +480,8 @@ public class ContextServiceExtensionsAdviceTest {
         vEvent.getProperties().add(Transp.OPAQUE);
             
         Calendar calendar = new Calendar();
+        calendar.getProperties().add(new ProdId("PID"));
+        calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getComponents().add(vEvent);
             
         eventStamp.setEventCalendar(calendar);        

@@ -100,7 +100,7 @@ public class MockNoteItem extends MockICalendarItem implements NoteItem {
      * Gets reminder time.
      * @return The date.
      */
-    public Date getReminderTime() {
+    public Long getReminderTime() {
         return MockTimestampAttribute.getValue(this, ATTR_REMINDER_TIME);
     }
 
@@ -111,7 +111,7 @@ public class MockNoteItem extends MockICalendarItem implements NoteItem {
      * Sets reminder time.
      * @param reminderTime The reminder time.
      */
-    public void setReminderTime(Date reminderTime) {
+    public void setReminderTime(Long reminderTime) {
         // reminderDate stored as TimestampAttribute on Item
         MockTimestampAttribute.setValue(this, ATTR_REMINDER_TIME, reminderTime);
     }
@@ -232,7 +232,7 @@ public class MockNoteItem extends MockICalendarItem implements NoteItem {
     public String calculateEntityTag() {
         String uid = getUid() != null ? getUid() : "-";
         String modTime = getModifiedDate() != null ?
-            Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+            Long.valueOf(getModifiedDate()).toString() : "-";
          
         StringBuilder etag = new StringBuilder(uid + ":" + modTime);
         
@@ -241,7 +241,7 @@ public class MockNoteItem extends MockICalendarItem implements NoteItem {
             for(NoteItem mod: getModifications()) {
                 uid = mod.getUid() != null ? mod.getUid() : "-";
                 modTime = mod.getModifiedDate() != null ?
-                        Long.valueOf(mod.getModifiedDate().getTime()).toString() : "-";
+                        Long.valueOf(mod.getModifiedDate()).toString() : "-";
                 etag.append("," + uid + ":" + modTime);
             }
         }

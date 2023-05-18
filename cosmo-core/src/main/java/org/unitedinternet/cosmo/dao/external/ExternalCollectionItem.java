@@ -7,7 +7,6 @@
  */
 package org.unitedinternet.cosmo.dao.external;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +35,7 @@ public class ExternalCollectionItem implements CollectionItem {
         return delegate;
     }
 
-    public Date getCreationDate() {
+    public Long getCreationDate() {
         return delegate.getCreationDate();
     }
 
@@ -45,7 +44,7 @@ public class ExternalCollectionItem implements CollectionItem {
         return (Set<Item>) children;
     }
 
-    public Date getModifiedDate() {
+    public Long getModifiedDate() {
         return delegate.getModifiedDate();
     }
 
@@ -173,19 +172,19 @@ public class ExternalCollectionItem implements CollectionItem {
         return delegate.getAttributes(namespace);
     }
 
-    public Date getClientCreationDate() {
+    public Long getClientCreationDate() {
         return delegate.getClientCreationDate();
     }
 
-    public void setClientCreationDate(Date clientCreationDate) {
+    public void setClientCreationDate(Long clientCreationDate) {
         delegate.setClientCreationDate(clientCreationDate);
     }
 
-    public Date getClientModifiedDate() {
+    public Long getClientModifiedDate() {
         return delegate.getClientModifiedDate();
     }
 
-    public void setClientModifiedDate(Date clientModifiedDate) {
+    public void setClientModifiedDate(Long clientModifiedDate) {
         delegate.setClientModifiedDate(clientModifiedDate);
     }
 

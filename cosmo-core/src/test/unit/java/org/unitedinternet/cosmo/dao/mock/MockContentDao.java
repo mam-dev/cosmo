@@ -15,10 +15,10 @@
  */
 package org.unitedinternet.cosmo.dao.mock;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.dao.ConcurrencyFailureException;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -27,7 +27,6 @@ import org.unitedinternet.cosmo.model.UidInUseException;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.mock.MockCollectionItem;
 import org.unitedinternet.cosmo.model.mock.MockItem;
-import org.springframework.dao.ConcurrencyFailureException;
 
 /**
  * Mock implementation of <code>ContentDao</code> useful for testing.
@@ -36,15 +35,10 @@ import org.springframework.dao.ConcurrencyFailureException;
  * @see ContentItem
  * @see CollectionItem
  */
-@SuppressWarnings("unchecked")
 public class MockContentDao extends MockItemDao implements ContentDao {
 
     public static final boolean THROW_CONCURRENT_EXCEPTION = false;
     
-    /**
-     * Constructor.
-     * @param storage Mock dao storage.
-     */
     public MockContentDao(MockDaoStorage storage) {
         super(storage);
     }
@@ -302,7 +296,7 @@ public class MockContentDao extends MockItemDao implements ContentDao {
      * @return CollectionItem.
      */
     public CollectionItem updateCollectionTimestamp(CollectionItem collection) {
-        ((MockCollectionItem) collection).setModifiedDate(new Date());
+        ((MockCollectionItem) collection).setModifiedDate(System.currentTimeMillis());
         getStorage().updateItem(collection);
         return collection;
     }
@@ -314,11 +308,11 @@ public class MockContentDao extends MockItemDao implements ContentDao {
      * @param timestamp The date.
      * @return Set<ContentItem>.
      */
-    public Set<ContentItem> loadChildren(CollectionItem collection, Date timestamp) {
+    public Set<ContentItem> loadChildren(CollectionItem collection, Long timestamp) {
         Set<ContentItem> items = new HashSet<ContentItem>();
         for(Item item : collection.getChildren()) {
             if(item instanceof ContentItem) {
-                if (timestamp==null || item.getModifiedDate().after(timestamp)) {
+                if (timestamp ==null || item.getModifiedDate() >= timestamp) {
                     items.add((ContentItem) item);
                 }
             }

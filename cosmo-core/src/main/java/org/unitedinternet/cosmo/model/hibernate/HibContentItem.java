@@ -47,10 +47,10 @@ public abstract class HibContentItem extends HibItem implements ContentItem {
     @Target(HibTriageStatus.class)
     private TriageStatus triageStatus = new HibTriageStatus();
     
-    @Column(name = "sent")
+    @Column(name = "sent", columnDefinition = "tinyint(4)")
     private Boolean sent = null;
     
-    @Column(name = "needsreply")
+    @Column(name = "needsreply", columnDefinition = "tinyint(4)")
     private Boolean needsReply = null;
     
     public HibContentItem() {

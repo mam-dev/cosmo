@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -54,7 +53,6 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
@@ -67,19 +65,18 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.component.VJournal;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
-import net.fortuna.ical4j.model.parameter.XParameter;
 import net.fortuna.ical4j.model.property.Action;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Completed;
 import net.fortuna.ical4j.model.property.DateListProperty;
 import net.fortuna.ical4j.model.property.DateProperty;
 import net.fortuna.ical4j.model.property.DtStamp;
-import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Status;
 import net.fortuna.ical4j.model.property.Trigger;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.Location;
 
 /**
  * A component that converts iCalendar objects to entities and vice versa.
@@ -442,7 +439,8 @@ public class EntityConverter {
     }
 
     /**
-     * gets calendar from event stamp.
+     * Gets calendar from event stamp.
+     * 
      * @param stamp The event stamp.
      * @return The calendar.
      */
@@ -452,15 +450,15 @@ public class EntityConverter {
             return null;
         }
        
-        // the master calendar might not have any events; for
-        // instance, a client might be trying to save a VTODO
+        // the master calendar might not have any events; for instance, a client might be trying to save a VTODO
         if (masterCal.getComponents(Component.VEVENT).isEmpty()) {
             return masterCal;
         }
 
         VEvent masterEvent = (VEvent) masterCal.getComponents(Component.VEVENT).get(0);
         VAlarm masterAlarm = getDisplayAlarm(masterEvent);
-        String masterLocation = stamp.getLocation();
+        Location masterLocationProperty = masterEvent.getProperties().getProperty(Property.LOCATION);
+        String masterLocation = masterLocationProperty != null ? masterLocationProperty.getValue() : null;
         
         // build timezone map that includes all timezones in master calendar
         ComponentList<VTimeZone> timezones = masterCal.getComponents(Component.VTIMEZONE);
@@ -493,15 +491,13 @@ public class EntityConverter {
         // merge item properties to icalendar props
         mergeCalendarProperties(masterEvent, (NoteItem) stamp.getItem());
         
-        // bug 9606: handle displayAlarm with no trigger by not including
-        // in exported icalendar
+        // bug 9606: handle displayAlarm with no trigger by not including in exported icalendar
         if(masterAlarm!=null && stamp.getDisplayAlarmTrigger()==null) {
             masterEvent.getAlarms().remove(masterAlarm);
             masterAlarm = null;
         }
         
-        // If event is not recurring, skip all the event modification
-        // processing
+        // If event is not recurring, skip all the event modification processing
         if (!stamp.isRecurring()) {
             return masterCal;
         }
@@ -529,20 +525,8 @@ public class EntityConverter {
             
             // merge item properties to icalendar props
             mergeCalendarProperties(exceptionEvent, exception);
-          
-            // check for inherited anyTime
-            if(exceptionStamp.isAnyTime()==null) {
-                DtStart modDtStart = exceptionEvent.getStartDate();
-                // remove "missing" value
-                modDtStart.getParameters().remove(modDtStart.getParameter(ICalendarConstants.PARAM_X_OSAF_ANYTIME));
-                // add inherited value
-                if(stamp.isAnyTime()) {
-                    modDtStart.getParameters().add(getAnyTimeXParam());
-                }
-            }
-                
-            // Check for inherited displayAlarm, which is represented
-            // by a valarm with no TRIGGER
+              
+            // Check for inherited displayAlarm, which is represented by a valarm with no TRIGGER
             VAlarm displayAlarm = getDisplayAlarm(exceptionEvent);
             if(displayAlarm !=null && exceptionStamp.getDisplayAlarmTrigger()==null) {
                 exceptionEvent.getAlarms().remove(displayAlarm);
@@ -553,7 +537,9 @@ public class EntityConverter {
             
             // Check for inherited LOCATION which is represented as null LOCATION
             // If inherited, and master event has a LOCATION, then add it to exception
-            if(exceptionStamp.getLocation()==null && masterLocation!=null) {
+            Location exLocationProperty = exceptionEvent.getProperties().getProperty(Property.LOCATION);
+            String exceptionLocation = exLocationProperty != null ? exLocationProperty.getValue() : null;
+            if (exceptionLocation == null && masterLocation != null) {
                 ICalendarUtils.setLocation(masterLocation, exceptionEvent);
             }
             
@@ -750,14 +736,6 @@ public class EntityConverter {
         }
         
         return null;
-    }
-    
-    /**
-     * Gets any time x param.
-     * @return The parameter.
-     */
-    private Parameter getAnyTimeXParam() {
-        return new XParameter(ICalendarConstants.PARAM_X_OSAF_ANYTIME, ICalendarConstants.VALUE_TRUE);
     }
     
     /**
@@ -966,7 +944,7 @@ public class EntityConverter {
             exceptionStamp.getEventCalendar().getComponents().add(0, vtimezone);
         }
         
-        noteMod.setClientModifiedDate(new Date());
+        noteMod.setClientModifiedDate(System.currentTimeMillis());
         noteMod.setLastModifiedBy(noteMod.getModifies().getLastModifiedBy());
         noteMod.setLastModification(ContentItem.Action.EDITED);
         
@@ -982,7 +960,7 @@ public class EntityConverter {
         TriageStatus ts = entityFactory.createTriageStatus();
         TriageStatusUtil.initialize(ts);
 
-        item.setClientCreationDate(new Date());
+        item.setClientCreationDate(System.currentTimeMillis());
         item.setClientModifiedDate(item.getClientCreationDate());
         item.setTriageStatus(ts);
         item.setLastModification(ContentItem.Action.CREATED);
@@ -1014,8 +992,8 @@ public class EntityConverter {
         }
 
         // look for DTSTAMP
-        if(event.getDateStamp()!=null) {
-            note.setClientModifiedDate(event.getDateStamp().getDate());
+        if(event.getDateStamp() != null) {
+            note.setClientModifiedDate(event.getDateStamp().getDate().getTime());
         }
         
         // look for absolute VALARM
@@ -1024,7 +1002,7 @@ public class EntityConverter {
             Trigger trigger = va.getTrigger();
             Date reminderTime = trigger.getDateTime();
             if (reminderTime != null) {
-                note.setReminderTime(reminderTime);
+                note.setReminderTime(reminderTime.getTime());
             }
         }
 
@@ -1080,17 +1058,17 @@ public class EntityConverter {
 
         // look for DTSTAMP
         if (task.getDateStamp() != null) {
-            note.setClientModifiedDate(task.getDateStamp().getDate());
+            note.setClientModifiedDate(task.getDateStamp().getDate().getTime());
         }
 
         // look for absolute VALARM
         VAlarm va = ICalendarUtils.getDisplayAlarm(task);
-        if (va != null && va.getTrigger()!=null) {
+        if (va != null && va.getTrigger() != null) {
             Trigger trigger = va.getTrigger();
             Date reminderTime = trigger.getDateTime();
-           if (reminderTime != null) {
-                note.setReminderTime(reminderTime);
-           }
+            if (reminderTime != null) {
+                note.setReminderTime(reminderTime.getTime());
+            }
         }
         
         // look for COMPLETED or STATUS:COMPLETED
@@ -1153,7 +1131,7 @@ public class EntityConverter {
 
         // look for DTSTAMP
         if (journal.getDateStamp() != null) {
-            note.setClientModifiedDate(journal.getDateStamp().getDate());
+            note.setClientModifiedDate(journal.getDateStamp().getDate().getTime());
         }
     }
     
@@ -1170,7 +1148,7 @@ public class EntityConverter {
         
         // look for DTSTAMP
         if (vfb.getDateStamp() != null) {
-            freeBusy.setClientModifiedDate(vfb.getDateStamp().getDate());
+            freeBusy.setClientModifiedDate(vfb.getDateStamp().getDate().getTime());
         }
     }
     

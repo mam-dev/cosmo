@@ -16,7 +16,6 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -41,13 +40,13 @@ public class AuditableObjectInterceptor extends EmptyInterceptor {
         // Set new modifyDate so that calculateEntityTag()
         // has access to it
         HibAuditableObject ao = (HibAuditableObject) object;
-        Date curDate = new Date(System.currentTimeMillis());
-        ao.setModifiedDate(curDate);
+        Long currentTime = System.currentTimeMillis();
+        ao.setModifiedDate(currentTime);
         
         // update modifiedDate and entityTag
         for ( int i=0; i < propertyNames.length; i++ ) {
             if ( "modifiedDate".equals( propertyNames[i] ) ) {
-                currentState[i] = curDate;
+                currentState[i] = currentTime;
             } else if("etag".equals( propertyNames[i] )) {
                 currentState[i] = ao.calculateEntityTag();
             }
@@ -65,14 +64,14 @@ public class AuditableObjectInterceptor extends EmptyInterceptor {
         // Set new modifyDate so that calculateEntityTag()
         // has access to it
         HibAuditableObject ao = (HibAuditableObject) object;
-        Date curDate = new Date(System.currentTimeMillis());
-        ao.setModifiedDate(curDate);
+        Long currentTime = System.currentTimeMillis();
+        ao.setModifiedDate(currentTime);
         
         // initialize modifiedDate, creationDate and entityTag
         for ( int i=0; i < propertyNames.length; i++ ) {
             if ( "creationDate".equals(propertyNames[i]) ||
                   "modifiedDate".equals(propertyNames[i]) ) {
-                state[i] = curDate;
+                state[i] = currentTime;
             } else if("etag".equals( propertyNames[i] )) {
                 state[i] = ao.calculateEntityTag();
             }

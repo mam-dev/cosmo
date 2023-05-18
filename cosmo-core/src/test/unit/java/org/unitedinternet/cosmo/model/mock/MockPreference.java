@@ -125,7 +125,7 @@ public class MockPreference extends MockAuditableObject implements Preference {
             getUser().getUid() : "-";
         String key = getKey() != null ? getKey() : "-";
         String modTime = getModifiedDate() != null ?
-            Long.valueOf(getModifiedDate().getTime()).toString() : "-";
+            Long.valueOf(getModifiedDate()).toString() : "-";
         String etag = uid + ":" + key + ":" + modTime;
         return encodeEntityTag(etag.getBytes());
     }

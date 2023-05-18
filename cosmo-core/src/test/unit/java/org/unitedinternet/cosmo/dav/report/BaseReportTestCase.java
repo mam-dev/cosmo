@@ -15,6 +15,8 @@
  */
 package org.unitedinternet.cosmo.dav.report;
 
+import java.io.InputStream;
+
 import org.apache.jackrabbit.webdav.version.report.ReportInfo;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
@@ -56,7 +58,7 @@ public abstract class BaseReportTestCase extends BaseDavTestCase {
      * @throws Exception - if something is wrong this exception is thrown.
      */
     protected ReportBase makeReport(@SuppressWarnings("rawtypes") Class clazz,
-                                    String reportXml,
+                                    InputStream reportXml,
                                     int depth,
                                     WebDavResource target)
         throws Exception {
@@ -72,8 +74,7 @@ public abstract class BaseReportTestCase extends BaseDavTestCase {
      * @return The report info.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    protected ReportInfo makeReportInfo(String reportXml,
-                                        int depth)
+    protected ReportInfo makeReportInfo(InputStream reportXml, int depth)
         throws Exception {
         Document doc = testHelper.loadXml(reportXml);
         return new ReportInfo(doc.getDocumentElement(), depth);

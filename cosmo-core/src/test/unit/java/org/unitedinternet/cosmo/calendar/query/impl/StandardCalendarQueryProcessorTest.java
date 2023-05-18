@@ -126,7 +126,7 @@ public class StandardCalendarQueryProcessorTest {
         
         Period fbRange = new Period(start, end);
         
-        Calendar calendar = CalendarUtils.parseCalendar(testHelper.getBytes("allday_weekly_recurring.ics"));
+        Calendar calendar = CalendarUtils.parseCalendar(this.getClass().getResourceAsStream(("allday_weekly_recurring.ics")));
         
         // test several timezones
         TimeZone tz = TIMEZONE_REGISTRY.getTimeZone("America/Chicago");
@@ -232,7 +232,7 @@ public class StandardCalendarQueryProcessorTest {
        
         EventStamp evs = factory.createEventStamp(event);
         event.addStamp(evs);
-        evs.setEventCalendar(CalendarUtils.parseCalendar(testHelper.getBytes(file)));
+        evs.setEventCalendar(CalendarUtils.parseCalendar(this.getClass().getResourceAsStream(file)));
        
         return event;
     }
@@ -251,7 +251,7 @@ public class StandardCalendarQueryProcessorTest {
         fb.setName(name);
         fb.setDisplayName(name);
         fb.setOwner(owner);
-        fb.setFreeBusyCalendar(CalendarUtils.parseCalendar(testHelper.getBytes(file)));
+        fb.setFreeBusyCalendar(CalendarUtils.parseCalendar(this.getClass().getResourceAsStream(file)));
         
         return fb;
     }

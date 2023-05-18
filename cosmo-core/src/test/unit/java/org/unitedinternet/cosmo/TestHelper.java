@@ -15,11 +15,8 @@
  */
 package org.unitedinternet.cosmo;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 import java.security.Principal;
 import java.time.Duration;
 import java.util.HashSet;
@@ -28,7 +25,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Disabled;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
@@ -46,7 +42,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Property;
@@ -357,24 +352,11 @@ public class TestHelper {
      * @throws SAXException - if something is wrong this exception is thrown.
      * @throws ParserConfigurationException - if something is wrong this exception is thrown.
      */
-    public Document loadXml(String name) throws SAXException,
+    public Document loadXml(InputStream resource) throws SAXException,
             ParserConfigurationException, IOException {
-        InputStream in = getInputStream(name);
         BUILDER_FACTORY.setNamespaceAware(true);
         DocumentBuilder docBuilder = BUILDER_FACTORY.newDocumentBuilder();
-        return docBuilder.parse(in);
-    }
-    
-    /**
-     * Loads ics.
-     * @param name The name.
-     * @return The calendar.
-     * @throws IOException - if something is wrong this exception is thrown.
-     * @throws ParserException - if something is wrong this exception is thrown.
-     */
-    public Calendar loadIcs(String name) throws IOException, ParserException{
-        InputStream in = getInputStream(name);
-        return calendarBuilder.build(in);
+        return docBuilder.parse(resource);
     }
 
     /**
@@ -493,36 +475,6 @@ public class TestHelper {
             throw new IllegalStateException("resource " + name + " not found");
         }
         return in;
-    }
-    
-    /**
-     * Gets bytes.
-     * @param name The name.
-     * @return The bytes.
-     * @throws IOException - if something is wrong this exception is thrown.
-     */
-    public byte[] getBytes(String name) throws IOException {
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
-        if (in == null) {
-            throw new IllegalStateException("resource " + name + " not found");
-        }
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOUtils.copy(in, bos);
-        return bos.toByteArray();
-    }
-
-    /**
-     * Gets reader.
-     * @param name The name.
-     * @return The reader.
-     */
-    public Reader getReader(String name) {
-        try {
-            byte[] buf = IOUtils.toByteArray(getInputStream(name));
-            return new StringReader(new String(buf));
-        } catch (IOException e) {
-            throw new CosmoIOException("error converting input stream to reader", e);
-        }
     }
 
     /**

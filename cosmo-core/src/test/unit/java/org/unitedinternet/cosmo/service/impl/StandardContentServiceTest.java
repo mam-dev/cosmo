@@ -15,20 +15,19 @@
  */
 package org.unitedinternet.cosmo.service.impl;
 
-import java.io.FileInputStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+import org.junit.jupiter.api.Test;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
@@ -71,8 +70,6 @@ public class StandardContentServiceTest {
     private MockDaoStorage storage;
     private SingleVMLockManager lockManager;
     private TestHelper testHelper;
-    
-    protected String baseDir = "src/test/unit/resources/testdata/";
 
     /**
      * Set up.
@@ -573,15 +570,12 @@ public class StandardContentServiceTest {
     
     /**
      * Gets calendar.
-     * @param filename The file name.
+     * @param resourceName The file name.
      * @return The calendar.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    private Calendar getCalendar(String filename) throws Exception {
-        CalendarBuilder cb = new CalendarBuilder();
-        FileInputStream fis = new FileInputStream(baseDir + filename);
-        Calendar calendar = cb.build(fis);
-        return calendar;
+    private Calendar getCalendar(String resourceName) throws Exception {
+        return new CalendarBuilder().build(this.getClass().getResourceAsStream(resourceName));        
     }
     
     /**

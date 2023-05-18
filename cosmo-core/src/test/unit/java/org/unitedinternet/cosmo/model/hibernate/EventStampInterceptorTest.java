@@ -15,21 +15,23 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.unitedinternet.cosmo.calendar.ICalendarUtils.createBaseCalendar;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.RRule;
 
 /**
  * Test EventStampHandler
@@ -37,8 +39,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 public class EventStampInterceptorTest {
    
     EventStampInterceptor interceptor = new EventStampInterceptor();
-    TimeZoneRegistry registry =
-        TimeZoneRegistryFactory.getInstance().createRegistry();
+    TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
     
     /**
      * Tests event stamp handler.
@@ -49,9 +50,11 @@ public class EventStampInterceptorTest {
         
         HibNoteItem master = new HibNoteItem();
         HibEventStamp eventStamp = new HibEventStamp(master);
-        eventStamp.createCalendar();
-        eventStamp.setStartDate(new DateTime("20070212T074500"));
-        eventStamp.setEndDate(new DateTime("20070212T094500"));
+        VEvent vEvent = new VEvent(); 
+        Calendar calendar = createBaseCalendar(vEvent);
+        vEvent.getProperties().add(new DtStart(new DateTime("20070212T074500")));
+        vEvent.getProperties().add(new DtEnd(new DateTime("20070212T094500")));
+        eventStamp.setEventCalendar(calendar);
         master.addStamp(eventStamp);
         
         HibEventTimeRangeIndex index = interceptor.calculateEventStampIndexes(eventStamp);
@@ -62,26 +65,13 @@ public class EventStampInterceptorTest {
         
         TimeZone ctz = registry.getTimeZone("America/Chicago");
         DateTime start = new DateTime("20070212T074500", ctz);
-        eventStamp.setStartDate(start);
-        
+        vEvent.getStartDate().setDate(start);
         DateTime end = new DateTime("20070212T094500", ctz);
-        eventStamp.setEndDate(end);
+        vEvent.getEndDate().setDate(end);
         
-        String recur1 = "FREQ=DAILY;";
+        vEvent.getProperties().add(new RRule("FREQ=DAILY;"));
+        eventStamp.setEventCalendar(calendar);
         
-        ArrayList<Recur> recursList = new ArrayList<Recur>();
-        if (recur1 != null) {
-            for (String s : recur1.split(":")) {
-                try {
-                    recursList.add(new Recur(s));
-                } catch (ParseException e) {
-                   
-                }
-            }
-        }
-        
-		List<Recur> recurs = recursList;
-        eventStamp.setRecurrenceRules(recurs);
         
         index = interceptor.calculateEventStampIndexes(eventStamp);
         
@@ -99,9 +89,11 @@ public class EventStampInterceptorTest {
         
         HibNoteItem master = new HibNoteItem();
         HibEventStamp eventStamp = new HibEventStamp(master);
-        eventStamp.createCalendar();
-        eventStamp.setStartDate(new Date("20070212"));
-        eventStamp.setEndDate(new Date("20070213"));
+        VEvent vEvent = new VEvent(); 
+        Calendar calendar = createBaseCalendar(vEvent);
+        vEvent.getProperties().add(new DtStart(new Date("20070212")));
+        vEvent.getProperties().add(new DtEnd(new Date("20070213")));
+        eventStamp.setEventCalendar(calendar);
         master.addStamp(eventStamp);
         
         HibEventTimeRangeIndex index = interceptor.calculateEventStampIndexes(eventStamp);
@@ -110,21 +102,8 @@ public class EventStampInterceptorTest {
         assertEquals("20070213", index.getEndDate());
         assertTrue(index.getIsFloating().booleanValue());
       
-        String recur1 = "FREQ=DAILY;";
-        
-        ArrayList<Recur> recursList = new ArrayList<Recur>();
-        if (recur1 != null) {
-            for (String s : recur1.split(":")) {
-                try {
-                    recursList.add(new Recur(s));
-                } catch (ParseException e) {
-                   
-                }
-            }
-        }
-        
-        List<Recur> recurs = recursList;
-        eventStamp.setRecurrenceRules(recurs);
+        vEvent.getProperties().add(new RRule("FREQ=DAILY;"));
+        eventStamp.setEventCalendar(calendar);
         
         index = interceptor.calculateEventStampIndexes(eventStamp);
         
@@ -142,17 +121,22 @@ public class EventStampInterceptorTest {
         
         HibNoteItem master = new HibNoteItem();
         HibEventStamp eventStamp = new HibEventStamp(master);
-        eventStamp.createCalendar();
-        eventStamp.setStartDate(new DateTime("20070212T074500"));
-        eventStamp.setEndDate(new DateTime("20070212T094500"));
+        VEvent vEvent = new VEvent(); 
+        Calendar calendar = createBaseCalendar(vEvent);
+        vEvent.getProperties().add(new DtStart(new DateTime("20070212T074500")));
+        vEvent.getProperties().add(new DtEnd(new DateTime("20070212T094500")));
+        eventStamp.setEventCalendar(calendar);
         master.addStamp(eventStamp);
         
         HibNoteItem mod = new HibNoteItem();
         mod.setModifies(master);
         HibEventExceptionStamp eventExceptionStamp = new HibEventExceptionStamp(mod);
-        eventExceptionStamp.createCalendar();
-        eventExceptionStamp.setStartDate(new DateTime("20070213T084500"));
-       
+        
+        VEvent vEventCopy = new VEvent(); 
+        Calendar calendarCopy = createBaseCalendar(vEventCopy);
+        vEventCopy.getProperties().add(new DtStart(new DateTime("20070213T084500")));
+        eventExceptionStamp.setEventCalendar(calendarCopy);
+        
         mod.addStamp(eventStamp);
         
         HibEventTimeRangeIndex index = interceptor.calculateEventStampIndexes(eventExceptionStamp);

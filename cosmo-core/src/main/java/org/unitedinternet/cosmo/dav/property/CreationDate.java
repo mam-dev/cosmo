@@ -31,23 +31,21 @@ public class CreationDate extends StandardDavProperty {
         @Override
         protected DateFormat initialValue() {
             return new HttpDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        }
-        
-        
+        }                
     };
     
-    public CreationDate(Date date) {
-        super(DavPropertyName.CREATIONDATE, dateToString(date), false);
+    public CreationDate(Long timestamp) {
+        super(DavPropertyName.CREATIONDATE, dateToString(timestamp), false);
     }
 
-    private static String dateToString(Date date) {
+    private static String dateToString(Long timestamp) {
         // need one DateFormat instance per thread
         DateFormat df = dateFormatLocal.get();
         
-        if (date == null) {
-            date = new Date();
+        if (timestamp == null) {
+            timestamp = System.currentTimeMillis();
         }
         
-        return df.format(date);
+        return df.format(new Date(timestamp));
     }
 }

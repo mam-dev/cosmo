@@ -1164,9 +1164,9 @@ public class InstanceListTest {
      * @return The calendar.
      * @throws Exception - if something is wrong this exception is thrown.
      */
-    protected Calendar getCalendar(String name) throws Exception {
+    private Calendar getCalendar(String name) throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        InputStream in = getClass().getClassLoader().getResourceAsStream("instancelist/" + name);
+        InputStream in = this.getClass().getResourceAsStream("instancelist/" + name);
         if (in == null) {
             throw new IllegalStateException("resource " + name + " not found");
         }

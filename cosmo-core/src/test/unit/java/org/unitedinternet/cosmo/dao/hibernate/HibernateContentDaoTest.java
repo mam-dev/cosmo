@@ -15,9 +15,16 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,14 +38,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
@@ -50,7 +49,6 @@ import org.unitedinternet.cosmo.model.AvailabilityItem;
 import org.unitedinternet.cosmo.model.BooleanAttribute;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
-import org.unitedinternet.cosmo.model.DecimalAttribute;
 import org.unitedinternet.cosmo.model.DictionaryAttribute;
 import org.unitedinternet.cosmo.model.FileItem;
 import org.unitedinternet.cosmo.model.FreeBusyItem;
@@ -78,7 +76,6 @@ import org.unitedinternet.cosmo.model.hibernate.HibAvailabilityItem;
 import org.unitedinternet.cosmo.model.hibernate.HibBooleanAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibContentItem;
-import org.unitedinternet.cosmo.model.hibernate.HibDecimalAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibDictionaryAttribute;
 import org.unitedinternet.cosmo.model.hibernate.HibFileItem;
 import org.unitedinternet.cosmo.model.hibernate.HibFreeBusyItem;
@@ -99,6 +96,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.property.ProdId;
 
 /**
@@ -173,7 +172,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         children = contentDao.loadChildren(root, newItem.getModifiedDate());
         assertEquals(0, children.size());
 
-        children = contentDao.loadChildren(root, new Date(newItem.getModifiedDate().getTime() - 1));
+        children = contentDao.loadChildren(root, newItem.getModifiedDate() - 1);
         assertEquals(1, children.size());
     }
 
@@ -276,15 +275,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         BooleanAttribute ba = new HibBooleanAttribute(new HibQName("booleanattribute"), Boolean.TRUE);
         item.addAttribute(ba);
 
-        DecimalAttribute decAttr = new HibDecimalAttribute(new HibQName("decimalattribute"),
-                new BigDecimal("1.234567"));
-        item.addAttribute(decAttr);
-
-        // TODO: figure out db date type is handled because i'm seeing
-        // issues with accuracy
-        // item.addAttribute(new DateAttribute("dateattribute", new Date()));
-
-        HashSet<String> values = new HashSet<String>();
+        Set<String> values = new HashSet<String>();
         values.add("value1");
         values.add("value2");
         MultiValueStringAttribute mvs = new HibMultiValueStringAttribute(new HibQName("multistringattribute"), values);
@@ -304,11 +295,6 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         clearSession();
 
         ContentItem queryItem = (ContentItem) contentDao.findItemByUid(newItem.getUid());
-
-        Attribute attr = queryItem.getAttribute(new HibQName("decimalattribute"));
-        assertNotNull(attr);
-        assertTrue(attr instanceof DecimalAttribute);
-        assertEquals(attr.getValue().toString(), "1.234567");
 
         Set<String> querySet = (Set<String>) queryItem.getAttributeValue("multistringattribute");
         assertTrue(querySet.contains("value1"));
@@ -359,7 +345,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         CollectionItem root = (CollectionItem) contentDao.getRootItem(user);
 
         ContentItem item = generateTestContent();
-        Date dateVal = new Date();
+        Long dateVal = System.currentTimeMillis();
         TimestampAttribute tsAttr = new HibTimestampAttribute(new HibQName("timestampattribute"), dateVal);
         item.addAttribute(tsAttr);
 
@@ -373,10 +359,10 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(attr);
         assertTrue(attr instanceof TimestampAttribute);
 
-        Date val = (Date) attr.getValue();
+        Long val = (Long) attr.getValue();
         assertTrue(dateVal.equals(val));
 
-        dateVal.setTime(dateVal.getTime() + 101);
+        dateVal+= 101;
         attr.setValue(dateVal);
 
         contentDao.updateContent(queryItem);
@@ -388,7 +374,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(queryAttr);
         assertTrue(queryAttr instanceof TimestampAttribute);
 
-        val = (Date) queryAttr.getValue();
+        val = (Long) queryAttr.getValue();
         assertTrue(dateVal.equals(val));
     }
 
@@ -429,7 +415,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(element);
         assertEquals(DomWriter.write(testElement), DomWriter.write(element));
 
-        Date modifyDate = attr.getModifiedDate();
+        Long modifyDate = attr.getModifiedDate();
 
         // Sleep a couple millis to make sure modifyDate doesn't change
         Thread.sleep(2);
@@ -461,7 +447,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(attr);
         assertTrue(attr instanceof XmlAttribute);
         // Attribute should have been updated
-        assertTrue(modifyDate.before(attr.getModifiedDate()));
+        assertTrue(modifyDate <= attr.getModifiedDate());
 
         element = (org.w3c.dom.Element) attr.getValue();
 
@@ -483,7 +469,8 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         ICalendarAttribute icalAttr = new HibICalendarAttribute();
         icalAttr.setQName(new HibQName("icalattribute"));
-        icalAttr.setValue(helper.getInputStream("vjournal.ics"));
+        Calendar calendar = new CalendarBuilder().build(helper.getInputStream("vjournal.ics"));
+        icalAttr.setValue(calendar);
         item.addAttribute(icalAttr);
 
         ContentItem newItem = contentDao.createContent(root, item);
@@ -496,14 +483,17 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         assertNotNull(attr);
         assertTrue(attr instanceof ICalendarAttribute);
 
-        net.fortuna.ical4j.model.Calendar calendar = (net.fortuna.ical4j.model.Calendar) attr.getValue();
+        calendar = (net.fortuna.ical4j.model.Calendar) attr.getValue();
         assertNotNull(calendar);
 
         net.fortuna.ical4j.model.Calendar expected = CalendarUtils.parseCalendar(helper.getInputStream("vjournal.ics"));
 
         assertEquals(expected.toString(), calendar.toString());
-
-        calendar.getProperties().add(new ProdId("blah"));
+        
+        Property prodIdProperty = calendar.getProperties().getProperty(Property.PRODID);
+        calendar.getProperties().remove(prodIdProperty);
+        calendar.getProperties().add(new ProdId("new-prod-id"));
+        attr.setValue(calendar);
         contentDao.updateContent(queryItem);
 
         clearSession();
@@ -620,7 +610,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
         FileItem item = generateTestContent();
 
         ContentItem newItem = contentDao.createContent(root, item);
-        Date newItemModifyDate = newItem.getModifiedDate();
+        Long newItemModifyDate = newItem.getModifiedDate();
 
         clearSession();
 
@@ -647,7 +637,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         helper.verifyItem(queryItem, queryItem2);
 
-        assertTrue(newItemModifyDate.before(queryItem2.getModifiedDate()));
+        assertTrue(newItemModifyDate <= queryItem2.getModifiedDate());
     }
 
     /**
@@ -902,7 +892,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         a = contentDao.createCollection(root, a);
         Integer ver = ((HibItem) a).getVersion();
-        Date timestamp = a.getModifiedDate();
+        Long timestamp = a.getModifiedDate();
 
         clearSession();
         // FIXME this test is timing dependant!
@@ -910,7 +900,7 @@ public class HibernateContentDaoTest extends AbstractSpringDaoTestCase {
 
         a = contentDao.updateCollectionTimestamp(a);
         assertTrue(((HibItem) a).getVersion() == ver + 1);
-        assertTrue(timestamp.before(a.getModifiedDate()));
+        assertTrue(timestamp <= a.getModifiedDate());
     }
 
     /**

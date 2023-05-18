@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>3.9.1-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>	
@@ -245,28 +245,12 @@
 		<testResources>
 			<testResource>
 				<directory>src/test/unit/resources</directory>
+				<filtering>false</filtering>
 				<includes>
-					<include>logback.xml</include>
-					<include>etc/cosmo.properties</include>
-					<include>applicationContext-*.xml</include>
-					<include>application-*.yaml</include>
+					<include>**/*</include>				
 				</includes>
 			</testResource>
-			<testResource>
-				<directory>src/test/unit/resources/dav/caldav</directory>
-				<includes>
-					<include>*.ics</include>
-				</includes>
-			</testResource>
-			<testResource>
-				<directory>src/test/unit/resources/icalendar</directory>
-				<includes>
-					<include>*.ics</include>
-				</includes>
-			</testResource>
-			<testResource>
-				<directory>src/test/unit/resources/testdata</directory>
-			</testResource>
+			
 		</testResources>
 		
 	</build>	

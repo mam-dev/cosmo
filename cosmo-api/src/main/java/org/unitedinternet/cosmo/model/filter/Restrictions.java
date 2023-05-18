@@ -16,7 +16,7 @@
 package org.unitedinternet.cosmo.model.filter;
 
 /**
- * Provides convienent FilterCriteria 
+ * Provides convenient FilterCriteria 
  *
  */
 public class Restrictions {

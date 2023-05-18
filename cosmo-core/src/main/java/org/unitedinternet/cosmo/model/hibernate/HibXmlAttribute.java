@@ -15,16 +15,23 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
+import java.io.IOException;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
-import org.hibernate.annotations.Type;
+import org.unitedinternet.cosmo.CosmoIOException;
+import org.unitedinternet.cosmo.CosmoParseException;
+import org.unitedinternet.cosmo.CosmoXMLStreamException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.Attribute;
-import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.XmlAttribute;
+import org.unitedinternet.cosmo.util.DomReader;
+import org.unitedinternet.cosmo.util.DomWriter;
 import org.w3c.dom.Element;
 
 /**
@@ -37,43 +44,55 @@ public class HibXmlAttribute extends HibAttribute implements XmlAttribute {
     private static final long serialVersionUID = -6431240722450099152L;
 
     @Column(name = "textvalue", length = 2147483647)
-    @Type(type = "xml_clob")
-    private Element value;
+    private String textValue;
 
     public HibXmlAttribute() {
+
     }
 
-    public HibXmlAttribute(QName qname, Element value) {
-        setQName(qname);
-        this.value = value;
+    public HibXmlAttribute(QName qName, Element element) {
+        setQName(qName);
+        setValue(element);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.Attribute#getValue()
-     */
+    public String getTextValue() {
+        return textValue;
+    }
+
+    public void setTextValue(String textValue) {
+        from(textValue);
+        this.textValue = textValue;
+    }
+
+    private static Element from(String value) {
+        try {
+            return (Element) DomReader.read(value);
+        } catch (ParserConfigurationException e) {
+            throw new CosmoParseException(e);
+        } catch (XMLStreamException e) {
+            throw new CosmoXMLStreamException(e);
+        } catch (IOException e) {
+            throw new CosmoIOException(e);
+        }
+    }
+
+    @Override
     public Element getValue() {
-        return this.value;
+        return from(this.textValue);
     }
 
-    public Attribute copy() {
-        XmlAttribute attr = new HibXmlAttribute();
-        attr.setQName(getQName().copy());
-        Element clone = value != null ? (Element) value.cloneNode(true) : null;
-        attr.setValue(clone);
-        return attr;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.XmlAttribute#setValue(org.w3c.dom.Element)
-     */
+    @Override
     public void setValue(Element value) {
-        this.value = value;
+        try {
+            this.textValue = DomWriter.write(value);
+        } catch (XMLStreamException e) {
+            throw new CosmoXMLStreamException(e);
+        } catch (IOException e) {
+            throw new CosmoIOException(e);
+        }
     }
-
+    
+    @Override
     public void setValue(Object value) {
         if (value != null && !(value instanceof Element)) {
             throw new ModelValidationException("attempted to set non-Element value");
@@ -81,41 +100,11 @@ public class HibXmlAttribute extends HibAttribute implements XmlAttribute {
         setValue((Element) value);
     }
 
-    /**
-     * Convienence method for returning a Element value on an XmlAttribute with a given QName stored on the given item.
-     * 
-     * @param item  item to fetch XmlAttribute from
-     * @param qname QName of attribute
-     * @return Long value of XmlAttribute
-     */
-    public static Element getValue(Item item, QName qname) {
-        XmlAttribute xa = (XmlAttribute) item.getAttribute(qname);
-        if (xa == null) {
-            return null;
-        } else {
-            return xa.getValue();
-        }
-    }
-
-    /**
-     * Convienence method for setting a Elementvalue on an XmlAttribute with a given QName stored on the given item.
-     * 
-     * @param item  item to fetch Xmlttribute from
-     * @param qname QName of attribute
-     * @param value value to set on XmlAttribute
-     */
-    public static void setValue(Item item, QName qname, Element value) {
-        XmlAttribute attr = (XmlAttribute) item.getAttribute(qname);
-        if (attr == null && value != null) {
-            attr = new HibXmlAttribute(qname, value);
-            item.addAttribute(attr);
-            return;
-        }
-        if (value == null) {
-            item.removeAttribute(qname);
-        } else {
-            attr.setValue(value);
-        }
+    public Attribute copy() {
+        HibXmlAttribute attr = new HibXmlAttribute();
+        attr.setQName(getQName().copy());
+        attr.setTextValue(this.textValue);
+        return attr;
     }
 
     @Override

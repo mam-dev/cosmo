@@ -15,29 +15,15 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.io.InputStream;
-
 import net.fortuna.ical4j.model.Calendar;
 
 /**
  * Attribute that stores an icalendar (.ics) value.
  */
-public interface ICalendarAttribute extends Attribute{
+public interface ICalendarAttribute extends Attribute {
 
     public Calendar getValue();
 
     public void setValue(Calendar value);
-
-    /**
-     * Set Calendar value with string
-     * @param calendar string
-     */
-    public void setValue(String value);
-
-    /**
-     * Set Calendar value with inputstream
-     * @param calendar string
-     */
-    public void setValue(InputStream is);
 
 }

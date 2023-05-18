@@ -115,6 +115,6 @@ public abstract class MockStamp extends MockAuditableObject implements
      * Updates timestamp.
      */
     public void updateTimestamp() {
-        setModifiedDate(new Date());
+        setModifiedDate(System.currentTimeMillis());
     }
 }

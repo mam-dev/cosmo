@@ -206,7 +206,7 @@ public class RecurrenceExpanderTest {
      */
     protected Calendar getCalendar(String name) throws Exception {
         CalendarBuilder cb = new CalendarBuilder();
-        InputStream in = getClass().getClassLoader().getResourceAsStream("expander/" + name);
+        InputStream in = getClass().getResourceAsStream("expander/" + name);
         if (in == null) {
             throw new IllegalStateException("resource " + name + " not found");
         }        

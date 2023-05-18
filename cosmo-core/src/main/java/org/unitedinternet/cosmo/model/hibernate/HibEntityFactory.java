@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
@@ -26,7 +25,6 @@ import org.unitedinternet.cosmo.model.BinaryAttribute;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
-import org.unitedinternet.cosmo.model.DecimalAttribute;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
 import org.unitedinternet.cosmo.model.EventStamp;
@@ -106,10 +104,6 @@ public class HibEntityFactory implements EntityFactory {
 
     public CollectionSubscription createCollectionSubscription() {
         return new HibCollectionSubscription();
-    }
-
-    public DecimalAttribute createDecimalAttribute(QName qname, BigDecimal bd) {
-        return new HibDecimalAttribute(qname, bd);
     }
 
     public EventExceptionStamp createEventExceptionStamp(NoteItem note) {
