@@ -33,8 +33,8 @@
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<spring.boot.version>2.2.6.RELEASE</spring.boot.version>
-		<org.springframework.security.version>5.1.6.RELEASE</org.springframework.security.version>	
+		<spring.boot.version>2.5.15</spring.boot.version>
+		<org.springframework.security.version>5.3.13.RELEASE</org.springframework.security.version>
 		<hibernate-validator.version>6.0.19.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>

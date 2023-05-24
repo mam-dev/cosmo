@@ -52,8 +52,6 @@ server:
 spring:
   application:
     name: cosmo-webapp
-  profiles:
-    active: local
   datasource:
     url: jdbc:mysql://localhost:33060/test?autoReconnect=true
     username: root
