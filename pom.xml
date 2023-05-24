@@ -27,8 +27,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
 			
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,6 +63,7 @@
 		<cpd.skip>true</cpd.skip>
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+		<jacoco.skip>true</jacoco.skip>
 		
 	</properties>
 
@@ -322,27 +323,6 @@
 			</plugin>
 			
 			
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<haltOnFailure>false</haltOnFailure>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			
 		</plugins>
 	</build>
