@@ -78,6 +78,9 @@ public class HibXmlAttribute extends HibAttribute implements XmlAttribute {
 
     @Override
     public Element getValue() {
+        if (this.textValue == null) {
+            return null;
+        }
         return from(this.textValue);
     }
 
