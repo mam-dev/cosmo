@@ -18,7 +18,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>4.0.2-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -27,14 +27,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
 			
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<spring.boot.version>2.2.6.RELEASE</spring.boot.version>
-		<org.springframework.security.version>5.1.6.RELEASE</org.springframework.security.version>	
+		<spring.boot.version>2.5.15</spring.boot.version>
+		<org.springframework.security.version>5.3.13.RELEASE</org.springframework.security.version>
 		<hibernate-validator.version>6.0.19.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
@@ -63,6 +63,7 @@
 		<cpd.skip>true</cpd.skip>
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+		<jacoco.skip>true</jacoco.skip>
 		
 	</properties>
 
@@ -183,6 +184,12 @@
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
 				<version>${xerces.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>xml-apis</artifactId>
+						<groupId>xml-apis</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- OTHER -->
@@ -322,27 +329,6 @@
 			</plugin>
 			
 			
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<haltOnFailure>false</haltOnFailure>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			
 		</plugins>
 	</build>
