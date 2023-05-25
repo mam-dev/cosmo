@@ -58,6 +58,7 @@
 		
 		<!-- Overwrite for java 17 -->
 		<spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
+		<maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
 		
 		<!-- Deactivate checkstyle, findbugs, jacoco and pmd -->
 		<checkstyle.skip>true</checkstyle.skip>
