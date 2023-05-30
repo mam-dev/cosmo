@@ -69,7 +69,7 @@ spring:
       maximum-pool-size: 10
   jpa:        
     properties:
-     hibernate.dialect: org.unitedinternet.cosmo.hibernate.CosmoMySQL5InnoDBDialect     
+     hibernate.dialect: org.hibernate.dialect.MariaDB103Dialect     
      hibernate.cache.use_query_cache: false
      hibernate.cache.use_second_level_cache: false
      hibernate.show_sql: false

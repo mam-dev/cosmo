@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>cosmo-multimodule</artifactId>
 		<groupId>net.oneandone.cosmo</groupId>
-		<version>3.7.4</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>net.oneandone.cosmo</groupId>
 			<artifactId>cosmo-core</artifactId>
-			<version>3.7.4</version>
+			<version>5.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -48,17 +48,19 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<finalName>cosmo</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version>
 				<configuration>
 					<configuration>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
