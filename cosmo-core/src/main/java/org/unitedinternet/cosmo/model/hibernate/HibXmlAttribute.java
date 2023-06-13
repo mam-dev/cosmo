@@ -70,6 +70,14 @@ public class HibXmlAttribute extends HibAttribute implements XmlAttribute {
         } catch (ParserConfigurationException e) {
             throw new CosmoParseException(e);
         } catch (XMLStreamException e) {
+            /*
+             * Apple PROPFIND request is broken <E:calendar-color xmlns:E="http://apple.com/ns/ical/"
+             * xmlns:E="http://apple.com/ns/ical/">#711A76FF</E:calendar-color>
+             */
+            if (e.getMessage().contains("Duplicate declaration for namespace prefix")
+                    || e.getMessage().contains("was already specified for element")) {
+                return null;
+            }
             throw new CosmoXMLStreamException(e);
         } catch (IOException e) {
             throw new CosmoIOException(e);
