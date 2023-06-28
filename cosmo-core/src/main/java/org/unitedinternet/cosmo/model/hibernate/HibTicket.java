@@ -67,7 +67,6 @@ public class HibTicket extends HibAuditableObject implements Comparable<Ticket>,
     private Set<String> privileges;
     
     @Column(name = "creationdate")
-    @org.hibernate.annotations.Type(type="timestamp")
     private Date created;
     
     @ManyToOne(targetEntity=HibUser.class, fetch = FetchType.LAZY)
