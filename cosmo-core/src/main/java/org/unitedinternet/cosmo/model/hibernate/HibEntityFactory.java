@@ -15,13 +15,11 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.io.InputStream;
 import java.io.Reader;
 
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.dao.external.UuidExternalGenerator;
 import org.unitedinternet.cosmo.model.AvailabilityItem;
-import org.unitedinternet.cosmo.model.BinaryAttribute;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionSubscription;
@@ -88,14 +86,6 @@ public class HibEntityFactory implements EntityFactory {
 
     public AvailabilityItem createAvailability() {
         return new HibAvailabilityItem();
-    }
-
-    public BinaryAttribute createBinaryAttribute(QName qname, byte[] bytes) {
-        return new HibBinaryAttribute(qname, bytes);
-    }
-
-    public BinaryAttribute createBinaryAttribute(QName qname, InputStream is) {
-        return new HibBinaryAttribute(qname, is);
     }
 
     public CalendarCollectionStamp createCalendarCollectionStamp(CollectionItem col) {

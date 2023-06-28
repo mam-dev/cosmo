@@ -15,9 +15,6 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -31,7 +28,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.model.PasswordRecovery;
 import org.unitedinternet.cosmo.model.User;
 
@@ -51,12 +47,10 @@ public class HibPasswordRecovery extends BaseModelObject implements PasswordReco
     private String key;
     
     @Column(name = "creationdate")
-    @Type(type="timestamp")
     private Date created;
     
     @Column(name = "timeout")
-    @Type(type = "long")
-    private long timeout;
+    private Long timeout;
     
     @ManyToOne(targetEntity=HibUser.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "userid")
@@ -79,68 +73,50 @@ public class HibPasswordRecovery extends BaseModelObject implements PasswordReco
         this.user = user;
         this.key = key;
         this.timeout = timeout;
-        this.created = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.SECONDS));
+        this.created = new Date();
     }
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#getKey()
-     */
+    @Override
     public String getKey() {
         return key;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#setKey(java.lang.String)
-     */
+    @Override
     public void setKey(String key) {
         this.key = key;
     }
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#getTimeout()
-     */
+    @Override
     public long getTimeout() {
         return timeout;
     }
   
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#setTimeout(long)
-     */
+    @Override
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#getCreated()
-     */
+    
     public Date getCreated() {
         return created;
     }
    
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#setCreated(java.util.Date)
-     */
+    @Override
     public void setCreated(Date created) {
         this.created = created;
     }
-   
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#getUser()
-     */
+    
+    @Override
     public User getUser() {
         return user;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#setUser(org.unitedinternet.cosmo.model.User)
-     */
+    @Override
     public void setUser(User user) {
         this.user = user;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.PasswordRecovery#hasExpired()
-     */
+    @Override
     public boolean hasExpired() {
         Date now = new Date();
         return now.after(new Date(created.getTime() + timeout));

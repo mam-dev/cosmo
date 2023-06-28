@@ -15,9 +15,7 @@
  */
 package org.unitedinternet.cosmo.model;
 
-import java.io.InputStream;
 import java.io.Reader;
-import java.math.BigDecimal;
 
 import org.w3c.dom.Element;
 
@@ -177,22 +175,6 @@ public interface EntityFactory {
      */
     public Preference createPreference(String key, String value);
     
-    
-    /**
-     * Create new BinaryAttribute using InpuStream.
-     * @param qname QName of attribute
-     * @param is data
-     * @return new BinaryAttribute
-     */
-    public BinaryAttribute createBinaryAttribute(QName qname, InputStream is);
-    
-    /**
-     * Create new BinaryAttribute using byte array.
-     * @param qname QName of attribute
-     * @param is data
-     * @return new BinaryAttribute
-     */
-    public BinaryAttribute createBinaryAttribute(QName qname, byte[] bytes);
     
     /**
      * Create new TextAttribute using Reader.

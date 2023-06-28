@@ -17,7 +17,6 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.persistence.Column;
@@ -25,7 +24,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.CosmoIOException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.Attribute;
@@ -43,13 +41,11 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
     private static final long serialVersionUID = 2417093506524504993L;
 
     @Column(name = "textvalue", length = 2147483647)
-    @Type(type = "materialized_clob")
     private String value;
 
-    // Constructors
 
-    /** default constructor */
     public HibTextAttribute() {
+        //default constructor
     }
 
     public HibTextAttribute(QName qname, String value) {
@@ -68,44 +64,18 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
         this.value = read(reader);
     }
 
-    // Property accessors
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.Attribute#getValue()
-     */
+    @Override
     public String getValue() {
         return this.value;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.TextAttribute#setValue(java.lang.String)
-     */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.TextAttribute#getReader()
-     */
-    public Reader getReader() {
-        if (value != null) {
-            return new StringReader(value);
-        } else {
-            return null;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.unitedinternet.cosmo.model.TextAttribute#getLength()
-     */
+    @Override
     public int getLength() {
         if (value != null) {
             return value.length();
@@ -146,7 +116,7 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
     }
 
     /**
-     * Convienence method for returning a String value on a TextAttribute with a given QName stored on the given item.
+     * Convenience method for returning a String value on a TextAttribute with a given QName stored on the given item.
      * 
      * @param item  item to fetch TextAttribute from
      * @param qname QName of attribute
@@ -162,7 +132,7 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
     }
 
     /**
-     * Convienence method for setting a String value on a TextAttribute with a given QName stored on the given item.
+     * Convenience method for setting a String value on a TextAttribute with a given QName stored on the given item.
      * 
      * @param item  item to fetch TextAttribute from
      * @param qname QName of attribute
@@ -183,7 +153,7 @@ public class HibTextAttribute extends HibAttribute implements TextAttribute {
     }
 
     /**
-     * Convienence method for setting a Reader value on a TextAttribute with a given QName stored on the given item.
+     * Convenience method for setting a Reader value on a TextAttribute with a given QName stored on the given item.
      * 
      * @param item  item to fetch TextAttribute from
      * @param qname QName of attribute
