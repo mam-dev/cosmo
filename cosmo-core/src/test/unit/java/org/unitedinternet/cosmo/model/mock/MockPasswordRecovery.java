@@ -71,9 +71,7 @@ public class MockPasswordRecovery implements PasswordRecovery {
         this.created = new Date();
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#getKey()
-     */
+    
     /**
      * Gets key.
      * @return The key.
@@ -82,9 +80,7 @@ public class MockPasswordRecovery implements PasswordRecovery {
         return key;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#setKey(java.lang.String)
-     */
+    
     /**
      * Sets key.
      * @param key The key.
@@ -93,9 +89,6 @@ public class MockPasswordRecovery implements PasswordRecovery {
         this.key = key;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#getTimeout()
-     */
     /**
      * Gets timeout.
      * @return The timeout.
@@ -104,9 +97,6 @@ public class MockPasswordRecovery implements PasswordRecovery {
         return timeout;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#setTimeout(long)
-     */
     /**
      * Sets timeout.
      * @param timeout The timeout.
@@ -115,57 +105,27 @@ public class MockPasswordRecovery implements PasswordRecovery {
         this.timeout = timeout;
     }
 
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#getCreated()
-     */
-    /**
-     * Gets created.
-     * @return The date.
-     */
+    @Override
     public Date getCreated() {
         return created;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#setCreated(java.util.Date)
-     */
-    /**
-     * Sets created.
-     * @param created The date.
-     */
+    @Override
     public void setCreated(Date created) {
         this.created = created;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#getUser()
-     */
-    /**
-     * Gets user.
-     * @return The user.
-     */
+    @Override
     public User getUser() {
         return user;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#setUser(org.unitedinternet.cosmo.model.copy.User)
-     */
-    /**
-     * Sets user.
-     * @param user The user.
-     */
+    @Override
     public void setUser(User user) {
         this.user = user;
     }
     
-    /* (non-Javadoc)
-     * @see org.unitedinternet.cosmo.model.copy.InterfacePasswordRecovery#hasExpired()
-     */
-    /**
-     * HasExpired.
-     * @return if the date is expired or not.
-     */
+    @Override
     public boolean hasExpired() {
         Date now = new Date();
         return now.after(new Date(created.getTime() + timeout));

@@ -23,7 +23,6 @@ import javax.persistence.Embeddable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Type;
 import org.unitedinternet.cosmo.model.TriageStatus;
 
 /**
@@ -37,7 +36,6 @@ public class HibTriageStatus implements TriageStatus, Serializable {
     private Integer code = null;
     
     @Column(name = "triagestatusrank", precision = 12, scale = 2)
-    @Type(type="org.hibernate.type.BigDecimalType")
     private BigDecimal rank = null;
     
     @Column(name = "isautotriage", columnDefinition = "tinyint(4)")

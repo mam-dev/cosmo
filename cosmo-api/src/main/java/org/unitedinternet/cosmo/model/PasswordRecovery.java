@@ -35,12 +35,9 @@ public interface PasswordRecovery {
 
     public void setTimeout(long timeout);
 
-    /**
-     */
     public Date getCreated();
 
-    /**
-     */
+    
     public void setCreated(Date created);
 
     /**
