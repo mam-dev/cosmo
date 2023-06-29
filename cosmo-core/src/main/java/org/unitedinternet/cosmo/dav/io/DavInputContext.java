@@ -18,7 +18,7 @@ package org.unitedinternet.cosmo.dav.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.jackrabbit.webdav.io.InputContextImpl;
 import org.slf4j.Logger;

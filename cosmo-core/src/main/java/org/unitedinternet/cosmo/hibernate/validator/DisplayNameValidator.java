@@ -7,8 +7,8 @@
  */
 package org.unitedinternet.cosmo.hibernate.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class DisplayNameValidator implements  ConstraintValidator<DisplayName, String> {
     private static final int MIN_LENGTH = 1;

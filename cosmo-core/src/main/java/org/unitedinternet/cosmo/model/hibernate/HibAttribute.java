@@ -15,25 +15,25 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Target;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
+
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 /**
  * Hibernate persistent Attribute.
@@ -55,15 +55,6 @@ public abstract class HibAttribute extends HibAuditableObject implements Attribu
     // Fields
     @Embedded
     @Target(HibQName.class)
-    /*
-     * XXX - This does not work well with JPA
-     * 
-     * @AttributeOverrides( {
-     * 
-     * @AttributeOverride(name="namespace", column = @Column(name="namespace", nullable = false, length=255) ),
-     * 
-     * @AttributeOverride(name="localName", column = @Column(name="localname", nullable = false, length=255) ) } )
-     */
     private QName qname;
 
     @ManyToOne(targetEntity = HibItem.class, fetch = FetchType.LAZY)

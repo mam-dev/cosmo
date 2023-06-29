@@ -1,7 +1,7 @@
 package org.unitedinternet.cosmo.model.hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 /**
  * Contains time-range data for an event that can be

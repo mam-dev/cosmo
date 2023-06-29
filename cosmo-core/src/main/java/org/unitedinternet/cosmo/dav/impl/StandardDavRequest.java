@@ -24,19 +24,19 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
+import jakarta.activation.MimeType;
+import jakarta.activation.MimeTypeParseException;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.abdera.util.EntityTag;
@@ -173,11 +173,6 @@ public class StandardDavRequest extends WebdavRequestImpl implements DavRequest,
 
     public boolean isRequestedSessionIdFromURL() {
         return originalHttpServletRequest.isRequestedSessionIdFromURL();
-    }
-    
-    @Deprecated
-    public boolean isRequestedSessionIdFromUrl() {
-        return originalHttpServletRequest.isRequestedSessionIdFromUrl();
     }
     
     /**

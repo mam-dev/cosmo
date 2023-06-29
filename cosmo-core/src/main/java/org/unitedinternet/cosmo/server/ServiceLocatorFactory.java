@@ -15,7 +15,7 @@
  */
 package org.unitedinternet.cosmo.server;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.unitedinternet.cosmo.model.Ticket;
 import org.unitedinternet.cosmo.security.CosmoSecurityManager;

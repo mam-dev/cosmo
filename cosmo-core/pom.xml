@@ -96,14 +96,13 @@
 		</dependency>
 		
 		<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-core</artifactId>
-				<scope>test</scope>				
+		    <groupId>dev.atchison.mariaDB4j</groupId>
+		    <artifactId>mariaDB4j</artifactId>			    
 		</dependency>
+			
 		<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-app</artifactId>
-				<scope>test</scope>				
+		    <groupId>dev.atchison.mariaDB4j</groupId>
+		    <artifactId>mariaDB4j-db-linux64</artifactId>
 		</dependency>
 
 		<!-- abdera is the ATOM implementation. This library is still used for 
@@ -143,18 +142,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-webdav</artifactId>
-			<exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
+			<groupId>net.oneandone</groupId>
+			<artifactId>jackrabbit-webdav</artifactId>			
 		</dependency>
 
 		<!-- Spring -->

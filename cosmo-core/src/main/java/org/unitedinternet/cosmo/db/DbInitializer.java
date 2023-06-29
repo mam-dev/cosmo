@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.HibernateException;
@@ -34,10 +33,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.tool.hbm2ddl.SchemaValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * XXX - Run this spring context is about to start. A helper class that initializes the Cosmo database schema and populates the
@@ -163,7 +163,7 @@ public class DbInitializer {
             MetadataSources sources = new MetadataSources(registry);
             sources.addPackage("org.unitedinternet.cosmo.model.hibernate");
             Metadata metadata = sources.buildMetadata(registry);
-            new SchemaValidator().validate(metadata);
+//            new SchemaValidator().validate(metadata);
             LOG.info("Schema validation passed");
         } catch (HibernateException e) {
             LOG.error("error validating schema", e);

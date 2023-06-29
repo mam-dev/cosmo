@@ -15,7 +15,7 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;

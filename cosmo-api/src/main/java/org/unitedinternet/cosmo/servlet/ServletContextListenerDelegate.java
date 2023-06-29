@@ -1,6 +1,6 @@
 package org.unitedinternet.cosmo.servlet;
 
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextListener;
 /**
  * Provides the same contract as <code>ServletContextListener</code>.
  * Implementations of this class will be called internally by the Calendar server after 

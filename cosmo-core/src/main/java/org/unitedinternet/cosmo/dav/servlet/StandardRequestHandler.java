@@ -18,10 +18,10 @@ package org.unitedinternet.cosmo.dav.servlet;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ValidationException;
 
 import org.apache.abdera.util.EntityTag;
 import org.slf4j.Logger;

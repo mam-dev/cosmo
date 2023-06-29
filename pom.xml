@@ -33,20 +33,20 @@
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<spring.boot.version>2.5.15</spring.boot.version>
-		<org.springframework.security.version>5.3.13.RELEASE</org.springframework.security.version>
-		<hibernate-validator.version>6.0.19.Final</hibernate-validator.version>
+		<spring.boot.version>3.1.0</spring.boot.version>
+		<org.springframework.security.version>5.8.3</org.springframework.security.version>
+		<hibernate.core.version>6.2.2.Final</hibernate.core.version>
+		<hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
-		<jackrabbit.version>2.19.0</jackrabbit.version>
+		<jackrabbit.version>3.0.0-SNAPSHOT</jackrabbit.version>
 		<ical4j.version>3.0.27</ical4j.version>
 			
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
-		<slf4j.version>1.7.30</slf4j.version>
-		<logback.version>1.2.3</logback.version>
+		<slf4j.version>2.0.7</slf4j.version>
+		<logback.version>1.4.8</logback.version>
 
-		<mariadb.version>2.7.0</mariadb.version>
-		<mariadb4j.version>2.4.0</mariadb4j.version>
+		<mariadb.version>3.1.4</mariadb.version>		
 		<xerces.version>2.12.0</xerces.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<stax.version>1.0.1</stax.version>
@@ -118,17 +118,19 @@
 				<artifactId>mariadb-java-client</artifactId>
 				<version>${mariadb.version}</version>
 			</dependency>
-						
+			
 			<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-core</artifactId>
-				<version>${mariadb4j.version}</version>
+			    <groupId>dev.atchison.mariaDB4j</groupId>
+			    <artifactId>mariaDB4j</artifactId>
+			    <scope>test</scope>
+			    <version>2.7.1</version>
 			</dependency>
 			
 			<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-app</artifactId>
-				<version>${mariadb4j.version}</version>
+			    <groupId>dev.atchison.mariaDB4j</groupId>
+			    <artifactId>mariaDB4j-db-linux64</artifactId>
+			    <scope>test</scope>
+			    <version>10.6.12</version>
 			</dependency>
 
 			<!-- ical4j related libs -->
@@ -149,12 +151,29 @@
 			</dependency>
 			
 			<dependency>
-				<groupId>org.apache.jackrabbit</groupId>
+				<groupId>net.oneandone</groupId>
 				<artifactId>jackrabbit-webdav</artifactId>
 				<version>${jackrabbit.version}</version>
+				<exclusions>
+                <exclusion>
+	                    <groupId>commons-codec</groupId>
+	                    <artifactId>commons-codec</artifactId>
+	                </exclusion>
+	                <exclusion>
+	                    <groupId>org.slf4j</groupId>
+	                    <artifactId>jcl-over-slf4j</artifactId>
+	                </exclusion>
+	            </exclusions>
 			</dependency>
 
 			<!-- hibernate -->
+			
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+				<version>${hibernate.core.version}</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.hibernate.validator</groupId>
 				<artifactId>hibernate-validator</artifactId>
@@ -354,7 +373,7 @@
 		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 		<url>https://github.com/1and1/</url>
-		<tag>cosmo-multimodule-1.5.3</tag>
+		<tag>HEAD</tag>
 	</scm>
 		
 </project>
