@@ -360,7 +360,7 @@ public class ItemFilterEvaluater {
         CalendarFilter cf = getCalendarFilter(esf);
         CalendarFilterEvaluater cfe = new CalendarFilterEvaluater();
         
-        if(cfe.evaluate(cal, cf)==false) {
+        if(cfe.evaluateCalendarFilter(cal, cf)==false) {
             return false;
         }
         

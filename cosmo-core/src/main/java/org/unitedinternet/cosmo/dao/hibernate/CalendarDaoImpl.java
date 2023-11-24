@@ -138,7 +138,7 @@ public class CalendarDaoImpl implements CalendarDao {
                     ICalendarItem content = (ICalendarItem) child;
                     Calendar calendar = entityConverter.convertContent(content);
 
-                    if (calendar != null && evaluater.evaluate(calendar, filter)) {
+                    if (calendar != null && evaluater.evaluateCalendarFilter(calendar, filter)) {
                         results.add(content);
                     }
                 }

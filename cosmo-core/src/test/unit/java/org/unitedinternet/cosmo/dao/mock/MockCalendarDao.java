@@ -90,7 +90,7 @@ public class MockCalendarDao extends MockItemDao implements CalendarDao {
                 Calendar calendar = new EntityConverter(null).convertContent(content);
                 
                 if(calendar!=null) {
-                    if (evaluater.evaluate(calendar, filter) == true) {
+                    if (evaluater.evaluateCalendarFilter(calendar, filter) == true) {
                         results.add(content);
                     }
                 }
