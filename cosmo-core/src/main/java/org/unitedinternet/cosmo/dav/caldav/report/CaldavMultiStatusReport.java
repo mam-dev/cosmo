@@ -44,13 +44,13 @@ import org.w3c.dom.Element;
  */
 public abstract class CaldavMultiStatusReport extends MultiStatusReport
     implements CaldavConstants {
-    
-    private OutputFilter outputFilter;
 
     // ReportBase methods
 
 
     // MultiStatusReport methods
+
+    protected OutputFilter outputFilter;
 
     /**
      * Removes <code>CALDAV:calendar-data</code> from the property spec
@@ -88,9 +88,6 @@ public abstract class CaldavMultiStatusReport extends MultiStatusReport
         return outputFilter;
     }
 
-    public void setOutputFilter(OutputFilter outputFilter) {
-        this.outputFilter = outputFilter;
-    }
 
     /**
      * Parses an output filter out of the given report info.
@@ -127,5 +124,21 @@ public abstract class CaldavMultiStatusReport extends MultiStatusReport
             builder.append(resource.getCalendar().toString());
         }
         return builder.toString();
+    }
+
+    public void setReportSpecifics(ReportInfo info) throws CosmoDavException {
+        setPropFindProps(info.getPropertyNameSet());
+        if (info.containsContentElement(XML_ALLPROP, NAMESPACE)) {
+            setPropFindType(PROPFIND_ALL_PROP);
+        } else if (info.containsContentElement(XML_PROPNAME, NAMESPACE)) {
+            setPropFindType(PROPFIND_PROPERTY_NAMES);
+        } else {
+            setPropFindType(PROPFIND_BY_PROPERTY);
+            setOutputFilter(findOutputFilter(info));
+        }
+    }
+
+    public void setOutputFilter(OutputFilter outputFilter) {
+        this.outputFilter = outputFilter;
     }
 }

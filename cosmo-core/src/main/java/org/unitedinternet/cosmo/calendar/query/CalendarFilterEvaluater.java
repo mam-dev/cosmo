@@ -72,7 +72,7 @@ public class CalendarFilterEvaluater {
      * @throws UnsupportedQueryException if filter represents a query
      *                              that the server does not support
      */
-    public boolean evaluate(Calendar calendar, CalendarFilter filter) {
+    public boolean evaluateCalendarFilter(Calendar calendar, CalendarFilter filter) {
         ComponentFilter rootFilter = filter.getFilter();
         
         // root filter must be "VCALENDAR"
@@ -100,7 +100,7 @@ public class CalendarFilterEvaluater {
      * @param filter The component filter.
      * @return The result.
      */
-    private boolean evaluate(ComponentList<? extends Component> comps, ComponentFilter filter) {
+    private boolean evaluateComponentFilter(ComponentList<? extends Component> comps, ComponentFilter filter) {
         // Evaluate component filter against a set of components.
         // If any component matches, then evaluation succeeds.
         // This is basically a big OR
@@ -121,7 +121,7 @@ public class CalendarFilterEvaluater {
      * @param filter The property filter.
      * @return The result.
      */
-    private boolean evaluate(ComponentList<? extends Component> comps, PropertyFilter filter) {
+    private boolean evaluatePropertyFilter(ComponentList<? extends Component> comps, PropertyFilter filter) {
         
         // Evaluate property filter against a set of components.
         // If any component matches, then evaluation succeeds.
@@ -180,13 +180,13 @@ public class CalendarFilterEvaluater {
         }
         
         for(Iterator<ComponentFilter> it = filter.getComponentFilters().iterator(); it.hasNext();) {
-            if(evaluate(comps, it.next())==false) {
+            if(evaluateComponentFilter(comps, it.next())==false) {
                 return false;
             }
         }
         
         for(Iterator<PropertyFilter> it = filter.getPropFilters().iterator(); it.hasNext();) {
-            if(evaluate(comps, it.next())==false) {
+            if(evaluatePropertyFilter(comps, it.next())==false) {
                 return false;
             }
         }

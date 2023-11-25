@@ -37,7 +37,7 @@ import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
  * Provides api for determining if item matches given filter.
  */
 public class ItemFilterEvaluater {
-    
+
     /**
      * Evaluate.
      * @param item The item.
@@ -45,39 +45,47 @@ public class ItemFilterEvaluater {
      * @return boolean.
      */
     public boolean evaulate(Item item, ItemFilter filter) {
-        
+
+
+        FilterEval filterEval = filter.judgeItemFilter(filter);
+
         if(item==null || filter==null) {
             return false;
         }
-        
-        if(filter.getParent()!=null) {
-            if(!item.getParents().contains(filter.getParent())) {
-                return false;
-            }
-        }
-        
-        if(filter instanceof NoteItemFilter) { 
-            if(!handleNoteItemFilter((NoteItemFilter) filter, item)) {
-                return false;
-            }
-        }
-        
-        if(filter instanceof ContentItemFilter) {
-            if(!handleContentItemFilter((ContentItemFilter) filter, item)) {
-                return false;
-            }
-        }
-    
-        if(filter.getDisplayName()!=null) {
-            if(!handleFilterCriteria(item.getDisplayName(), filter.getDisplayName())) {
-                return false;
-            }
-        }
-        
-        if(filter.getUid()!=null) {
-            if(!handleFilterCriteria(item.getUid(), filter.getUid())) {
-                return false;
-            }
+
+
+        switch (filterEval){
+            case FILTER_PARENT_NOTNULL:
+                if(!item.getParents().contains(filter.getParent())) {
+                    return false;
+                }
+                break;
+
+            case INSTANCE_OF_NOTE_ITEM_FILTER:
+                if(!handleNoteItemFilter((NoteItemFilter) filter, item)) {
+                    return false;
+                }
+                break;
+
+            case INSTANCE_OF_CONTENT_ITEM_FILTER:
+                if(!handleContentItemFilter((ContentItemFilter) filter, item)) {
+                    return false;
+                }
+                break;
+
+            case FILTER_DISPLAY_NAME_NOT_NULL:
+                if(!handleFilterCriteria(item.getDisplayName(), filter.getDisplayName())) {
+                    return false;
+                }
+                break;
+
+            case FILTER_UID_NOT_NULL:
+                if(!handleFilterCriteria(item.getUid(), filter.getUid())) {
+                    return false;
+                }
+                break;
+
+
         }
         
         for(AttributeFilter af: filter.getAttributeFilters()) {
@@ -360,7 +368,7 @@ public class ItemFilterEvaluater {
         CalendarFilter cf = getCalendarFilter(esf);
         CalendarFilterEvaluater cfe = new CalendarFilterEvaluater();
         
-        if(cfe.evaluate(cal, cf)==false) {
+        if(cfe.evaluateCalendarFilter(cal, cf)==false) {
             return false;
         }
         

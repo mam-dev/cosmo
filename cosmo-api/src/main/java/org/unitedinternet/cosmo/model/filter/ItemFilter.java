@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.context.annotation.FilterType;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.QName;
 
@@ -46,7 +47,27 @@ public class ItemFilter {
     
     public ItemFilter() {
     }
-    
+
+    public FilterEval judgeItemFilter(ItemFilter filter){
+
+        if(filter.getParent()!=null)
+            return FilterEval.FILTER_PARENT_NOTNULL;
+
+        if(filter instanceof NoteItemFilter)
+            return FilterEval.INSTANCE_OF_NOTE_ITEM_FILTER;
+
+        if(filter instanceof ContentItemFilter)
+            return FilterEval.INSTANCE_OF_CONTENT_ITEM_FILTER;
+
+        if(filter.getDisplayName()!=null)
+            return FilterEval.FILTER_DISPLAY_NAME_NOT_NULL;
+
+        if(filter.getUid()!=null)
+            return FilterEval.FILTER_UID_NOT_NULL;
+
+        return null;
+    }
+
     /**
      * List of AttributeFilters.  If there are multiple attribute filters,
      * each filter must match for an item to match the ItemFilter.

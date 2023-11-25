@@ -75,27 +75,27 @@ public class CalendarFilterEvaluaterTest {
         propFilter.setTextMatchFilter(textFilter);
         eventFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setValue("ViSiBle");
         textFilter.setCollation(TextMatchFilter.COLLATION_OCTET);
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setCollation(null);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setValue("XXX");
         textFilter.setNegateCondition(true);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         propFilter.setTextMatchFilter(null);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         propFilter.setName("RRULE");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
         
         propFilter.setIsNotDefinedFilter(new IsNotDefinedFilter());
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -120,22 +120,22 @@ public class CalendarFilterEvaluaterTest {
         propFilter.getParamFilters().add(paramFilter);
         eventFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setValue("XXX");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
 
         textFilter.setNegateCondition(true);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         paramFilter.setTextMatchFilter(null);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         paramFilter.setName("BOGUS");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
         
         paramFilter.setIsNotDefinedFilter(new IsNotDefinedFilter());
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -162,12 +162,12 @@ public class CalendarFilterEvaluaterTest {
        
         eventFilter.setTimeRangeFilter(timeRangeFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         start = new DateTime("20050818T115000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -194,12 +194,12 @@ public class CalendarFilterEvaluaterTest {
        
         eventFilter.setTimeRangeFilter(timeRangeFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         start = new DateTime("20070515T205000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
        
     /**
@@ -228,12 +228,12 @@ public class CalendarFilterEvaluaterTest {
         propFilter.setTimeRangeFilter(timeRangeFilter);
         eventFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         start = new DateTime("20060717T115000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -277,11 +277,11 @@ public class CalendarFilterEvaluaterTest {
         
         eventFilter.getPropFilters().add(propFilter2);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         // change one thing
         paramFilter2.setName("XXX");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -309,13 +309,13 @@ public class CalendarFilterEvaluaterTest {
         eventFilter.getComponentFilters().add(alarmFilter);
         alarmFilter.getPropFilters().add(propFilter);
        
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textMatch.setValue("EMAIL");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
         
         alarmFilter.getPropFilters().clear();
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         // time-range filter on VALARM
         
@@ -326,32 +326,32 @@ public class CalendarFilterEvaluaterTest {
         Period period = new Period(start, end);
         TimeRangeFilter timeRangeFilter = new TimeRangeFilter(period);
         alarmFilter.setTimeRangeFilter(timeRangeFilter);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         // find alarm relative to end
         start = new DateTime("20060101T050000Z");
         end = new DateTime("20060101T190000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         // find absolute repeating alarm
         start = new DateTime("20051230T050000Z");
         end = new DateTime("20051230T080000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         // find no alarms
         start = new DateTime("20060101T020000Z");
         end = new DateTime("20060101T030000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
         
         alarmFilter.setTimeRangeFilter(null);
         alarmFilter.setIsNotDefinedFilter(new IsNotDefinedFilter());
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -372,7 +372,7 @@ public class CalendarFilterEvaluaterTest {
         PropertyFilter propFilter = new PropertyFilter("DESCRIPTION");
         eventFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -392,17 +392,17 @@ public class CalendarFilterEvaluaterTest {
         filter.setFilter(compFilter);
         compFilter.getComponentFilters().add(eventFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         PropertyFilter propFilter = new PropertyFilter("SUMMARY");
         TextMatchFilter textFilter = new TextMatchFilter("Staff");
         propFilter.setTextMatchFilter(textFilter);
         eventFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setValue("bogus");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -422,17 +422,17 @@ public class CalendarFilterEvaluaterTest {
         filter.setFilter(compFilter);
         compFilter.getComponentFilters().add(eventFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         PropertyFilter propFilter = new PropertyFilter("SUMMARY");
         TextMatchFilter textFilter = new TextMatchFilter("Income");
         propFilter.setTextMatchFilter(textFilter);
         eventFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setValue("bogus");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -460,24 +460,24 @@ public class CalendarFilterEvaluaterTest {
         TimeRangeFilter timeRangeFilter = new TimeRangeFilter(period);
         vtodoFilter.setTimeRangeFilter(timeRangeFilter);
         
-        assertTrue(evaluater.evaluate(calendar1, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar1, filter));
         
         // Verify VTODO that has DTSTART doesn't match
         start = new DateTime("19970420T133000Z");
         end = new DateTime("19970421T133000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertFalse(evaluater.evaluate(calendar1, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar1, filter));
         
         // Verify VTODO that has DUE doesn't match
-        assertFalse(evaluater.evaluate(calendar2, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar2, filter));
         
         // Verify VTODO that has DUE matches
         start = new DateTime("20080401T133000Z");
         end = new DateTime("20080421T133000Z");
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
-        assertTrue(evaluater.evaluate(calendar2, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar2, filter));
     }
     
     /**
@@ -496,17 +496,17 @@ public class CalendarFilterEvaluaterTest {
         filter.setFilter(compFilter);
         compFilter.getComponentFilters().add(vfbFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         PropertyFilter propFilter = new PropertyFilter("ORGANIZER");
         TextMatchFilter textFilter = new TextMatchFilter("Joe");
         propFilter.setTextMatchFilter(textFilter);
         vfbFilter.getPropFilters().add(propFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
         
         textFilter.setValue("bogus");
-        assertFalse(evaluater.evaluate(calendar, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**
@@ -533,8 +533,8 @@ public class CalendarFilterEvaluaterTest {
         TimeRangeFilter timeRangeFilter = new TimeRangeFilter(period);
         vfbFilter.setTimeRangeFilter(timeRangeFilter);
         
-        assertTrue(evaluater.evaluate(calendar1, filter));
-        assertTrue(evaluater.evaluate(calendar2, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar1, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar2, filter));
         
         start = new DateTime("20070102T115000Z");
         end = new DateTime("20070109T115000Z");
@@ -542,8 +542,8 @@ public class CalendarFilterEvaluaterTest {
         period = new Period(start, end);
         timeRangeFilter.setPeriod(period);
         
-        assertFalse(evaluater.evaluate(calendar1, filter));
-        assertFalse(evaluater.evaluate(calendar2, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar1, filter));
+        assertFalse(evaluater.evaluateCalendarFilter(calendar2, filter));
         
     }
     
@@ -563,7 +563,7 @@ public class CalendarFilterEvaluaterTest {
         filter.setFilter(compFilter);
         compFilter.getComponentFilters().add(vfbFilter);
         
-        assertTrue(evaluater.evaluate(calendar, filter));
+        assertTrue(evaluater.evaluateCalendarFilter(calendar, filter));
     }
     
     /**

@@ -649,9 +649,7 @@ public class HCalendarParser implements CalendarParser {
             normalized = original.replace("Z", "GMT-00:00");
         }
         // 2002-10-10T00:00:00+05:00
-        else if (original.indexOf("GMT") == -1 && 
-                 (original.charAt(original.length()-6) == '+' ||
-                  original.charAt(original.length()-6) == '-')) {
+        else if (needsGmtConversion(original)) {
             String tzId = "GMT" + original.substring(original.length()-6);
             normalized = original.substring(0, original.length()-6) + tzId;
         }
@@ -675,4 +673,16 @@ public class HCalendarParser implements CalendarParser {
 
         return dt;
     }
+
+    private boolean isPlusOrMinusAtPosition(String original, int position) {
+        return original.charAt(position) == '+' || original.charAt(position) == '-';
+    }
+
+    private boolean needsGmtConversion(String original) {
+        return !original.contains("GMT") && isPlusOrMinusAtPosition(original, original.length() - 6);
+    }
 }
+
+
+
+

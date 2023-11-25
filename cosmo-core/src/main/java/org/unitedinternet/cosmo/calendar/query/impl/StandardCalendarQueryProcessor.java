@@ -123,7 +123,7 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
         
         Calendar calendar = entityConverter.convertContent(item);
         if(calendar!=null) {
-            return new CalendarFilterEvaluater().evaluate(calendar, filter);
+            return new CalendarFilterEvaluater().evaluateCalendarFilter(calendar, filter);
         }
         else {
             return false;
@@ -249,6 +249,87 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
                     busyTentativePeriods, busyUnavailablePeriods);
         }
     }
+
+    private VEvent addComponentsToInstances(Calendar calendar, Period freeBusyRange, InstanceList instances, Object comp) {
+
+        VEvent vcomp = (VEvent) comp;
+        // See if this is the master instance
+        if (vcomp.getRecurrenceId() == null) {
+            instances.addComponent(vcomp, freeBusyRange.getStart(),
+                    freeBusyRange.getEnd());
+        } else {
+            return vcomp;
+        }
+        return vcomp;
+    }
+
+    private void addFreeBusyPeriods(Object comp, Period freeBusyRange, PeriodList busyPeriods, PeriodList busyTentativePeriods, PeriodList busyUnavailablePeriods) {
+        List<FreeBusy> fbs = ((Component)comp).getProperties().getProperties(Property.FREEBUSY);
+        for (FreeBusy fb : fbs) {
+            FbType fbt = (FbType) fb.getParameters().getParameter(
+                    Parameter.FBTYPE);
+            if (fbt == null || FbType.BUSY.equals(fbt)) {
+                addRelevantPeriods(busyPeriods, fb.getPeriods(),
+                        freeBusyRange);
+            } else if (FbType.BUSY_TENTATIVE.equals(fbt)) {
+                addRelevantPeriods(busyTentativePeriods, fb
+                        .getPeriods(), freeBusyRange);
+            } else if (FbType.BUSY_UNAVAILABLE.equals(fbt)) {
+                addRelevantPeriods(busyUnavailablePeriods, fb
+                        .getPeriods(), freeBusyRange);
+            }
+        }
+    }
+
+    private void addPeriodsToBusyLists(InstanceList instances, Period freeBusyRange, PeriodList busyPeriods, PeriodList busyTentativePeriods) {
+
+        for (Iterator<Entry<String, Instance>> i = instances.entrySet().iterator(); i.hasNext();) {
+            Map.Entry<?, ?> entry = i.next();
+
+            Object instanceObj = entry.getValue();
+
+            if(!(instanceObj instanceof Instance)){
+                continue;
+            }
+            Instance instance = (Instance) instanceObj;
+
+            // Check that the VEVENT has the proper busy status
+            if (Transp.TRANSPARENT.equals(instance.getComp().getProperties()
+                    .getProperty(Property.TRANSP))) {
+                continue;
+            }
+            if (Status.VEVENT_CANCELLED.equals(instance.getComp()
+                    .getProperties().getProperty(Property.STATUS))) {
+                continue;
+            }
+
+            // Can only have DATE-TIME values in PERIODs
+            Date start = null;
+            Date end = null;
+
+            start =  instance.getStart();
+            end =  instance.getEnd();
+
+            if (start.compareTo(freeBusyRange.getStart()) < 0) {
+                start = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(freeBusyRange
+                        .getStart(), start);
+            }
+            if (end.compareTo(freeBusyRange.getEnd()) > 0) {
+                end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(freeBusyRange.getEnd(),
+                        end);
+            }
+            DateTime dtStart = new DateTime(start);
+            DateTime dtEnd = new DateTime(end);
+            if (Status.VEVENT_TENTATIVE.equals(instance.getComp()
+                    .getProperties().getProperty(Property.STATUS))) {
+                busyTentativePeriods.add(new Period(dtStart, dtEnd));
+            } else {
+                busyPeriods.add(new Period(dtStart, dtEnd));
+            }
+
+        }
+
+    }
     
     /**
      * Adds relevant periods.
@@ -272,31 +353,10 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
         ComponentList<Component> overrides = new ComponentList<>();
         for (Object comp: calendar.getComponents()) {
             if (comp instanceof VEvent) {
-                VEvent vcomp = (VEvent) comp;
-                // See if this is the master instance
-                if (vcomp.getRecurrenceId() == null) {
-                    instances.addComponent(vcomp, freeBusyRange.getStart(),
-                            freeBusyRange.getEnd());
-                } else {
-                    overrides.add(vcomp);
-                }
+                overrides.add(addComponentsToInstances(calendar,freeBusyRange, instances,comp));
             } else if (comp instanceof VFreeBusy) {
                 // Add all FREEBUSY BUSY/BUSY-TENTATIVE/BUSY-UNAVAILABLE to the periods
-                List<FreeBusy> fbs = ((Component)comp).getProperties().getProperties(Property.FREEBUSY);
-                for (FreeBusy fb : fbs) {                    
-                    FbType fbt = (FbType) fb.getParameters().getParameter(
-                            Parameter.FBTYPE);
-                    if (fbt == null || FbType.BUSY.equals(fbt)) {
-                        addRelevantPeriods(busyPeriods, fb.getPeriods(),
-                                freeBusyRange);
-                    } else if (FbType.BUSY_TENTATIVE.equals(fbt)) {
-                        addRelevantPeriods(busyTentativePeriods, fb
-                                .getPeriods(), freeBusyRange);
-                    } else if (FbType.BUSY_UNAVAILABLE.equals(fbt)) {
-                        addRelevantPeriods(busyUnavailablePeriods, fb
-                                .getPeriods(), freeBusyRange);
-                    }
-                }
+                addFreeBusyPeriods(comp, freeBusyRange, busyPeriods, busyTentativePeriods, busyUnavailablePeriods);
             }
         }
 
@@ -311,52 +371,7 @@ public class StandardCalendarQueryProcessor implements CalendarQueryProcessor {
             return;
         }
 
-        // Add start/end period for each instance
-        for (Iterator<Entry<String, Instance>> i = instances.entrySet().iterator(); i.hasNext();) {
-            Map.Entry<?, ?> entry = i.next();
-            
-            Object instanceObj = entry.getValue();
-            
-            if(!(instanceObj instanceof Instance)){
-                continue;
-            }
-            Instance instance = (Instance) instanceObj;
-            
-            // Check that the VEVENT has the proper busy status
-            if (Transp.TRANSPARENT.equals(instance.getComp().getProperties()
-                    .getProperty(Property.TRANSP))) {
-                continue;
-            }
-            if (Status.VEVENT_CANCELLED.equals(instance.getComp()
-                    .getProperties().getProperty(Property.STATUS))) {
-                continue;
-            }
-
-            // Can only have DATE-TIME values in PERIODs
-            Date start = null;
-            Date end = null;
-            
-            start =  instance.getStart();
-            end =  instance.getEnd();
-           
-            if (start.compareTo(freeBusyRange.getStart()) < 0) {
-                start = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(freeBusyRange
-                        .getStart(), start);
-            }
-            if (end.compareTo(freeBusyRange.getEnd()) > 0) {
-                end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(freeBusyRange.getEnd(),
-                        end);
-            }
-            DateTime dtStart = new DateTime(start);
-            DateTime dtEnd = new DateTime(end);
-            if (Status.VEVENT_TENTATIVE.equals(instance.getComp()
-                    .getProperties().getProperty(Property.STATUS))) {
-                busyTentativePeriods.add(new Period(dtStart, dtEnd));
-            } else {
-                busyPeriods.add(new Period(dtStart, dtEnd));
-            }
-            
-        }
+        addPeriodsToBusyLists(instances,freeBusyRange, busyPeriods, busyTentativePeriods);
     }
     
     /**
