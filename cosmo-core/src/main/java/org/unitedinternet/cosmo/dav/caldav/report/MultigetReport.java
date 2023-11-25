@@ -86,15 +86,7 @@ public class MultigetReport extends CaldavMultiStatusReport {
             throw new CosmoDavException("Report not of type " + getType().getReportName());
         }
 
-        setPropFindProps(info.getPropertyNameSet());
-        if (info.containsContentElement(XML_ALLPROP, NAMESPACE)) {
-            setPropFindType(PROPFIND_ALL_PROP);
-        } else if (info.containsContentElement(XML_PROPNAME, NAMESPACE)) {
-            setPropFindType(PROPFIND_PROPERTY_NAMES);
-        } else {
-            setPropFindType(PROPFIND_BY_PROPERTY);
-            setOutputFilter(findOutputFilter(info));
-        }
+        setReportSpecifics(info);
 
         List<Element> hrefElements =
             info.getContentElements(XML_HREF, NAMESPACE);
