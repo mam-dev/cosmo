@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Period;
@@ -72,7 +72,7 @@ public class ExpandRecurringEventsTest {
         
         Calendar filterCal = cb.build(sr);
         
-        ComponentList<VEvent> comps = filterCal.getComponents().getComponents("VEVENT");
+        List<VEvent> comps = filterCal.getComponents().getComponents("VEVENT");
         
         // Should expand to 3 event components
         assertEquals(3, comps.size());
@@ -107,7 +107,7 @@ public class ExpandRecurringEventsTest {
         
         Calendar calendar = cb.build(this.getClass().getResourceAsStream("expand_recurr_test2.ics"));
         
-        ComponentList<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
+        List<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
         
         assertEquals(5, comps.size());
         
@@ -185,7 +185,7 @@ public class ExpandRecurringEventsTest {
         
         Calendar filterCal = cb.build(sr);
         
-        ComponentList<VEvent> comps = filterCal.getComponents().getComponents("VEVENT");
+        List<VEvent> comps = filterCal.getComponents().getComponents("VEVENT");
         
         // Should be the same component
         assertEquals(1, comps.size());
@@ -208,7 +208,7 @@ public class ExpandRecurringEventsTest {
         // timezone should be stripped
         assertNull(calendar.getComponents().getComponent("VTIMEZONE"));
         
-        ComponentList<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
+        List<VEvent> comps = calendar.getComponents().getComponents("VEVENT");
         
         for(VEvent event : comps) {
             DateTime dt = (DateTime) event.getStartDate().getDate();

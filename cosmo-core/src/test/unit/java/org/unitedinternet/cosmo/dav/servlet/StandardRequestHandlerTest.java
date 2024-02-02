@@ -15,24 +15,31 @@
  */
 package org.unitedinternet.cosmo.dav.servlet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Date;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ValidationException;
 
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.unitedinternet.cosmo.dav.BadRequestException;
 import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavRequest;
+import org.unitedinternet.cosmo.dav.DavResourceFactory;
+import org.unitedinternet.cosmo.dav.DavResourceLocator;
+import org.unitedinternet.cosmo.dav.DavResourceLocatorFactory;
 import org.unitedinternet.cosmo.dav.DavResponse;
 import org.unitedinternet.cosmo.dav.DavTestContext;
 import org.unitedinternet.cosmo.dav.ForbiddenException;
@@ -42,6 +49,7 @@ import org.unitedinternet.cosmo.dav.WebDavResource;
 import org.unitedinternet.cosmo.dav.acl.DavPrivilege;
 import org.unitedinternet.cosmo.dav.acl.NeedsPrivilegesException;
 import org.unitedinternet.cosmo.dav.caldav.CaldavExceptionExtMkCalendarForbidden;
+import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.security.ItemSecurityException;
 import org.unitedinternet.cosmo.security.Permission;
@@ -187,6 +195,31 @@ public class StandardRequestHandlerTest extends BaseDavTestCase {
         String responseEtag = (String) ctx.getHttpResponse().getHeader("ETag");
         assertNotNull(responseEtag, "Null ETag header");
         assertEquals(responseEtag, home.getETag(), "Incorrect ETag header value");
+    }
+    
+    @Test
+    public void testIfNoneMatchDisallows() throws Exception {
+        WebDavResource home = testHelper.initializeHomeResource();
+
+        DavTestContext ctx = testHelper.createTestContext();
+        
+        ctx.getHttpRequest().setMethod("PUT");
+        ctx.getHttpRequest().addHeader("If-None-Match", home.getETag());
+        
+        DavResourceFactory factoryMock = mock(DavResourceFactory.class);
+        DavResourceLocatorFactory locatorFactoryMock = mock(DavResourceLocatorFactory.class);
+        
+        DavResourceLocator mockLocator = mock(DavResourceLocator.class);
+        when(locatorFactoryMock.createResourceLocatorByUri(any(), any())).thenReturn(mockLocator);
+        
+        WebDavResource resourceMock = mock(WebDavResource.class);
+        when(factoryMock.resolve(any(), any())).thenReturn(resourceMock);
+        when(resourceMock.getETag()).thenReturn(home.getETag());
+        
+        StandardRequestHandler handler = new StandardRequestHandler(locatorFactoryMock, factoryMock,
+                mock(EntityFactory.class));
+        handler.handleRequest(ctx.getDavRequest(), ctx.getDavResponse());        
+        assertEquals(HttpStatus.SC_PRECONDITION_FAILED, ctx.getDavResponse().getStatus());
     }
 
     /**

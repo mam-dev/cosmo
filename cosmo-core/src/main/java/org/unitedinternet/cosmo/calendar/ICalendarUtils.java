@@ -731,7 +731,7 @@ public class ICalendarUtils {
         if (calendar == null) {
             return null;
         }
-        ComponentList<VEvent> vEvents = calendar.getComponents().getComponents(Component.VEVENT);
+        List<VEvent> vEvents = calendar.getComponents().getComponents(Component.VEVENT);
         if (vEvents.size() == 0) {
             return null;
         }

@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav.provider;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.User;
 
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
@@ -94,7 +94,7 @@ public class OutboxCollectionProvider extends CollectionProvider {
     }
 
     private void processPostFreeBusyRequest(Calendar calendar, ScheduleMultiResponse ms) {
-        ComponentList<VFreeBusy> freeBusyList = calendar.getComponents(VFreeBusy.VFREEBUSY);
+        List<VFreeBusy> freeBusyList = calendar.getComponents(VFreeBusy.VFREEBUSY);
         for (VFreeBusy vFreeBusy : freeBusyList) {
             Date periodStrart =  vFreeBusy.getStartDate().getDate();
             Date periodEnd =  vFreeBusy.getEndDate().getDate();

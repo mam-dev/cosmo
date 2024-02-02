@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,6 @@ import org.unitedinternet.cosmo.service.lock.SingleVMLockManager;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
@@ -585,7 +585,7 @@ public class StandardContentServiceTest {
      * @return The event.
      */
     private VEvent getEvent(String recurrenceId, Calendar calendar) {
-        ComponentList<VEvent> events = calendar.getComponents().getComponents(Component.VEVENT);
+        List<VEvent> events = calendar.getComponents().getComponents(Component.VEVENT);
         for(VEvent event : events) {            
             if(event.getRecurrenceId()!=null && event.getRecurrenceId().getDate().toString().equals(recurrenceId))
                 return event;

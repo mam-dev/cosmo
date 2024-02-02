@@ -21,6 +21,7 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.RequestUserAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,9 @@ public class SimpleUrlContentReader implements UrlContentReader {
 
     @Value("${external.content.size}")
     private int allowedContentSizeInBytes;
+    
+    @Value("${external.content.user-agent}")
+    private String userAgent;
 
     @Autowired
     private ContentSourceProcessor processor;
@@ -149,7 +153,7 @@ public class SimpleUrlContentReader implements UrlContentReader {
                         ConnectionConfig
                                 .custom().setMessageConstraints(MessageConstraints.custom()
                                         .setMaxHeaderCount(MAX_HEADER_COUNT).setMaxLineLength(MAX_LINE_LENGTH).build())
-                                .build())
+                                .build()).addInterceptorLast(new RequestUserAgent(this.userAgent))
                 .build();
     }
 

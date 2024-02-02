@@ -18,8 +18,7 @@
 	<artifactId>cosmo-core</artifactId>	
 
 
-	<properties>
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+	<properties>		
 		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
 		<maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
 		<maven-clean-plugin.version>2.1.1</maven-clean-plugin.version>

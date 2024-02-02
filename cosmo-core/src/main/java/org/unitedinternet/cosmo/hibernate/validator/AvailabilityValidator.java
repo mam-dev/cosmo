@@ -16,18 +16,17 @@
 package org.unitedinternet.cosmo.hibernate.validator;
 
 import java.io.IOException;
-
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
-import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.validate.ValidationException;
 
@@ -53,13 +52,13 @@ public class AvailabilityValidator implements ConstraintValidator<Availability, 
             CalendarUtils.parseCalendar(calendar.toString());
             
             // make sure we have a VAVAILABILITY
-            ComponentList<CalendarComponent> comps = calendar.getComponents();
+            List<CalendarComponent> comps = calendar.getComponents();
             if(comps==null) {
                 LOG.warn("Error validating availability: {}", calendar.toString());
                 return false;
             }
             
-            comps = comps.getComponents(ICalendarConstants.COMPONENT_VAVAILABLITY);
+            comps = calendar.getComponents(Component.VAVAILABILITY);
             if(comps==null || comps.size()==0) {
                 LOG.warn("Error validating availability: {}", calendar.toString());
                 return false;

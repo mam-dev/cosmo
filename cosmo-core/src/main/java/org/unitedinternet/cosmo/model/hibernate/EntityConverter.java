@@ -461,7 +461,7 @@ public class EntityConverter {
         String masterLocation = masterLocationProperty != null ? masterLocationProperty.getValue() : null;
         
         // build timezone map that includes all timezones in master calendar
-        ComponentList<VTimeZone> timezones = masterCal.getComponents(Component.VTIMEZONE);
+        List<VTimeZone> timezones = masterCal.getComponents(Component.VTIMEZONE);
         HashMap<String, VTimeZone> tzMap = new HashMap<String, VTimeZone>();
         for(VTimeZone vtz : timezones) {             
             tzMap.put(vtz.getTimeZoneId().getValue(), vtz);
@@ -748,7 +748,7 @@ public class EntityConverter {
         
         Calendar masterCalendar = calendar;
         
-        ComponentList<VEvent> vevents = masterCalendar.getComponents().getComponents(
+        List<VEvent> vevents = masterCalendar.getComponents().getComponents(
                 Component.VEVENT);
         EventStamp eventStamp = StampUtils.getEventStamp(masterNote);
 
@@ -802,7 +802,7 @@ public class EntityConverter {
         // definitions that are in the registry.  The idea is to not store
         // extra data.  Instead, the timezones will be added to the calendar
         // by the getCalendar() api.
-        ComponentList<VTimeZone> timezones = calendar.getComponents(Component.VTIMEZONE);
+        List<VTimeZone> timezones = calendar.getComponents(Component.VTIMEZONE);
         List<VTimeZone> toRemove = new ArrayList<>();
         for(VTimeZone vtz : timezones) {
             String tzid = vtz.getTimeZoneId().getValue();
@@ -913,7 +913,7 @@ public class EntityConverter {
         
         // copy VTIMEZONEs to front if present
         EventStamp es = StampUtils.getEventStamp(masterNote);
-        ComponentList<VTimeZone> vtimezones = es.getEventCalendar().getComponents(Component.VTIMEZONE);
+        List<VTimeZone> vtimezones = es.getEventCalendar().getComponents(Component.VTIMEZONE);
         for( VTimeZone vtimezone : vtimezones) {
             exceptionStamp.getEventCalendar().getComponents().add(0, vtimezone);
         }
@@ -938,7 +938,7 @@ public class EntityConverter {
         exceptionStamp.setExceptionEvent(event);
         
         // copy VTIMEZONEs to front if present
-        ComponentList<VTimeZone> vtimezones = exceptionStamp.getMasterStamp()
+        List<VTimeZone> vtimezones = exceptionStamp.getMasterStamp()
                 .getEventCalendar().getComponents(Component.VTIMEZONE);
         for(VTimeZone vtimezone : vtimezones) {
             exceptionStamp.getEventCalendar().getComponents().add(0, vtimezone);
@@ -1157,7 +1157,7 @@ public class EntityConverter {
      * @param components The component list.
      * @return The component.
      */
-    private Component getMasterComponent(ComponentList<? extends Component> components) {
+    private Component getMasterComponent(List<? extends Component> components) {
         Iterator<? extends Component> it = components.iterator();
         while(it.hasNext()) {
             Component c = it.next();

@@ -40,9 +40,9 @@
 				
 		<javax.el.version>2.2.4</javax.el.version>
 		<jackrabbit.version>3.0.0-SNAPSHOT</jackrabbit.version>
-		<ical4j.version>3.0.27</ical4j.version>
+		<ical4j.version>3.2.14</ical4j.version>
 			
-		<aspectjweaver.version>1.8.9</aspectjweaver.version>
+		<aspectjweaver.version>1.9.2</aspectjweaver.version>
 		<slf4j.version>2.0.7</slf4j.version>
 		<logback.version>1.4.8</logback.version>
 
@@ -351,7 +351,15 @@
 				</configuration>
 			</plugin>
 			
-			
+			<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>            
+            <configuration>
+                <!-- Needed FOR AspectJ to work when importing cosmo jars -->
+                <parameters>true</parameters>
+                <testCompilerArgument>-parameters</testCompilerArgument>                
+                </configuration>
+            </plugin>
 			
 		</plugins>
 	</build>

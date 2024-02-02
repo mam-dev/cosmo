@@ -67,6 +67,7 @@ import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Trigger;
+import net.fortuna.ical4j.validate.ValidationResult;
 
 
 /**
@@ -144,6 +145,10 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     private static String calendarToString(Calendar value) {
         String calendar = null;
         try {
+            ValidationResult validationResult = value.validate(true);
+            if (validationResult.hasErrors()) {
+                throw new net.fortuna.ical4j.validate.ValidationException("calendar has validation errors");
+            }
             calendar = CalendarUtils.outputCalendar(value);
         } catch (ValidationException e) {
             throw new CosmoValidationException(e);

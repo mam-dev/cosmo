@@ -16,18 +16,17 @@
 package org.unitedinternet.cosmo.hibernate.validator;
 
 import java.io.IOException;
-
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.validate.ValidationException;
 
@@ -54,7 +53,7 @@ public class FreeBusyValidator implements ConstraintValidator<FreeBusy, Calendar
 
             // make sure we have a VFREEBUSY
 
-            ComponentList<CalendarComponent> comps = calendar.getComponents(Component.VFREEBUSY);
+            List<CalendarComponent> comps = calendar.getComponents(Component.VFREEBUSY);
             if (comps == null || comps.size() == 0) {
                 LOG.warn("Error validating freebusy: {}", calendar.toString());
                 return false;

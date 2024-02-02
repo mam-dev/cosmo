@@ -12,7 +12,6 @@ import java.util.List;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -63,7 +62,7 @@ public final class FreeBusyUtil {
         copy.getProperties().add(CalScale.GREGORIAN);
         copy.getProperties().add(new XProperty(FREE_BUSY_X_PROPERTY, Boolean.TRUE.toString()));
 
-        ComponentList<CalendarComponent> events = original.getComponents(Component.VEVENT);
+        List<CalendarComponent> events = original.getComponents(Component.VEVENT);
         for (Component event : events) {
             copy.getComponents().add(getFreeBusyEvent((VEvent) event, freeBusyText));
         }

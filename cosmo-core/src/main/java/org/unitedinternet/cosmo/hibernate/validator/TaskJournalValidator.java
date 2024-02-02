@@ -16,20 +16,19 @@
 package org.unitedinternet.cosmo.hibernate.validator;
 
 import java.io.IOException;
-
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.component.VJournal;
+import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.validate.ValidationException;
 
 /**
@@ -54,7 +53,7 @@ public class TaskJournalValidator implements ConstraintValidator<TaskJournal, Ca
             CalendarUtils.parseCalendar(calendar.toString());
 
             if(calendar.getComponent(Component.VTODO) != null) {
-                ComponentList<VToDo> comps = calendar.getComponents(Component.VTODO);
+                List<VToDo> comps = calendar.getComponents(Component.VTODO);
                 if (comps == null || comps.size() == 0) {
                     LOG.warn("Error validating task: {}", calendar.toString());
                 
@@ -62,7 +61,7 @@ public class TaskJournalValidator implements ConstraintValidator<TaskJournal, Ca
                 }
                 return true;
             } else if(calendar.getComponent(Component.VJOURNAL) != null) {
-                ComponentList<VJournal> comps = calendar.getComponents(Component.VJOURNAL);
+                List<VJournal> comps = calendar.getComponents(Component.VJOURNAL);
                 if (comps == null || comps.size() == 0) {
                     LOG.warn("Error validating journal: {}", calendar.toString());
                     return false;

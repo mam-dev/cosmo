@@ -138,7 +138,7 @@ public class StandardRequestHandler implements HttpRequestHandler, ServerConstan
                 LOG.error("Internal dav error", e);
             }
             else if (de.getErrorCode() >= 400 && de.getMessage() != null) {
-                LOG.error("Client error (" + de.getErrorCode() + "): " + de.getMessage(), de);
+                LOG.error("Client error (" + de.getErrorCode() + "): " + de.getMessage());
             }
             if (wres != null) {
                 wres.sendDavError(de);

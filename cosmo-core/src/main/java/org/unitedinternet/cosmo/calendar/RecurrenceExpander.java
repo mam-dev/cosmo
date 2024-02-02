@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
@@ -84,7 +83,7 @@ public class RecurrenceExpander {
      */
     public Date[] calculateRecurrenceRange(Calendar calendar) {
         try{
-            ComponentList<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
+            List<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
             
             List<Component> exceptions = new ArrayList<Component>();
             Component masterComp = null;
@@ -292,7 +291,7 @@ public class RecurrenceExpander {
      *         time range
      */
     public InstanceList getOcurrences(Calendar calendar, Date rangeStart, Date rangeEnd, TimeZone timezone) {
-        ComponentList<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
+        List<VEvent> vevents = calendar.getComponents().getComponents(Component.VEVENT);
         
         List<Component> exceptions = new ArrayList<Component>();
         Component masterComp = null;

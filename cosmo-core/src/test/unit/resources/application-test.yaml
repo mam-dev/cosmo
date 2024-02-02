@@ -40,7 +40,8 @@ external:
     size: 1048576
     non:
       proxyed:
-        hosts:  
+        hosts:
+    user-agent: COSMO      
 calendar: 
   server:
    productId: COSMO
