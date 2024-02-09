@@ -39,7 +39,7 @@
 		<hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
 				
 		<javax.el.version>2.2.4</javax.el.version>
-		<jackrabbit.version>3.0.0-SNAPSHOT</jackrabbit.version>
+		<jackrabbit.version>3.0.1</jackrabbit.version>
 		<ical4j.version>3.2.14</ical4j.version>
 			
 		<aspectjweaver.version>1.9.2</aspectjweaver.version>
