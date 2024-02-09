@@ -155,15 +155,15 @@
 				<artifactId>jackrabbit-webdav</artifactId>
 				<version>${jackrabbit.version}</version>
 				<exclusions>
-                <exclusion>
-	                    <groupId>commons-codec</groupId>
-	                    <artifactId>commons-codec</artifactId>
-	                </exclusion>
-	                <exclusion>
-	                    <groupId>org.slf4j</groupId>
-	                    <artifactId>jcl-over-slf4j</artifactId>
-	                </exclusion>
-	            </exclusions>
+				    <exclusion>
+				        <groupId>commons-codec</groupId>
+				        <artifactId>commons-codec</artifactId>
+				    </exclusion>
+				    <exclusion>
+				        <groupId>org.slf4j</groupId>
+				        <artifactId>jcl-over-slf4j</artifactId>
+				    </exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- hibernate -->
@@ -352,14 +352,14 @@
 			</plugin>
 			
 			<plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>            
-            <configuration>
-                <!-- Needed FOR AspectJ to work when importing cosmo jars -->
-                <parameters>true</parameters>
-                <testCompilerArgument>-parameters</testCompilerArgument>                
-                </configuration>
-            </plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>            
+			    <configuration>
+				    <!-- Needed FOR AspectJ to work when importing cosmo jars -->
+				    <parameters>true</parameters>
+				    <testCompilerArgument>-parameters</testCompilerArgument>                
+			     </configuration>
+			 </plugin>
 			
 		</plugins>
 	</build>
