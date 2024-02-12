@@ -28,6 +28,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
@@ -91,7 +92,7 @@ public class HibUser extends HibAuditableObject implements User {
      * range of unicode code points: [#x20-#xD7FF] | [#xE000-#xFFFD] EXCEPT #x7F or #x3A. Oh and don't allow ';' or '/'
      * because there are problems with encoding them in urls (tomcat doesn't support it)
      */
-    @jakarta.validation.constraints.Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")    
+    @Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")    
     private String username;
 
     private transient String oldUsername;

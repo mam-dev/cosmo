@@ -36,7 +36,7 @@ public abstract class BaseModelObject implements Serializable {
 
     private static final long serialVersionUID = 8396186357498363586L;
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id = null;
+    private Long id;
     
     /**
      */
