@@ -70,8 +70,7 @@
     @NamedQuery(name="user.byEmail", query="from HibUser where email=:email"),
         @NamedQuery(name = "user.byUsernameOrEmail", query = "from HibUser where"
                 + " id!=:userid and (username=:username or email=:email)"),
-        @NamedQuery(name = "user.byUid", query = "from HibUser where uid=:uid"),
-        @NamedQuery(name = "user.byActivationId", query = "from HibUser where activationid=:activationId"),
+        @NamedQuery(name = "user.byUid", query = "from HibUser where uid=:uid"),        
         @NamedQuery(name = "user.all", query = "from HibUser"),
         @NamedQuery(name = "user.count", query = "select count(id) from HibUser"),
         @NamedQuery(name = "users.byPreference", query = "select u from HibUser u join u.preferences"

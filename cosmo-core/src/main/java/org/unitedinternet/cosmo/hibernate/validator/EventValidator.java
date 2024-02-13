@@ -18,17 +18,16 @@ package org.unitedinternet.cosmo.hibernate.validator;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
@@ -61,13 +60,13 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
     public boolean isValid(Calendar value, ConstraintValidatorContext context) {
         Calendar calendar = null;
-        ComponentList<CalendarComponent> comps = null;
+        List<CalendarComponent> comps = null;
         try {
             calendar = value;
 
             // validate entire icalendar object
             if (calendar != null) {
-                calendar.validate(true);
+                ValidationUtils.verifyResult(calendar.validate(true));
                 // additional check to prevent bad .ics
                 
                 String textCalendar = calendar.toString();
@@ -85,7 +84,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
                 }
             }
             if (comps != null) {
-                comps = comps.getComponents(Component.VEVENT);
+                comps = calendar.getComponents(Component.VEVENT);
             }
             if (comps == null || comps.size() == 0) {
                 LOG.warn("Error validating event: {}", calendar.toString());

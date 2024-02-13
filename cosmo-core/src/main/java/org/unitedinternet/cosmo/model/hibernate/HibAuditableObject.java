@@ -18,8 +18,8 @@ package org.unitedinternet.cosmo.model.hibernate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 
 import org.apache.commons.codec.binary.Base64;
 import org.unitedinternet.cosmo.CosmoNoSuchAlgorithmException;

@@ -15,12 +15,8 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.component.VEvent;
-
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.jackrabbit.webdav.io.InputContext;
@@ -35,6 +31,10 @@ import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.StampUtils;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.component.VEvent;
 
 /**
  * Extends <code>DavCalendarResource</code> to adapt the Cosmo <code>ContentItem</code> with an <code>EventStamp</code>
@@ -78,7 +78,7 @@ public class DavEvent extends DavCalendarResource {
 
     protected void setCalendar(Calendar calendar) throws CosmoDavException {
 
-        ComponentList<VEvent> vevents = calendar.getComponents(Component.VEVENT);
+        List<VEvent> vevents = calendar.getComponents(Component.VEVENT);
         if (vevents.isEmpty()) {
             throw new UnprocessableEntityException("VCALENDAR does not contain any VEVENTs");
         }

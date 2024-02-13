@@ -25,9 +25,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ValidationException;
 
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;

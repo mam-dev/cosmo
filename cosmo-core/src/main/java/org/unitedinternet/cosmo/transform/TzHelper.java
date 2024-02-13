@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.DefaultTimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.Parameter;
@@ -83,7 +82,7 @@ public class TzHelper {
         if (vTimeZone != null && vTimeZone.getTimeZoneId() != null) {
             correctTzValueOf(vTimeZone.getTimeZoneId());
         }
-        ComponentList<CalendarComponent> vEventList = calendar.getComponents(Component.VEVENT);
+        List<CalendarComponent> vEventList = calendar.getComponents(Component.VEVENT);
         for (CalendarComponent vEvent : vEventList) {
             correctTzParameterFrom(vEvent);
         }

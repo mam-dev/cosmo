@@ -15,20 +15,19 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import javax.validation.ConstraintViolationException;
-
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.unitedinternet.cosmo.CosmoValidationException;
 import org.unitedinternet.cosmo.dao.UserDao;
 import org.unitedinternet.cosmo.model.CalendarCollectionStamp;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -48,12 +47,12 @@ import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 import org.unitedinternet.cosmo.model.hibernate.HibQName;
 import org.unitedinternet.cosmo.model.hibernate.HibStringAttribute;
 
+import jakarta.validation.ConstraintViolationException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.validate.ValidationException;
 
 /**
  * Test for hibernate content dao stamping.
@@ -248,7 +247,7 @@ public class HibernateContentDaoStampingTest extends AbstractSpringDaoTestCase {
     @Test
     public void testEventStampValidation() throws Exception {
         EventStamp event = new HibEventStamp();        
-        assertThrows(ValidationException.class, ()-> {
+        assertThrows(CosmoValidationException.class, ()-> {
             event.setEventCalendar(helper.getCalendar("noevent.ics"));
         });                
     }

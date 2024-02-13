@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.io.StringReader;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +75,7 @@ public class LimitRecurrenceSetTest {
         
         // Make sure 3rd and 4th override are dropped
 
-        ComponentList<CalendarComponent> events = comps.getComponents("VEVENT");
+        List<CalendarComponent> events = comps.getComponents("VEVENT");
         for(CalendarComponent c : events) {            
             assertNotSame("event 6 changed 3",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
             assertNotSame("event 6 changed 4",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
@@ -112,7 +113,7 @@ public class LimitRecurrenceSetTest {
         
         assertEquals(2, filterCal.getComponents().getComponents("VEVENT").size());
         // Make sure 2nd override is dropped
-        ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);        
+        List<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);        
         for(VEvent c : vevents) {            
             assertNotSame("event 6 changed 2",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());
         }   
@@ -150,7 +151,7 @@ public class LimitRecurrenceSetTest {
         
         assertEquals(2, filterCal.getComponents().getComponents("VEVENT").size());
         // Make sure 2nd and 3rd override are dropped
-        ComponentList<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);
+        List<VEvent> vevents = filterCal.getComponents().getComponents(VEvent.VEVENT);
         
         for(VEvent c : vevents) {            
             assertNotSame("event 6 changed",((Summary) c.getProperties().getProperty("SUMMARY")).getValue());

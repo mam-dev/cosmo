@@ -7,10 +7,13 @@
  */
 package org.unitedinternet.cosmo.dav.caldav;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -30,7 +33,10 @@ public class CalendarClientsAdapterTest {
     public void icalIOS7_missingTimezoneProductIdIsAdded() throws IOException, ParserException, ValidationException{
         Calendar calendar = new CalendarBuilder().build(new ByteArrayInputStream(geticalIOS7Calendar()));
         CalendarClientsAdapter.adaptTimezoneCalendarComponent(calendar);
-        calendar.validate(true);//must not throw exceptions
+        assertDoesNotThrow(() -> {
+           //must not throw exceptions
+            ValidationUtils.verifyResult(calendar.validate(true));         
+        });       
     }
 
     private byte[] geticalIOS7Calendar() {

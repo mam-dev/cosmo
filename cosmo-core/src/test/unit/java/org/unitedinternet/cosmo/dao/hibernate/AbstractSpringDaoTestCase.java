@@ -15,22 +15,19 @@
  */
 package org.unitedinternet.cosmo.dao.hibernate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.unitedinternet.cosmo.boot.CalendarTestApplication;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 /**
  * Abstract Spring DAO test case.
@@ -38,7 +35,6 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  */
 @Rollback
 @Transactional
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CalendarTestApplication.class)
 @ActiveProfiles(value = { "test" })
 public abstract class AbstractSpringDaoTestCase {
@@ -46,7 +42,7 @@ public abstract class AbstractSpringDaoTestCase {
     private static Logger LOG = LoggerFactory.getLogger(AbstractSpringDaoTestCase.class);
 
     private static volatile MariaDB4jSpringService mariaDB = new MariaDB4jSpringService();
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -62,7 +58,7 @@ public abstract class AbstractSpringDaoTestCase {
         this.entityManager.clear();
         this.entityManager.close();
     }
-    
+
     @BeforeAll
     public static void startMariaDB() {
         if (mariaDB.isRunning()) {
@@ -73,6 +69,8 @@ public abstract class AbstractSpringDaoTestCase {
         mariaDB.setDefaultBaseDir("target/maridb/base");
         mariaDB.setDefaultDataDir("target/maridb/data");
         mariaDB.setDefaultPort(33060);
+        
+        
         mariaDB.start();
 
         LOG.info("\n\n[DB] - Started MariaDB test instance.\n\n");
@@ -86,7 +84,5 @@ public abstract class AbstractSpringDaoTestCase {
             }
         }));
     }
-    
 
-   
 }

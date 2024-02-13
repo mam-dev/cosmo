@@ -17,15 +17,15 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.Serializable;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 
 /**
  * Base class for model objects.
@@ -35,8 +35,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public abstract class BaseModelObject implements Serializable {
 
     private static final long serialVersionUID = 8396186357498363586L;
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id = Long.valueOf(-1);
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
     
     /**
      */

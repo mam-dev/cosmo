@@ -20,6 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.unitedinternet.cosmo.CosmoConstants;
+import org.unitedinternet.cosmo.calendar.ICalendarUtils;
+import org.unitedinternet.cosmo.calendar.InstanceList;
+
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
@@ -42,10 +46,6 @@ import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.FreeBusy;
 import net.fortuna.ical4j.model.property.Trigger;
-
-import org.unitedinternet.cosmo.CosmoConstants;
-import org.unitedinternet.cosmo.calendar.ICalendarUtils;
-import org.unitedinternet.cosmo.calendar.InstanceList;
 
 
 /**
@@ -100,7 +100,7 @@ public class CalendarFilterEvaluater {
      * @param filter The component filter.
      * @return The result.
      */
-    private boolean evaluate(ComponentList<? extends Component> comps, ComponentFilter filter) {
+    private boolean evaluate(List<? extends Component> comps, ComponentFilter filter) {
         // Evaluate component filter against a set of components.
         // If any component matches, then evaluation succeeds.
         // This is basically a big OR
@@ -121,7 +121,7 @@ public class CalendarFilterEvaluater {
      * @param filter The property filter.
      * @return The result.
      */
-    private boolean evaluate(ComponentList<? extends Component> comps, PropertyFilter filter) {
+    private boolean evaluate(List<? extends Component> comps, PropertyFilter filter) {
         
         // Evaluate property filter against a set of components.
         // If any component matches, then evaluation succeeds.
@@ -147,7 +147,7 @@ public class CalendarFilterEvaluater {
         attribute exists in the current scope;*/
         if(filter.getComponentFilters().size()==0 && filter.getPropFilters().size()==0 
                 && filter.getTimeRangeFilter()==null && filter.getIsNotDefinedFilter()==null) {
-            ComponentList<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
+            List<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
             return comps.size()>0;
         }
         
@@ -156,12 +156,12 @@ public class CalendarFilterEvaluater {
         component type specified by the "name" attribute does not exist
         in the current scope;*/
         if(filter.getIsNotDefinedFilter()!=null) {
-            ComponentList<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
+            List<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
             return comps.size()==0;
         }
         
         // Match the component
-        ComponentList<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
+        List<? extends Component> comps = components.getComponents(filter.getName().toUpperCase(CosmoConstants.LANGUAGE_LOCALE));
         if(comps.size()==0) {
             return false;
         }
@@ -394,7 +394,7 @@ public class CalendarFilterEvaluater {
      * @param filter The time range filter.
      * @return the result.
      */
-    private boolean evaluate(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
+    private boolean evaluate(List<? extends Component> comps, TimeRangeFilter filter) {
         
         Component comp = (Component) comps.get(0);
         
@@ -514,7 +514,7 @@ public class CalendarFilterEvaluater {
      * @param filter The time range filter.
      * @return The result.
      */
-    private boolean evaluateVEventTimeRange(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
+    private boolean evaluateVEventTimeRange(List<? extends Component> comps, TimeRangeFilter filter) {
         
         InstanceList instances = new InstanceList();
         if(filter.getTimezone()!=null) {
@@ -707,7 +707,7 @@ public class CalendarFilterEvaluater {
      * @return The boolean.
      * 
      */
-    private boolean evaulateVToDoTimeRange(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
+    private boolean evaulateVToDoTimeRange(List<? extends Component> comps, TimeRangeFilter filter) {
         ArrayList<Component> mods = new ArrayList<Component>();
         VToDo master = null;
         
@@ -802,7 +802,7 @@ public class CalendarFilterEvaluater {
        @return The result.
      */
             
-    private boolean evaluateVAlarmTimeRange(ComponentList<? extends Component> comps, TimeRangeFilter filter) {
+    private boolean evaluateVAlarmTimeRange(List<? extends Component> comps, TimeRangeFilter filter) {
         
         // VALARAM must have parent VEVENT or VTODO
         Component parent = stack.peek();

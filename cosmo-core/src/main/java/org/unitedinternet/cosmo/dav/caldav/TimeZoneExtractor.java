@@ -29,6 +29,7 @@ import net.fortuna.ical4j.model.component.VTimeZone;
 import org.unitedinternet.cosmo.calendar.util.CalendarBuilderDispenser;
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 /**
  * Helper class for extracting a <code>VTimeZone</code> from an iCalendar
@@ -115,7 +116,7 @@ public class TimeZoneExtractor {
                 CalendarBuilderDispenser.getCalendarBuilder();
             calendar = builder.build(new StringReader(ical));
             CalendarClientsAdapter.adaptTimezoneCalendarComponent(calendar);
-            calendar.validate(true);
+            ValidationUtils.verifyResult(calendar.validate(true));
         } catch (IOException e) {
             throw new CosmoDavException(e);
         } catch (ParserException e) {

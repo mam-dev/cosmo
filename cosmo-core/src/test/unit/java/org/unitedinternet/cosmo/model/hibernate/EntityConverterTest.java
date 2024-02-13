@@ -24,6 +24,7 @@ import static org.unitedinternet.cosmo.calendar.ICalendarUtils.createBaseCalenda
 
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -44,11 +45,11 @@ import org.unitedinternet.cosmo.model.mock.MockEventStamp;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.model.mock.MockTaskStamp;
 import org.unitedinternet.cosmo.model.mock.MockTriageStatus;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateList;
 import net.fortuna.ical4j.model.DateTime;
@@ -169,7 +170,7 @@ public class EntityConverterTest {
 
         // mod should include VTIMEZONES
         Calendar eventCal = ees.getEventCalendar();
-        ComponentList<VTimeZone> vtimezones = eventCal.getComponents(Component.VTIMEZONE);
+        List<VTimeZone> vtimezones = eventCal.getComponents(Component.VTIMEZONE);
         assertEquals(1, vtimezones.size());
 
         // update event (change mod and add mod)
@@ -283,7 +284,7 @@ public class EntityConverterTest {
         collection.addChild(note2);
 
         Calendar fullCal = converter.convertCollection(collection);
-        fullCal.validate();
+        ValidationUtils.verifyResult(fullCal.validate());
         assertNotNull(fullCal);
 
         // VTIMEZONE, VTODO, VEVENT
@@ -310,11 +311,11 @@ public class EntityConverterTest {
         master.setTriageStatus(TriageStatusUtil.initialize(new MockTriageStatus()));
 
         Calendar cal = converter.convertNote(master);
-        cal.validate();
+        ValidationUtils.verifyResult(cal.validate());
 
         assertEquals(1, cal.getComponents().size());
 
-        ComponentList<VToDo> comps = cal.getComponents(Component.VTODO);
+        List<VToDo> comps = cal.getComponents(Component.VTODO);
         assertEquals(1, comps.size());
         VToDo task = comps.get(0);
 
@@ -359,7 +360,7 @@ public class EntityConverterTest {
         master.addStamp(eventStamp);
 
         Calendar cal = converter.convertNote(master);
-        cal.validate();
+        ValidationUtils.verifyResult(cal.validate());
 
         // date has no timezone, so there should be no timezones
         assertEquals(0, cal.getComponents(Component.VTIMEZONE).size());
@@ -373,7 +374,7 @@ public class EntityConverterTest {
         cal.validate();
 
         // should be a single VEVENT
-        ComponentList<VEvent> comps = cal.getComponents(Component.VEVENT);
+        List<VEvent> comps = cal.getComponents(Component.VEVENT);
         assertEquals(1, comps.size());
         VEvent event = (VEvent) comps.get(0);
 
@@ -442,7 +443,7 @@ public class EntityConverterTest {
 
         master.addStamp(eventStamp);
 
-        eventStamp.getEventCalendar().validate();
+        ValidationUtils.verifyResult(eventStamp.getEventCalendar().validate());
 
         NoteItem mod = new MockNoteItem();
         mod.setDisplayName("modDisplayName");
@@ -461,7 +462,7 @@ public class EntityConverterTest {
 
         // test modification VEVENT gets added properly
         Calendar cal = converter.convertNote(master);
-        ComponentList<VEvent> comps = cal.getComponents(Component.VEVENT);
+        List<VEvent> comps = cal.getComponents(Component.VEVENT);
         assertEquals(2, comps.size());
         @SuppressWarnings("unused")
         VEvent masterEvent = (VEvent) comps.get(0);

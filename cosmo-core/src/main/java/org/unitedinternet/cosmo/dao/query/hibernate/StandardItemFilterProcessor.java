@@ -24,11 +24,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
-import org.hibernate.query.internal.QueryImpl;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -60,6 +56,10 @@ import org.unitedinternet.cosmo.model.filter.StringAttributeFilter;
 import org.unitedinternet.cosmo.model.filter.TextAttributeFilter;
 import org.unitedinternet.cosmo.model.hibernate.HibNoteItem;
 import org.unitedinternet.cosmo.util.NoteOccurrenceUtil;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 /**
  * Standard Implementation of <code>ItemFilterProcessor</code>. Translates filter into HQL Query, executes query and
@@ -148,8 +148,8 @@ public class StandardItemFilterProcessor  implements ItemFilterProcessor {
     /**
      * Defined for testing reasons.
      */
-    protected QueryImpl<Item> buildQuery(ItemFilter filter) {
-        return (QueryImpl<Item>) this.buildQueryInternal(filter);
+    protected Query<Item> buildQuery(ItemFilter filter) {
+        return (Query<Item>) this.buildQueryInternal(filter);
     }
 
     private void handleItemFilter(StringBuilder selectBuf, StringBuilder whereBuf, HashMap<String, Object> params,

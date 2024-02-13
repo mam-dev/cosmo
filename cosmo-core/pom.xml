@@ -12,14 +12,13 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>5.0.7-SNAPSHOT</version>
+		<version>6.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>	
 
 
-	<properties>
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+	<properties>		
 		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
 		<maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
 		<maven-clean-plugin.version>2.1.1</maven-clean-plugin.version>
@@ -96,14 +95,13 @@
 		</dependency>
 		
 		<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-core</artifactId>
-				<scope>test</scope>				
+		    <groupId>dev.atchison.mariaDB4j</groupId>
+		    <artifactId>mariaDB4j</artifactId>			    
 		</dependency>
+			
 		<dependency>
-				<groupId>ch.vorburger.mariaDB4j</groupId>
-				<artifactId>mariaDB4j-app</artifactId>
-				<scope>test</scope>				
+		    <groupId>dev.atchison.mariaDB4j</groupId>
+		    <artifactId>mariaDB4j-db-linux64</artifactId>
 		</dependency>
 
 		<!-- abdera is the ATOM implementation. This library is still used for 
@@ -143,18 +141,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-webdav</artifactId>
-			<exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
+			<groupId>net.oneandone</groupId>
+			<artifactId>jackrabbit-webdav</artifactId>			
 		</dependency>
 
 		<!-- Spring -->

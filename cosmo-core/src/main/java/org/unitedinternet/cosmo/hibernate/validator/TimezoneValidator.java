@@ -15,8 +15,10 @@
  */
 package org.unitedinternet.cosmo.hibernate.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import org.unitedinternet.cosmo.util.ValidationUtils;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
@@ -40,7 +42,7 @@ public class TimezoneValidator implements ConstraintValidator<Timezone, Calendar
             Calendar calendar = (Calendar) value;
             
             // validate entire icalendar object
-            calendar.validate(true);
+            ValidationUtils.verifyResult(calendar.validate(true));
             
             // make sure we have a VTIMEZONE
             VTimeZone timezone = (VTimeZone) calendar.getComponents()

@@ -17,11 +17,11 @@ package org.unitedinternet.cosmo.dao.hibernate;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class UserDaoImpl implements UserDao {
             throw new IllegalArgumentException("user is required");
         }
 
-        if (getBaseModelObject(user).getId() != -1) {
+        if (getBaseModelObject(user).getId() != null) {
             throw new IllegalArgumentException("new user is required");
         }
 

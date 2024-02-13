@@ -21,9 +21,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -41,6 +38,10 @@ import org.unitedinternet.cosmo.dav.ticket.property.TicketDiscovery;
 import org.unitedinternet.cosmo.dav.util.XmlSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Extends {@link org.apache.jackrabbit.webdav.WebdavResponseImpl} and
@@ -90,12 +91,6 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
     public String getContentType() {
         return originalHttpServletResponse.getContentType();
     }
-
-    @Deprecated
-    public String encodeUrl(String url) {
-        return originalHttpServletResponse.encodeUrl(url);
-    }
-
 
     public String encodeRedirectUrl(String url) {
         return originalHttpServletResponse.encodeRedirectURL(url);
@@ -194,12 +189,6 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
     public void flushBuffer() throws IOException {
         originalHttpServletResponse.flushBuffer();
     }
-
-    @Deprecated
-    public void setStatus(int sc, String sm) {
-        originalHttpServletResponse.setStatus(sc, sm);
-    }
-
 
     public void resetBuffer() {
         originalHttpServletResponse.resetBuffer();

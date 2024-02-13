@@ -15,10 +15,7 @@
  */
 package org.unitedinternet.cosmo.dav.impl;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.component.VToDo;
+import java.util.List;
 
 import org.unitedinternet.cosmo.dav.CosmoDavException;
 import org.unitedinternet.cosmo.dav.DavResourceFactory;
@@ -27,6 +24,10 @@ import org.unitedinternet.cosmo.dav.UnprocessableEntityException;
 import org.unitedinternet.cosmo.model.EntityFactory;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.hibernate.EntityConverter;
+
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.component.VToDo;
 
 /**
  * Extends <code>DavCalendarResource</code> to adapt the Cosmo
@@ -95,7 +96,7 @@ public class DavTask extends DavCalendarResource {
         throws CosmoDavException {
         NoteItem note = (NoteItem) getItem();
         
-        ComponentList<VToDo> vtodos = cal.getComponents(Component.VTODO);
+        List<VToDo> vtodos = cal.getComponents(Component.VTODO);
         if (vtodos.isEmpty()) {
             throw new UnprocessableEntityException("VCALENDAR does not contain any VTODOS");
         }

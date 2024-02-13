@@ -17,7 +17,7 @@ package org.unitedinternet.cosmo.dao.query.hibernate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.hibernate.query.internal.QueryImpl;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
     public void testUidQuery() throws Exception {
         ItemFilter filter = new ItemFilter();
         filter.setUid(Restrictions.eq("abc"));
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibItem i where i.uid=:param0", query.getQueryString());
     }
 
@@ -77,7 +77,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         Long end = System.currentTimeMillis();
         Long start = end - 1;
         filter.setModifiedSince(Restrictions.between(start, end));
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibNoteItem i where i.modifiedDate between :param0 and :param1",
                 query.getQueryString());
     }
@@ -92,7 +92,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
     public void testDisplayNameQuery() throws Exception {
         ItemFilter filter = new ItemFilter();
         filter.setDisplayName(Restrictions.eq("test"));
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibItem i where i.displayName=:param0", query.getQueryString());
 
         filter.setDisplayName(Restrictions.neq("test"));
@@ -133,7 +133,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         ItemFilter filter = new ItemFilter();
         CollectionItem parent = new HibCollectionItem();
         filter.setParent(parent);
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals(
                 "select i from HibItem i join i.parentDetails pd where " + "pd.primaryKey.collection=:parent",
                 query.getQueryString());
@@ -151,7 +151,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         CollectionItem parent = new HibCollectionItem();
         filter.setParent(parent);
         filter.setDisplayName(Restrictions.eq("test"));
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibItem i join i.parentDetails pd where "
                 + "pd.primaryKey.collection=:parent and i.displayName=:param1", query.getQueryString());
     }
@@ -168,7 +168,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         CollectionItem parent = new HibCollectionItem();
         filter.setParent(parent);
         filter.setTriageStatusCode(Restrictions.eq(TriageStatus.CODE_DONE));
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibContentItem i join i.parentDetails pd where "
                 + "pd.primaryKey.collection=:parent and i.triageStatus.code=:param1", query.getQueryString());
 
@@ -201,7 +201,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         filter.setBody(Restrictions.eq("body"));
         filter.setTriageStatusCode(Restrictions.eq(TriageStatus.CODE_DONE));
 
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibNoteItem i join i.parentDetails pd, "
                 + "HibTextAttribute ta4 where pd.primaryKey.collection=:parent and "
                 + "i.displayName=:param1 and i.triageStatus.code=:param2 and i.icalUid=:param3 and "
@@ -258,7 +258,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         filter.setIcalUid(Restrictions.eq("icaluid"));
         // filter.setBody("body");
         filter.getStampFilters().add(eventFilter);
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibNoteItem i join i.parentDetails pd, "
                 + "HibBaseEventStamp es where pd.primaryKey.collection=:parent and "
                 + "i.displayName=:param1 and es.item=i and i.icalUid=:param2", query.getQueryString());
@@ -288,7 +288,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         CollectionItem parent = new HibCollectionItem();
         filter.setParent(parent);
         filter.getStampFilters().add(eventFilter);
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibNoteItem i join i.parentDetails pd, "
                 + "HibBaseEventStamp es where pd.primaryKey.collection=:parent and es.item=i "
                 + "and ( (es.timeRangeIndex.isFloating=true and "
@@ -313,7 +313,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         StampFilter missingFilter = new StampFilter();
         missingFilter.setStampClass(EventStamp.class);
         filter.getStampFilters().add(missingFilter);
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals("select i from HibNoteItem i where exists (select s.id from HibStamp s "
                 + "where s.item=i and s.class=HibEventStamp)", query.getQueryString());
         missingFilter.setMissing(true);
@@ -336,7 +336,7 @@ public class StandardItemFilterProcessorTest extends AbstractSpringDaoTestCase {
         AttributeFilter missingFilter = new AttributeFilter();
         missingFilter.setQname(new HibQName("ns", "name"));
         filter.getAttributeFilters().add(missingFilter);
-        QueryImpl<Item> query = queryBuilder.buildQuery(filter);
+        Query<Item> query = queryBuilder.buildQuery(filter);
         assertEquals(
                 "select i from HibNoteItem i where exists "
                         + "(select a.id from HibAttribute a where a.item=i and a.qname=:param0)",

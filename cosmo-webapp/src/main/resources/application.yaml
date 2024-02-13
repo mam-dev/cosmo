@@ -46,7 +46,8 @@ external:
     size: 1048576
     non:
       proxyed:
-        hosts:  
+        hosts:
+    user-agent: COSMO      
 calendar: 
   server:
    productId: COSMO
@@ -61,7 +62,7 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://localhost:33060/test?autoReconnect=true
+    jdbc-url: jdbc:mariadb://localhost:33060/test?autoReconnect=true
     username: root
     password: 
     driver-class-name: org.mariadb.jdbc.Driver

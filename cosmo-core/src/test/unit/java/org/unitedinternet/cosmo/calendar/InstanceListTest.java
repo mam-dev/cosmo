@@ -15,23 +15,24 @@
  */
 package org.unitedinternet.cosmo.calendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
-
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test InstanceList, the meat and potatoes of recurrence
@@ -1142,7 +1143,7 @@ public class InstanceListTest {
      */
     private static void addToInstanceList(Calendar calendar,
                                           InstanceList instances, Date start, Date end) {
-        ComponentList<VEvent> vevents = calendar.getComponents().getComponents(VEvent.VEVENT);
+        List<VEvent> vevents = calendar.getComponents().getComponents(VEvent.VEVENT);
 	Iterator<VEvent> it = vevents.iterator();
         boolean addedMaster = false;
         while (it.hasNext()) {

@@ -22,7 +22,6 @@ import org.unitedinternet.cosmo.CosmoException;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
@@ -46,7 +45,7 @@ public class ICal3ClientFilter implements ICalendarClientFilter{
     public void filterCalendar(Calendar calendar) {
        
         try {
-            ComponentList<VEvent> events = calendar.getComponents(Component.VEVENT);
+            List<VEvent> events = calendar.getComponents(Component.VEVENT);
             for(VEvent event : events) {                 
                 // fix VALUE=DATE-TIME instances
                 fixDateTimeProperties(event);

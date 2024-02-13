@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.FlushModeType;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ContentDao;
@@ -63,8 +63,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw new IllegalArgumentException("collection must have owner");
         }
 
-        if (getBaseModelObject(collection).getId() != -1) {
-            throw new IllegalArgumentException("invalid collection id (expected -1)");
+        if (getBaseModelObject(collection).getId() != null) {
+            throw new IllegalArgumentException("invalid collection id (expected null)");
         }
 
         // Verify uid not in use
@@ -111,7 +111,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             }
 
             // Create item
-            if (getBaseModelObject(item).getId() == -1) {
+            if (getBaseModelObject(item).getId() == null) {
                 createContentInternal(collection, item);
             } else if (item.getIsActive() == false) {
                 // Delete item
@@ -407,8 +407,8 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
             throw new IllegalArgumentException("content cannot be null");
         }
 
-        if (getBaseModelObject(content).getId() != -1) {
-            throw new IllegalArgumentException("invalid content id (expected -1)");
+        if (getBaseModelObject(content).getId() != null) {
+            throw new IllegalArgumentException("invalid content id (expected null)");
         }
 
         if (content.getOwner() == null) {
@@ -647,7 +647,7 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
         // If icaluid is in use throw exception
         if (itemId != null) {
             // If the note is new, then its a duplicate icaluid
-            if (getBaseModelObject(item).getId() == -1) {
+            if (getBaseModelObject(item).getId() == null) {
                 Item dup = (Item) this.em.find(HibItem.class, itemId);
                 throw new IcalUidInUseException(
                         "iCal uid" + item.getIcalUid() + " already in use for collection " + parent.getUid(),

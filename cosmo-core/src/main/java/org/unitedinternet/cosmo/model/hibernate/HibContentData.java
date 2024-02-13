@@ -15,10 +15,10 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 
 /**
  * Represents the data of a piece of Content. Data is stored as a BufferedContent, either in memory (small content) or

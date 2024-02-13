@@ -20,14 +20,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Index;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
@@ -91,7 +92,7 @@ public class HibUser extends HibAuditableObject implements User {
      * range of unicode code points: [#x20-#xD7FF] | [#xE000-#xFFFD] EXCEPT #x7F or #x3A. Oh and don't allow ';' or '/'
      * because there are problems with encoding them in urls (tomcat doesn't support it)
      */
-    @javax.validation.constraints.Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")    
+    @Pattern(regexp = "^[\\u0020-\\ud7ff\\ue000-\\ufffd&&[^\\u007f\\u003a;/\\\\]]+$")    
     private String username;
 
     private transient String oldUsername;

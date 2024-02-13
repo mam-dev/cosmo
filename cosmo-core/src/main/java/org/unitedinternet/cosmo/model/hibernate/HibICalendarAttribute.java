@@ -18,9 +18,9 @@ package org.unitedinternet.cosmo.model.hibernate;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.CosmoIOException;

@@ -15,10 +15,10 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 
 import org.hibernate.annotations.Target;
 import org.unitedinternet.cosmo.model.ContentItem;

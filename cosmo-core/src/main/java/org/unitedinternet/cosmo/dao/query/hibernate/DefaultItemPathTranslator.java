@@ -18,9 +18,9 @@ package org.unitedinternet.cosmo.dao.query.hibernate;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.springframework.stereotype.Repository;
