@@ -21,6 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unitedinternet.cosmo.calendar.util.CalendarUtils;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -65,7 +66,7 @@ public class EventValidator implements ConstraintValidator<Event, Calendar> {
 
             // validate entire icalendar object
             if (calendar != null) {
-                calendar.validate(true);
+                ValidationUtils.verifyResult(calendar.validate(true));
                 // additional check to prevent bad .ics
                 
                 String textCalendar = calendar.toString();

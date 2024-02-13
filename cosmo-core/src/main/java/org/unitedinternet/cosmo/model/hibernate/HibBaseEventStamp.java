@@ -28,7 +28,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
-import jakarta.validation.ValidationException;
 
 import org.unitedinternet.cosmo.CosmoIOException;
 import org.unitedinternet.cosmo.CosmoParseException;
@@ -39,6 +38,7 @@ import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 import org.unitedinternet.cosmo.model.BaseEventStamp;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.transform.TzHelper;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -67,7 +67,7 @@ import net.fortuna.ical4j.model.property.RDate;
 import net.fortuna.ical4j.model.property.RRule;
 import net.fortuna.ical4j.model.property.RecurrenceId;
 import net.fortuna.ical4j.model.property.Trigger;
-import net.fortuna.ical4j.validate.ValidationResult;
+import net.fortuna.ical4j.validate.ValidationException;
 
 
 /**
@@ -145,10 +145,7 @@ public abstract class HibBaseEventStamp extends HibStamp implements ICalendarCon
     private static String calendarToString(Calendar value) {
         String calendar = null;
         try {
-            ValidationResult validationResult = value.validate(true);
-            if (validationResult.hasErrors()) {
-                throw new net.fortuna.ical4j.validate.ValidationException("calendar has validation errors");
-            }
+            ValidationUtils.verifyResult(value.validate());
             calendar = CalendarUtils.outputCalendar(value);
         } catch (ValidationException e) {
             throw new CosmoValidationException(e);

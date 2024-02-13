@@ -15,6 +15,8 @@
  */
 package org.unitedinternet.cosmo.hibernate.validator;
 
+import org.unitedinternet.cosmo.util.ValidationUtils;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -40,7 +42,7 @@ public class TimezoneValidator implements ConstraintValidator<Timezone, Calendar
             Calendar calendar = (Calendar) value;
             
             // validate entire icalendar object
-            calendar.validate(true);
+            ValidationUtils.verifyResult(calendar.validate(true));
             
             // make sure we have a VTIMEZONE
             VTimeZone timezone = (VTimeZone) calendar.getComponents()

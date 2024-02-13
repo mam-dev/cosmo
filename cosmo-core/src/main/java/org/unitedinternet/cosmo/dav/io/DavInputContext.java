@@ -32,6 +32,7 @@ import org.unitedinternet.cosmo.dav.caldav.InvalidCalendarResourceException;
 import org.unitedinternet.cosmo.dav.caldav.SupportedCalendarComponentException;
 import org.unitedinternet.cosmo.dav.caldav.UnsupportedCalendarDataException;
 import org.unitedinternet.cosmo.util.ContentTypeUtil;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
@@ -113,7 +114,7 @@ public class DavInputContext extends InputContextImpl implements CaldavConstants
 
         try {
             Calendar c = CalendarUtils.parseCalendar(getInputStream());
-            c.validate(true);
+            ValidationUtils.verifyResult(c.validate(true));
 
             if (CalendarUtils.hasMultipleComponentTypes(c)) {
                 throw new InvalidCalendarResourceException("Calendar object contains more than one type of component");

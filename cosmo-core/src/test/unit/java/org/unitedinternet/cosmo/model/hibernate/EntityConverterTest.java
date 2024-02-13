@@ -45,6 +45,7 @@ import org.unitedinternet.cosmo.model.mock.MockEventStamp;
 import org.unitedinternet.cosmo.model.mock.MockNoteItem;
 import org.unitedinternet.cosmo.model.mock.MockTaskStamp;
 import org.unitedinternet.cosmo.model.mock.MockTriageStatus;
+import org.unitedinternet.cosmo.util.ValidationUtils;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
@@ -283,7 +284,7 @@ public class EntityConverterTest {
         collection.addChild(note2);
 
         Calendar fullCal = converter.convertCollection(collection);
-        fullCal.validate();
+        ValidationUtils.verifyResult(fullCal.validate());
         assertNotNull(fullCal);
 
         // VTIMEZONE, VTODO, VEVENT
@@ -310,7 +311,7 @@ public class EntityConverterTest {
         master.setTriageStatus(TriageStatusUtil.initialize(new MockTriageStatus()));
 
         Calendar cal = converter.convertNote(master);
-        cal.validate();
+        ValidationUtils.verifyResult(cal.validate());
 
         assertEquals(1, cal.getComponents().size());
 
@@ -359,7 +360,7 @@ public class EntityConverterTest {
         master.addStamp(eventStamp);
 
         Calendar cal = converter.convertNote(master);
-        cal.validate();
+        ValidationUtils.verifyResult(cal.validate());
 
         // date has no timezone, so there should be no timezones
         assertEquals(0, cal.getComponents(Component.VTIMEZONE).size());
@@ -442,7 +443,7 @@ public class EntityConverterTest {
 
         master.addStamp(eventStamp);
 
-        eventStamp.getEventCalendar().validate();
+        ValidationUtils.verifyResult(eventStamp.getEventCalendar().validate());
 
         NoteItem mod = new MockNoteItem();
         mod.setDisplayName("modDisplayName");
