@@ -28,7 +28,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -403,13 +403,13 @@ public class DavCollectionBase extends DavItemResourceBase implements DavItemCol
             writer.write("<html>\n<head><title>");
             String colName = getDisplayName() != null ? getDisplayName()
                     : "no name";
-            writer.write(StringEscapeUtils.escapeHtml(colName));
+            writer.write(StringEscapeUtils.escapeHtml4(colName));
     
             writer.write("</title></head>\n");
             writer.write("<body>\n");
             writer.write("<h1>");
     
-            writer.write(StringEscapeUtils.escapeHtml(colName));
+            writer.write(StringEscapeUtils.escapeHtml4(colName));
     
             writer.write("</h1>\n");
     
@@ -419,7 +419,7 @@ public class DavCollectionBase extends DavItemResourceBase implements DavItemCol
                 writer.write(parent.getResourceLocator().getHref(true));
                 writer.write("\">");
                 if (parent.getDisplayName() != null) {
-                    writer.write(StringEscapeUtils.escapeHtml(parent
+                    writer.write(StringEscapeUtils.escapeHtml4(parent
                             .getDisplayName()));
                 } else {
                     writer.write("no name");
@@ -436,7 +436,7 @@ public class DavCollectionBase extends DavItemResourceBase implements DavItemCol
                         child.isCollection()));
                 writer.write("\">");
                 if (child.getDisplayName() != null) {
-                    writer.write(StringEscapeUtils.escapeHtml(child
+                    writer.write(StringEscapeUtils.escapeHtml4(child
                             .getDisplayName()));
                 } else {
                     writer.write("no name");
@@ -467,9 +467,9 @@ public class DavCollectionBase extends DavItemResourceBase implements DavItemCol
                 }
                 writer.write("<dt>");
                 writer.write(StringEscapeUtils
-                        .escapeHtml(prop.getName().toString()));
+                        .escapeHtml4(prop.getName().toString()));
                 writer.write("</dt><dd>");
-                writer.write(StringEscapeUtils.escapeHtml(text));
+                writer.write(StringEscapeUtils.escapeHtml4(text));
                 writer.write("</dd>\n");
             }
             writer.write("</dl>\n");

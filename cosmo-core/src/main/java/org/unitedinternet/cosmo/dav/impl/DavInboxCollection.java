@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jackrabbit.webdav.DavResourceIterator;
 import org.apache.jackrabbit.webdav.DavResourceIteratorImpl;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -292,11 +292,11 @@ public class DavInboxCollection extends DavResourceBase implements DavCollection
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(context.getOutputStream(), "utf8"));
         try {
             writer.write("<html>\n<head><title>");
-            writer.write(StringEscapeUtils.escapeHtml(getDisplayName()));
+            writer.write(StringEscapeUtils.escapeHtml4(getDisplayName()));
             writer.write("</title></head>\n");
             writer.write("<body>\n");
             writer.write("<h1>");
-            writer.write(StringEscapeUtils.escapeHtml(getDisplayName()));
+            writer.write(StringEscapeUtils.escapeHtml4(getDisplayName()));
             writer.write("</h1>\n");
 
             writer.write("<h2>Properties</h2>\n");
@@ -316,9 +316,9 @@ public class DavInboxCollection extends DavResourceBase implements DavCollection
                     text = prop.getValueText();
                 }
                 writer.write("<dt>");
-                writer.write(StringEscapeUtils.escapeHtml(prop.getName().toString()));
+                writer.write(StringEscapeUtils.escapeHtml4(prop.getName().toString()));
                 writer.write("</dt><dd>");
-                writer.write(StringEscapeUtils.escapeHtml(text));
+                writer.write(StringEscapeUtils.escapeHtml4(text));
                 writer.write("</dd>\n");
             }
             writer.write("</dl>\n");
