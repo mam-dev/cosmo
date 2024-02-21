@@ -17,8 +17,8 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import java.text.ParseException;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.ModificationUid;

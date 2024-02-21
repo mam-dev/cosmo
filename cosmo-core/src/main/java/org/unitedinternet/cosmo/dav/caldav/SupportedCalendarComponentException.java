@@ -20,7 +20,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import net.fortuna.ical4j.model.Component;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 

@@ -18,7 +18,7 @@ package org.unitedinternet.cosmo.dav.acl;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.XmlSerializable;

@@ -19,7 +19,7 @@ import java.text.ParseException;
 
 import net.fortuna.ical4j.model.component.VTimeZone;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.apache.jackrabbit.webdav.xml.ElementIterator;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;

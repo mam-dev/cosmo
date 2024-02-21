@@ -17,7 +17,7 @@ package org.unitedinternet.cosmo.calendar.query;
 
 import java.text.ParseException;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.jackrabbit.webdav.xml.DomUtil;
 import org.unitedinternet.cosmo.dav.caldav.CaldavConstants;
 import org.w3c.dom.Element;

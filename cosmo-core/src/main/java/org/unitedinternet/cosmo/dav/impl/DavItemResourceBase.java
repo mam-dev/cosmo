@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.abdera.i18n.text.UrlEncoding;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.Status;
 import org.apache.jackrabbit.webdav.io.InputContext;

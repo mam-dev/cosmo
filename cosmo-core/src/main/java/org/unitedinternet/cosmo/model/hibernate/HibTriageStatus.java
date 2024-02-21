@@ -21,8 +21,8 @@ import java.math.BigDecimal;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.unitedinternet.cosmo.model.TriageStatus;
 
 /**

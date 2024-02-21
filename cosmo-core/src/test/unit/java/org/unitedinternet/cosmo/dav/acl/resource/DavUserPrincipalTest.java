@@ -15,7 +15,7 @@
  */
 package org.unitedinternet.cosmo.dav.acl.resource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 
 import org.junit.jupiter.api.Test;

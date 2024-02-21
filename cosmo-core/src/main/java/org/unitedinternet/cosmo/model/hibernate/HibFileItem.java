@@ -28,7 +28,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.unitedinternet.cosmo.CosmoIOException;
 import org.unitedinternet.cosmo.model.DataSizeException;
 import org.unitedinternet.cosmo.model.FileItem;

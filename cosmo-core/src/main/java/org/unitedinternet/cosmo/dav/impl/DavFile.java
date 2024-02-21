@@ -18,7 +18,7 @@ package org.unitedinternet.cosmo.dav.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.webdav.io.InputContext;
 import org.apache.jackrabbit.webdav.io.OutputContext;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;

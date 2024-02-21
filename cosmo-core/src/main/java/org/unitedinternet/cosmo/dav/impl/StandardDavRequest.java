@@ -40,7 +40,7 @@ import jakarta.servlet.http.Part;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.abdera.util.EntityTag;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.WebdavRequestImpl;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
