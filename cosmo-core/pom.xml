@@ -12,25 +12,12 @@
 	<parent>
 		<groupId>net.oneandone.cosmo</groupId>
 		<artifactId>cosmo-multimodule</artifactId>
-		<version>6.0.3-SNAPSHOT</version>
+		<version>7.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cosmo-core</artifactId>	
 
-
-	<properties>		
-		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
-		<maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
-		<maven-clean-plugin.version>2.1.1</maven-clean-plugin.version>
-		<maven-war-plugin.version>2.2</maven-war-plugin.version>
-		<maven-assembly-plugin.version>2.2.2</maven-assembly-plugin.version>		
-		<maven-pmd-plugin.failOnViolation>false</maven-pmd-plugin.failOnViolation>
-
-	</properties>
-
-
-	<dependencies>
-
+    <dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -61,18 +48,15 @@
 		<!-- Apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.14.0</version>
+			<artifactId>commons-lang3</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-text</artifactId>
-			<version>1.11.0</version>
+			<artifactId>commons-text</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.15.1</version>
+			<artifactId>commons-io</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -95,10 +79,7 @@
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-		</dependency> -->
+		
 		<!-- Databases -->
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
@@ -119,36 +100,18 @@
 			parsing eTags. -->
 		<dependency>
 			<groupId>org.apache.abdera</groupId>
-			<artifactId>abdera-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-			</exclusions>
+			<artifactId>abdera-core</artifactId>			
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.abdera</groupId>
-			<artifactId>abdera-i18n</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-			</exclusions>
+			<artifactId>abdera-i18n</artifactId>			
 		</dependency>
 
 		<!-- ical4j related libs -->
 		<dependency>
 			<groupId>org.mnode.ical4j</groupId>
-			<artifactId>ical4j</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-			</exclusions>
+			<artifactId>ical4j</artifactId>			
 		</dependency>
 
 		<dependency>
@@ -217,18 +180,12 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-		</dependency>
-		
-		<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>				
-		</dependency>
+		</dependency>				
 
 		<!-- Test -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<scope>test</scope>			
+			<artifactId>junit-jupiter</artifactId>			
 		</dependency>
 
 	</dependencies>
