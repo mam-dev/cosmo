@@ -19,11 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.hibernate.validator.Color;
 import org.unitedinternet.cosmo.hibernate.validator.DisplayName;
 import org.unitedinternet.cosmo.hibernate.validator.Timezone;
@@ -35,6 +30,8 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
@@ -48,7 +45,6 @@ import net.fortuna.ical4j.model.property.TzId;
  */
 @Entity
 @DiscriminatorValue("calendar")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibCalendarCollectionStamp extends HibStamp implements ICalendarConstants, CalendarCollectionStamp {
     
     private static final long serialVersionUID = 4397868099410967516L;

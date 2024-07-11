@@ -59,13 +59,11 @@ spring:
   datasource:
     url: jdbc:mariadb://localhost:33060/test?autoReconnect=true
     username: root
-    password: 
-    driver-class-name: org.mariadb.jdbc.Driver
+    password:     
     hikari:
       maximum-pool-size: 10     
   jpa:        
-    properties:
-     hibernate.dialect: org.hibernate.dialect.MariaDB103Dialect     
+    properties:     
      hibernate.cache.use_query_cache: false
      hibernate.cache.use_second_level_cache: false
      hibernate.show_sql: false

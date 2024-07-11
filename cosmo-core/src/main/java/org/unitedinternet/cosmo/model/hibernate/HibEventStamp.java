@@ -18,11 +18,6 @@ package org.unitedinternet.cosmo.model.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.hibernate.validator.Event;
@@ -32,6 +27,8 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -42,7 +39,6 @@ import net.fortuna.ical4j.model.component.VEvent;
  */
 @Entity
 @DiscriminatorValue("event")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibEventStamp extends HibBaseEventStamp implements EventStamp {
     
     /**
