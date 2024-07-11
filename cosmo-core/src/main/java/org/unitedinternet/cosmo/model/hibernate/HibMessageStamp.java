@@ -17,15 +17,13 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import java.io.Reader;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.MessageStamp;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 
 /**
