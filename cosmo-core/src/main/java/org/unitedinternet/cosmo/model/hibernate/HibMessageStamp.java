@@ -33,7 +33,6 @@ import org.unitedinternet.cosmo.model.Stamp;
  */
 @Entity
 @DiscriminatorValue("message")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibMessageStamp extends HibStamp implements MessageStamp {
 
     private static final long serialVersionUID = -6100568628972081120L;

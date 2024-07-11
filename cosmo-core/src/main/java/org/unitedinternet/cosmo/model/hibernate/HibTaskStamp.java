@@ -15,15 +15,13 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
 import org.unitedinternet.cosmo.model.Stamp;
 import org.unitedinternet.cosmo.model.TaskStamp;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 
 /**
@@ -31,7 +29,6 @@ import org.unitedinternet.cosmo.model.TaskStamp;
  */
 @Entity
 @DiscriminatorValue("task")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibTaskStamp extends HibStamp implements TaskStamp {
 
     private static final long serialVersionUID = -6197756070431706553L;

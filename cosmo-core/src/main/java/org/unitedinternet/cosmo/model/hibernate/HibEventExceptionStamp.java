@@ -15,11 +15,6 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.unitedinternet.cosmo.CosmoException;
 import org.unitedinternet.cosmo.calendar.ICalendarUtils;
 import org.unitedinternet.cosmo.hibernate.validator.EventException;
@@ -29,6 +24,8 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.Stamp;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -38,7 +35,6 @@ import net.fortuna.ical4j.model.component.VEvent;
  */
 @Entity
 @DiscriminatorValue("eventexception")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class HibEventExceptionStamp extends HibBaseEventStamp implements EventExceptionStamp {
 
     private static final long serialVersionUID = 3992468809776886156L;
