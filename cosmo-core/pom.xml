@@ -62,18 +62,7 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
-		
 
-		<!-- Logging -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-		</dependency>
-		
 		<!-- XML processing -->
 		<dependency>
 			<groupId>xerces</groupId>
