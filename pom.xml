@@ -13,10 +13,10 @@
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
 	<version>7.0.2-SNAPSHOT</version>
-
 	<packaging>pom</packaging>
-
 	<name>cosmo-multimodule</name>
+	<description>CalDAV core implementation server</description>
+    <url>http://1and1.github.io/foss-parent</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
