@@ -114,6 +114,7 @@ public class DavInputContext extends InputContextImpl implements CaldavConstants
 
         try {
             Calendar c = CalendarUtils.parseCalendar(getInputStream());
+            ValidationUtils.addRequired(c);
             ValidationUtils.verifyResult(c.validate(true));
 
             if (CalendarUtils.hasMultipleComponentTypes(c)) {
