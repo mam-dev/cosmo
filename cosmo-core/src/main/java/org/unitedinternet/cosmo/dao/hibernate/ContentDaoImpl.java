@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.CollectionSubscription;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.ICalendarItem;
 import org.unitedinternet.cosmo.model.IcalUidInUseException;
@@ -35,6 +36,7 @@ import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
 import org.unitedinternet.cosmo.model.User;
 import org.unitedinternet.cosmo.model.hibernate.HibCollectionItem;
+import org.unitedinternet.cosmo.model.hibernate.HibCollectionSubscriptionItem;
 import org.unitedinternet.cosmo.model.hibernate.HibItem;
 import org.unitedinternet.cosmo.model.hibernate.HibItemTombstone;
 
@@ -346,6 +348,13 @@ public class ContentDaoImpl extends ItemDaoImpl implements ContentDao {
          * Removing a collection does not automatically remove its children. Instead, the association to all the
          * children is removed, and any children who have no parent collection are then removed.
          */
+        if (collection instanceof HibCollectionSubscriptionItem) {
+            HibCollectionSubscriptionItem subCollection = (HibCollectionSubscriptionItem) collection;
+            CollectionSubscription subScription = subCollection.getSubscription();
+            if (subScription != null) {
+                this.em.detach(subScription);
+            }
+        }
         removeItemsFromCollection(collection);
         this.em.remove(collection);
     }
