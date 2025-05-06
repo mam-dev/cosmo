@@ -12,7 +12,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>7.0.4-SNAPSHOT</version>
+	<version>7.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>cosmo-multimodule</name>
 	<description>CalDAV core implementation server</description>
@@ -27,7 +27,7 @@
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<spring.boot.version>3.3.1</spring.boot.version>		
+		<spring.boot.version>3.4.4</spring.boot.version>		
 						
 		<jackrabbit.version>3.0.1</jackrabbit.version>
 		<ical4j.version>3.2.14</ical4j.version>
@@ -40,7 +40,7 @@
 		<stax.version>1.0.1</stax.version>
 		<woodstox.version>4.0.6</woodstox.version>
 		
-		<jackson.version>2.17.2</jackson.version>
+		<jackson.version>2.18.3</jackson.version>
 		<abdera.version>1.1.3</abdera.version>
 		<junit.version>5.10.3</junit.version>
 		
