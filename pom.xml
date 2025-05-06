@@ -27,7 +27,7 @@
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<spring.boot.version>3.4.4</spring.boot.version>		
+		<spring.boot.version>3.4.5</spring.boot.version>		
 						
 		<jackrabbit.version>3.0.1</jackrabbit.version>
 		<ical4j.version>3.2.14</ical4j.version>
