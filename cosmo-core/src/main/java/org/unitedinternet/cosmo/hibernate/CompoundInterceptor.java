@@ -15,45 +15,41 @@
  */
 package org.unitedinternet.cosmo.hibernate;
 
-import java.io.Serializable;
 import java.util.List;
 
-import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
 import org.hibernate.type.Type;
 
 /**
  * Hibernate Interceptor supports invoking multiple Interceptors
  */
-public class CompoundInterceptor extends EmptyInterceptor {
+public class CompoundInterceptor implements Interceptor {
 
-    private static final long serialVersionUID = 1L;
     private List<Interceptor> interceptors;
     
     @Override
-    public boolean onFlushDirty(Object object, Serializable id, Object[] currentState, Object[] previousState,
-                String[] propertyNames, Type[] types) {
+    public boolean onFlushDirty(Object entity, Object id, Object[] currentState, Object[] previousState,
+            String[] propertyNames, Type[] types) {
         boolean modified = false;
         for(Interceptor i: interceptors){
-            modified = modified | i.onFlushDirty(object, id, currentState, previousState, propertyNames, types);
+            modified = modified | i.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
         }
         return modified;
     }
 
     @Override
-    public boolean onSave(Object object, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    public boolean onPersist(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) {
         boolean modified = false;
         for(Interceptor i: interceptors){
-            modified = modified | i.onSave(object, id, state, propertyNames, types);
+            modified = modified | i.onPersist(entity, id, state, propertyNames, types);
         }
         return modified;
     }
     
     @Override
-    public void onDelete(Object entity, Serializable id, Object[] state,
-            String[] propertyNames, Type[] types) {
+    public void onRemove(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) {
         for(Interceptor i: interceptors) {
-            i.onDelete(entity, id, state, propertyNames, types);
+            i.onRemove(entity, id, state, propertyNames, types);
         }
     }
 

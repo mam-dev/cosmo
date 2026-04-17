@@ -15,17 +15,19 @@
  */
 package org.unitedinternet.cosmo.dav.acegisecurity;
 
-import java.util.Collection;
+import java.util.function.Supplier;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -53,7 +55,7 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  */
 @Service
 public class DavAccessDecisionManager
-        implements AccessDecisionManager, ExtendedDavConstants {
+        implements AuthorizationManager<HttpServletRequest> , ExtendedDavConstants {
     
     private static final Logger LOG = LoggerFactory.getLogger(DavAccessDecisionManager.class);
 
@@ -77,10 +79,10 @@ public class DavAccessDecisionManager
      *          {@link TicketAuthenticationToken}.
      */
     @Override
-    public void decide(Authentication authentication, Object object,
-                       Collection<ConfigAttribute> configAttributes)
+    public AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authenticationSupplier, HttpServletRequest object)
             throws AccessDeniedException, InsufficientAuthenticationException {
         AclEvaluator evaluator = null;
+        Authentication authentication = authenticationSupplier.get();
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             CosmoUserDetails details = (CosmoUserDetails)
                     authentication.getPrincipal();
@@ -110,18 +112,11 @@ public class DavAccessDecisionManager
 
         try {
             match(path, request.getMethod(), evaluator);
+            return new AuthorizationDecision(true);
         } catch (AclEvaluationException e) {
             throw new DavAccessDeniedException(request.getRequestURI(),
                     e.getPrivilege());
         }
-    }
-
-    /**
-     * Always returns true, as this manager does not support any
-     * config attributes.
-     */
-    public boolean supports(ConfigAttribute attribute) {
-        return true;
     }
 
     /**

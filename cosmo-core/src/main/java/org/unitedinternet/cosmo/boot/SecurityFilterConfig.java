@@ -1,26 +1,19 @@
 package org.unitedinternet.cosmo.boot;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.support.HttpRequestHandlerServlet;
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.ExtraTicketProcessingFilter;
 import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter;
@@ -36,7 +29,6 @@ import org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter;
  *
  */
 @Configuration
-@SuppressWarnings("serial")
 public class SecurityFilterConfig {
 
     public static final String PATH_DAV = "/dav/*";
@@ -93,12 +85,7 @@ public class SecurityFilterConfig {
 
     @Bean
     public FilterRegistrationBean<?> securityFilterChain() {
-        FilterSecurityInterceptor securityFilter = new FilterSecurityInterceptor();
-        securityFilter.setAuthenticationManager(this.authManager);
-        securityFilter.setAccessDecisionManager(this.davDecisionManager);
-        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> metadata = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
-        metadata.put(AnyRequestMatcher.INSTANCE, SecurityConfig.createList(ROLES));
-        securityFilter.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(metadata));
+        AuthorizationFilter securityFilter = new AuthorizationFilter(this.davDecisionManager);
 
         /*
          * Note that the order in which filters are defined is highly important.

@@ -20,7 +20,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 
-import org.hibernate.annotations.Target;
+import org.hibernate.annotations.TargetEmbeddable;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.TriageStatus;
@@ -44,7 +44,7 @@ public abstract class HibContentItem extends HibItem implements ContentItem {
     private Integer lastModification = null;
     
     @Embedded
-    @Target(HibTriageStatus.class)
+    @TargetEmbeddable(HibTriageStatus.class)
     private TriageStatus triageStatus = new HibTriageStatus();
     
     @Column(name = "sent", columnDefinition = "tinyint(4)")

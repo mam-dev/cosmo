@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
-<!-- Copyright 2005-2007 Open Source Applications Foundation Licensed under 
-	the Apache License, Version 2.0 (the "License"); you may not use this file 
-	except in compliance with the License. You may obtain a copy of the License 
-	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
-	law or agreed to in writing, software distributed under the License is distributed 
-	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-	express or implied. See the License for the specific language governing permissions 
+<!-- Copyright 2005-2007 Open Source Applications Foundation Licensed under
+	the Apache License, Version 2.0 (the "License"); you may not use this file
+	except in compliance with the License. You may obtain a copy of the License
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
+	law or agreed to in writing, software distributed under the License is distributed
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+	express or implied. See the License for the specific language governing permissions
 	and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>7.1.2-SNAPSHOT</version>
+	<version>8.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>cosmo-multimodule</name>
 	<description>CalDAV core implementation server</description>
@@ -20,30 +20,30 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
-		<maven.compiler.target>17</maven.compiler.target>
-		<maven.compiler.source>17</maven.compiler.source>
-			
+
+		<maven.compiler.target>25</maven.compiler.target>
+		<maven.compiler.source>25</maven.compiler.source>
+
 		<qxlint.report.profile>false</qxlint.report.profile>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
-		<spring.boot.version>3.4.5</spring.boot.version>		
-						
+
+		<spring.boot.version>4.0.5</spring.boot.version>
+
 		<jackrabbit.version>3.0.1</jackrabbit.version>
 		<ical4j.version>3.2.14</ical4j.version>
-			
+
 		<aspectjweaver.version>1.9.22.1</aspectjweaver.version>
 
-		<mariadb.version>3.4.0</mariadb.version>		
+		<mariadb.version>3.4.0</mariadb.version>
 		<xerces.version>2.12.2</xerces.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<stax.version>1.0.1</stax.version>
 		<woodstox.version>4.0.6</woodstox.version>
-		
+
 		<jackson.version>2.18.3</jackson.version>
 		<abdera.version>1.1.3</abdera.version>
 		<junit.version>5.10.3</junit.version>
-		
+
 		<!-- Deactivate checkstyle, findbugs, jacoco and pmd -->
 		<checkstyle.skip>true</checkstyle.skip>
 		<spotbugs.skip>true</spotbugs.skip>
@@ -52,19 +52,20 @@
 		<enforcer.skip>true</enforcer.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<jacoco.skip>true</jacoco.skip>
-		
-		<!-- Overwrite for java 17 -->
-                <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
-                <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
-                <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-                <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
-                <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-                <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-                <maven-license-plugin.version>3.0</maven-license-plugin.version>
-                <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-                <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
-                <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-		
+
+		<!-- Overwrite for java 25 -->
+        <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
+        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-license-plugin.version>3.0</maven-license-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>      
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        
 	</properties>
 
 	<modules>
@@ -74,7 +75,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-			
+
 			<dependency>
 				<!-- Import dependency management from Spring Boot -->
 				<groupId>org.springframework.boot</groupId>
@@ -83,7 +84,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-						
+
 
 			<!-- XML & co. -->
 			<dependency>
@@ -114,14 +115,14 @@
 				<artifactId>mariadb-java-client</artifactId>
 				<version>${mariadb.version}</version>
 			</dependency>
-			
+
 			<dependency>
 			    <groupId>dev.atchison.mariaDB4j</groupId>
 			    <artifactId>mariaDB4j</artifactId>
 			    <scope>test</scope>
 			    <version>2.7.2</version>
 			</dependency>
-			
+
 			<dependency>
 			    <groupId>dev.atchison.mariaDB4j</groupId>
 			    <artifactId>mariaDB4j-db-linux64</artifactId>
@@ -140,8 +141,8 @@
 						<groupId>commons-logging</groupId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.slf4j</groupId>						
-						<artifactId>slf4j-log4j12</artifactId>						
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
 					</exclusion>
 					<exclusion>
 					        <groupId>commons-codec</groupId>
@@ -149,7 +150,7 @@
 	        			</exclusion>
 				</exclusions>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>net.oneandone</groupId>
 				<artifactId>jackrabbit-webdav</artifactId>
@@ -165,13 +166,13 @@
 				    </exclusion>
 				</exclusions>
 			</dependency>
-									
+
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
 				<version>${aspectjweaver.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
@@ -186,7 +187,7 @@
 
 			<!-- OTHER -->
 
-			<!-- abdera is the ATOM implementation. This library is still used for 
+			<!-- abdera is the ATOM implementation. This library is still used for
 				parsing eTags. -->
 			<dependency>
 				<groupId>org.apache.abdera</groupId>
@@ -230,7 +231,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-						
+
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
@@ -241,18 +242,18 @@
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			
+
 			<dependency>
                 		<groupId>org.apache.commons</groupId>
                 		<artifactId>commons-text</artifactId>
-                		<version>1.12.0</version>           
+                		<version>1.12.0</version>
             		</dependency>
            		<dependency>
                 		<groupId>commons-io</groupId>
                 		<artifactId>commons-io</artifactId>
                 		<version>2.16.1</version>
            		</dependency>
-		
+
 			<!-- Test -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
@@ -262,7 +263,7 @@
 			</dependency>
 
 		</dependencies>
-	</dependencyManagement>	
+	</dependencyManagement>
 
 	<build>
 		<plugins>
@@ -291,7 +292,7 @@
 					<mapping>
 						<java>SLASHSTAR_STYLE</java>
 					</mapping>
-				</configuration>				
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -300,18 +301,18 @@
 				<version>${maven-javadoc-plugin.version}</version>
 				<configuration>
 					<doclint>none</doclint>
-					<quiet>true</quiet>					
+					<quiet>true</quiet>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-compiler-plugin</artifactId>
-			    <version>${maven-compiler-plugin.version}</version>            
+			    <version>${maven-compiler-plugin.version}</version>
 			    <configuration>
 				    <!-- Needed FOR AspectJ to work when importing cosmo jars -->
 				    <parameters>true</parameters>
-				    <testCompilerArgument>-parameters</testCompilerArgument>                
+				    <testCompilerArgument>-parameters</testCompilerArgument>
 			     </configuration>
 			 </plugin>
 			 <plugin>
@@ -319,7 +320,7 @@
                 		<artifactId>maven-gpg-plugin</artifactId>
                 		<version>${maven-gpg-plugin.version}</version>
              		</plugin>
-             
+
 		     	<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -334,7 +335,13 @@
 			    		<autoVersionSubmodules>true</autoVersionSubmodules>
 				</configuration>
 		    </plugin>
-                     
+		    
+		    <plugin>		      
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>                
+		    </plugin>
+
 		</plugins>
 	</build>
 
@@ -347,7 +354,7 @@
 					<failOnViolation>false</failOnViolation>
 					<configLocation>checkstyle-suppressions.xml</configLocation>
 				</configuration>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -429,7 +436,7 @@
                 <role>developer</role>
             </roles>
         </developer>
-    </developers>   
-	
-		
+    </developers>
+
+
 </project>
