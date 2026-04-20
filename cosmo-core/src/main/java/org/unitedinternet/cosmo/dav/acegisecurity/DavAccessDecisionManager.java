@@ -98,8 +98,7 @@ public class DavAccessDecisionManager
             throw new InsufficientAuthenticationException("Unrecognized authentication token");
         }
 
-        HttpServletRequest request =
-                ((FilterInvocation) object).getHttpRequest();
+        HttpServletRequest request = object;
 
         String path = request.getPathInfo();
         if (path == null) {
