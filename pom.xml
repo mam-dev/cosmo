@@ -12,7 +12,7 @@
 
 	<groupId>net.oneandone.cosmo</groupId>
 	<artifactId>cosmo-multimodule</artifactId>
-	<version>8.0.0</version>
+	<version>8.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>cosmo-multimodule</name>
 	<description>CalDAV core implementation server</description>
@@ -362,7 +362,7 @@
 		<developerConnection>scm:git:ssh://git@github.com/1and1/cosmo.git</developerConnection>
 		<connection>scm:git:ssh://git@github.com/1and1/cosmo.git</connection>
 		<url>https://github.com/1and1/</url>
-		<tag>cosmo-multimodule-8.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
     <distributionManagement>
