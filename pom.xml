@@ -54,18 +54,22 @@
 		<jacoco.skip>true</jacoco.skip>
 
 		<!-- Overwrite for java 25 -->
-        <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
-        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <maven-license-plugin.version>3.0</maven-license-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
+        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-license-plugin.version>5.0.0</maven-license-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
-        <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-sonatype-publish-plugin.version>0.10.0</maven-sonatype-publish-plugin.version>
+        
+         <!-- used during release:prepare and release:perform -->
+        <preparationGoals>clean</preparationGoals>
+        <goals>deploy</goals>
 
 	</properties>
 
@@ -333,7 +337,8 @@
 			  	  http://jira.codehaus.org/browse/MGPG-9
 			  	  -->
 			  	  	<mavenExecutorId>forked-path</mavenExecutorId>
-			    		<autoVersionSubmodules>true</autoVersionSubmodules>
+			    	<autoVersionSubmodules>true</autoVersionSubmodules>
+			    	<releaseProfiles>sonatype-publish</releaseProfiles>
 				</configuration>
 		    </plugin>
 
@@ -384,52 +389,102 @@
 		<tag>HEAD</tag>
 	</scm>
 
-    <distributionManagement>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <profiles>
         <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+          <id>sonatype-publish</id>
+          <build>
+            <plugins>
+              <!-- plugins from Maven's super pom -->
+              <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>release-jar-no-fork</id>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                  <execution>
+                    <id>release-test-jar-no-fork</id>
+                    <goals>
+                      <goal>test-jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                      <goal>jar</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>default-deploy</id>
+                    <phase>none</phase>
+                    <goals>
+                      <goal>deploy</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+    
+              <!-- specific plugins -->
+              <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <configuration>
+                  <publishingServerId>sonatype-central</publishingServerId>
+                </configuration>
+                <executions>
+                  <execution>
+                    <id>central-deploy</id>
+                    <phase>deploy</phase>
+                    <goals>
+                      <goal>publish</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>sign</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
         </profile>
-    </profiles>
+      </profiles>
 
     <licenses>
         <license>
