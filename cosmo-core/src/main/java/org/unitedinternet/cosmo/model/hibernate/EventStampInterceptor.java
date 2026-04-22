@@ -15,10 +15,9 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.io.Serializable;
 import java.time.temporal.TemporalAmount;
 
-import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
 import org.hibernate.type.Type;
 import org.springframework.stereotype.Component;
 import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
@@ -33,19 +32,17 @@ import net.fortuna.ical4j.model.TemporalAmountAdapter;
  * Hibernate Interceptor that updates BaseEventStamp timeRangeIndexes.
  */
 @Component
-public class EventStampInterceptor extends EmptyInterceptor {
-
-    private static final long serialVersionUID = 5339230223113722458L;
+public class EventStampInterceptor implements Interceptor {
 
     @Override
-    public boolean onFlushDirty(Object object, Serializable id, Object[] currentState,
+    public boolean onFlushDirty(Object entity, Object id, Object[] currentState,
             Object[] previousState, String[] propertyNames, Type[] types) {
-        if(! (object instanceof HibBaseEventStamp)) {
+        if(! (entity instanceof HibBaseEventStamp)) {
             return false;
         }
         
         // calculate time-range-index
-        HibBaseEventStamp es = (HibBaseEventStamp) object;
+        HibBaseEventStamp es = (HibBaseEventStamp) entity;
         HibEventTimeRangeIndex index = calculateEventStampIndexes(es);
         
         if(index==null) {
@@ -64,14 +61,14 @@ public class EventStampInterceptor extends EmptyInterceptor {
     }
 
     @Override
-    public boolean onSave(Object object, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    public boolean onPersist(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) {
         
-        if(! (object instanceof HibBaseEventStamp)) {
+        if(! (entity instanceof HibBaseEventStamp)) {
             return false;
         }
         
         // calculate time-range-index
-        HibBaseEventStamp es = (HibBaseEventStamp) object;
+        HibBaseEventStamp es = (HibBaseEventStamp) entity;
         HibEventTimeRangeIndex index = calculateEventStampIndexes(es);
         
         if(index==null) {

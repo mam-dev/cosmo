@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -31,8 +32,6 @@ import jakarta.persistence.OneToMany;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.unitedinternet.cosmo.hibernate.validator.TaskJournal;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.NoteItem;
@@ -58,9 +57,7 @@ public class HibNoteItem extends HibICalendarItem implements NoteItem {
     private static final Set<NoteItem> EMPTY_MODS = Collections
             .unmodifiableSet(new HashSet<NoteItem>(0));
 
-    @OneToMany(targetEntity=HibNoteItem.class, mappedBy = "modifies", fetch=FetchType.LAZY)
-    @Cascade( {CascadeType.DELETE} )
-    //@BatchSize(size=50)
+    @OneToMany(targetEntity=HibNoteItem.class, mappedBy = "modifies", fetch=FetchType.LAZY, cascade = CascadeType.REMOVE)    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<NoteItem> modifications = new HashSet<NoteItem>(0);
     

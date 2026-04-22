@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.hibernate.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
+import org.springframework.boot.hibernate.autoconfigure.HibernatePropertiesCustomizer;
 import org.springframework.context.annotation.Configuration;
 import org.unitedinternet.cosmo.model.hibernate.AuditableObjectInterceptor;
 import org.unitedinternet.cosmo.model.hibernate.EventStampInterceptor;

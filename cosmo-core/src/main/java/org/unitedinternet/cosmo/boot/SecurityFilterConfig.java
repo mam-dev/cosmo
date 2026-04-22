@@ -1,29 +1,21 @@
 package org.unitedinternet.cosmo.boot;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.support.HttpRequestHandlerServlet;
-import org.unitedinternet.cosmo.acegisecurity.providers.ticket.ExtraTicketProcessingFilter;
-import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketProcessingFilter;
+import org.unitedinternet.cosmo.acegisecurity.providers.ticket.TicketAuthenticationConverter;
 import org.unitedinternet.cosmo.acegisecurity.ui.CosmoAuthenticationEntryPoint;
 import org.unitedinternet.cosmo.dav.acegisecurity.DavAccessDecisionManager;
 import org.unitedinternet.cosmo.dav.servlet.StandardRequestHandler;
@@ -36,22 +28,14 @@ import org.unitedinternet.cosmo.filters.CosmoExceptionLoggerFilter;
  *
  */
 @Configuration
-@SuppressWarnings("serial")
 public class SecurityFilterConfig {
 
-    public static final String PATH_DAV = "/dav/*";
-    public static final String ROLES = "ROLES_WE_DONT_HAVE";
+    public static final String PATH_DAV = "/dav/*";    
 
     /**
      * @see StandardRequestHandler component.
      */
     private static final String DAV_SERVLET_NAME = "davRequestHandler";
-
-    @Autowired
-    private ExtraTicketProcessingFilter extraTicketFilter;
-
-    @Autowired
-    private TicketProcessingFilter ticketFilter;
 
     @Autowired
     private CosmoAuthenticationEntryPoint authEntryPoint;
@@ -93,19 +77,16 @@ public class SecurityFilterConfig {
 
     @Bean
     public FilterRegistrationBean<?> securityFilterChain() {
-        FilterSecurityInterceptor securityFilter = new FilterSecurityInterceptor();
-        securityFilter.setAuthenticationManager(this.authManager);
-        securityFilter.setAccessDecisionManager(this.davDecisionManager);
-        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> metadata = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
-        metadata.put(AnyRequestMatcher.INSTANCE, SecurityConfig.createList(ROLES));
-        securityFilter.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(metadata));
-
+        AuthorizationFilter autorizationFilter = new AuthorizationFilter(this.davDecisionManager);
+        DelegatingAuthenticationFilter delegatingAuthenticationFilter = new DelegatingAuthenticationFilter(
+                this.authManager, new TicketAuthenticationConverter());
         /*
          * Note that the order in which filters are defined is highly important.
          */
         SecurityFilterChain filterChain = new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE,
-                this.cosmoExceptionFilter, this.extraTicketFilter, this.ticketFilter,
-                new BasicAuthenticationFilter(authManager, this.authEntryPoint), securityFilter);
+                this.cosmoExceptionFilter,  
+                delegatingAuthenticationFilter,
+                new BasicAuthenticationFilter(authManager, this.authEntryPoint), autorizationFilter);
         FilterChainProxy proxy = new FilterChainProxy(filterChain);
         proxy.setFirewall(this.httpFirewall);
         FilterRegistrationBean<?> filterBean = new FilterRegistrationBean<>(proxy);

@@ -25,7 +25,7 @@ import jakarta.persistence.TypedQuery;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.dao.DuplicateEmailException;
 import org.unitedinternet.cosmo.dao.DuplicateUsernameException;
@@ -107,7 +107,7 @@ public class UserDaoImpl implements UserDao {
             }
         } catch (HibernateException e) {
             this.em.clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+            throw EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible(e);
         }
     }
 

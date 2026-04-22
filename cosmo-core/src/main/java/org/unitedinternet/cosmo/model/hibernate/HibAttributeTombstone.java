@@ -24,7 +24,7 @@ import jakarta.persistence.Entity;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Target;
+import org.hibernate.annotations.TargetEmbeddable;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.AttributeTombstone;
 import org.unitedinternet.cosmo.model.Item;
@@ -39,7 +39,7 @@ public class HibAttributeTombstone extends HibTombstone implements AttributeTomb
     
     private static final long serialVersionUID = -5316512272555844439L;
     @Embedded
-    @Target(HibQName.class)
+    @TargetEmbeddable(HibQName.class)
     @AttributeOverrides( {
             @AttributeOverride(name="namespace", column = @Column(name="namespace", length=255) ),
             @AttributeOverride(name="localName", column = @Column(name="localname", length=255) )

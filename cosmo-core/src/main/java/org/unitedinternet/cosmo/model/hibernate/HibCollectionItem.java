@@ -21,13 +21,13 @@ import static org.unitedinternet.cosmo.model.hibernate.CollectionItemConstants.A
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionItemDetails;
 import org.unitedinternet.cosmo.model.Item;
@@ -46,8 +46,7 @@ public class HibCollectionItem extends HibItem implements CollectionItem {
     private static final long serialVersionUID = 2873258323314048223L;
   
 
-    @OneToMany(targetEntity=HibCollectionItemDetails.class, mappedBy="primaryKey.collection", fetch=FetchType.LAZY)
-    @Cascade( {CascadeType.DELETE }) 
+    @OneToMany(targetEntity=HibCollectionItemDetails.class, mappedBy="primaryKey.collection", fetch=FetchType.LAZY, cascade = CascadeType.REMOVE)    
     private Set<CollectionItemDetails> childDetails = new HashSet<CollectionItemDetails>(0);
 
     private transient Set<Item> children = null;

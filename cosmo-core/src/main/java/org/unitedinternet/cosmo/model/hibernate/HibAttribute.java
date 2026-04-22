@@ -17,7 +17,7 @@ package org.unitedinternet.cosmo.model.hibernate;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Target;
+import org.hibernate.annotations.TargetEmbeddable;
 import org.unitedinternet.cosmo.model.Attribute;
 import org.unitedinternet.cosmo.model.Item;
 import org.unitedinternet.cosmo.model.QName;
@@ -54,7 +54,7 @@ public abstract class HibAttribute extends HibAuditableObject implements Attribu
 
     // Fields
     @Embedded
-    @Target(HibQName.class)
+    @TargetEmbeddable(HibQName.class)
     private QName qname;
 
     @ManyToOne(targetEntity = HibItem.class, fetch = FetchType.LAZY)

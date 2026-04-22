@@ -125,6 +125,11 @@ public class StandardDavResponse extends WebdavResponseImpl implements DavRespon
     public void sendRedirect(String location) throws IOException {
         originalHttpServletResponse.sendRedirect(location);
     }
+    
+    @Override
+    public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException{
+        originalHttpServletResponse.sendRedirect(location, sc, clearBuffer);
+    }
 
 
     public void setDateHeader(String name, long date) {

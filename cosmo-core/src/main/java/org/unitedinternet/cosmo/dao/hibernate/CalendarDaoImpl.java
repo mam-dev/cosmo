@@ -27,7 +27,7 @@ import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.SessionFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.stereotype.Repository;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilter;
 import org.unitedinternet.cosmo.calendar.query.CalendarFilterEvaluater;
@@ -147,7 +147,7 @@ public class CalendarDaoImpl implements CalendarDao {
             return results;
         } catch (HibernateException e) {
             this.em.clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+            throw EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class CalendarDaoImpl implements CalendarDao {
             return itemFilterProcessor.processFilter(itemFilter);
         } catch (HibernateException e) {
             this.em.clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+            throw EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible(e);
         }
     }
 
@@ -196,7 +196,7 @@ public class CalendarDaoImpl implements CalendarDao {
             return null;
         } catch (HibernateException e) {
             this.em.clear();
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
+            throw EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible(e);
         }
     }
 

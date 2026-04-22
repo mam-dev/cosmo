@@ -15,9 +15,7 @@
  */
 package org.unitedinternet.cosmo.model.hibernate;
 
-import java.io.Serializable;
-
-import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
 import org.hibernate.type.Type;
 import org.springframework.stereotype.Component;
 
@@ -26,20 +24,22 @@ import org.springframework.stereotype.Component;
  * and etag each time an AuditableObject is saved/updated.
  */
 @Component
-public class AuditableObjectInterceptor extends EmptyInterceptor {
-
-    private static final long serialVersionUID = 2206186604411196082L;
+public class AuditableObjectInterceptor implements Interceptor {
 
     @Override
-    public boolean onFlushDirty(Object object, Serializable id, Object[] currentState,
-            Object[] previousState, String[] propertyNames, Type[] types) {
-        if(! (object instanceof HibAuditableObject)) {
+    public boolean onFlushDirty(Object entity,
+            Object id,
+            Object[] currentState,
+            Object[] previousState,
+            String[] propertyNames,
+            Type[] types) {
+        if(! (entity instanceof HibAuditableObject)) {
             return false;
         }
         
         // Set new modifyDate so that calculateEntityTag()
         // has access to it
-        HibAuditableObject ao = (HibAuditableObject) object;
+        HibAuditableObject ao = (HibAuditableObject) entity;
         Long currentTime = System.currentTimeMillis();
         ao.setModifiedDate(currentTime);
         
@@ -55,15 +55,15 @@ public class AuditableObjectInterceptor extends EmptyInterceptor {
     }
 
     @Override
-    public boolean onSave(Object object, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    public boolean onPersist(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) {
         
-        if(! (object instanceof HibAuditableObject)) {
+        if(! (entity instanceof HibAuditableObject)) {
             return false;
         }
         
         // Set new modifyDate so that calculateEntityTag()
         // has access to it
-        HibAuditableObject ao = (HibAuditableObject) object;
+        HibAuditableObject ao = (HibAuditableObject) entity;
         Long currentTime = System.currentTimeMillis();
         ao.setModifiedDate(currentTime);
         
