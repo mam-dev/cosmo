@@ -63,9 +63,10 @@
         <maven-license-plugin.version>3.0</maven-license-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-checkstyle-plugin.version>3.4.0</maven-checkstyle-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>      
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
-        
+        <maven-sonatype-publish-plugin.version>0.10.0</maven-sonatype-publish-plugin.version>
+
 	</properties>
 
 	<modules>
@@ -335,12 +336,30 @@
 			    		<autoVersionSubmodules>true</autoVersionSubmodules>
 				</configuration>
 		    </plugin>
-		    
-		    <plugin>		      
+
+		    <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven-jar-plugin.version}</version>                
+                <version>${maven-jar-plugin.version}</version>
 		    </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${maven-sonatype-publish-plugin.version}</version>
+                <configuration>
+                    <publishingServerId>sonatype-central</publishingServerId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>central-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>publish</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
 		</plugins>
 	</build>
@@ -366,10 +385,6 @@
 	</scm>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
         <repository>
             <id>sonatype-nexus-staging</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
