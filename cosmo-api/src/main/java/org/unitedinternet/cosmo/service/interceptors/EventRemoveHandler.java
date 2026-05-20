@@ -25,7 +25,8 @@ public interface EventRemoveHandler {
      * @param parent CollectionItem
      * @param items Set<Item> to remove
      */
-    public void beforeRemove(CollectionItem parent,  Set<Item> items);
+    default void beforeRemove(CollectionItem parent,  Set<Item> items) {
+    }
 	
     /**
      * Intercepter executed after removing an item from a collection.
@@ -33,5 +34,6 @@ public interface EventRemoveHandler {
      * @param parent CollectionItem
      * @param items Set<Item> to remove
      */
-    public void afterRemove(CollectionItem parent, Set<Item> items);
+    default void afterRemove(CollectionItem parent, Set<Item> items) {
+    }
 }

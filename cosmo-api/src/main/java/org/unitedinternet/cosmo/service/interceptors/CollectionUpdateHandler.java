@@ -22,6 +22,6 @@ public interface CollectionUpdateHandler {
      * This method contains the code inserted before a collection is updated..
      * @param collection 
      */
-    public void beforeUpdateCollection(CollectionItem collection);
+    void beforeUpdateCollection(CollectionItem collection);
 
 }
