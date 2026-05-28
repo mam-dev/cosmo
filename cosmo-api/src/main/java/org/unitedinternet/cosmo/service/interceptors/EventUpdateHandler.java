@@ -37,7 +37,8 @@ public interface EventUpdateHandler {
      * @param children
      *             children to update
      */
-    public void beforeUpdate(CollectionItem parent, Set<ContentItem> contentItems);
+    default void beforeUpdate(CollectionItem parent, Set<ContentItem> contentItems) {
+    }
     
     /**
      * This method contains the code inserted after an event to be updated.
@@ -57,5 +58,6 @@ public interface EventUpdateHandler {
      * @param children
      *             children to update
      */
-    public void afterUpdate(CollectionItem parent, Set<ContentItem> contentItems);
+    default void afterUpdate(CollectionItem parent, Set<ContentItem> contentItems) {
+    }
 }

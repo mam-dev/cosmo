@@ -25,7 +25,8 @@ public interface EventAddHandler {
      * @param parent CollectionItem
      * @param contentItems Set<ContentItem>
      */
-    public void beforeAdd(CollectionItem parent, Set<ContentItem> contentItems);
+    default void beforeAdd(CollectionItem parent, Set<ContentItem> contentItems) {
+    }
     
     /**
      * This method contains the code inserted after an event to be added.
@@ -33,6 +34,7 @@ public interface EventAddHandler {
      * @param parent CollectionItem
      * @param contentItems Set<ContentItem>
      */
-    public void afterAdd(CollectionItem parent, Set<ContentItem> contentItems);
+    default void afterAdd(CollectionItem parent, Set<ContentItem> contentItems) {
+    }
     
 }

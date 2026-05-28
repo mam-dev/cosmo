@@ -16,7 +16,9 @@ import org.unitedinternet.cosmo.model.CollectionItem;
  */
 public interface CollectionCreateHandler {
 
-    void beforeCreateCollection(CollectionItem collection);
+    default void beforeCreateCollection(CollectionItem collection) {
+    }
 
-    void afterCreateCollection(CollectionItem collection);
+    default void afterCreateCollection(CollectionItem collection) {
+    }
 }

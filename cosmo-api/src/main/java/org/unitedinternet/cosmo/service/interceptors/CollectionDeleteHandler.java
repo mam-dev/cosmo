@@ -18,9 +18,12 @@ public interface CollectionDeleteHandler {
     /**
      * This method contains the code inserted before a collection is deleted.
      */
-    public void beforeDeleteCollection(String calendarName);
+    default void beforeDeleteCollection(String calendarName) {
+    }
+
     /**
      * This method contains the code inserted after a collection is deleted.
      */
-    public void afterDeleteCollection(String calendarName);
+    default void afterDeleteCollection(String calendarName) {
+    }
 }
