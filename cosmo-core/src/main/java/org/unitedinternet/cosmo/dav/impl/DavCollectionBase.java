@@ -54,6 +54,8 @@ import org.unitedinternet.cosmo.dav.acl.report.PrincipalPropertySearchReport;
 import org.unitedinternet.cosmo.dav.caldav.report.FreeBusyReport;
 import org.unitedinternet.cosmo.dav.caldav.report.MultigetReport;
 import org.unitedinternet.cosmo.dav.caldav.report.QueryReport;
+import org.unitedinternet.cosmo.dav.report.SyncCollectionReport;
+
 import org.unitedinternet.cosmo.dav.property.ExcludeFreeBusyRollup;
 import org.unitedinternet.cosmo.dav.property.WebDavProperty;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -98,6 +100,8 @@ public class DavCollectionBase extends DavItemResourceBase implements DavItemCol
         REPORT_TYPES.add(PrincipalMatchReport.REPORT_TYPE_PRINCIPAL_MATCH);
         REPORT_TYPES
                 .add(PrincipalPropertySearchReport.REPORT_TYPE_PRINCIPAL_PROPERTY_SEARCH);
+        REPORT_TYPES.add(SyncCollectionReport.REPORT_TYPE_DAV_SYNC_COLLECTION);
+
 
         DEAD_PROPERTY_FILTER.add(CollectionItem.class.getName());
     }

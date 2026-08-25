@@ -27,6 +27,7 @@ import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
+import org.unitedinternet.cosmo.dao.mock.MockModificationDao;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -76,7 +77,8 @@ public class SecurityAdviceTest {
         userDao = new MockUserDao(storage);
         this.sa = new SecurityAdvice(securityManager, contentDao, userDao);
         lockManager = new SingleVMLockManager();
-        service = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());
+        service = new StandardContentService(contentDao, lockManager,
+                new StandardTriageStatusQueryProcessor(), new MockModificationDao());
         
         // create a factory that can generate a proxy for the given target object
         AspectJProxyFactory factory = new AspectJProxyFactory(service); 
