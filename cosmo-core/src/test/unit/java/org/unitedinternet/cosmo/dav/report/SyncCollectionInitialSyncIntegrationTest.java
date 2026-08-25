@@ -63,11 +63,12 @@ import org.w3c.dom.NodeList;
  * </ul>
  *
  * <p>
- * <strong>These tests are expected to FAIL until RFC 6578 support is implemented.</strong>
- * Today the {@code DAV:sync-collection} report type is not registered on any Cosmo
- * collection resource, so the pipeline answers with
- * {@code 422 Unprocessable Entity} ("Unknown report") instead of the required
- * {@code 207 Multi-Status}. No production code was changed to produce these tests.
+ * <strong>Status: green.</strong> All tests pass since the
+ * {@code DAV:sync-collection} report type was registered on collection resources
+ * via {@link SyncCollectionReport} (RFC 6578 support). Before registration the
+ * pipeline answered {@code 422 Unprocessable Entity} ("Unknown report") instead
+ * of the required {@code 207 Multi-Status}; some assertion messages deliberately
+ * retain that historical failure-mode context to aid diagnosis.
  * </p>
  */
 public class SyncCollectionInitialSyncIntegrationTest extends BaseDavTestCase {
@@ -205,9 +206,9 @@ public class SyncCollectionInitialSyncIntegrationTest extends BaseDavTestCase {
      * Test case G-a: a REPORT request whose body is missing entirely is invalid
      * and must be answered with 400 Bad Request - never silently ignored.
      *
-     * Expected to FAIL initially: BaseProvider.report() currently returns
-     * without answering when a collection receives a body-less REPORT,
-     * leaving the response at the default 200.
+     * Regression guard: BaseProvider.report() used to return silently when a
+     * collection received a body-less REPORT, leaving the response at the
+     * default 200.
      */
     @Test
     public void reportWithoutRequestBodyMustBeAnsweredWith400() throws Exception {
@@ -235,8 +236,9 @@ public class SyncCollectionInitialSyncIntegrationTest extends BaseDavTestCase {
      * "no member entries", yet the response must still be a valid 207 multistatus
      * carrying a usable DAV:sync-token.
      *
-     * Expected to FAIL initially: SyncCollectionReport.parseReport() rejects
-     * nresults <= 0 with 400 Bad Request.
+     * Historical note: an early draft of SyncCollectionReport.parseReport()
+     * rejected nresults <= 0 with 400 Bad Request; shipped behavior treats
+     * 0 as a valid request for zero member entries.
      */
     @Test
     public void nresultsZeroReturnsEmptyMultistatusWithToken() throws Exception {
@@ -269,8 +271,8 @@ public class SyncCollectionInitialSyncIntegrationTest extends BaseDavTestCase {
      * RFC 3986 URI reference. Fixture member names deliberately contain spaces;
      * emitting them unencoded into DAV:href breaks the XML/URI contract.
      *
-     * Expected to FAIL initially if the report framework copies raw item names
-     * into hrefs without percent-encoding.
+     * Guards against a report framework that copies raw item names into hrefs
+     * without percent-encoding.
      */
     @Test
     public void memberHrefsMustBeValidUriReferences() throws Exception {

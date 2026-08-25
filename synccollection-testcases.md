@@ -1,7 +1,15 @@
 # DAV:sync-collection (RFC 6578) — Required HTTP/XML Behavior & Test Cases
 
-> **Status:** Design/specification only. **Nothing has been implemented.**
+> **Status:** Partially implemented & automated — see "Implementation status" below.
 > Companion document to `/cosmo/reconnaissance.md`.
+>
+> **Implementation status (2026-08-25):** automated & green on branch
+> `feature/rfc-6578`: B1, B2, B4 (initial sync), G4 (missing body → 400),
+> nresults=0 truncation edge, href URI-validity check
+> (`SyncCollectionInitialSyncIntegrationTest`); C1, C2, D1, C4 (as
+> remove+add surrogate), F2 (pagination convergence), G token-rejection
+> regression lock (`SyncCollectionIncrementalSyncIntegrationTest`).
+> All remaining cases are specification for future automation.
 > Behavior is derived from RFC 6578 and cross-checked against Cosmo's existing
 > REPORT pipeline (`StandardRequestHandler` → `BaseProvider#report()` →
 > `WebDavResource#getReport()` → `ReportBase`/`MultiStatusReport`).

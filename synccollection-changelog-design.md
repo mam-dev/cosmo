@@ -54,3 +54,12 @@ Hibernate impl; wired via Spring like ContentDao.
 2. Service-layer hooks
 3. Report read-path rewrite (keep initial-sync behavior identical)
 4. New RED tests above → green
+
+## Status (2026-08-25)
+Steps 1–4 complete on branch `feature/rfc-6578`; automated and green:
+C1, C2, D1, C4 (remove+add surrogate), F2 pagination convergence, G token
+rejection (`SyncCollectionIncrementalSyncIntegrationTest`); initial-sync
+behavior unchanged per B1/B2/B4 (`SyncCollectionInitialSyncIntegrationTest`).
+Open item: persistence layer (`ModificationDaoImpl`,
+`HibCollectionModification`) has so far only been exercised through the mock
+DAO stack — verification against a real Hibernate/JPA session still pending.

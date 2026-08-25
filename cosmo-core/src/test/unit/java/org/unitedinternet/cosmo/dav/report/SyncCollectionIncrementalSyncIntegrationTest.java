@@ -77,14 +77,15 @@ import org.w3c.dom.NodeList;
  * </ul>
  *
  * <p>
- * <strong>These tests are expected to FAIL until the persistent change log and
- * real monotonic tokens are implemented (see
- * {@code synccollection-changelog-design.md}).</strong> Today any non-empty
- * {@code DAV:sync-token} is answered with {@code 403 Forbidden}, so every
- * incremental-round test fails with {@code expected: <207> but was: <403>}.
- * Only the G-group validation test passes today; it is kept as a regression
- * lock proving that real-token support does NOT loosen token validation.
- * No production code was changed to produce these tests.
+ * <strong>Status: green.</strong> All tests pass since the persistent change log
+ * ({@code ModificationDao}/{@code HibCollectionModification}) and real monotonic
+ * sync-tokens described in {@code synccollection-changelog-design.md} were
+ * implemented. Before that, any non-empty {@code DAV:sync-token} was answered
+ * with {@code 403 Forbidden}, so every incremental-round test failed with
+ * {@code expected: <207> but was: <403>}; some assertion messages deliberately
+ * retain that historical failure-mode context. The G-group validation test
+ * doubles as a regression lock proving that real-token support did NOT loosen
+ * token validation.
  * </p>
  */
 public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCase {
@@ -198,8 +199,6 @@ public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCas
      * Test case D1: removing a member between rounds reports it exactly once as
      * a deletion tombstone - a DAV:response whose only content is a bare
      * DAV:status of 404 - preserving the old href of the deleted member.
-     *
-     * Expected to FAIL initially (403 instead of 207): no tombstones exist yet.
      */
     @Test
     public void removedMemberIsReportedAs404Tombstone() throws Exception {
@@ -300,8 +299,6 @@ public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCas
      * and a NEW continuation token; the second round returns the remaining
      * entry; a third round returns zero entries, proving that no change was
      * lost by the earlier truncations.
-     *
-     * Expected to FAIL initially (403 instead of 207).
      */
     @Test
     public void limitPaginationConvergesWithoutLosingChanges() throws Exception {
@@ -347,15 +344,15 @@ public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCas
                 "after draining all changes a further round must report none");
     }
 
-    // G (regression lock: passes today, must KEEP passing)
+    // G (regression lock: must KEEP passing)
 
     /**
      * Test case G: garbage tokens and syntactically valid but unknown or
      * future tokens must be rejected with 403 Forbidden so clients repeat
      * the initial synchronization (RFC 6578 Section 3.7 fallback rule).
      *
-     * This test passes TODAY because every non-empty token is rejected;
-     * it guards that real-token support does not weaken validation.
+     * It guards that real-token support does not weaken token validation:
+     * unknown, malformed, negative and out-of-range-future tokens all yield 403.
      */
     @Test
     public void garbageAndFutureTokensAreRejectedWith403() throws Exception {
