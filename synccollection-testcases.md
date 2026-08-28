@@ -14,9 +14,11 @@
 > `MultiStatusReport` sync-collection path, unlike Multiget/Query/FreeBusy
 > which special-case it via `CaldavMultiStatusReport`)
 > (`SyncCollectionScopeAndCalendarDataIntegrationTest`);
-> C1, C2, D1, C4 (as
-> remove+add surrogate), F2 (pagination convergence), G token-rejection
-> regression lock (`SyncCollectionIncrementalSyncIntegrationTest`);
+> C1, C2, D1, D2 (tombstone consumed by subsequent token),
+> D3 (delete+recreate same name → tombstone + creation both in one round;
+> uid-keyed change log), C4 (as remove+add surrogate), F2 (pagination
+> convergence), G token-rejection regression lock
+> (`SyncCollectionIncrementalSyncIntegrationTest`);
 > E1, E2, E3 (+ empty-`<D:prop/>` form), E4 (`<D:allprop/>` is ignored and
 > treated as empty property selection → bare href-only multistatus, 207)
 > (`SyncCollectionPropertySelectionIntegrationTest`);
@@ -206,9 +208,17 @@ Conventions: base URI `C = /dav/{user}/calendars/{cal}`; all bodies use `xmlns:D
 | ID | Scenario | Steps | Expected |
 |---|---|---|---|
 | D1 | Deleted member reported once | Delete M2 after T0; REPORT with T0 | 207; one 404-status response for M2; no propstat inside it |
-| D2 | Tombstone consumed by later token | REPORT with token T1 taken *after* D1's response | M2 no longer listed (history advanced past deletion) |
-| D3 | Deleted-then-recreated same name | DELETE M2; PUT new M2; REPORT with T0 | M2 listed **once** as changed entry (not as 404), with new etag |
-| D4 | Tombstone retention window | Configure/observe server history limit; REPORT with token older than retention | 403 invalid-token (client resyncs full) |
+| D2 | Tombstone consumed by later token | REPORT with token T1 taken *after* D1's response | M2 no longer listed (history advanced past deletion) — **implemented** `tombstoneIsConsumedBySubsequentSyncToken` |
+| D3 | Deleted-then-recreated same name | DELETE M2; PUT new M2; REPORT with T0 | **As implemented:** M2 appears **twice** — once as 404 tombstone (old uid) and once as a 200 changed entry (new uid), two independent change-log rows sharing one href. Deviation from original expectation above: the log is uid-keyed, not name-keyed. See D3 note below. |
+| D4 | Tombstone retention window | Configure/observe server history limit; REPORT with token older than retention | 403 invalid-token (client resyncs full) — **not implementable:** production has no retention/pruning mechanism for `cosmo_collection_modification`; `parseSyncToken` only rejects malformed or future tokens, never "too old" tokens. Re-evaluate once a pruning strategy is added (see rfc-compliance.md §4.2). |
+
+> **D3 note (2026-08-28):** the original table expected a single changed entry (deleted +
+> recreated collapses to one row). The implemented `SyncCollectionReport#doIncrementalSync`
+> replays every change-log row independently, so delete + recreate with the same name in one
+> window yields **two** `DAV:response`s: a bare-404 tombstone for the removed uid and a
+> 200-propstat entry for the new uid, both with the same href. This is consistent with
+> RFC 6578 §3.5 (tombstones are per-deletion, keyed by the member's identity) and is the
+> behavior locked in by `deleteAndRecreateSameNameBothReportedInOneRound`.
 
 ### Group E — Property selection
 

@@ -16,6 +16,7 @@
 package org.unitedinternet.cosmo.dav.report;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,6 +66,13 @@ import org.w3c.dom.NodeList;
  * updated (non-tombstone) entry.</li>
  * <li><strong>D1</strong> - a removed member appears exactly once as a deletion
  * tombstone: a {@code DAV:response} with a bare {@code DAV:status} of 404.</li>
+ * <li><strong>D2</strong> - a tombstone is delivered in the round where the
+ * change was logged; a subsequent incremental round using the post-deletion
+ * token reports nothing (the tombstone is consumed, not re-delivered).</li>
+ * <li><strong>D3</strong> - a member deleted and then re-created with the same
+ * name within one window appears as BOTH a 404 tombstone (old uid) and a
+ * regular 200 propstat entry (new uid) — the hrefs are identical but the
+ * entries are independent rows in the change log.</li>
  * <li><strong>C4</strong> - a removal followed by an addition inside the same
  * synchronization window yields BOTH the tombstone and the new member in one
  * round (this is the change pattern a rename produces; the fixture simulates it
@@ -237,7 +245,135 @@ public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCas
                 "the tombstone must preserve the href of the deleted member");
     }
 
-    // C4 (rename surrogate: remove + add inside one window)
+    
+    // D2 — tombstone consumed by a later token
+
+    /**
+     * Test case D2: a tombstone is delivered in the incremental round that
+     * contains its change-log row.  After that round, taking the returned
+     * sync-token and performing a further incremental round must NOT re-list
+     * the deleted member: the log has advanced past the deletion row and the
+     * row is never replayed (RFC 6578 Section 3.5: "The synchronization token
+     ...indicates a point on the history of the collection").
+     */
+    @Test
+    public void tombstoneIsConsumedBySubsequentSyncToken() throws Exception {
+        List<CollectionItem> members = givenHomeChildCollections(1);
+        String initialToken = doInitialSyncAndGetToken();
+
+        CollectionItem removed = members.get(0);
+        testHelper.getContentService().removeCollection(removed);
+
+        // Round 1: incremental sync with the pre-deletion token → 1 tombstone
+        DavTestContext round1 = executeSyncCollectionReport(
+                incrementalBody(initialToken, null));
+        assertEquals(207, round1.getDavResponse().getStatus(),
+                "incremental sync after deletion must yield 207");
+        Document ms1 = parseMultistatus(round1.getHttpResponse().getContentAsString());
+        List<Element> responses1 =
+                getChildElements(ms1.getDocumentElement(), "response");
+        assertEquals(1, responses1.size(),
+                "round 1 must report exactly one change (the deletion)");
+        assertEquals(1, responsesDeletedMembers(responses1).size(),
+                "round 1's single entry must be a 404 tombstone");
+        String postDeletionToken = requiredSyncToken(ms1, "round 1 (post-deletion)");
+
+        // Round 2: incremental sync with the post-deletion token → 0 entries
+        DavTestContext round2 = executeSyncCollectionReport(
+                incrementalBody(postDeletionToken, null));
+        assertEquals(207, round2.getDavResponse().getStatus(),
+                "round 2 (further incremental sync) must still yield 207");
+        Document ms2 = parseMultistatus(round2.getHttpResponse().getContentAsString());
+        List<Element> responses2 =
+                getChildElements(ms2.getDocumentElement(), "response");
+        assertTrue(responses2.isEmpty(),
+                "the tombstone must be consumed: a second incremental round with the "
+                + "post-deletion token must report zero changed members");
+
+        // The round must still carry a sync-token so the client can keep syncing
+        assertNotNull(findDirectSyncToken(ms2.getDocumentElement()),
+                "round 2 must still carry a DAV:sync-token even with zero entries");
+    }
+
+    // D3 — delete + recreate same name in one window
+
+    /**
+     * Test case D3 (as implemented): a member is deleted and then a distinct
+     * collection is created with the same human-readable name inside the same
+     * synchronization window.  Because the two events carry different UIDs the
+     * persistent change log contains two independent rows and the incremental
+     * round reports BOTH:
+     * <ul>
+     *   <li>a 404 {@code DAV:response} (tombstone) for the deleted UID, and</li>
+     *   <li>a 200 propstat entry for the newly created UID,</li>
+     * </ul>
+     * both sharing the same href.  This is the production behaviour of
+     * {@link SyncCollectionReport#doIncrementalSync} and a documented
+     * deviation from the original spec (which expected a single changed entry):
+     * the RFC 6578 change log is UID-keyed, not name-keyed.
+     */
+    @Test
+    public void deleteAndRecreateSameNameBothReportedInOneRound() throws Exception {
+        List<CollectionItem> members = givenHomeChildCollections(1);
+        CollectionItem original = members.get(0);
+        String sharedName = original.getName();
+        String initialToken = doInitialSyncAndGetToken();
+
+        // Step 1: delete the original member (UID = original.getUid())
+        testHelper.getContentService().removeCollection(original);
+
+        // Step 2: create a new, distinct collection under home with the same name.
+        // makeDummyCollection always assigns a fresh UID (lseq counter); we override
+        // only the name/displayName to match the deleted member's name.
+        CollectionItem recreated = testHelper.makeDummyCollection(testHelper.getUser());
+        recreated.setName(sharedName);
+        recreated.setDisplayName(sharedName);
+        CollectionItem createdEntity = testHelper.getContentService()
+                .createCollection(testHelper.getHomeCollection(), recreated);
+        assertNotNull(createdEntity, "recreated collection must be stored");
+        assertNotEquals(original.getUid(), createdEntity.getUid(),
+                "the recreated collection must carry a different UID from the deleted one");
+
+        // Round: incremental sync with the pre-deletion token → both entries
+        DavTestContext ctx = executeSyncCollectionReport(
+                incrementalBody(initialToken, null));
+        assertEquals(207, ctx.getDavResponse().getStatus(),
+                "incremental sync after delete+recreate must yield 207");
+
+        Document ms = parseMultistatus(ctx.getHttpResponse().getContentAsString());
+        Element root = ms.getDocumentElement();
+        List<Element> responses = getChildElements(root, "response");
+        assertEquals(2, responses.size(),
+                "both the deletion (404, old uid) and the creation (200, new uid) "
+                + "must appear in the same round — the change log contains two "
+                + "independent rows with the same name but different UIDs");
+
+        boolean sawTombstone = false;
+        boolean sawCreation = false;
+        for (Element response : responses) {
+            if (!responsesDeletedMembers(
+                    java.util.Collections.singletonList(response)).isEmpty()) {
+                sawTombstone = true;
+                assertTrue(hrefDecodesTo(response, sharedName),
+                        "the tombstone must preserve the href of the deleted member");
+                assertNullPropstat(response,
+                        "the tombstone must not carry propstat blocks");
+            } else {
+                sawCreation = true;
+                assertTrue(hrefDecodesTo(response, sharedName),
+                        "the creation entry must reference the same member name");
+                assertNotNull(findPropStatProp(response, "getetag", 200),
+                        "the creation entry must carry DAV:getetag in a 200 propstat");
+            }
+        }
+        assertTrue(sawTombstone,
+                "one of the two entries must be the deletion tombstone (404)");
+        assertTrue(sawCreation,
+                "one of the two entries must be the creation (200 propstat)");
+        assertNotNull(findDirectSyncToken(root),
+                "the response must carry a DAV:sync-token for the next round");
+    }
+// C4 (rename surrogate: remove + add inside one window)
 
     /**
      * Test case C4: a removal followed by an addition within the same
