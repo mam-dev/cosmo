@@ -3,9 +3,11 @@
 > **Status:** Partially implemented & automated — see "Implementation status" below.
 > Companion document to `/cosmo/reconnaissance.md`.
 >
-> **Implementation status (2026-08-25):** automated & green on branch
-> `feature/rfc-6578`: B1, B2, B4 (initial sync), G4 (missing body → 400),
-> nresults=0 truncation edge, href URI-validity check
+> **Implementation status (2026-08-28):** automated & green on branch
+> `feature/rfc-6578`: A1 (supported-report-set discovery), A2 (+ A2b home
+> collection OPTIONS regression) (`SyncCollectionDiscoveryIntegrationTest`);
+> B1, B2, B4 (initial sync), G4 (missing body → 400), nresults=0 truncation
+> edge, href URI-validity check
 > (`SyncCollectionInitialSyncIntegrationTest`); C1, C2, D1, C4 (as
 > remove+add surrogate), F2 (pagination convergence), G token-rejection
 > regression lock (`SyncCollectionIncrementalSyncIntegrationTest`).
