@@ -690,7 +690,7 @@ public class EntityConverter {
         // Set COMPLETED/STATUS if triagestatus is DONE
         TriageStatus ts = note.getTriageStatus();
         DateTime completeDate = null;
-        if(ts!=null && ts.getCode()==TriageStatus.CODE_DONE) {
+        if(ts!=null && Integer.valueOf(TriageStatus.CODE_DONE).equals(ts.getCode())) {
             ICalendarUtils.setStatus(Status.VTODO_COMPLETED, task);
             if (ts.getRank() != null) {
                 completeDate =  new DateTime(TriageStatusUtil.getDateFromRank(ts.getRank()));

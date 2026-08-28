@@ -8,7 +8,13 @@
 > collection OPTIONS regression) (`SyncCollectionDiscoveryIntegrationTest`);
 > B1, B2, B4 (initial sync), G4 (missing body → 400), nresults=0 truncation
 > edge, href URI-validity check
-> (`SyncCollectionInitialSyncIntegrationTest`); C1, C2, D1, C4 (as
+> (`SyncCollectionInitialSyncIntegrationTest`);
+> B3 (level-1 scoping: sub-collection IS listed; its grand-child member is
+> NOT), B5 (calendar-data pseudo-prop → per-member 404 propstat on the plain
+> `MultiStatusReport` sync-collection path, unlike Multiget/Query/FreeBusy
+> which special-case it via `CaldavMultiStatusReport`)
+> (`SyncCollectionScopeAndCalendarDataIntegrationTest`);
+> C1, C2, D1, C4 (as
 > remove+add surrogate), F2 (pagination convergence), G token-rejection
 > regression lock (`SyncCollectionIncrementalSyncIntegrationTest`);
 > E1, E2, E3 (+ empty-`<D:prop/>` form), E4 (`<D:allprop/>` is ignored and
