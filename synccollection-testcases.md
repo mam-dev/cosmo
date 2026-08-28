@@ -13,7 +13,11 @@
 > regression lock (`SyncCollectionIncrementalSyncIntegrationTest`);
 > E1, E2, E3 (+ empty-`<D:prop/>` form), E4 (`<D:allprop/>` is ignored and
 > treated as empty property selection → bare href-only multistatus, 207)
-> (`SyncCollectionPropertySelectionIntegrationTest`).
+> (`SyncCollectionPropertySelectionIntegrationTest`);
+> F1 (nresults=4 → pages of 4+4+2, token advances per page, no dupes/loss over
+> 10 changes), F3 (nresults=1000 > 10 pending → single round drains all 10),
+> F5 (`nresults=-5` and `nresults=abc` → 400 Bad Request)
+> (`SyncCollectionLimitIntegrationTest`).
 > All remaining cases are specification for future automation.
 >
 > **Observed property-selection behavior (locked by the E tests,
