@@ -10,8 +10,23 @@
 > edge, href URI-validity check
 > (`SyncCollectionInitialSyncIntegrationTest`); C1, C2, D1, C4 (as
 > remove+add surrogate), F2 (pagination convergence), G token-rejection
-> regression lock (`SyncCollectionIncrementalSyncIntegrationTest`).
+> regression lock (`SyncCollectionIncrementalSyncIntegrationTest`);
+> E1, E2, E3 (+ empty-`<D:prop/>` form), E4 (`<D:allprop/>` is ignored and
+> treated as empty property selection → bare href-only multistatus, 207)
+> (`SyncCollectionPropertySelectionIntegrationTest`).
 > All remaining cases are specification for future automation.
+>
+> **Observed property-selection behavior (locked by the E tests,
+> 2026-08-28):**
+> - requested live properties share the 200 propstat (per RFC 4918
+>   § 14.24 propstat semantics);
+> - an unsupported property surfaces in its own 404 propstat and is NOT
+>   listed in the 200 propstat;
+> - an empty or missing `DAV:prop` selection yields a 207 with one
+>   `DAV:response` per member carrying only `DAV:href` + status 200 (no
+>   propstat), plus a minted `DAV:sync-token`;
+> - out-of-DTD children such as `DAV:allprop` are silently ignored (no
+>   400, no 5xx).
 > Behavior is derived from RFC 6578 and cross-checked against Cosmo's existing
 > REPORT pipeline (`StandardRequestHandler` → `BaseProvider#report()` →
 > `WebDavResource#getReport()` → `ReportBase`/`MultiStatusReport`).
