@@ -38,7 +38,22 @@
 > `SyncCollectionReport#addTombstone`), H3 (percent-encoded UTF-8/space
 > member names decode to exact name), H5 (1000-member initial sync 207 +
 > usable token; H4 covered by D2)
-> (`SyncCollectionConcurrencyRobustnessIntegrationTest`).
+> (`SyncCollectionConcurrencyRobustnessIntegrationTest`);
+> I5 (empty-collection initial sync → 207 + zero responses + token),
+> I3 (membership-set stability + sync-token last-child invariant),
+> I2 (cross-collection MOVE invisible in both incremental syncs; moveItem
+> does NOT log to the change log — locked Cosmo deviation),
+> I4 (CS:getctag on plain content member → 404 propstat, mirroring B5
+> pseudo-property treatment on the plain-MultiStatusReport sync path)
+> (`SyncCollectionCosmoSpecificIntegrationTest`).
+> **I1 (ACL ticket path)** is deliberately NOT covered — no AclEvaluator
+> plumbing exists in the test pipeline (no Authorization header hook, no
+> provider-side ACL evaluation; the test framework runs with a pre-authenticated
+> security context). See the I1 note below.
+> **I2 original scenario** (external/subscribed collection) is also NOT
+> covered — the I2 slot was repurposed to cross-collection MOVE isolation,
+> which is the more important Cosmo-specific risk (silent 500 or spurious
+> change-log entries when `moveItem` bypasses `modificationDao.log`).
 > All remaining cases are specification for future automation.
 >
 > **Observed property-selection behavior (locked by the E tests,
@@ -307,10 +322,30 @@ Conventions: base URI `C = /dav/{user}/calendars/{cal}`; all bodies use `xmlns:D
 
 | ID | Scenario | Steps | Expected |
 |---|---|---|---|
-| I1 | ACL enforcement path | Ticket-authenticated user WITH read ticket | Report executes (exercises `checkReportAccess` ticket branch) |
-| I2 | External/subscription collections | Run REPORT against external collection (`ContentDaoExternal`-backed) | Defined behavior: either works over delegated items or clean 403 — must not 500 (these bypass Hibernate change tracking) |
-| I3 | Multistatus ordering invariant | Any successful case | `DAV:sync-token` is last child; all `DAV:response`s precede it (requires custom `output()` override, since stock `MultiStatusReport#output()` cannot append it) |
-| I4 | getctag consistency (advisory) | After any sync round | `CS:getctag` (collection entity tag) changed iff there were ≥1 reported changes — keeps CTag-based clients coherent |
+| I1 | ACL enforcement path | Ticket-authenticated user WITH read ticket | **DROPPED** — no AclEvaluator plumbing in the test pipeline; pre-authenticated security context used instead (see I1 note below) |
+| I2 | Cross-collection MOVE isolation | Create member in A; `moveItem(m, A→B)` | Both A's and B's incremental syncs report **zero** members (moveItem does NOT log); B's fresh initial sync shows member — **implemented** `crossCollectionMoveIsInvisibleToBothSiblingCollections` |
+| I3 | Multistatus membership stability + sync-token last-child | Two consecutive initial syncs, unchanged collection | Same member <em>set</em> in both rounds; `DAV:sync-token` strictly last child in both — **implemented** `multistatusMembershipIsStableAndTokenIsLastChild` |
+| I4 | getctag consistency (advisory) | Initial sync requesting `CS:getctag` on a plain content member | `DAV:getetag` → 200 propstat; `CS:getctag` → 404 propstat per member (plain `MultiStatusReport` path has no CS override, mirroring B5) — **implemented** `csGetctagOnPlainContentMemberSurfacesAsUnknown` |
+| I5 | Empty collection initial sync | Fresh collection, no members | 207; zero `DAV:response` children; non-empty token starting with `urn:cosmo:sync-token:` — **implemented** `emptyCollectionInitialSyncYieldsZeroResponsesAndUsableToken` (B4 alias) |
+
+> **I1 note (2026-08-29):** The I1 "ACL ticket" scenario was evaluated and found
+> infeasible for automation in the current pipeline. `DavTestHelper#logIn()` sets up a
+> pre-authenticated security context via the mock resource manager; there is no
+> `Authorization` header hook, no ticket/ACL resolution in `checkReportAccess`, and
+> no `AclEvaluator` bean in the test Spring context. Covering I1 would require either
+> a real auth-provider integration or a new mock for the ACL layer — flagged as
+> future work beyond the RFC 6578 behavioral lock.
+
+> **I2 note (2026-08-29):** The original I2 scenario ("REPORT against an external /
+> `ContentDaoExternal`-backed collection") was repurposed. `moveItem()`
+> (`StandardContentService` line 308) **does not call `modificationDao.log()`** —
+> it calls `contentDao.addItemToCollection` + `removeItemFromCollection` directly.
+> Therefore a cross-collection move produces **zero** change-log entries in either
+> collection, making it invisible to both the source's and the target's incremental
+> syncs. The test `crossCollectionMoveIsInvisibleToBothSiblingCollections` locks this
+> behavior and verifies the move was effective via a fresh initial sync of the target,
+> which lists the member. This is the more important Cosmo-specific risk (silent 500
+> or spurious change-log entries).
 
 ---
 
@@ -326,4 +361,4 @@ Conventions: base URI `C = /dav/{user}/calendars/{cal}`; all bodies use `xmlns:D
 | R6 discovery | A1–A2 |
 | R7 limit/truncation | F1–F5 |
 | R8 invalid-token handling | G9–G11 |
-| Cosmo-specific risk areas | G4 (silent-null quirk), I2 (external collections), I3 (multistatus writer) |
+| Cosmo-specific risk areas | G4 (silent-null quirk), I2 (cross-collection move / moveItem no-log), I3 (multistatus ordering), I4 (CS:getctag 404) |
