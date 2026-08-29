@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.unitedinternet.cosmo.TestHelper;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
+import org.unitedinternet.cosmo.dao.mock.MockModificationDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EventExceptionStamp;
@@ -81,7 +82,8 @@ public class StandardContentServiceTest {
         storage = new MockDaoStorage();        
         contentDao = new MockContentDao(storage);
         lockManager = new SingleVMLockManager();
-        service = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());                
+        service = new StandardContentService(contentDao, lockManager,
+                new StandardTriageStatusQueryProcessor(), new MockModificationDao());                
     }
 
     /**

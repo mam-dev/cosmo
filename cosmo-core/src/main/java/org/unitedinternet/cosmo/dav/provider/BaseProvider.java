@@ -276,11 +276,9 @@ public abstract class BaseProvider implements DavProvider, DavConstants, AclCons
         try {
             ReportInfo info = request.getReportInfo();
             if (info == null) {
-                if (resource.isCollection()) {
-                    return;
-                } else {
-                    throw new BadRequestException("REPORT requires entity body");
-                }
+                // RFC 3253/6578: a REPORT without an entity body is invalid;
+                // silently ignoring it would leave the response unanswered.
+                throw new BadRequestException("REPORT requires entity body");
             }
             /*
              * Since the report type could not be determined in the security filter in order to check ticket permissions

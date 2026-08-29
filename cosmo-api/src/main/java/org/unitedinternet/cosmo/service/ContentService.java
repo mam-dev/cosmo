@@ -15,8 +15,11 @@
  */
 package org.unitedinternet.cosmo.service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+
+import org.unitedinternet.cosmo.model.CollectionModification;
 
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.ContentItem;
@@ -426,5 +429,25 @@ public interface ContentService {
      * @param collection The collection contains all items which will be removed. 
      */
     public void removeItemsFromCollection(CollectionItem collection);
+
+    /**
+     * Returns the change records of a collection's persistent change log that
+     * were appended after the given revision, ordered by ascending revision.
+     * Backs incremental DAV:sync-collection REPORT rounds (RFC 6578).
+     *
+     * @param collectionUid uid of the collection to query
+     * @param sinceRevision exclusive lower bound (client-held token value)
+     * @param limit maximum number of records; negative means no limit
+     * @return the matching {@link CollectionModification} records
+     */
+    List<CollectionModification> findModificationsSince(String collectionUid,
+                                                        long sinceRevision,
+                                                        int limit);
+
+    /**
+     * The highest revision currently assigned in the change log. This is the
+     * numeric part of the freshest sync token the server can issue.
+     */
+    long getModificationRevision();
 
 }

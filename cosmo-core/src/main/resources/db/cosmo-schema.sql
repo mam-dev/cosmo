@@ -294,3 +294,16 @@ INSERT INTO users (id, createdate, etag, modifydate, activationid, admin, email,
 	VALUES(NULL, 1404983699604, 'Y1PlUVPg/qxugBgLtXoQC9u8k8M=', 1404983699604, null, 1, 'root@localhost', 'Cosmo', 'Administrator', 0, md5('cosmo'), '648e2565-2081-4e60-9cac-306a4ffb8d64', 'root');
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+DROP TABLE IF EXISTS `cosmo_collection_modification`;
+CREATE TABLE `cosmo_collection_modification` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `collectionuid` varchar(255) NOT NULL,
+  `memberuid` varchar(255) NOT NULL,
+  `membername` varchar(255) NOT NULL,
+  `modtype` char(1) NOT NULL,
+  `moddate` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_collmod_collection_uid_id` (`collectionuid`,`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

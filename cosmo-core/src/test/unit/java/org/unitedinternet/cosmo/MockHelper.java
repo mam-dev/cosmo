@@ -25,6 +25,7 @@ import org.unitedinternet.cosmo.calendar.query.impl.StandardCalendarQueryProcess
 import org.unitedinternet.cosmo.dao.mock.MockCalendarDao;
 import org.unitedinternet.cosmo.dao.mock.MockContentDao;
 import org.unitedinternet.cosmo.dao.mock.MockDaoStorage;
+import org.unitedinternet.cosmo.dao.mock.MockModificationDao;
 import org.unitedinternet.cosmo.dao.mock.MockUserDao;
 import org.unitedinternet.cosmo.icalendar.ICalendarClientFilterManager;
 import org.unitedinternet.cosmo.model.CollectionItem;
@@ -89,7 +90,12 @@ public class MockHelper extends TestHelper {
         
         entityFactory = new MockEntityFactory();
         
-        contentService = new StandardContentService(contentDao, lockManager, new StandardTriageStatusQueryProcessor());        
+        // persistent per-collection change log backing RFC 6578 sync tokens;
+        // in-memory variant of ModificationDaoImpl for the mock stack
+        MockModificationDao modificationDao = new MockModificationDao();
+        
+        contentService = new StandardContentService(contentDao, lockManager,
+                new StandardTriageStatusQueryProcessor(), modificationDao);
 
         clientFilterManager = new ICalendarClientFilterManager();
         

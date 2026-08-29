@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -32,8 +33,10 @@ import org.unitedinternet.cosmo.calendar.RecurrenceExpander;
 import org.unitedinternet.cosmo.dao.ContentDao;
 import org.unitedinternet.cosmo.dao.DuplicateItemNameException;
 import org.unitedinternet.cosmo.dao.ModelValidationException;
+import org.unitedinternet.cosmo.dao.ModificationDao;
 import org.unitedinternet.cosmo.model.CollectionItem;
 import org.unitedinternet.cosmo.model.CollectionLockedException;
+import org.unitedinternet.cosmo.model.CollectionModification;
 import org.unitedinternet.cosmo.model.ContentItem;
 import org.unitedinternet.cosmo.model.EventStamp;
 import org.unitedinternet.cosmo.model.HomeCollectionItem;
@@ -78,14 +81,18 @@ public class StandardContentService implements ContentService {
         
     private final TriageStatusQueryProcessor triageStatusQueryProcessor;
   
+    private final ModificationDao modificationDao;
+        
     private long lockTimeout = 100;
     
     public StandardContentService( @Autowired ContentDao contentDao,  @Autowired LockManager lockManager,
-            @Autowired TriageStatusQueryProcessor triageStatusQueryProcessor) {
+            @Autowired TriageStatusQueryProcessor triageStatusQueryProcessor,
+            @Autowired ModificationDao modificationDao) {
         super();
         this.contentDao = contentDao;
         this.lockManager = lockManager;
         this.triageStatusQueryProcessor = triageStatusQueryProcessor;
+        this.modificationDao = modificationDao;
     }
 
     // ContentService methods
@@ -290,14 +297,35 @@ public class StandardContentService implements ContentService {
     }
   
     /**
-     * Move item from one collection to another
+     * Move item from one collection to another.
+     *
+     * <p>RFC 6578 change-log contract: a <em>cross-collection</em> move is a
+     * membership change in BOTH collections and MUST be recorded in the
+     * change log so an incremental {@code DAV:sync-collection} REPORT with a
+     * pre-move {@code DAV:sync-token} surfaces it correctly on each side —
+     * the source collection emits a <code>D</code>-row (rendered as a
+     * bare-404 tombstone) at the member's old name, and the destination
+     * collection emits a <code>C</code>-row (rendered as a regular
+     * live-member entry) at the same name. A <em>same-parent</em> call is
+     * a no-op with respect to the change log: the WebDAV layer
+     * ({@code DavItemResourceBase#move}) routes same-parent renames through
+     * {@link #updateItem}/{@code updateContent}, which already yield a single
+     * <code>M</code>-row, and would otherwise emit a spurious D+C pair for
+     * what clients observe as a rename.
+     *
+     * <p>Ordering of the log writes matters for the destination side: the
+     * <code>C</code>-row is written AFTER the item has been added to the
+     * destination so that {@code membersByUid} in
+     * {@link org.unitedinternet.cosmo.dav.report.SyncCollectionReport}
+     * resolves the uid to a live member, not a tombstone.
+     *
      * @param item item to move
      * @param oldParent parent to remove item from
      * @param newParent parent to add item to
      * @throws org.unitedinternet.cosmo.model.CollectionLockedException
-     *         if Item is a ContentItem and source or destination 
+     *         if Item is a ContentItem and source or destination
      *         CollectionItem is lockecd.
-     */    
+     */
     public void moveItem(Item item, CollectionItem oldParent, CollectionItem newParent) {
         
         // Prevent HomeCollection from being moved
@@ -305,14 +333,42 @@ public class StandardContentService implements ContentService {
             throw new IllegalArgumentException("cannot move home collection");
         }
         
+        // RFC 6578: a cross-collection move is a membership change in BOTH
+        // collections — the source must emit a D-row (tombstone) for the
+        // member and the destination must emit a C-row for it, so that an
+        // incremental sync with a pre-move sync-token surfaces the move
+        // correctly on both sides. Same-parent calls never reach this method
+        // (DavItemResourceBase#move routes same-parent renames through
+        // updateItem, which already yields a single M-row), but the guard is
+        // kept defensively in case a future caller forgets.
+        boolean crossCollection = !oldParent.equals(newParent);
+
         // Only need locking for ContentItem for now
         if(item instanceof ContentItem) {
             Set<CollectionItem> locks = acquireLocks(newParent, item);
             try {
+                // RFC 6578: D-row in the SOURCE collection must be written
+                // BEFORE the item is physically removed, so that an
+                // incremental sync that resolves after the removal (uid no
+                // longer present in the source) still renders a bare-404
+                // tombstone from the change log.
+                if (crossCollection) {
+                    modificationDao.log(oldParent.getUid(), item.getUid(),
+                            item.getName(),
+                            CollectionModification.MOD_TYPE_DELETED);
+                }
                 // add item to newParent
                 contentDao.addItemToCollection(item, newParent);
                 // remove item from oldParent
                 contentDao.removeItemFromCollection(item, oldParent);
+                // RFC 6578: C-row in the DESTINATION collection is written
+                // AFTER the item has been added, so that an incremental sync
+                // resolves the uid to a live member and returns a 200 entry.
+                if (crossCollection) {
+                    modificationDao.log(newParent.getUid(), item.getUid(),
+                            item.getName(),
+                            CollectionModification.MOD_TYPE_CREATED);
+                }
                 
                 // update collections involved
                 for(CollectionItem parent : locks) {
@@ -327,6 +383,15 @@ public class StandardContentService implements ContentService {
             contentDao.addItemToCollection(item, newParent);
             // remove item from oldParent
             contentDao.removeItemFromCollection(item, oldParent);
+            // RFC 6578: same C5 semantics as the ContentItem branch above.
+            if (crossCollection) {
+                modificationDao.log(oldParent.getUid(), item.getUid(),
+                        item.getName(),
+                        CollectionModification.MOD_TYPE_DELETED);
+                modificationDao.log(newParent.getUid(), item.getUid(),
+                        item.getName(),
+                        CollectionModification.MOD_TYPE_CREATED);
+            }
         }
     }
     
@@ -367,6 +432,9 @@ public class StandardContentService implements ContentService {
             LOG.debug("removing item {} from collection {}", item.getUid(), collection.getUid());
         }
         
+        // RFC 6578 change log: record tombstone BEFORE removal
+        modificationDao.log(collection.getUid(), item.getUid(),
+                item.getName(), CollectionModification.MOD_TYPE_DELETED);
         contentDao.removeItemFromCollection(item, collection);
         contentDao.updateCollectionTimestamp(collection);
     }
@@ -403,7 +471,12 @@ public class StandardContentService implements ContentService {
             LOG.debug("creating collection {} in {}", collection.getName(), parent.getName());
         }
         
-        return contentDao.createCollection(parent, collection);
+        CollectionItem created =
+            contentDao.createCollection(parent, collection);
+        // RFC 6578 change log: new member in parent collection
+        modificationDao.log(parent.getUid(), created.getUid(),
+                created.getName(), CollectionModification.MOD_TYPE_CREATED);
+        return created;
     }
 
     /**
@@ -431,6 +504,9 @@ public class StandardContentService implements ContentService {
         try {
             // Create the new collection
             collection = contentDao.createCollection(parent, collection);
+            // RFC 6578 change log: new member in parent collection
+            modificationDao.log(parent.getUid(), collection.getUid(),
+                    collection.getName(), CollectionModification.MOD_TYPE_CREATED);
             
             Set<ContentItem> childrenToUpdate = new LinkedHashSet<ContentItem>();
             
@@ -496,7 +572,13 @@ public class StandardContentService implements ContentService {
         }
         
         try {
-            return contentDao.updateCollection(collection);
+            CollectionItem updated = contentDao.updateCollection(collection);
+            // RFC 6578 change log: modified member -> M row per parent
+            for (CollectionItem modParent : updated.getParents()) {
+                modificationDao.log(modParent.getUid(), updated.getUid(),
+                        updated.getName(), CollectionModification.MOD_TYPE_MODIFIED);
+            }
+            return updated;
         } finally {
             lockManager.unlockCollection(collection);
         }
@@ -599,6 +681,11 @@ public class StandardContentService implements ContentService {
         if(collection instanceof HomeCollectionItem) {
             throw new IllegalArgumentException("cannot remove home collection");
         }
+        // RFC 6578 change log: tombstone in every parent BEFORE removal
+        for (CollectionItem tombParent : collection.getParents()) {
+            modificationDao.log(tombParent.getUid(), collection.getUid(),
+                    collection.getName(), CollectionModification.MOD_TYPE_DELETED);
+        }
         contentDao.removeCollection(collection);
     }
 
@@ -626,6 +713,9 @@ public class StandardContentService implements ContentService {
         
         try {
             content = contentDao.createContent(parent, content);
+            // RFC 6578 change log: new member in parent collection
+            modificationDao.log(parent.getUid(), content.getUid(),
+                    content.getName(), CollectionModification.MOD_TYPE_CREATED);
             
             // update collections
             for(CollectionItem col : locks) {
@@ -708,6 +798,9 @@ public class StandardContentService implements ContentService {
         try {
             for(ContentItem content : contentItems) {
                 contentDao.createContent(parent, content);
+                // RFC 6578 change log: new member in parent collection
+                modificationDao.log(parent.getUid(), content.getUid(),
+                        content.getName(), CollectionModification.MOD_TYPE_CREATED);
             }
             
             contentDao.updateCollectionTimestamp(parent);
@@ -813,12 +906,21 @@ public class StandardContentService implements ContentService {
            for(ContentItem content: contentItems) {
                if(content.getCreationDate()==null) {
                    contentDao.createContent(parent, content);
+                   // RFC 6578 change log: new member in parent collection
+                   modificationDao.log(parent.getUid(), content.getUid(),
+                           content.getName(), CollectionModification.MOD_TYPE_CREATED);
                }
                else if(Boolean.FALSE.equals(content.getIsActive())) {
+                   // RFC 6578 change log: tombstone BEFORE removal
+                   modificationDao.log(parent.getUid(), content.getUid(),
+                           content.getName(), CollectionModification.MOD_TYPE_DELETED);
                    contentDao.removeContent(content);
                }
                else {
                    contentDao.updateContent(content);
+                   // RFC 6578 change log: modified member
+                   modificationDao.log(parent.getUid(), content.getUid(),
+                           content.getName(), CollectionModification.MOD_TYPE_MODIFIED);
                }
            }
            
@@ -850,6 +952,11 @@ public class StandardContentService implements ContentService {
         
         try {
             content = contentDao.updateContent(content);
+            // RFC 6578 change log: modified member -> M row per parent
+            for (CollectionItem modParent : content.getParents()) {
+                modificationDao.log(modParent.getUid(), content.getUid(),
+                        content.getName(), CollectionModification.MOD_TYPE_MODIFIED);
+            }
             
             // update collections
             for(CollectionItem parent : locks) {
@@ -877,7 +984,14 @@ public class StandardContentService implements ContentService {
         
         Set<CollectionItem> locks = acquireLocks(content);
         
+        Set<CollectionItem> parentsBeforeRemoval = new HashSet<CollectionItem>(content.getParents());
+        
         try {
+            // RFC 6578 change log: tombstones in every parent BEFORE removal
+            for (CollectionItem tombParent : parentsBeforeRemoval) {
+                modificationDao.log(tombParent.getUid(), content.getUid(),
+                        content.getName(), CollectionModification.MOD_TYPE_DELETED);
+            }
             contentDao.removeContent(content);
             // update collections
             for(CollectionItem parent : locks) {
@@ -886,6 +1000,24 @@ public class StandardContentService implements ContentService {
         } finally {
             releaseLocks(locks);
         }
+    }
+
+    /**
+     * Returns the change records of a collection's persistent change log that
+     * were appended after the given revision, ordered by ascending revision.
+     */
+    public List<CollectionModification> findModificationsSince(String collectionUid,
+                                                               long sinceRevision,
+                                                               int limit) {
+        return modificationDao.findSince(collectionUid, sinceRevision, limit);
+    }
+
+    /**
+     * The highest revision currently assigned in the change log; the numeric
+     * part of the freshest sync token the server can issue.
+     */
+    public long getModificationRevision() {
+        return modificationDao.currentRevision();
     }
 
     /**

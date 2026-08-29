@@ -59,8 +59,20 @@ public abstract class AbstractSpringDaoTestCase {
         this.entityManager.close();
     }
 
+    /**
+     * Starts the embedded MariaDB4j instance unless an external test database
+     * is selected via the {@code COSMO_TEST_EXTERNAL_DB} environment variable
+     * (any non-empty value). In that case the datasource must be provided
+     * through the standard Spring overrides ({@code SPRING_DATASOURCE_URL},
+     * {@code SPRING_DATASOURCE_USERNAME}, {@code SPRING_DATASOURCE_PASSWORD}).
+     */
     @BeforeAll
     public static void startMariaDB() {
+        if (System.getenv("COSMO_TEST_EXTERNAL_DB") != null) {
+            LOG.info("COSMO_TEST_EXTERNAL_DB is set - skipping embedded "
+                    + "MariaDB4j, using externally configured datasource");
+            return;
+        }
         if (mariaDB.isRunning()) {
             return;
         }
