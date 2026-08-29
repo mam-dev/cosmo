@@ -297,14 +297,35 @@ public class StandardContentService implements ContentService {
     }
   
     /**
-     * Move item from one collection to another
+     * Move item from one collection to another.
+     *
+     * <p>RFC 6578 change-log contract: a <em>cross-collection</em> move is a
+     * membership change in BOTH collections and MUST be recorded in the
+     * change log so an incremental {@code DAV:sync-collection} REPORT with a
+     * pre-move {@code DAV:sync-token} surfaces it correctly on each side —
+     * the source collection emits a <code>D</code>-row (rendered as a
+     * bare-404 tombstone) at the member's old name, and the destination
+     * collection emits a <code>C</code>-row (rendered as a regular
+     * live-member entry) at the same name. A <em>same-parent</em> call is
+     * a no-op with respect to the change log: the WebDAV layer
+     * ({@code DavItemResourceBase#move}) routes same-parent renames through
+     * {@link #updateItem}/{@code updateContent}, which already yield a single
+     * <code>M</code>-row, and would otherwise emit a spurious D+C pair for
+     * what clients observe as a rename.
+     *
+     * <p>Ordering of the log writes matters for the destination side: the
+     * <code>C</code>-row is written AFTER the item has been added to the
+     * destination so that {@code membersByUid} in
+     * {@link org.unitedinternet.cosmo.dav.report.SyncCollectionReport}
+     * resolves the uid to a live member, not a tombstone.
+     *
      * @param item item to move
      * @param oldParent parent to remove item from
      * @param newParent parent to add item to
      * @throws org.unitedinternet.cosmo.model.CollectionLockedException
-     *         if Item is a ContentItem and source or destination 
+     *         if Item is a ContentItem and source or destination
      *         CollectionItem is lockecd.
-     */    
+     */
     public void moveItem(Item item, CollectionItem oldParent, CollectionItem newParent) {
         
         // Prevent HomeCollection from being moved
@@ -312,14 +333,42 @@ public class StandardContentService implements ContentService {
             throw new IllegalArgumentException("cannot move home collection");
         }
         
+        // RFC 6578: a cross-collection move is a membership change in BOTH
+        // collections — the source must emit a D-row (tombstone) for the
+        // member and the destination must emit a C-row for it, so that an
+        // incremental sync with a pre-move sync-token surfaces the move
+        // correctly on both sides. Same-parent calls never reach this method
+        // (DavItemResourceBase#move routes same-parent renames through
+        // updateItem, which already yields a single M-row), but the guard is
+        // kept defensively in case a future caller forgets.
+        boolean crossCollection = !oldParent.equals(newParent);
+
         // Only need locking for ContentItem for now
         if(item instanceof ContentItem) {
             Set<CollectionItem> locks = acquireLocks(newParent, item);
             try {
+                // RFC 6578: D-row in the SOURCE collection must be written
+                // BEFORE the item is physically removed, so that an
+                // incremental sync that resolves after the removal (uid no
+                // longer present in the source) still renders a bare-404
+                // tombstone from the change log.
+                if (crossCollection) {
+                    modificationDao.log(oldParent.getUid(), item.getUid(),
+                            item.getName(),
+                            CollectionModification.MOD_TYPE_DELETED);
+                }
                 // add item to newParent
                 contentDao.addItemToCollection(item, newParent);
                 // remove item from oldParent
                 contentDao.removeItemFromCollection(item, oldParent);
+                // RFC 6578: C-row in the DESTINATION collection is written
+                // AFTER the item has been added, so that an incremental sync
+                // resolves the uid to a live member and returns a 200 entry.
+                if (crossCollection) {
+                    modificationDao.log(newParent.getUid(), item.getUid(),
+                            item.getName(),
+                            CollectionModification.MOD_TYPE_CREATED);
+                }
                 
                 // update collections involved
                 for(CollectionItem parent : locks) {
@@ -334,6 +383,15 @@ public class StandardContentService implements ContentService {
             contentDao.addItemToCollection(item, newParent);
             // remove item from oldParent
             contentDao.removeItemFromCollection(item, oldParent);
+            // RFC 6578: same C5 semantics as the ContentItem branch above.
+            if (crossCollection) {
+                modificationDao.log(oldParent.getUid(), item.getUid(),
+                        item.getName(),
+                        CollectionModification.MOD_TYPE_DELETED);
+                modificationDao.log(newParent.getUid(), item.getUid(),
+                        item.getName(),
+                        CollectionModification.MOD_TYPE_CREATED);
+            }
         }
     }
     

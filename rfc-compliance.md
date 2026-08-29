@@ -91,7 +91,7 @@ Note: the cycle-3 suite initially failed 3 assertions (C1/C2/C4) due to over-str
 
 ## 4. Known limitations
 
-1. **Change-log coverage gaps.** The batch variants (`createBatch`, `updateBatch`, `removeBatchContentItems`) and move/copy operations do not write log rows yet — mutations performed exclusively through those paths are invisible to incremental sync until hooks are added.
+1. **Change-log coverage gaps.** The batch variants (`createBatch`, `updateBatch`, `removeBatchContentItems`) and the COPY path do not write log rows yet — mutations performed exclusively through those paths are invisible to incremental sync until hooks are added. (The cross-collection MOVE gap was closed 2026-08-29: `moveItem` now writes a D-row in the source and a C-row in the destination, guarded by `crossCollection`, and is locked by the I2 test `crossCollectionMoveEmitsTombstoneInSourceAndLiveMemberInTarget`.)
 2. **No retention policy.** `cosmo_collection_modification` grows unboundedly; production deployment needs a pruning strategy. Pruning is resync-safe: pruned-away revisions simply make old tokens unknown → 403 → client repeats initial synchronization (already the mandated fallback).
 3. **Tombstone href fidelity for collections.** Deleted *collection* members are reported without the RFC 4918 §5.2 trailing `/`, because the change log does not record whether a removed member was a collection. Clients should match tombstone hrefs slash-insensitively; future refinement: persist the member kind.
 4. **Pre-existing `tombstones` table is unrelated.** Cosmo's `HibTombstone`/`HibItemTombstone` machinery (table `tombstones`) carries no revision column and is never populated by the mock DAO stack — it cannot back sync tokens. Superseded by the dedicated change log; documented here to prevent future confusion.
@@ -104,4 +104,4 @@ Note: the cycle-3 suite initially failed 3 assertions (C1/C2/C4) due to over-str
 2. ~~Real monotonic tokens + stale/garbage-token fallback~~ ✅ cycle #3
 3. ~~Tombstone reporting (bare 404 responses)~~ ✅ cycle #3
 4. Automate remaining groups A, E, rest of F, rest of G from the test-case catalog (~33 cases)
-5. Production hardening: batch/move/copy hooks, change-log retention pruning, tombstone-href trailing-slash fidelity, namespace strictness
+5. Production hardening: batch + copy hooks, change-log retention pruning, tombstone-href trailing-slash fidelity, namespace strictness (cross-collection move hook ✅ done 2026-08-29)

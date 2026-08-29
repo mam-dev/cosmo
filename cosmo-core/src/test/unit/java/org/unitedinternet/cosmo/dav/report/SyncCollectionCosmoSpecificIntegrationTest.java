@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
@@ -32,6 +33,11 @@ import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,17 +75,22 @@ import org.w3c.dom.NodeList;
  * and the {@code DAV:sync-token} is always the <strong>last</strong> child
  * of the root {@code DAV:multistatus}. This is a requirement of RFC 6578 §3.5
  * (position-based parsing by token-driven clients).</li>
- * <li><strong>I2</strong> — Cross-collection MOVE isolation (locked, safe
- * behavior in Cosmo): {@code ContentService#moveItem} between two sibling
- * plain collections does NOT write any persistent change-log row in either
- * parent. Consequently, an incremental sync against the SOURCE collection
- * reports zero members (the moved-out item produces neither a tombstone
- * nor a live entry), AND an incremental sync against the TARGET collection
- * likewise reports zero members (no spurious "added" entry). A final fresh
- * initial sync of the target proves the move actually happened, ruling out
- * silent loss on either side. (The H-group tombstone dedup and D-group
- * coverage already pin the tombstone behavior for real deletions and
- * same-parent renames; this isolates the cross-parent move path.)</li>
+ * <li><strong>I2</strong> — Cross-collection MOVE, RFC 6578-compliant
+ * (since 2026-08-29 C5 fix): {@code ContentService#moveItem} between two
+ * sibling plain collections now writes a <code>D</code>-row in the SOURCE
+ * and a <code>C</code>-row in the DESTINATION. An incremental sync against
+ * the SOURCE with a pre-move token MUST report exactly one entry — a
+ * bare-404 tombstone for the moved member (RFC 6578 §3.2 shape, same
+ * shape as D1/D2). An incremental sync against the DESTINATION with a
+ * pre-move token MUST report exactly one entry — a live-member response
+ * with a 200 status and a {@code DAV:getetag} propstat (RFC 6578 §3.2
+ * live shape, same shape as B1/C1). A finality check — A no longer
+ * contains the member, B now does — rules out silent loss or double
+ * attribution. (The H-group tombstone-dedup and D-group coverage already
+ * pin the tombstone behavior for real deletions and same-parent renames;
+ * this isolates the cross-parent move path specifically, which previously
+ * bypassed the change log entirely — a production RFC 6578 §5 gap, now
+ * fixed by logging D+C rows in {@code moveItem}.)</li>
  * <li><strong>I4</strong> — CS:getctag advisory consistency (locked):
  * requesting the Calendar-Server extension property
  * {@code CS:getctag} (namespace {@code http://calendarserver.org/ns/})
@@ -244,49 +255,68 @@ public class SyncCollectionCosmoSpecificIntegrationTest extends BaseDavTestCase 
                 + "(round1=" + members1 + " round2=" + members2 + ")");
     }
 
-    // ---------- I2: cross-collection MOVE isolation ----------
+    // ---------- I2: cross-collection MOVE — tombstone + live member ----------
 
     /**
-     * Test case I2: a cross-collection MOVE of a plain member between two
-     * sibling collections leaves BOTH the source and target collection's
-     * incremental sync-collection REPORT clean for that member — no 200
-     * entry, no 404 tombstone, no spurious row in either log.
+     * Test case I2: a cross-collection MOVE of a plain content member M
+     * from collection A to sibling collection B MUST be RFC 6578-compliant
+     * in both the source and the destination collection's incremental
+     * sync-collection REPORT with a pre-move {@code DAV:sync-token}:
      *
-     * <p>Cosmo's {@code StandardContentService#moveItem} does not write
-     * persistent change-log rows (it calls
-     * {@code contentDao.addItemToCollection} +
-     * {@code contentDao.removeItemFromCollection} directly, bypassing
-     * {@code modificationDao.log}); therefore neither the source nor
-     * the target collection's incremental sync will surface the moved
-     * member. This is a deliberate Cosmo-specific behavior (a deviation
-     * from the more general RFC 6578 expectation that a cross-parent
-     * move would surface a tombstone in the source's log) and is locked
-     * here as a regression contract.
-     * </p>
+     * <ul>
+     *   <li><strong>A (source)</strong> — exactly <em>one</em> response,
+     *       surfaced as a bare-404 <strong>tombstone</strong>: a
+     *       {@code DAV:response} whose only content is a
+     *       {@code DAV:status} of "404", whose {@code DAV:href} resolves
+     *       to M's original name <em>under A</em>, and which carries
+     *       <em>no</em> {@code DAV:propstat} blocks (this is the RFC
+     *       6578 §3.2 tombstone shape, also locked by the D1/D2 tests).</li>
+     *   <li><strong>B (destination)</strong> — exactly <em>one</em>
+     *       response, surfaced as a regular <strong>live-member</strong>
+     *       entry: a {@code DAV:response} whose {@code DAV:status} is
+     *       "200", whose {@code DAV:href} resolves to M's name
+     *       <em>under B</em>, and which carries a {@code DAV:propstat}
+     *       for {@code DAV:getetag} that is "200" (this is the RFC
+     *       6578 §3.2 live-entry shape, also locked by B1/C1/D1).</li>
+     *   <li><strong>Finality</strong> — a fresh initial sync of B lists
+     *       M, proving the move actually happened (not a reporting
+     *       anomaly); A's fresh initial sync no longer lists M.</li>
+     * </ul>
+     *
+     * <p>Before the C5 fix (2026-08-29), Cosmo's
+     * {@code StandardContentService#moveItem} did not write any
+     * {@code modificationDao.log} entries and the move was invisible to
+     * both incremental syncs — a deviation from RFC 6578 §5. The test has
+     * been re-scoped to lock the compliant behavior: moveItem now logs a
+     * D-row in the source and a C-row in the destination, guarded by
+     * {@code crossCollection = !oldParent.equals(newParent)} so the
+     * same-parent rename path (which routes through
+     * {@code updateItem}/{@code updateContent} and already emits a single
+     * M-row) is not duplicated.
      *
      * <p>Setup:
      * <ol>
      *   <li>two sibling sub-collections A and B under the user's home;</li>
-     *   <li>one plain member M inside A;</li>
-     *   <li>baseline initial syncs of A (token T_A) and B (token T_B);</li>
-     *   <li>{@link org.unitedinternet.cosmo.service.ContentService#moveItem}
-     *       (M, A, B);</li>
-     *   <li>assert A's incremental sync (with T_A) reports zero members
-     *       and B's incremental sync (with T_B) reports zero members;</li>
-     *   <li>assert a fresh initial sync of B lists member M — proving the
-     *       move was actually effective (not a silent loss in either
-     *       direction).</li>
+     *   <li>one plain content member M inside A;</li>
+     *   <li>baseline initial syncs of A (token T_A) and B (token T_B) —
+     *       A lists M, B is empty;</li>
+     *   <li>{@code ContentService#moveItem(m, a, b)};</li>
+     *   <li>assert A's incremental sync (with T_A) is EXACTLY one
+     *       response, a bare-404 tombstone for M;</li>
+     *   <li>assert B's incremental sync (with T_B) is EXACTLY one
+     *       response, a 200 live entry for M with a getetag propstat;</li>
+     *   <li>assert A's fresh initial sync no longer lists M (source
+     *       lost the member) and B's fresh initial sync lists M
+     *       (destination gained it).</li>
      * </ol>
-     * </p>
      *
-     * <p>The test also pins that a cross-parent move NEVER 500s the report
-     * engine. (The H-group tombstone-dedup and D-group tests already pin
-     * the tombstone behavior for real deletions and same-parent renames;
-     * this isolates the {@code moveItem} path specifically.)
+     * <p>This test also pins that a cross-parent move NEVER 500s the
+     * report engine — the original pre-C5 concern behind the I2 slot,
+     * now upgraded to a positive RFC 6578 behavior lock.
      * </p>
      */
     @Test
-    public void crossCollectionMoveIsInvisibleToBothSiblingCollections()
+    public void crossCollectionMoveEmitsTombstoneInSourceAndLiveMemberInTarget()
             throws Exception {
         // Two sibling sub-collections under home.
         CollectionItem a = testHelper.makeAndStoreDummyCollection();
@@ -309,7 +339,8 @@ public class SyncCollectionCosmoSpecificIntegrationTest extends BaseDavTestCase 
         assertNotNull(m, "I2: fixture content member in A must be created");
         String mName = m.getName();
 
-        // Baseline initial syncs for both collections.
+        // Baseline initial syncs for both collections (tokens T_A, T_B are
+        // our anchors for the incremental round after the move).
         DavTestContext aInitial =
             executeSyncCollectionReport(aUri, INITIAL_SYNC_BODY);
         assertEquals(207, aInitial.getDavResponse().getStatus(),
@@ -338,7 +369,8 @@ public class SyncCollectionCosmoSpecificIntegrationTest extends BaseDavTestCase 
         // Cross-collection move: A -> B.
         testHelper.getContentService().moveItem(m, a, b);
 
-        // Source (A) incremental sync MUST NOT list the moved member.
+        // ---- A (source) incremental round: exactly one response, a
+        //      bare-404 tombstone for M (RFC 6578 §3.2 shape).
         DavTestContext aInc = executeSyncCollectionReport(
                 aUri, incrementalBody(aBaselineToken));
         assertEquals(207, aInc.getDavResponse().getStatus(),
@@ -349,14 +381,35 @@ public class SyncCollectionCosmoSpecificIntegrationTest extends BaseDavTestCase 
             parseMultistatus(aInc.getHttpResponse().getContentAsString());
         List<Element> aIncResponses =
             getChildElements(aIncMs.getDocumentElement(), "response");
-        assertEquals(0, aIncResponses.size(),
+        assertEquals(1, aIncResponses.size(),
                 "I2: after a cross-collection move, A's incremental sync "
-                + "MUST report zero members for the moved item "
-                + "(got " + aIncResponses.size()
-                + " — moveItem does not log to the change log; this is the "
-                + "locked Cosmo behavior)");
+                + "MUST report exactly one entry — the D-row tombstone "
+                + "for the moved member (got " + aIncResponses.size()
+                + " responses; decoded hrefs: "
+                + decodedLastSegments(aIncMs) + ")");
+        Element aTombstone = aIncResponses.get(0);
+        assertTrue(isTombstoneResponse(aTombstone),
+                "I2: A's single incremental entry MUST be a bare-404 "
+                + "tombstone (a DAV:response with a 404 DAV:status, no "
+                + "propstat blocks); actual response:\n"
+                + dumpElement(aTombstone));
+        // The tombstone href must resolve to M's name under A.
+        List<Element> aTombstoneHrefs =
+            getChildElements(aTombstone, "href");
+        assertFalse(aTombstoneHrefs.isEmpty(),
+                "I2: A's tombstone response MUST carry a DAV:href");
+        String aTombstoneHref =
+            decodedHrefText(aTombstoneHrefs.get(0).getTextContent());
+        String aTombstoneName = segmentAfterLastSlash(aTombstoneHref);
+        assertEquals(mName, aTombstoneName,
+                "I2: A's tombstone href must preserve the moved member's "
+                + "original name " + mName + " (got " + aTombstoneHref + ")");
+        assertTrue(hrefStartsWithPrefix(aTombstoneHref, aUri),
+                "I2: A's tombstone href must be rooted under the source "
+                + "collection " + aUri + " (got " + aTombstoneHref + ")");
 
-        // Target (B) incremental sync MUST NOT list the moved member either.
+        // ---- B (destination) incremental round: exactly one response, a
+        //      200 live-member entry for M with a DAV:getetag propstat.
         DavTestContext bInc = executeSyncCollectionReport(
                 bUri, incrementalBody(bBaselineToken));
         assertEquals(207, bInc.getDavResponse().getStatus(),
@@ -367,27 +420,74 @@ public class SyncCollectionCosmoSpecificIntegrationTest extends BaseDavTestCase 
             parseMultistatus(bInc.getHttpResponse().getContentAsString());
         List<Element> bIncResponses =
             getChildElements(bIncMs.getDocumentElement(), "response");
-        assertEquals(0, bIncResponses.size(),
+        assertEquals(1, bIncResponses.size(),
                 "I2: after a cross-collection move, B's incremental sync "
-                + "MUST report zero members for the moved item "
-                + "(got " + bIncResponses.size()
-                + " — moveItem does not log to the change log; this is the "
-                + "locked Cosmo behavior)");
+                + "MUST report exactly one entry — the C-row live-member "
+                + "for the moved member (got " + bIncResponses.size()
+                + " responses; decoded hrefs: "
+                + decodedLastSegments(bIncMs) + ")");
+        Element bLive = bIncResponses.get(0);
+        // B's entry must be a LIVE member, NOT a tombstone. (A live
+        // member in Cosmo's multistatus carries its 200 status
+        // INSIDE the propstat, like a normal propfind response; a
+        // bare response-level DAV:status of 404 with no propstat is
+        // the tombstone shape, already ruled out here.)
+        assertFalse(isTombstoneResponse(bLive),
+                "I2: B's single incremental entry MUST be a LIVE member, "
+                + "NOT a tombstone; actual response:\n"
+                + dumpElement(bLive));
+        // B's entry MUST carry the getetag propstat with a 200 status
+        // INSIDE the propstat — the RFC 6578 live-member indicator.
+        Element bLiveGetetag =
+            findPropStatPropAnyNamespace(bLive, "getetag", 200);
+        assertNotNull(bLiveGetetag,
+                "I2: B's live response MUST carry a DAV:getetag in a "
+                + "200 propstat block (RFC 6578 live-member shape); "
+                + "actual response:\n" + dumpElement(bLive));
+        // As a further sanity check the propstat element must be
+        // non-empty (i.e. actually resolved the ETag value).
+        assertFalse(bLiveGetetag.getTextContent().trim().isEmpty(),
+                "I2: B's DAV:getetag propstat MUST carry a non-empty "
+                + "ETag value (RFC 6578 live-member shape)");
+        // The live-member href must resolve to M's name under B.
+        List<Element> bLiveHrefs =
+            getChildElements(bLive, "href");
+        assertFalse(bLiveHrefs.isEmpty(),
+                "I2: B's live response MUST carry a DAV:href");
+        String bLiveHref =
+            decodedHrefText(bLiveHrefs.get(0).getTextContent());
+        String bLiveName = segmentAfterLastSlash(bLiveHref);
+        assertEquals(mName, bLiveName,
+                "I2: B's live href must resolve to the moved member's "
+                + "name " + mName + " (got " + bLiveHref + ")");
+        assertTrue(hrefStartsWithPrefix(bLiveHref, bUri),
+                "I2: B's live href must be rooted under the destination "
+                + "collection " + bUri + " (got " + bLiveHref + ")");
 
-        // Prove the move was effective: a fresh initial sync of B MUST
-        // list member M under B.
+        // ---- Finality: fresh initial syncs confirm the membership shift.
+        DavTestContext aInitialAfter =
+            executeSyncCollectionReport(aUri, INITIAL_SYNC_BODY);
+        assertEquals(207, aInitialAfter.getDavResponse().getStatus(),
+                "I2: A's post-move fresh initial sync must succeed with 207 "
+                + "(got " + aInitialAfter.getDavResponse().getStatus() + ")");
+        Document aInitialAfterMs =
+            parseMultistatus(aInitialAfter.getHttpResponse().getContentAsString());
+        assertFalse(decodedLastSegments(aInitialAfterMs).contains(mName),
+                "I2: A's post-move fresh initial sync MUST NOT list "
+                + "member " + mName
+                + " (source collection must have lost it); decoded hrefs: "
+                + decodedLastSegments(aInitialAfterMs));
+
         DavTestContext bInitialAfter =
             executeSyncCollectionReport(bUri, INITIAL_SYNC_BODY);
         assertEquals(207, bInitialAfter.getDavResponse().getStatus(),
-                "I2: B's post-move fresh initial sync must also succeed "
-                + "with 207 (got "
-                + bInitialAfter.getDavResponse().getStatus() + ")");
+                "I2: B's post-move fresh initial sync must succeed with 207 "
+                + "(got " + bInitialAfter.getDavResponse().getStatus() + ")");
         Document bInitialAfterMs =
             parseMultistatus(bInitialAfter.getHttpResponse().getContentAsString());
         assertTrue(decodedLastSegments(bInitialAfterMs).contains(mName),
-                "I2: B's post-move fresh initial sync MUST show the moved "
-                + "member " + mName
-                + " (proving the move was effective, not a reporting bug); "
+                "I2: B's post-move fresh initial sync MUST list member "
+                + mName + " (destination collection must have gained it); "
                 + "decoded hrefs: " + decodedLastSegments(bInitialAfterMs));
     }
 
@@ -748,5 +848,94 @@ public class SyncCollectionCosmoSpecificIntegrationTest extends BaseDavTestCase 
         } catch (IllegalArgumentException e) {
             return text;
         }
+    }
+
+    /**
+     * I2: recognizes the RFC 6578 §3.2 deletion-tombstone response shape —
+     * a {@code DAV:response} whose FIRST and only {@code DAV:status} is
+     * "404" and which carries <em>no</em> {@code DAV:propstat} blocks
+     * (same shape locked by the D1/D2 tests in
+     * {@link SyncCollectionIncrementalSyncIntegrationTest}). A live-member
+     * response (200 + propstat) or a response whose status 404 sits inside
+     * a propstat rather than at response level is NOT a tombstone.
+     */
+    private boolean isTombstoneResponse(Element response) {
+        // A tombstone MUST NOT carry any propstat block (RFC 6578 §3.2 shape,
+        // the DAV:response is just href + status).
+        if (!getChildElements(response, "propstat").isEmpty()) {
+            return false;
+        }
+        List<Element> statuses = getChildElements(response, "status");
+        if (statuses.isEmpty()) {
+            return false;
+        }
+        // The (single) response-level status MUST be 404 — a 200 propstat
+        // on the member side, or a 404 buried in a propstat rather than as
+        // the response's own DAV:status, is NOT a tombstone.
+        String first = statuses.get(0).getTextContent().trim();
+        return first.matches("^HTTP/[0-9.]+ 404( .*)?$");
+    }
+
+    /**
+     * I2: serializes a DOM element to a string for failure-message output.
+     * Serialization is best-effort: on any transform error a readable
+     * placeholder is returned instead of throwing, since the method is only
+     * used to enrich assertion messages.
+     */
+    private String dumpElement(Element element) {
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(
+                    OutputKeys.INDENT, "yes");
+            StringWriter out = new StringWriter();
+            transformer.transform(new DOMSource(element),
+                    new StreamResult(out));
+            return out.toString();
+        } catch (Exception e) {
+            return "(serialization failed: " + e.getMessage() + ")";
+        }
+    }
+
+    /**
+     * I2: returns the final path segment of a decoded href (the part after
+     * the last {@code '/'}; the whole string if it contains no slash).
+     * Trailing slashes are stripped before the split so a trailing-slash
+     * form still yields the member name.
+     */
+    private String segmentAfterLastSlash(String decodedHref) {
+        if (decodedHref == null) {
+            return "";
+        }
+        String value = decodedHref.trim();
+        while (value.endsWith("/")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        int slash = value.lastIndexOf('/');
+        return slash >= 0 ? value.substring(slash + 1) : value;
+    }
+
+    /**
+     * I2: asserts that a decoded href is rooted under the given URI prefix
+     * — i.e. the href either equals the prefix (trailing slash tolerated on
+     * either side) or continues from it. Comparing on decoded text instead
+     * of raw href text keeps the check robust against percent-encoding of
+     * path segments.
+     */
+    private boolean hrefStartsWithPrefix(String decodedHref,
+            String collectionUri) {
+        String href = decodedHref == null ? "" : decodedHref.trim();
+        String prefix = decodedHrefText(collectionUri == null ? "" : collectionUri.trim());
+        if (prefix.equals("")) {
+            return false;
+        }
+        String prefixNoSlash = prefix;
+        while (prefixNoSlash.endsWith("/")) {
+            prefixNoSlash = prefixNoSlash.substring(
+                    0, prefixNoSlash.length() - 1);
+        }
+        if (href.equals(prefixNoSlash)) {
+            return true;
+        }
+        return href.startsWith(prefixNoSlash + "/");
     }
 }
