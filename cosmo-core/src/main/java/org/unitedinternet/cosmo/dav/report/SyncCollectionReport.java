@@ -326,13 +326,41 @@ public class SyncCollectionReport extends MultiStatusReport {
 
     /**
      * Records a deletion tombstone to render as a bare 404 DAV:response.
+     * Repeated tombstones for the same member name are suppressed: a client
+     * must observe at most one 404 per member per round (RFC 6578 Section 3.5,
+     * and H2 of the test catalogue — double-deletion or a race between
+     * pagination and removal must not duplicate 404s). This matters in
+     * practice because {@code StandardContentService#removeCollection} can be
+     * invoked twice in the same transaction (e.g. a retry or a caller
+     * re-issuing the deletion after a transient failure) yet the persistence
+     * layer treats the second call as a no-op, so the change log is the only
+     * record of the event — and the report is where the duplication must be
+     * resolved.
      */
     private void addTombstone(String memberName) throws CosmoDavException {
         String href = memberHref(memberName);
+        for (String existing : splitTombstoneHrefs()) {
+            if (existing.equals(href)) {
+                return;
+            }
+        }
         if (tombstoneHrefs.length() > 0) {
             tombstoneHrefs.append(' ');
         }
         tombstoneHrefs.append(href);
+    }
+
+    /**
+     * Splits the tombstone-hrefs accumulator into its space-delimited tokens
+     * (an empty list when nothing has been appended yet), mirroring the
+     * split in {@link TokenizedMultiStatus} so deduplication compares the
+     * exact strings that would be rendered.
+     */
+    private String[] splitTombstoneHrefs() {
+        if (tombstoneHrefs.length() == 0) {
+            return new String[0];
+        }
+        return tombstoneHrefs.toString().split(" ");
     }
 
     /**

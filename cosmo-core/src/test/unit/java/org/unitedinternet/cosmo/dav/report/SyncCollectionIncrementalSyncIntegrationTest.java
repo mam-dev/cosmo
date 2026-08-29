@@ -37,6 +37,7 @@ import org.unitedinternet.cosmo.dav.BaseDavTestCase;
 import org.unitedinternet.cosmo.dav.DavTestContext;
 import org.unitedinternet.cosmo.dav.servlet.StandardRequestHandler;
 import org.unitedinternet.cosmo.model.CollectionItem;
+import org.unitedinternet.cosmo.model.ContentItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,6 +78,17 @@ import org.w3c.dom.NodeList;
  * synchronization window yields BOTH the tombstone and the new member in one
  * round (this is the change pattern a rename produces; the fixture simulates it
  * as remove+add because the mock DAO index cannot resolve renamed items).</li>
+ * <li><strong>C5</strong> - a real same-parent rename (MOVE to a new name in
+ * the same collection) is reported as a single changed entry (M-row) and NOT
+ * as a 404 tombstone — a documented deviation from the naive RFC 6578
+ * rename expectation (delete+create).</li>
+ * <li><strong>C6</strong> - a PROPFIND-equivalent change to a content member
+ * (display-name update via {@code ContentService#updateContent}) is reported
+ * as a single changed entry (M-row) in the parent's change log.</li>
+ * <li><strong>C7</strong> - a PROPFIND-equivalent change to the collection
+ * itself (display-name update via {@code ContentService#updateCollection})
+ * does NOT leak into that same collection's incremental REPORT (the M-row
+ * would land in the collection's parent, not under itself).</li>
  * <li><strong>F2</strong> - truncation via {@code DAV:nresults} converges: successive
  * limited rounds eventually drain the change log and an empty round confirms
  * convergence without losing entries.</li>
@@ -379,9 +391,11 @@ public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCas
      * Test case C4: a removal followed by an addition within the same
      * synchronization window must surface BOTH changes in one incremental
      * round: the 404 tombstone for the old member and a regular entry for
-     * the new one. This is exactly the change pattern a rename produces;
-     * the fixture models it as remove+add because renamed items are not
-     * resolvable through the mock DAO index.
+     * the new one. See {@link #sameParentRenameInSameCollectionIsReportedAsChanged() C5}
+     * for the real same-parent rename path — that test drives the actual
+     * {@code DavItemResourceBase.move()}/{@code ContentService#update*}
+     * chain and asserts a single M-row (no tombstone) as the production
+     * behavior, documenting the C-suite's deliberate deviation.
      */
     @Test
     public void removalAndAdditionInSameWindowAreBothReported() throws Exception {
@@ -425,6 +439,184 @@ public class SyncCollectionIncrementalSyncIntegrationTest extends BaseDavTestCas
         }
         assertTrue(sawTombstone, "one entry must be the removal tombstone");
         assertTrue(sawAddition, "one entry must be the addition");
+    }
+
+    // C5 — real same-parent rename (drives the production rename path, NOT the C4 surrogate)
+
+    /**
+     * Test case C5: a MOVE that stays in the same parent collection is a
+     * <strong>same-parent rename</strong>.  RFC 6578 clients often assume a rename
+     * surfaces as a delete-of-old-name + create-of-new-name (two independent
+     * change log rows, one tombstone and one 200).  Cosmo deliberately deviates:
+     * the rename path goes through
+     * {@code DavItemResourceBase.move()}{@code ->
+     * ContentService#update*()} and produces a <strong>single</strong>
+     * {@code MOD_TYPE_MODIFIED} change log entry that carries the member's
+     * current UID (same before and after) and its <em>new</em> name.
+     *
+     * <p>Because the member's UID does not change,
+     * {@link SyncCollectionReport#doIncrementalSync} resolves the row through
+     * {@code indexMembersByUid} and emits a single regular 200 propstat entry
+     * — NOT a 404 tombstone, and NOT two separate responses.  This test locks
+     * in that behaviour so a future change that splits rename into delete+create
+     * is flagged as a behavioural regression.
+     */
+    @Test
+    public void sameParentRenameInSameCollectionIsReportedAsChanged() throws Exception {
+        List<CollectionItem> members = givenHomeChildCollections(1);
+        CollectionItem member = members.get(0);
+        String oldName = member.getName();
+        String initialToken = doInitialSyncAndGetToken();
+
+        // Same-parent rename: change name + display name on the same member
+        // object, then push through ContentService#updateCollection.  This is
+        // exactly what DavItemResourceBase.move() does when the destination
+        // parent equals the source parent — see
+        // {@link org.unitedinternet.cosmo.dav.impl.DavItemResourceBase#move(org.apache.jackrabbit.webdav.DavCollection)}.
+        String newName = oldName + " renamed";
+        member.setName(newName);
+        member.setDisplayName(newName);
+        testHelper.getContentService().updateCollection(member);
+
+        DavTestContext ctx = executeSyncCollectionReport(
+                incrementalBody(initialToken, null));
+        assertEquals(207, ctx.getDavResponse().getStatus(),
+                "an incremental round following a same-parent rename must be 207");
+
+        Document multistatus = parseMultistatus(ctx.getHttpResponse().getContentAsString());
+        Element root = multistatus.getDocumentElement();
+        List<Element> responses = getChildElements(root, "response");
+
+        assertEquals(1, responses.size(),
+                "a same-parent rename must appear as exactly ONE changed entry: a "
+                + "single MODIFIED change-log row keyed by the member's unchanged UID. "
+                + "Cosmo deliberately does not surface rename as delete+create (C4 "
+                + "simulates that pattern but C5 is the real path)");
+        assertTrue(responsesDeletedMembers(responses).isEmpty(),
+                "a same-parent rename must NOT produce a 404 tombstone: the member "
+                + "still exists under the new name and the change log row is a "
+                + "MODIFIED row");
+        assertNotNull(findPropStatProp(responses.get(0), "getetag", 200),
+                "the renamed member must carry DAV:getetag within a 200 propstat");
+        assertTrue(hrefDecodesTo(responses.get(0), newName),
+                "the reported href must reference the NEW name (the member's "
+                + "name field at the time of the change-log write)");
+        assertFalse(hrefDecodesTo(responses.get(0), oldName),
+                "the reported href must NOT reference the OLD name after a rename");
+        assertNotNull(findDirectSyncToken(root),
+                "the response must carry a DAV:sync-token for the next round");
+    }
+
+    // C6 — PROPFIND-equivalent change to a content member (M-row) is reported
+
+    /**
+     * Test case C6: a property-like change to a content member — here we
+     * stand in for PROPFIND/PROPPATCH semantics by pushing a name update
+     * through {@code ContentService#updateContent()} — must surface as a single
+     * {@link org.unitedinternet.cosmo.model.CollectionModification#MOD_TYPE_MODIFIED}
+     * entry in the parent collection's change log, rendered as a regular 200
+     * propstat (not a tombstone) in the next incremental round.
+     *
+     * <p>This complements C2 (member-display-name change on a sub-collection)
+     * by exercising the content-item path, which goes through
+     * {@code StandardContentService#updateContent()} and the
+     * {@code checkDatesForEvent} branch that is skipped for non-Note items
+     * (our fixture is a plain {@code FileItem}, so no ical validation runs).
+     */
+    @Test
+    public void incrementalSyncAfterContentMemberUpdateListsChangedContent() throws Exception {
+        ContentItem content = testHelper.makeAndStoreDummyContent();
+        assertNotNull(content, "fixture content member was not stored");
+        String oldName = content.getName();
+        String initialToken = doInitialSyncAndGetToken();
+
+        // Same-UID rename on the content item — the service path emits ONE M-row
+        // (updateContent does not write a D-row before the C row).
+        String newName = oldName + " updated";
+        content.setName(newName);
+        testHelper.getContentService().updateContent(content);
+
+        DavTestContext ctx = executeSyncCollectionReport(
+                incrementalBody(initialToken, null));
+        assertEquals(207, ctx.getDavResponse().getStatus(),
+                "an incremental round after a content-member update must be 207");
+
+        Document multistatus = parseMultistatus(ctx.getHttpResponse().getContentAsString());
+        Element root = multistatus.getDocumentElement();
+        List<Element> responses = getChildElements(root, "response");
+
+        assertEquals(1, responses.size(),
+                "exactly one changed member (the content update) must be reported");
+        assertTrue(responsesDeletedMembers(responses).isEmpty(),
+                "a modified content member must still exist; no 404 tombstone allowed");
+        assertNotNull(findPropStatProp(responses.get(0), "getetag", 200),
+                "the content member must carry DAV:getetag within a 200 propstat");
+        assertTrue(hrefDecodesTo(responses.get(0), newName),
+                "the reported member must be the content member at its new name");
+        assertNotNull(findDirectSyncToken(root),
+                "the response must carry a DAV:sync-token for the next round");
+    }
+
+    // C7 — PROPFIND-equivalent change to the collection ITSELF does not leak
+
+    /**
+     * Test case C7: applying a property update to the SAME collection that
+     * the client is synchronizing against — here the user's home collection —
+     * must NOT produce a spurious entry in that collection's next incremental
+     * REPORT round.
+     *
+     * <p>Rationale: the {@code ContentService#updateCollection} call writes an
+     * M-row into the collection's <em>parent</em>'s change log (because the
+     * log is per-parent and indexed by parent UID), not into the collection's
+     * own change log.  Since {@link SyncCollectionReport#doIncrementalSync}
+     * queries the <em>target</em> collection's own log, the self-update is
+     * invisible to that target's incremental round — a client synchronizing
+     * home should see no member entries, just the freshly-minted sync-token.
+     *
+     * <p>This locks against a regression where a bug made
+     * {@code updateCollection} also write an M-row for the updated collection
+     * into its own log, which would corrupt the semantics of "synchronize THIS
+     * collection."
+     */
+    @Test
+    public void incrementalSyncIgnoresSelfPropertyChangeOnTheTargetCollection() throws Exception {
+        givenHomeChildCollections(2);
+        String initialToken = doInitialSyncAndGetToken();
+
+        // Update the HOME collection itself (the collection we REPORT on).
+        // The M-row lands in the home collection's PARENT's change log, not in
+        // the home collection's own log — so the home REPORT below must not
+        // surface the self-update.
+        CollectionItem home = testHelper.getHomeCollection();
+        assertNotNull(home, "the fixture home collection must be available");
+        assertNotNull(home.getUid(), "the home collection must be persisted and carry a UID");
+        String currentDisplayName = home.getDisplayName();
+        home.setDisplayName(currentDisplayName + " home-patch");
+        testHelper.getContentService().updateCollection(home);
+
+        DavTestContext ctx = executeSyncCollectionReport(
+                incrementalBody(initialToken, null));
+        assertEquals(207, ctx.getDavResponse().getStatus(),
+                "an incremental round must still be answered with 207 even when "
+                + "nothing under the target collection has changed");
+
+        Document multistatus = parseMultistatus(ctx.getHttpResponse().getContentAsString());
+        Element root = multistatus.getDocumentElement();
+        List<Element> responses = getChildElements(root, "response");
+
+        assertTrue(responses.isEmpty(),
+                "a PROPFIND-equivalent change to the collection ITSELF must not "
+                + "leak into that same collection's incremental REPORT: the M-row "
+                + "is logged against the collection's PARENT (per-parent change "
+                + "log), and the target collection's own log is what "
+                + "doIncrementalSync replays");
+        assertTrue(responsesDeletedMembers(responses).isEmpty(),
+                "no 404 tombstone is expected when only the target collection "
+                + "itself was modified");
+        assertNotNull(findDirectSyncToken(root),
+                "the response must still carry a DAV:sync-token even with zero "
+                + "entries (RFC 6578 Section 3.1 requires a fresh token on every "
+                + "successful sync)");
     }
 
     // F2

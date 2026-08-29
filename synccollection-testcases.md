@@ -3,7 +3,7 @@
 > **Status:** Partially implemented & automated — see "Implementation status" below.
 > Companion document to `/cosmo/reconnaissance.md`.
 >
-> **Implementation status (2026-08-28):** automated & green on branch
+> **Implementation status (2026-08-29):** automated & green on branch
 > `feature/rfc-6578`: A1 (supported-report-set discovery), A2 (+ A2b home
 > collection OPTIONS regression) (`SyncCollectionDiscoveryIntegrationTest`);
 > B1, B2, B4 (initial sync), G4 (missing body → 400), nresults=0 truncation
@@ -16,8 +16,15 @@
 > (`SyncCollectionScopeAndCalendarDataIntegrationTest`);
 > C1, C2, D1, D2 (tombstone consumed by subsequent token),
 > D3 (delete+recreate same name → tombstone + creation both in one round;
-> uid-keyed change log), C4 (as remove+add surrogate), F2 (pagination
-> convergence), G token-rejection regression lock
+> uid-keyed change log), C4 (as remove+add surrogate),
+> C5 (**deviation, locked**: same-parent rename = ONE M-row at the new name,
+> NO tombstone; same-parent MOVE routes through `updateItem()` →
+> `updateCollection/updateContent` rather than `moveItem()`),
+> C6 (content-member property change → single M-row in the parent's log,
+> complements C2 on the collection path),
+> C7 (self-PROPPATCH on the target collection does not leak into its own
+> REPORT round), F2 (pagination convergence), G token-rejection regression
+> lock
 > (`SyncCollectionIncrementalSyncIntegrationTest`);
 > E1, E2, E3 (+ empty-`<D:prop/>` form), E4 (`<D:allprop/>` is ignored and
 > treated as empty property selection → bare href-only multistatus, 207)
@@ -25,7 +32,13 @@
 > F1 (nresults=4 → pages of 4+4+2, token advances per page, no dupes/loss over
 > 10 changes), F3 (nresults=1000 > 10 pending → single round drains all 10),
 > F5 (`nresults=-5` and `nresults=abc` → 400 Bad Request)
-> (`SyncCollectionLimitIntegrationTest`).
+> (`SyncCollectionLimitIntegrationTest`);
+> H1 (mid-pagination change not lost + strictly monotonic tokens),
+> H2 (double-deletion → exactly one 404 tombstone; report-level dedup in
+> `SyncCollectionReport#addTombstone`), H3 (percent-encoded UTF-8/space
+> member names decode to exact name), H5 (1000-member initial sync 207 +
+> usable token; H4 covered by D2)
+> (`SyncCollectionConcurrencyRobustnessIntegrationTest`).
 > All remaining cases are specification for future automation.
 >
 > **Observed property-selection behavior (locked by the E tests,
@@ -199,9 +212,25 @@ Conventions: base URI `C = /dav/{user}/calendars/{cal}`; all bodies use `xmlns:D
 | C2 | New member since token | Add M4; REPORT with T0 | 207; exactly 1 response for M4 with fresh etag |
 | C3 | Modified member since token | PUT updated content over M1 (new ETag); REPORT with T0 | 207; exactly 1 response for M1; etag differs from B1's |
 | C4 | Mixed changes | Add M4, modify M1, delete M2 (see D1); REPORT with T0 | 207; M4 & M1 as propstat-200 entries, M2 as 404 entry; 3 responses total |
-| C5 | Rename reported as delete+create | MOVE M3 → M5 within C; REPORT with T0 | 207; M3 appears as 404 tombstone AND M5 appears as changed entry |
+| C5 | Rename of a member in the same collection | Same-parent MOVE (M3 → M5 within C); REPORT with T0 | **Deviation (locked):** one 200 propstat entry at the NEW name; NO 404 tombstone. See note below. |
 | C6 | Member property-only change counts | PROPPATCH live prop (e.g., displayname) on M1; REPORT with T0 | M1 listed as changed |
 | C7 | Collection-level changes don't leak | PROPPATCH on collection itself; REPORT with T0 | No `DAV:response` whose href == C |
+
+> **C5 — deliberate deviation from the spec's "delete+create" framing.**
+> A same-parent MOVE in Cosmo does NOT go through
+> `ContentService#moveItem()`. `DavItemResourceBase#move()` detects that the
+> destination parent equals the source parent and instead calls
+> `updateItem()` → `ContentService#updateCollection()/updateContent()`, which
+> logs a **single** `MOD_TYPE_MODIFIED` row keyed by the member's *unchanged*
+> UID and its *new* name. Because `SyncCollectionReport#doIncrementalSync`
+> resolves every non-deleted row through `indexMembersByUid()`, the result is
+> exactly one 200 propstat response at the new href and **no** tombstone for
+> the old href. This is client-safe (a client that had cached M3 simply sees a
+> new M5 and drops nothing it can resolve) but it *is* a deviation from a
+> naive reading of "rename = delete + create". `C5` in
+> `SyncCollectionIncrementalSyncIntegrationTest`
+> (`sameParentRenameInSameCollectionIsReportedAsChanged`) locks this in; C4 is
+> a distinct surrogate (removal + independent addition) and stays as-is.
 
 ### Group D — Deletions & tombstones
 
@@ -261,11 +290,18 @@ Conventions: base URI `C = /dav/{user}/calendars/{cal}`; all bodies use `xmlns:D
 
 | ID | Scenario | Steps | Expected |
 |---|---|---|---|
-| H1 | Change during pagination | Modify M1 between F1 page 1 and page 2 | Page 2 either includes the newer change or a subsequent round catches it; final convergence guaranteed; tokens always monotonic |
-| H2 | Concurrent deletes of tombstoned item | Item deleted twice / deleted while being paginated | No duplicate 404 entries within one response; no 500 |
-| H3 | URL escaping | Member names with spaces/UTF-8 (`my event.ics`, `événement.ics`) | Hrefs percent-encoded consistently with PROPFIND output |
-| H4 | Repeated identical requests | Replay exact request+token twice | Idempotent: same result set (or empty if consumed by token advance per server policy); never 5xx |
-| H5 | Large collection sanity | ~1000 members initial sync | Completes 200/207 within configured timeout; memory bounded (streaming acceptable) |
+| H1 | Change during pagination | Add a member after F1 page 1, before page 2 | Page 2 includes the newer change; final convergence; tokens strictly monotonic — **implemented** `changesMadeDuringPaginationAreNotLostAndTokensAreMonotonic` |
+| H2 | Concurrent/delete-twice tombstone | Item removed twice in one window | Exactly one 404 tombstone in the round, never 500 — **implemented** `doubleDeletionReportsASingleTombstoneAndDoesNotFail` (requires the `addTombstone` href-dedup added in `SyncCollectionReport`) |
+| H3 | URL escaping | Member names with spaces/UTF-8 (`my event.ics`, `événement.ics`) | Hrefs are valid percent-encoded URIs decoding to the exact name — **implemented** `escapedMemberNamesArePercentEncodedAndDecodable` |
+| H4 | Repeated identical request | Replay exact request+token twice | Idempotent; never 5xx — covered by D2 (`tombstoneIsConsumedBySubsequentSyncToken`), not separately auto-tested |
+| H5 | Large collection sanity | ~1000 members initial sync | 207 listing all members + usable token; follow-up round 207 — **implemented** `largeCollectionInitialSyncListsAllMembersAndIssuesToken` |
+
+> **H2 note (2026-08-28):** `StandardContentService#removeCollection` logs a D-row per
+> parent on every invocation, so removing an already-removed member writes a second
+> D-row (the persistence layer treats the second removal as a no-op, so the change log
+> is the only record). `SyncCollectionReport#addTombstone` now suppresses duplicate
+> tombstone hrefs within a single round so a client never observes two identical
+> 404s — required by the H2 case.
 
 ### Group I — Cosmo integration specifics
 
